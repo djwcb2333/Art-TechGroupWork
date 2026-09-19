@@ -1,0 +1,75 @@
+{
+  "complete": true,
+  "passed": true,
+  "documents": [
+    {
+      "name": "DoughWorld_完整操作与修改手册",
+      "passed": true,
+      "desktop": {
+        "title": "Dough World · 完整操作与修改手册",
+        "overflow": false,
+        "brokenAnchors": 0,
+        "sections": 15,
+        "images": 13,
+        "brokenImages": [],
+        "hasPageTransitions": true,
+        "hasCameraMotion": true
+      },
+      "search": {
+        "text": "匹配 2 个章节",
+        "visible": 2,
+        "hidden": 13
+      },
+      "empty": 0,
+      "restored": 15,
+      "narrow": {
+        "overflow": false
+      },
+      "errors": [],
+      "brokenLocalLinks": []
+    },
+    {
+      "name": "DoughWorld_UI从零开始_图解教程",
+      "passed": true,
+      "desktop": {
+        "title": "Dough World · UI 从零开始图解教程",
+        "overflow": false,
+        "brokenAnchors": 0,
+        "sections": 6,
+        "images": 12,
+        "brokenImages": [],
+        "hasPageTransitions": true,
+        "hasCameraMotion": true
+      },
+      "search": {
+        "text": "匹配 2 个章节",
+        "visible": 2,
+        "hidden": 4
+      },
+      "empty": 0,
+      "restored": 6,
+      "narrow": {
+        "overflow": false
+      },
+      "errors": [],
+      "brokenLocalLinks": []
+    },
+    {
+      "name": "MaterialUIBasics / 截图放大指引",
+      "passed": true,
+      "images": 7,
+      "brokenImages": [],
+      "brokenLocalLinks": []
+    },
+    {
+      "name": "FrontendExample / 截图放大指引",
+      "passed": true,
+      "images": 4,
+      "brokenImages": [],
+      "brokenLocalLinks": []
+    }
+  ],
+  "deliveredAssetCount": 25,
+  "unwantedAssets": [],
+  "noUEOrProjectActions": true
+}

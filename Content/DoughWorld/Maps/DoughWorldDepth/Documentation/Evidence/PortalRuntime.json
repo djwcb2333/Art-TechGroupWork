@@ -1,0 +1,132 @@
+{
+  "phase": "wait_entry_capture",
+  "finished": true,
+  "started": 1798.531,
+  "checks": [
+    {
+      "name": "approach_no_autoentry",
+      "passed": true,
+      "position_cm": [
+        16820.0,
+        -10400.0,
+        -365.14503437473525
+      ]
+    },
+    {
+      "name": "confirm_without_request_refused",
+      "passed": true
+    },
+    {
+      "name": "cancel_invalidates_confirmation",
+      "passed": true
+    },
+    {
+      "name": "confirmed_one_way_entry_grounded_camera_unchanged",
+      "passed": true,
+      "position_cm": [
+        16169.999999999998,
+        -14069.999999999998,
+        -5895.849999956748
+      ],
+      "destination_error_cm": 0.8499999567484338,
+      "entry_count": 1,
+      "grounded": true
+    },
+    {
+      "name": "entry_automation_capture_created",
+      "passed": true
+    }
+  ],
+  "captures": [
+    {
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\17_AbyssConfirmation.png",
+      "width": 1280,
+      "height": 720,
+      "bytes": 1154441,
+      "contains_umg_not_guaranteed": true
+    },
+    {
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\17_AbyssConfirmation_UI.png",
+      "width": 1432,
+      "height": 1289,
+      "bytes": 2210611,
+      "native_showui_request": true
+    },
+    {
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\18_DeepEntry.png",
+      "width": 1280,
+      "height": 720,
+      "bytes": 1360237,
+      "contains_umg_not_guaranteed": true
+    }
+  ],
+  "warnings": [],
+  "initial_entry_count": 0,
+  "initial_position_cm": [
+    -2830.0,
+    -669.9999999999989,
+    750.2650056377175
+  ],
+  "stage_started": 1803.812,
+  "camera_before": {
+    "world_rotation": {
+      "pitch": -49.99999999999989,
+      "yaw": 44.99999999999991,
+      "roll": 4.9480647005852166e-15
+    },
+    "arm_length": 2800.0,
+    "fov": 55.0,
+    "projection_mode": "<CameraProjectionMode.PERSPECTIVE: 0>",
+    "ortho_width": 512.0,
+    "absolute_rotation": true,
+    "do_collision_test": false,
+    "enable_camera_lag": true
+  },
+  "confirmation_prompt": [
+    {
+      "visible": true,
+      "widget": "/Engine/Transient.UnrealEdEngine_0:GameInstance_2.DepthAbyssPromptWidget_0",
+      "text_read_error": "DepthAbyssPromptWidget: Failed to find property 'prompt_text' for attribute 'prompt_text' on 'DepthAbyssPromptWidget'"
+    }
+  ],
+  "capture_file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\18_DeepEntry.png",
+  "capture_wall_time": 1789051399.3444204,
+  "capture_started": 1806.937,
+  "ui_file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\17_AbyssConfirmation_UI.png",
+  "ui_wall_time": 1789051395.8321016,
+  "ui_started": 1803.421,
+  "destination_cm": [
+    16169.999999999998,
+    -14069.999999999998,
+    -5895.0
+  ],
+  "before_confirm_position_cm": [
+    16820.0,
+    -10400.0,
+    -365.14503437473525
+  ],
+  "position_immediately_after_confirm_cm": [
+    16169.999999999998,
+    -14069.999999999998,
+    -5895.0
+  ],
+  "camera_after": {
+    "world_rotation": {
+      "pitch": -49.99999999999989,
+      "yaw": 44.99999999999991,
+      "roll": 4.9480647005852166e-15
+    },
+    "arm_length": 2800.0,
+    "fov": 55.0,
+    "projection_mode": "<CameraProjectionMode.PERSPECTIVE: 0>",
+    "ortho_width": 512.0,
+    "absolute_rotation": true,
+    "do_collision_test": false,
+    "enable_camera_lag": true
+  },
+  "error": null,
+  "scope": "actual portal confirmation methods used by E/Enter; hardware key dispatch not automated",
+  "direct_destination_teleport_used": false,
+  "camera_parameters_changed_by_script": false,
+  "successful_test_leaves_player_at_underground_destination": true
+}

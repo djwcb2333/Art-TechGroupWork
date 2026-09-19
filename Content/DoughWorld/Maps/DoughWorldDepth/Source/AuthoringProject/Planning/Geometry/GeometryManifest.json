@@ -1,0 +1,927 @@
+{
+  "schema_version": "1.0",
+  "status": "source_geometry_generated_offline_not_imported_or_runtime_verified",
+  "generation_script": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\generate_geometry.py",
+  "meters_to_obj_cm": 100.0,
+  "obj_import_scale": 1.0,
+  "source_coordinates_modified": false,
+  "asset_count": 14,
+  "intended_destination": "/Game/Maps/<candidate>/Geometry",
+  "bounds_scaling": "actor_scale_axis = target_dimensions_cm_axis / dimensions_cm_axis; all bottom pivots allow local ground placement with no half-height offset",
+  "mesh_count_quality_claim": "All are one connected, closed, consistently oriented manifold with no degenerate triangles; this does not prove UE collision import or runtime visual quality.",
+  "material_policy": "No shared pack material modifications. Import meshes with candidate material; cap/roof slots require CameraFade hookup and independent components.",
+  "assets": [
+    {
+      "key": "SM_DW_BreadBrick",
+      "obj_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\OBJ\\SM_DW_BreadBrick.obj",
+      "obj_relative_path": "OBJ/SM_DW_BreadBrick.obj",
+      "sha256": "08d5a8d4ad9792e0db92f4b589383a7a1a578d6e6b5ef50d1da41e6006a442ac",
+      "units": "centimeters",
+      "import_uniform_scale": 1.0,
+      "pivot": "bottom_center_of_bounds",
+      "axis_convention": "+Z up; X width; Y depth",
+      "bounds_min_cm": [
+        -120.0,
+        -70.0,
+        0.0
+      ],
+      "bounds_max_cm": [
+        120.0,
+        70.0,
+        110.0
+      ],
+      "dimensions_cm": [
+        240,
+        140,
+        110
+      ],
+      "description": "Rounded crust loaf with bevelled shoulders and asymmetric soft top.",
+      "recommended_collision": "convex_hull",
+      "module_requirements": [
+        "jidi_01",
+        "jidi_02",
+        "fajiao_01",
+        "fajiao_07",
+        "meijun_03",
+        "meijun_05"
+      ],
+      "validation": {
+        "vertex_count": 282,
+        "triangle_count": 560,
+        "edge_count": 840,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "winding_consistent": true,
+        "watertight": true,
+        "connected_components": 1,
+        "signed_volume_cm3": 3021576.1493,
+        "smallest_triangle_area_cm2": 56.4879797,
+        "euler_characteristic": 2,
+        "self_intersection_test": "not performed; deterministic radial/shell construction, do not claim general self-intersection verification"
+      },
+      "normal_policy": "area-weighted smooth vertex normals, consistent outward winding",
+      "uv_policy": "UV0 dominant face projection; no packed lightmap atlas; use candidate material or world aligned texture"
+    },
+    {
+      "key": "SM_DW_MushroomCap_Pleated",
+      "obj_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\OBJ\\SM_DW_MushroomCap_Pleated.obj",
+      "obj_relative_path": "OBJ/SM_DW_MushroomCap_Pleated.obj",
+      "sha256": "666b49bdc0e60d8fefda15f2ca0090cd233bfb193ede70144a1e7eef9259deab",
+      "units": "centimeters",
+      "import_uniform_scale": 1.0,
+      "pivot": "bottom_center_of_bounds",
+      "axis_convention": "+Z up; X width; Y depth",
+      "bounds_min_cm": [
+        -240.0,
+        -210.0,
+        0.0
+      ],
+      "bounds_max_cm": [
+        240.0,
+        210.0,
+        150.0
+      ],
+      "dimensions_cm": [
+        480,
+        420,
+        150
+      ],
+      "description": "Independent cap with domed crown, lobed lip and real radial underside pleats.",
+      "recommended_collision": "NoCollision",
+      "module_requirements": [
+        "fajiao_02",
+        "jiaomu_02",
+        "jiaomu_03",
+        "jiaomu_04",
+        "shendu_07"
+      ],
+      "validation": {
+        "vertex_count": 722,
+        "triangle_count": 1440,
+        "edge_count": 2160,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "winding_consistent": true,
+        "watertight": true,
+        "connected_components": 1,
+        "signed_volume_cm3": 13344231.6076,
+        "smallest_triangle_area_cm2": 49.3890113,
+        "euler_characteristic": 2,
+        "self_intersection_test": "not performed; deterministic radial/shell construction, do not claim general self-intersection verification"
+      },
+      "normal_policy": "area-weighted smooth vertex normals, consistent outward winding",
+      "uv_policy": "UV0 dominant face projection; no packed lightmap atlas; use candidate material or world aligned texture"
+    },
+    {
+      "key": "SM_DW_MushroomStem",
+      "obj_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\OBJ\\SM_DW_MushroomStem.obj",
+      "obj_relative_path": "OBJ/SM_DW_MushroomStem.obj",
+      "sha256": "987ed228886b7e1909efe04a0e644724de67b8814dfc6ed56b860df4a791dac2",
+      "units": "centimeters",
+      "import_uniform_scale": 1.0,
+      "pivot": "bottom_center_of_bounds",
+      "axis_convention": "+Z up; X width; Y depth",
+      "bounds_min_cm": [
+        -45.0,
+        -45.0,
+        0.0
+      ],
+      "bounds_max_cm": [
+        45.0,
+        45.0,
+        320.0
+      ],
+      "dimensions_cm": [
+        90,
+        90,
+        320
+      ],
+      "description": "Tapered bent stalk with flared roots, separate from cap.",
+      "recommended_collision": "convex_decomposition_or_simple_capsule",
+      "module_requirements": [
+        "fajiao_02",
+        "jiaomu_02",
+        "jiaomu_03",
+        "jiaomu_04",
+        "shendu_07"
+      ],
+      "validation": {
+        "vertex_count": 258,
+        "triangle_count": 512,
+        "edge_count": 768,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "winding_consistent": true,
+        "watertight": true,
+        "connected_components": 1,
+        "signed_volume_cm3": 789070.9278,
+        "smallest_triangle_area_cm2": 45.7525797,
+        "euler_characteristic": 2,
+        "self_intersection_test": "not performed; deterministic radial/shell construction, do not claim general self-intersection verification"
+      },
+      "normal_policy": "area-weighted smooth vertex normals, consistent outward winding",
+      "uv_policy": "UV0 dominant face projection; no packed lightmap atlas; use candidate material or world aligned texture"
+    },
+    {
+      "key": "SM_DW_Bud",
+      "obj_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\OBJ\\SM_DW_Bud.obj",
+      "obj_relative_path": "OBJ/SM_DW_Bud.obj",
+      "sha256": "5ef82e25671d28aba768b20432befcbc444ac19c1a8144c384325bb7f79cb949",
+      "units": "centimeters",
+      "import_uniform_scale": 1.0,
+      "pivot": "bottom_center_of_bounds",
+      "axis_convention": "+Z up; X width; Y depth",
+      "bounds_min_cm": [
+        -35.0,
+        -35.0,
+        0.0
+      ],
+      "bounds_max_cm": [
+        35.0,
+        35.0,
+        65.0
+      ],
+      "dimensions_cm": [
+        70,
+        70,
+        65
+      ],
+      "description": "Closed lobed fungal/dough bud.",
+      "recommended_collision": "NoCollision",
+      "module_requirements": [
+        "fajiao_01",
+        "fajiao_02",
+        "jiaomu_02",
+        "jiaomu_04",
+        "shendu_07"
+      ],
+      "validation": {
+        "vertex_count": 182,
+        "triangle_count": 360,
+        "edge_count": 540,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "winding_consistent": true,
+        "watertight": true,
+        "connected_components": 1,
+        "signed_volume_cm3": 154726.4505,
+        "smallest_triangle_area_cm2": 10.4400751,
+        "euler_characteristic": 2,
+        "self_intersection_test": "not performed; deterministic radial/shell construction, do not claim general self-intersection verification"
+      },
+      "normal_policy": "area-weighted smooth vertex normals, consistent outward winding",
+      "uv_policy": "UV0 dominant face projection; no packed lightmap atlas; use candidate material or world aligned texture"
+    },
+    {
+      "key": "SM_DW_PoreRing",
+      "obj_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\OBJ\\SM_DW_PoreRing.obj",
+      "obj_relative_path": "OBJ/SM_DW_PoreRing.obj",
+      "sha256": "739d9838c8bc705aab5d3ffc3b5465395415f5413826926c2f5bf1cd781f89dd",
+      "units": "centimeters",
+      "import_uniform_scale": 1.0,
+      "pivot": "bottom_center_of_bounds",
+      "axis_convention": "+Z up; X width; Y depth",
+      "bounds_min_cm": [
+        -300.0,
+        -250.0,
+        0.0
+      ],
+      "bounds_max_cm": [
+        300.0,
+        250.0,
+        300.0
+      ],
+      "dimensions_cm": [
+        600,
+        500,
+        300
+      ],
+      "description": "Hollow annular cut wall with thick rim and unobstructed center.",
+      "recommended_collision": "complex_as_simple_static_or_segmented_convex",
+      "module_requirements": [
+        "qianceng_03",
+        "qianceng_04",
+        "meijun_02",
+        "meijun_07"
+      ],
+      "validation": {
+        "vertex_count": 512,
+        "triangle_count": 1024,
+        "edge_count": 1536,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "winding_consistent": true,
+        "watertight": true,
+        "connected_components": 1,
+        "signed_volume_cm3": 36026560.1501,
+        "smallest_triangle_area_cm2": 232.3873523,
+        "euler_characteristic": 0,
+        "self_intersection_test": "not performed; deterministic radial/shell construction, do not claim general self-intersection verification",
+        "hollow_axis_vertical_intersections": 0
+      },
+      "normal_policy": "area-weighted smooth vertex normals, consistent outward winding",
+      "uv_policy": "UV0 dominant face projection; no packed lightmap atlas; use candidate material or world aligned texture",
+      "arc_axis_xy_cm": [
+        -0.826975,
+        -7.98813
+      ],
+      "collision_warning": "A single auto-convex hull fills the opening. Use static complex collision or multiple convex wall segments; inspect capsule path."
+    },
+    {
+      "key": "SM_DW_PoreHalfRing",
+      "obj_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\OBJ\\SM_DW_PoreHalfRing.obj",
+      "obj_relative_path": "OBJ/SM_DW_PoreHalfRing.obj",
+      "sha256": "fdabefc50e52f7f082b0a368e50d33382b55ba62f762a6d15c30766662a3a8ea",
+      "units": "centimeters",
+      "import_uniform_scale": 1.0,
+      "pivot": "bottom_center_of_bounds",
+      "axis_convention": "+Z up; X width; Y depth",
+      "bounds_min_cm": [
+        -300.0,
+        -125.0,
+        0.0
+      ],
+      "bounds_max_cm": [
+        300.0,
+        125.0,
+        300.0
+      ],
+      "dimensions_cm": [
+        600,
+        250,
+        300
+      ],
+      "description": "Closed solid semicircular wall section; inner side remains concave/open. End caps close only wall thickness.",
+      "recommended_collision": "complex_as_simple_static_or_segmented_convex",
+      "module_requirements": [
+        "qianceng_06",
+        "fajiao_03",
+        "meijun_01",
+        "shendu_04"
+      ],
+      "validation": {
+        "vertex_count": 264,
+        "triangle_count": 524,
+        "edge_count": 786,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "winding_consistent": true,
+        "watertight": true,
+        "connected_components": 1,
+        "signed_volume_cm3": 18028010.2434,
+        "smallest_triangle_area_cm2": 258.1324922,
+        "euler_characteristic": 2,
+        "self_intersection_test": "not performed; deterministic radial/shell construction, do not claim general self-intersection verification",
+        "hollow_axis_vertical_intersections": 0
+      },
+      "normal_policy": "area-weighted smooth vertex normals, consistent outward winding",
+      "uv_policy": "UV0 dominant face projection; no packed lightmap atlas; use candidate material or world aligned texture",
+      "arc_axis_xy_cm": [
+        -0.826975,
+        -125.0
+      ],
+      "collision_warning": "A single auto-convex hull fills the opening. Use static complex collision or multiple convex wall segments; inspect capsule path."
+    },
+    {
+      "key": "SM_DW_PoreQuarterRing",
+      "obj_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\OBJ\\SM_DW_PoreQuarterRing.obj",
+      "obj_relative_path": "OBJ/SM_DW_PoreQuarterRing.obj",
+      "sha256": "a3f597401025355b72f1ab5550b599b18a83d0b12e829a7ca2be7e0eeec5a644",
+      "units": "centimeters",
+      "import_uniform_scale": 1.0,
+      "pivot": "bottom_center_of_bounds",
+      "axis_convention": "+Z up; X width; Y depth",
+      "bounds_min_cm": [
+        -150.0,
+        -125.0,
+        0.0
+      ],
+      "bounds_max_cm": [
+        150.0,
+        125.0,
+        300.0
+      ],
+      "dimensions_cm": [
+        300,
+        250,
+        300
+      ],
+      "description": "Quarter annular wall for modular exposed cuts or partial portal rims.",
+      "recommended_collision": "complex_as_simple_static_or_segmented_convex",
+      "module_requirements": [
+        "qianceng_03",
+        "meijun_02",
+        "meijun_07"
+      ],
+      "validation": {
+        "vertex_count": 136,
+        "triangle_count": 268,
+        "edge_count": 402,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "winding_consistent": true,
+        "watertight": true,
+        "connected_components": 1,
+        "signed_volume_cm3": 8995146.2029,
+        "smallest_triangle_area_cm2": 261.2771357,
+        "euler_characteristic": 2,
+        "self_intersection_test": "not performed; deterministic radial/shell construction, do not claim general self-intersection verification",
+        "hollow_axis_vertical_intersections": 0
+      },
+      "normal_policy": "area-weighted smooth vertex normals, consistent outward winding",
+      "uv_policy": "UV0 dominant face projection; no packed lightmap atlas; use candidate material or world aligned texture",
+      "arc_axis_xy_cm": [
+        -150.0,
+        -125.0
+      ],
+      "collision_warning": "A single auto-convex hull fills the opening. Use static complex collision or multiple convex wall segments; inspect capsule path."
+    },
+    {
+      "key": "SM_DW_PoreInnerSleeve",
+      "obj_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\OBJ\\SM_DW_PoreInnerSleeve.obj",
+      "obj_relative_path": "OBJ/SM_DW_PoreInnerSleeve.obj",
+      "sha256": "639738519a36238832c5e4588b462e8844448e644d3f9b2f09f4f6136d3def40",
+      "units": "centimeters",
+      "import_uniform_scale": 1.0,
+      "pivot": "bottom_center_of_bounds",
+      "axis_convention": "+Z up; X width; Y depth",
+      "bounds_min_cm": [
+        -250.0,
+        -200.0,
+        0.0
+      ],
+      "bounds_max_cm": [
+        250.0,
+        200.0,
+        600.0
+      ],
+      "dimensions_cm": [
+        500,
+        400,
+        600
+      ],
+      "description": "Deep thin hollow sleeve, no center cap. Used with separate top rim and optional dark bed.",
+      "recommended_collision": "complex_as_simple_static_or_segmented_convex",
+      "module_requirements": [
+        "qianceng_04",
+        "meijun_02",
+        "meijun_07"
+      ],
+      "validation": {
+        "vertex_count": 384,
+        "triangle_count": 768,
+        "edge_count": 1152,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "winding_consistent": true,
+        "watertight": true,
+        "connected_components": 1,
+        "signed_volume_cm3": 23432184.4286,
+        "smallest_triangle_area_cm2": 92.5056923,
+        "euler_characteristic": 0,
+        "self_intersection_test": "not performed; deterministic radial/shell construction, do not claim general self-intersection verification",
+        "hollow_axis_vertical_intersections": 0
+      },
+      "normal_policy": "area-weighted smooth vertex normals, consistent outward winding",
+      "uv_policy": "UV0 dominant face projection; no packed lightmap atlas; use candidate material or world aligned texture",
+      "arc_axis_xy_cm": [
+        -0.689146,
+        -6.390504
+      ],
+      "collision_warning": "A single auto-convex hull fills the opening. Use static complex collision or multiple convex wall segments; inspect capsule path."
+    },
+    {
+      "key": "SM_DW_GlutenColumn",
+      "obj_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\OBJ\\SM_DW_GlutenColumn.obj",
+      "obj_relative_path": "OBJ/SM_DW_GlutenColumn.obj",
+      "sha256": "d9d049b836005e971a825aa53ebaec0e0aef964bdd0b8ad0f27528e79fc93280",
+      "units": "centimeters",
+      "import_uniform_scale": 1.0,
+      "pivot": "bottom_center_of_bounds",
+      "axis_convention": "+Z up; X width; Y depth",
+      "bounds_min_cm": [
+        -22.5,
+        -22.5,
+        0.0
+      ],
+      "bounds_max_cm": [
+        22.5,
+        22.5,
+        240.0
+      ],
+      "dimensions_cm": [
+        45,
+        45,
+        240
+      ],
+      "description": "Curved tapered gluten strand with polygonal grooves.",
+      "recommended_collision": "NoCollision",
+      "module_requirements": [
+        "qianceng_02",
+        "fajiao_01",
+        "jiaomu_07",
+        "meijun_04",
+        "shendu_07"
+      ],
+      "validation": {
+        "vertex_count": 170,
+        "triangle_count": 336,
+        "edge_count": 504,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "winding_consistent": true,
+        "watertight": true,
+        "connected_components": 1,
+        "signed_volume_cm3": 77908.1893,
+        "smallest_triangle_area_cm2": 1.5359771,
+        "euler_characteristic": 2,
+        "self_intersection_test": "not performed; deterministic radial/shell construction, do not claim general self-intersection verification"
+      },
+      "normal_policy": "area-weighted smooth vertex normals, consistent outward winding",
+      "uv_policy": "UV0 dominant face projection; no packed lightmap atlas; use candidate material or world aligned texture"
+    },
+    {
+      "key": "SM_DW_RoofTile",
+      "obj_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\OBJ\\SM_DW_RoofTile.obj",
+      "obj_relative_path": "OBJ/SM_DW_RoofTile.obj",
+      "sha256": "6aa8a6b9e1d7b4d400f8c72c25ae380b810cf2b062fc695e60daac045fbd36e9",
+      "units": "centimeters",
+      "import_uniform_scale": 1.0,
+      "pivot": "bottom_center_of_bounds",
+      "axis_convention": "+Z up; X width; Y depth",
+      "bounds_min_cm": [
+        -120.0,
+        -90.0,
+        0.0
+      ],
+      "bounds_max_cm": [
+        120.0,
+        90.0,
+        60.0
+      ],
+      "dimensions_cm": [
+        240,
+        180,
+        60
+      ],
+      "description": "Curved bread roof tile with actual underside shell, not a plane.",
+      "recommended_collision": "NoCollision",
+      "module_requirements": [
+        "jidi_02",
+        "jidi_04",
+        "meijun_03"
+      ],
+      "validation": {
+        "vertex_count": 68,
+        "triangle_count": 132,
+        "edge_count": 198,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "winding_consistent": true,
+        "watertight": true,
+        "connected_components": 1,
+        "signed_volume_cm3": 501628.7217,
+        "smallest_triangle_area_cm2": 33.7116076,
+        "euler_characteristic": 2,
+        "self_intersection_test": "not performed; deterministic radial/shell construction, do not claim general self-intersection verification"
+      },
+      "normal_policy": "area-weighted smooth vertex normals, consistent outward winding",
+      "uv_policy": "UV0 dominant face projection; no packed lightmap atlas; use candidate material or world aligned texture"
+    },
+    {
+      "key": "SM_DW_ArcRoof",
+      "obj_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\OBJ\\SM_DW_ArcRoof.obj",
+      "obj_relative_path": "OBJ/SM_DW_ArcRoof.obj",
+      "sha256": "66b69b5fd994d29ea4b50d48a3c6ccaa9fd1234e1678cf2e0eab7932e32d75fe",
+      "units": "centimeters",
+      "import_uniform_scale": 1.0,
+      "pivot": "bottom_center_of_bounds",
+      "axis_convention": "+Z up; X width; Y depth",
+      "bounds_min_cm": [
+        -500.0,
+        -400.0,
+        0.0
+      ],
+      "bounds_max_cm": [
+        500.0,
+        400.0,
+        240.0
+      ],
+      "dimensions_cm": [
+        1000,
+        800,
+        240
+      ],
+      "description": "Full arched roof shell; independent component suitable for CameraFade.",
+      "recommended_collision": "NoCollision",
+      "module_requirements": [
+        "jidi_02",
+        "jidi_04",
+        "qianceng_06",
+        "shendu_05"
+      ],
+      "validation": {
+        "vertex_count": 132,
+        "triangle_count": 260,
+        "edge_count": 390,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "winding_consistent": true,
+        "watertight": true,
+        "connected_components": 1,
+        "signed_volume_cm3": 37337473.2315,
+        "smallest_triangle_area_cm2": 282.2893641,
+        "euler_characteristic": 2,
+        "self_intersection_test": "not performed; deterministic radial/shell construction, do not claim general self-intersection verification"
+      },
+      "normal_policy": "area-weighted smooth vertex normals, consistent outward winding",
+      "uv_policy": "UV0 dominant face projection; no packed lightmap atlas; use candidate material or world aligned texture",
+      "center_underside_height_cm": 192
+    },
+    {
+      "key": "SM_DW_BridgePlank",
+      "obj_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\OBJ\\SM_DW_BridgePlank.obj",
+      "obj_relative_path": "OBJ/SM_DW_BridgePlank.obj",
+      "sha256": "26a7ff877d13458c2fe6e6b2dd288674bfad700b62f4b701d4880ebca83cac0e",
+      "units": "centimeters",
+      "import_uniform_scale": 1.0,
+      "pivot": "bottom_center_of_bounds",
+      "axis_convention": "+Z up; X width; Y depth",
+      "bounds_min_cm": [
+        -200.0,
+        -35.0,
+        0.0
+      ],
+      "bounds_max_cm": [
+        200.0,
+        35.0,
+        35.0
+      ],
+      "dimensions_cm": [
+        400,
+        70,
+        35
+      ],
+      "description": "Soft beveled plank/slab with slightly crowned top; repeat across bridge.",
+      "recommended_collision": "convex_hull",
+      "module_requirements": [
+        "meijun_06",
+        "jidi_03",
+        "jidi_04"
+      ],
+      "validation": {
+        "vertex_count": 282,
+        "triangle_count": 560,
+        "edge_count": 840,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "winding_consistent": true,
+        "watertight": true,
+        "connected_components": 1,
+        "signed_volume_cm3": 801175.4941,
+        "smallest_triangle_area_cm2": 24.0545181,
+        "euler_characteristic": 2,
+        "self_intersection_test": "not performed; deterministic radial/shell construction, do not claim general self-intersection verification"
+      },
+      "normal_policy": "area-weighted smooth vertex normals, consistent outward winding",
+      "uv_policy": "UV0 dominant face projection; no packed lightmap atlas; use candidate material or world aligned texture"
+    },
+    {
+      "key": "SM_DW_SupportPost",
+      "obj_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\OBJ\\SM_DW_SupportPost.obj",
+      "obj_relative_path": "OBJ/SM_DW_SupportPost.obj",
+      "sha256": "816fd9ac06de18a2ecdb0ec0193ccd6128fc39edd27ed46f9b6d1593a5a567b7",
+      "units": "centimeters",
+      "import_uniform_scale": 1.0,
+      "pivot": "bottom_center_of_bounds",
+      "axis_convention": "+Z up; X width; Y depth",
+      "bounds_min_cm": [
+        -30.0,
+        -30.0,
+        0.0
+      ],
+      "bounds_max_cm": [
+        30.0,
+        30.0,
+        500.0
+      ],
+      "dimensions_cm": [
+        60,
+        60,
+        500
+      ],
+      "description": "Tapered faceted support column with integrated foot/capital.",
+      "recommended_collision": "convex_hull",
+      "module_requirements": [
+        "jidi_02",
+        "jidi_03",
+        "jidi_04",
+        "meijun_06"
+      ],
+      "validation": {
+        "vertex_count": 74,
+        "triangle_count": 144,
+        "edge_count": 216,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "winding_consistent": true,
+        "watertight": true,
+        "connected_components": 1,
+        "signed_volume_cm3": 789865.1864,
+        "smallest_triangle_area_cm2": 54.7188253,
+        "euler_characteristic": 2,
+        "self_intersection_test": "not performed; deterministic radial/shell construction, do not claim general self-intersection verification"
+      },
+      "normal_policy": "area-weighted smooth vertex normals, consistent outward winding",
+      "uv_policy": "UV0 dominant face projection; no packed lightmap atlas; use candidate material or world aligned texture"
+    },
+    {
+      "key": "SM_DW_AltarDish",
+      "obj_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\Geometry\\OBJ\\SM_DW_AltarDish.obj",
+      "obj_relative_path": "OBJ/SM_DW_AltarDish.obj",
+      "sha256": "ce11b97cde8b1511f4732abdcc75d729accd21dd57521b81731de09ad1d72ed3",
+      "units": "centimeters",
+      "import_uniform_scale": 1.0,
+      "pivot": "bottom_center_of_bounds",
+      "axis_convention": "+Z up; X width; Y depth",
+      "bounds_min_cm": [
+        -400.0,
+        -350.0,
+        0.0
+      ],
+      "bounds_max_cm": [
+        400.0,
+        350.0,
+        80.0
+      ],
+      "dimensions_cm": [
+        800,
+        700,
+        80
+      ],
+      "description": "Stepped altar plinth with raised rim and a real recessed central bowl.",
+      "recommended_collision": "complex_as_simple_static_or_convex_segments",
+      "module_requirements": [
+        "shendu_02"
+      ],
+      "validation": {
+        "vertex_count": 642,
+        "triangle_count": 1280,
+        "edge_count": 1920,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "winding_consistent": true,
+        "watertight": true,
+        "connected_components": 1,
+        "signed_volume_cm3": 24884572.7676,
+        "smallest_triangle_area_cm2": 250.1409984,
+        "euler_characteristic": 2,
+        "self_intersection_test": "not performed; deterministic radial/shell construction, do not claim general self-intersection verification"
+      },
+      "normal_policy": "area-weighted smooth vertex normals, consistent outward winding",
+      "uv_policy": "UV0 dominant face projection; no packed lightmap atlas; use candidate material or world aligned texture",
+      "central_bowl_floor_above_pivot_cm": 49.6
+    }
+  ],
+  "assembly_recipes": [
+    {
+      "key": "fungus_medium",
+      "source_examples": [
+        "flora/yeast_buds_fajiao"
+      ],
+      "root_xy_policy": "unchanged",
+      "components": [
+        {
+          "mesh": "SM_DW_MushroomStem",
+          "bottom_offset_cm": [
+            0,
+            0,
+            0
+          ],
+          "target_dimensions_cm": [
+            90,
+            90,
+            320
+          ],
+          "collision": "BlockAll",
+          "fade": false
+        },
+        {
+          "mesh": "SM_DW_MushroomCap_Pleated",
+          "bottom_offset_cm": [
+            0,
+            0,
+            270
+          ],
+          "target_dimensions_cm": [
+            480,
+            420,
+            150
+          ],
+          "collision": "NoCollision",
+          "fade": true
+        },
+        {
+          "mesh": "SM_DW_Bud",
+          "bottom_offset_cm": [
+            160,
+            80,
+            0
+          ],
+          "target_dimensions_cm": [
+            100,
+            95,
+            85
+          ],
+          "collision": "NoCollision",
+          "fade": false
+        }
+      ]
+    },
+    {
+      "key": "fungus_large",
+      "source_examples": [
+        "regions/jiaomu"
+      ],
+      "root_xy_policy": "source anchor plus additive decor offset",
+      "components": [
+        {
+          "mesh": "SM_DW_MushroomStem",
+          "bottom_offset_cm": [
+            0,
+            0,
+            0
+          ],
+          "target_dimensions_cm": [
+            200,
+            200,
+            700
+          ],
+          "collision": "BlockAll",
+          "fade": false
+        },
+        {
+          "mesh": "SM_DW_MushroomCap_Pleated",
+          "bottom_offset_cm": [
+            0,
+            0,
+            600
+          ],
+          "target_dimensions_cm": [
+            1100,
+            1000,
+            300
+          ],
+          "collision": "NoCollision",
+          "fade": true
+        }
+      ]
+    },
+    {
+      "key": "deep_pore",
+      "source_examples": [
+        "holes/hole_abyss"
+      ],
+      "root_xy_policy": "unchanged",
+      "components": [
+        {
+          "mesh": "SM_DW_PoreRing",
+          "bottom_offset_cm": [
+            0,
+            0,
+            -200
+          ],
+          "target_dimensions_cm": [
+            1600,
+            1400,
+            300
+          ],
+          "collision": "static_complex_or_segmented",
+          "fade": false
+        },
+        {
+          "mesh": "SM_DW_PoreInnerSleeve",
+          "bottom_offset_cm": [
+            0,
+            0,
+            -950
+          ],
+          "target_dimensions_cm": [
+            1120,
+            910,
+            850
+          ],
+          "collision": "static_complex_or_segmented",
+          "fade": false
+        }
+      ],
+      "notes": "Terrain must have a matching real opening. Ring meshes do not remove Landscape underneath. Do not cap center with collision or single auto-convex hull."
+    },
+    {
+      "key": "base_arc_roof",
+      "source_examples": [
+        "buildings/base_hut"
+      ],
+      "root_xy_policy": "unchanged",
+      "components": [
+        {
+          "mesh": "SM_DW_ArcRoof",
+          "bottom_offset_cm": [
+            0,
+            0,
+            280
+          ],
+          "target_dimensions_cm": [
+            1000,
+            800,
+            240
+          ],
+          "collision": "NoCollision",
+          "fade": true
+        }
+      ],
+      "notes": "Walls, entry and floor are separate. Each roof owns candidate material instance; fading roof does not change wall collision."
+    },
+    {
+      "key": "altar_and_core",
+      "source_examples": [
+        "buildings/core_altar",
+        "monsters/boss_core"
+      ],
+      "root_xy_policy": "both source XY unchanged",
+      "components": [
+        {
+          "mesh": "SM_DW_AltarDish",
+          "bottom_offset_cm": [
+            0,
+            0,
+            0
+          ],
+          "target_dimensions_cm": [
+            800,
+            700,
+            80
+          ],
+          "collision": "static_complex_or_convex_segments",
+          "fade": false
+        }
+      ],
+      "boss_visual_min_bottom_z_cm": 50,
+      "notes": "Lift the Boss body visually from the recessed bowl floor; keep altar and Boss source roots coincident."
+    }
+  ]
+}

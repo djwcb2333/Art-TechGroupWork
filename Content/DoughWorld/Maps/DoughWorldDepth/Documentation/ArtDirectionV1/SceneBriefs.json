@@ -1,0 +1,1275 @@
+{
+  "schema": "doughworld_art_direction_scene_briefs_v1",
+  "status": "concept briefs only; no new Unreal changes or generated images by this document task",
+  "created_date": "2026-09-14",
+  "sources": [
+    {
+      "path": "UE_Whitebox_Delivery/DoughWorldV3/Handoff/Originals/10_document.json",
+      "sha256": "d79b1bd9165e846604ede8fdab70a581d0a1cfe87cb90ed8ce23ef7170809fd4"
+    },
+    {
+      "path": "UE_Whitebox_Delivery/DoughWorldV3/TerrainDesign/depth_supplement.json",
+      "sha256": "9977a16ae59bf9e30cf9dd4849d8ada3dd755290806b527ba1eaf95784181053"
+    }
+  ],
+  "authority_cn": "10_document.json决定当前六区、原点位、路线与语义；depth_supplement决定本轮已有高差/地下层与新增地形路径。源elevation_value为灰度参考，不是米。分镜、辅助色与资产造型属于美术建议。",
+  "reference_rules_cn": [
+    "参考1使用造型与配色语汇，参考2使用手绘构图与气氛；不复刻建筑、城堡、IP角色、标识、签名或文字。",
+    "用户已排除商业Mushroom包，不推荐搜索/采购；原创酵母生态仍服从当前JSON内容。",
+    "不采用旧版麦谷/大烤原命名或布局。",
+    "当前先做整体AI预览统一方向，再做六区场景概念图，再拆资产与搭建；文档本身不触发UE修改或机制实现。"
+  ],
+  "global_overview": {
+    "name_cn": "五个地表区域与一个地下层的整体气氛预览",
+    "composition_cn": "主画面保持500×500m的相对拓扑：中央基地嵌在浅层环带，左侧/西北为发酵隆起，左上为酵母高地，右侧为霉菌塌陷低地。地下菌核以单独下方剖面/附属画幅表示层级，不能画为地表右上的露天Boss盆地。",
+    "must_read_cn": [
+      "基地在浅层内部，而非六座并排小岛。",
+      "黄油瀑布从发酵崖顶经潭溪流到破壁口，水系连续。",
+      "发酵—浅层与发酵—酵母各只有规定通口；霉菌桥为可选近道并有外圈路。",
+      "深渊主动入口与地下菌核房有层级连接，区别于坍塌陷阱。"
+    ],
+    "render_language_cn": "原创手绘环境概念图、可见绘画笔触、较大清楚色块、受光与阴影层次、有机圆润面团形体，避免工程UI/网格/坐标文字和水印；概念阶段颜色允许在源色基础上做和谐调整。",
+    "not_to_claim_cn": "AI概念图不是严格米制平面图，不证明碰撞、导航、材质或机制已实现。源点位和路线约束由本简报保留，进入UE阶段再按实际相机验证。"
+  },
+  "asset_strategy": {
+    "fantastic_root": "/Game/Maps/DoughWorldDepth/Village/Meshes/",
+    "reuse_scope_cn": "优先复用当前已采用的Fantastic桌架、木箱、独立盖、面包、袋筐、生活木器、小车、散板和桥面。保留原包材质/纹理依赖；不把完整住宅设为面团世界主轮廓。",
+    "custom_priority_cn": [
+      "统一面团地表/崖面/弧顶模块",
+      "黄油瀑布三段水系与孔洞家族",
+      "原创酵母囊与面筋植被",
+      "腐败与地下内腔模块",
+      "核心祭坛、菌核、角色与资源专用造型"
+    ],
+    "non_fantastic_existing_cn": "当前SoStylized岩石与低草可作为地形底层或远景辅助；不因本概念任务重新导入、重刷植被或购买资源。"
+  },
+  "precision_notes_cn": [
+    "pressure_plate mech_plate_1在当前两JSON中为(393.3,180)，与既有桥体中心(393.3,170)区分；本概念阶段不移动二者。",
+    "demo_route第2面粉(210,343.3)与resources/flour_demo(200,233.3)是不同原记录，不合并。",
+    "所有art_reference_pins仅为意向与材质参考，不据其坐标放真实地标。",
+    "地下arena_bounds_reference.activity_envelope_m=[80,60]是设计活动范围，不把区域radius当Boss房直径。"
+  ],
+  "scenes": [
+    {
+      "id": "jidi",
+      "title_cn": "01 基地：密实面团台地上的生活枢纽",
+      "concept_goal_cn": "温暖、可靠、能一眼分辨住处、制作与储备；屋顶和地表属于面团世界。",
+      "source_region": {
+        "name_cn": "基地稳定区",
+        "center_xy_m": [
+          253.3,
+          253.3
+        ],
+        "radius_xy_m": [
+          50.0,
+          46.7
+        ],
+        "color_hex": "#E7DFCB",
+        "elevation_gray_reference": 200,
+        "representative_depth_z_m": 6.42246
+      },
+      "must_preserve": [
+        {
+          "name_cn": "稳定台地与浅层环带",
+          "source_refs": [
+            "regions/jidi",
+            "regions/qianceng"
+          ],
+          "preserve_cn": "基地和浅层共享中心(253.3,253.3)，基地为约50×46.7m半径的内区，外侧是浅层环带；基地地面约+6.4m，边缘以可读的密实切面过渡。不要画成与外界悬空断开的岛。"
+        },
+        {
+          "name_cn": "三处原建筑设施",
+          "source_refs": [
+            "buildings/base_hut",
+            "buildings/workbench",
+            "buildings/storage_repair"
+          ],
+          "preserve_cn": "主棚(221.7,243.3)、工作台(221.7,266.7)、储物修复(196.7,256.7)保持相对位置；主棚与桌架是不同设施，不合成城堡或整栋中世纪房。"
+        },
+        {
+          "name_cn": "教学进入基地的顺序",
+          "source_refs": [
+            "demo_route/5",
+            "demo_route/6",
+            "demo_route/7",
+            "demo_route/8",
+            "demo_route/9"
+          ],
+          "preserve_cn": "障碍锁(216.7,253.3)→战斗②(243.3,240)→补给(270,233.3)→基地(260,250)→终点(266.7,283.3)顺序不改；末端小霉菌保留在教学角落，不能因美术标注“安全”而删除。"
+        },
+        {
+          "name_cn": "向两翼延展的地形",
+          "source_refs": [
+            "paths_additive/base_to_wall",
+            "paths_additive/base_to_mold"
+          ],
+          "preserve_cn": "基地西侧路径经储物点渐降至破壁入口；东侧从补给方向降向霉菌低地。镜头用两条边缘道路暗示外界，不新增穿越发酵封闭边界的出口。"
+        },
+        {
+          "name_cn": "进入、操作、屋顶可读性",
+          "source_refs": [
+            "buildings/base_hut",
+            "buildings/workbench"
+          ],
+          "preserve_cn": "主棚门洞前保留空地、工作台操作面朝路径；弧屋顶与上墙保持可分离轮廓，后续能延续固定镜头局部渐隐。"
+        }
+      ],
+      "source_route_ids": [
+        "base_to_wall",
+        "base_to_mold"
+      ],
+      "additional_paths": [
+        {
+          "id": "base_to_wall",
+          "points": [
+            [
+              216.7,
+              253.3
+            ],
+            [
+              196.7,
+              256.7
+            ],
+            [
+              177,
+              249
+            ],
+            [
+              159,
+              237
+            ],
+            [
+              143.3,
+              233.3
+            ]
+          ],
+          "z": [
+            6.34,
+            6.365,
+            4.2,
+            1.45,
+            0.15
+          ]
+        },
+        {
+          "id": "base_to_mold",
+          "points": [
+            [
+              270,
+              233.3
+            ],
+            [
+              292,
+              239
+            ],
+            [
+              315,
+              238
+            ],
+            [
+              337,
+              231
+            ],
+            [
+              360,
+              220
+            ]
+          ],
+          "z": [
+            6.4,
+            4.45,
+            1.4,
+            -2.0,
+            -4.25
+          ]
+        }
+      ],
+      "source_palette_hex": "#E7DFCB",
+      "proposed_support_palette": [
+        {
+          "hex": "#B57A4E",
+          "use": "少量烘烤木器/边缘暖色"
+        },
+        {
+          "hex": "#C5D39B",
+          "use": "低饱和草与生活区点缀"
+        },
+        {
+          "hex": "#857269",
+          "use": "切面与屋檐阴影"
+        }
+      ],
+      "hero_shot": {
+        "name_cn": "主棚—工作台—仓储三角生活场",
+        "camera_cn": "从基地西南侧较高处朝东北斜俯视；概念图用约35–45°俯角，兼顾屋檐和桌面。它是构图建议，不是UE相机参数变更。",
+        "foreground_cn": "近处面团路缘与少量草；仓储木箱/袋筐形成一侧框景，路中留空。",
+        "midground_cn": "主棚为第一视觉焦点，工作台与货架各自形成次焦点，三者之间有能走通的空地。",
+        "background_cn": "密实台缘和浅层环带的起伏；以淡化远景暗示东西两条外出方向，不加入高塔。",
+        "scale_cn": "加入小比例面团玩家剪影，家具维持玩家尺度；建筑主体读作轻巧主棚。"
+      },
+      "optional_detail_shot_cn": "工作台面包、搅拌碗与面粉袋近景；主棚入口的屋顶分层与内外空间近景。",
+      "fantastic_reuse": [
+        {
+          "mesh": "SM_PROP_table_02",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_table_02",
+          "use_cn": "基础工作台"
+        },
+        {
+          "mesh": "SM_PROP_bowl_wood_01",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_bowl_wood_01",
+          "use_cn": "搅拌碗"
+        },
+        {
+          "mesh": "SM_PROP_plate_wood",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_plate_wood",
+          "use_cn": "面包托盘"
+        },
+        {
+          "mesh": "SM_PROP_food_bread_02",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_food_bread_02",
+          "use_cn": "面包摆件"
+        },
+        {
+          "mesh": "SM_PROP_food_bread_05",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_food_bread_05",
+          "use_cn": "小面包"
+        },
+        {
+          "mesh": "SM_PROP_market_shelf_03",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_market_shelf_03",
+          "use_cn": "储物货架"
+        },
+        {
+          "mesh": "SM_PROP_box_02",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_box_02",
+          "use_cn": "开口箱"
+        },
+        {
+          "mesh": "SM_PROP_box_lid_02",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_box_lid_02",
+          "use_cn": "独立箱盖"
+        },
+        {
+          "mesh": "SM_PROP_sack_01",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_01",
+          "use_cn": "袋装原料"
+        },
+        {
+          "mesh": "SM_PROP_basket_01",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_basket_01",
+          "use_cn": "篮筐"
+        },
+        {
+          "mesh": "SM_PROP_table_01",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_table_01",
+          "use_cn": "修理桌"
+        },
+        {
+          "mesh": "SM_PROP_bench_01",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_bench_01",
+          "use_cn": "靠墙低家具"
+        },
+        {
+          "mesh": "SM_PROP_cart_01",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_cart_01",
+          "use_cn": "基地补给车"
+        }
+      ],
+      "custom_assets": [
+        {
+          "asset_cn": "圆润面团主棚墙/弧顶/门洞模块",
+          "function_cn": "形成原创基地剪影，屋顶与上墙拆分",
+          "reuse_across_regions": [
+            "jidi",
+            "meijun"
+          ]
+        },
+        {
+          "asset_cn": "密实面团切面/路缘/台缘",
+          "function_cn": "区分安全高地与松软浅层",
+          "reuse_across_regions": [
+            "jidi",
+            "qianceng"
+          ]
+        },
+        {
+          "asset_cn": "面团玩家与教学敌人外观",
+          "function_cn": "提供尺度和世界观角色辨识，不代表机制完成",
+          "reuse_across_regions": [
+            "jidi",
+            "qianceng"
+          ]
+        }
+      ],
+      "avoid_cn": [
+        "不使用整套Fantastic住宅或城堡主楼。",
+        "不把所有木器放大成地标，木构应从属于面团房体。",
+        "不把概念图生活摆件解释成已实现的制作/开箱/驾驶系统。"
+      ]
+    },
+    {
+      "id": "qianceng",
+      "title_cn": "02 浅层：环绕基地的教学探索路径",
+      "concept_goal_cn": "松软、明亮、低风险的探索起点，玩家能看懂前往基地的路线与可选孔洞。",
+      "source_region": {
+        "name_cn": "浅层面团区",
+        "center_xy_m": [
+          253.3,
+          253.3
+        ],
+        "radius_xy_m": [
+          130.0,
+          126.7
+        ],
+        "color_hex": "#FAEEDA",
+        "elevation_gray_reference": 140,
+        "representative_depth_z_m": 6.42246
+      },
+      "must_preserve": [
+        {
+          "name_cn": "环绕关系",
+          "source_refs": [
+            "regions/qianceng",
+            "regions/jidi"
+          ],
+          "preserve_cn": "浅层以(253.3,253.3)为中心、半径约130×126.7m环绕基地，不另画成一个与基地并列的大区域。局部低地接近0m，基地台面较高。"
+        },
+        {
+          "name_cn": "九节点教学顺序",
+          "source_refs": [
+            "demo_route/1",
+            "demo_route/2",
+            "demo_route/3",
+            "demo_route/4",
+            "demo_route/5",
+            "demo_route/6",
+            "demo_route/7",
+            "demo_route/8",
+            "demo_route/9"
+          ],
+          "preserve_cn": "出生(233.3,373.3)→面粉(210,343.3)→水源(190,310)→战斗①(196.7,276.7)→障碍锁→战斗②→补给→基地→终点；用地形开口和可读路面引导，不能因画面好看打乱顺序。"
+        },
+        {
+          "name_cn": "资源与面筋标志不是同一节点",
+          "source_refs": [
+            "resources/flour_demo",
+            "flora/gluten_whiskers_1",
+            "flora/gluten_whiskers_2",
+            "monsters/dough_neutral_1"
+          ],
+          "preserve_cn": "另一个原始面粉实体位于(200,233.3)，不要与Demo第2点(210,343.3)合并；面筋须(186.7,206.7)/(293.3,316.7)区分高地和稀疏过渡；中立面团位于(153.3,233.3)。"
+        },
+        {
+          "name_cn": "两类孔洞分开读图",
+          "source_refs": [
+            "holes/hole_small_1",
+            "mechanisms/mech_hole_shortcut",
+            "holes/hole_vent_1"
+          ],
+          "preserve_cn": "气孔近道(173.3,300)为可选探索支线，半径2.7m；呼吸孔(180,156.7)是独立的周期孔口，半径3.3m。不要合成同一门户或画成普通水井。"
+        },
+        {
+          "name_cn": "向发酵区的唯一边界口",
+          "source_refs": [
+            "mechanisms/mech_wall_1",
+            "paths_additive/base_to_wall"
+          ],
+          "preserve_cn": "破壁口(143.3,233.3)两侧干裂深沟连续封边，设计开口约5.5m；它是浅层通往活跃发酵区的唯一入口，不沿瀑布再画可步行捷径。"
+        }
+      ],
+      "source_route_ids": [
+        "demo_route",
+        "base_to_wall"
+      ],
+      "additional_paths": [
+        {
+          "id": "base_to_wall",
+          "points": [
+            [
+              216.7,
+              253.3
+            ],
+            [
+              196.7,
+              256.7
+            ],
+            [
+              177,
+              249
+            ],
+            [
+              159,
+              237
+            ],
+            [
+              143.3,
+              233.3
+            ]
+          ],
+          "z": [
+            6.34,
+            6.365,
+            4.2,
+            1.45,
+            0.15
+          ]
+        }
+      ],
+      "source_palette_hex": "#FAEEDA",
+      "proposed_support_palette": [
+        {
+          "hex": "#D3AB7D",
+          "use": "松软土丘阴影"
+        },
+        {
+          "hex": "#AFBD83",
+          "use": "浅层低草/面筋须点缀"
+        },
+        {
+          "hex": "#C3D8CF",
+          "use": "少量教学水源冷色"
+        }
+      ],
+      "hero_shot": {
+        "name_cn": "从初始补给路看见基地的教学纵深",
+        "camera_cn": "从南侧出生路径附近沿教学路线朝北斜俯视；使用较宽的手绘环境构图，不要求所有9点同框。",
+        "foreground_cn": "出生后的面粉/水源路径线索和一簇稀疏面筋须，留出玩家尺度。",
+        "midground_cn": "气孔近道位于主路一侧，正常行走路径继续通向第一战斗空地；孔口和路面不混淆。",
+        "background_cn": "抬高的基地台缘与主棚形成目的地，远处柔化的干裂边界暗示后续区域。",
+        "scale_cn": "主路为连续普通地表；气孔是低矮可钻入尺度，呼吸孔另做近景，不硬挤入主构图。"
+      },
+      "optional_detail_shot_cn": "气孔近道入口剖切小景；呼吸孔开/闭两状态造型对照，只表达概念，不作动画实现承诺。",
+      "fantastic_reuse": [
+        {
+          "mesh": "SM_PROP_sack_01",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_01",
+          "use_cn": "少量面粉站旁储物道具，不能替代节点标志"
+        },
+        {
+          "mesh": "SM_PROP_bucket_01",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_bucket_01",
+          "use_cn": "水源旁小木桶"
+        },
+        {
+          "mesh": "SM_PROP_basket_01",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_basket_01",
+          "use_cn": "补给点辅助摆件"
+        }
+      ],
+      "custom_assets": [
+        {
+          "asset_cn": "松软面团坡面与小土丘模块",
+          "function_cn": "建立低起伏路径、软硬地表对照",
+          "reuse_across_regions": [
+            "qianceng",
+            "fajiao"
+          ]
+        },
+        {
+          "asset_cn": "面筋须植被族",
+          "function_cn": "稀疏与密集两级轮廓，作为高地/过渡标志",
+          "reuse_across_regions": [
+            "qianceng",
+            "jidi"
+          ]
+        },
+        {
+          "asset_cn": "气孔入口/呼吸孔瓣/内壁",
+          "function_cn": "孔口类型可辨，孔底与内壁分件",
+          "reuse_across_regions": [
+            "qianceng",
+            "meijun",
+            "shendu"
+          ]
+        },
+        {
+          "asset_cn": "面粉节点、水源与小霉菌外观",
+          "function_cn": "保留不同节点的阅读符号",
+          "reuse_across_regions": [
+            "qianceng",
+            "jidi"
+          ]
+        }
+      ],
+      "avoid_cn": [
+        "不把浅层画成麦田村庄或旧版麦谷。",
+        "不把9点硬排成一条笔直道路；保持原折返与环带空间。",
+        "不把资产包麻袋自动视为新增可采集资源。"
+      ]
+    },
+    {
+      "id": "fajiao",
+      "title_cn": "03 发酵：黄油瀑布与破壁入口",
+      "concept_goal_cn": "暖金色隆起地貌中，瀑布、溪流与入口成为同一个清楚的空间叙事。",
+      "source_region": {
+        "name_cn": "活跃发酵区",
+        "center_xy_m": [
+          126.7,
+          186.7
+        ],
+        "radius_xy_m": [
+          76.7,
+          70.0
+        ],
+        "color_hex": "#FBE7A0",
+        "elevation_gray_reference": 190,
+        "representative_depth_z_m": 6.61249
+      },
+      "must_preserve": [
+        {
+          "name_cn": "隆起的发酵高地",
+          "source_refs": [
+            "regions/fajiao"
+          ],
+          "preserve_cn": "中心(126.7,186.7)，代表地面约+6.6m；整体隆起，与浅层边界衔接。形体以鼓胀面团、层叠边缘和气泡切面为主。"
+        },
+        {
+          "name_cn": "瀑布—潭—溪三段连续水系",
+          "source_refs": [
+            "landmarks/butter_waterfall",
+            "waterfall"
+          ],
+          "preserve_cn": "瀑布顶(123.3,160)水面约15.85m，经三次陡坠落向潭(143.3,201.7)约0.65m，再沿浅溪至(143.3,233.3)约0.2m。深度补充的棚层Z约15.75/10.73/5.255/0.333m；不能画成孤立一小条瀑布。"
+        },
+        {
+          "name_cn": "破壁口和干裂深沟",
+          "source_refs": [
+            "mechanisms/mech_wall_1",
+            "boundaries/fajiao"
+          ],
+          "preserve_cn": "破壁点(143.3,233.3)为从浅层进入发酵区的唯一口，旁侧深沟/峭壁不能留第二条可走路线。瀑布本体作为落差景观，潭和浅溪一侧保留普通地面。"
+        },
+        {
+          "name_cn": "向酵母区逐步上升的路线",
+          "source_refs": [
+            "paths_additive/wall_to_ferment",
+            "mechanisms/mech_gap_sentry"
+          ],
+          "preserve_cn": "从破壁口沿发酵内侧爬升，经过(110,166.7)附近，再到哨戒缝隙(96.7,132)，路面约0.15→8m；不把全部路线画成陡直台阶或瀑布攀登。"
+        },
+        {
+          "name_cn": "酵母生物与菌芽标志",
+          "source_refs": [
+            "monsters/yeast_neutral_fajiao",
+            "flora/yeast_buds_fajiao"
+          ],
+          "preserve_cn": "中立反击酵母位于(110,166.7)，酵母菇/菌芽位于(110,196.7)；它们提示生态归属，不把此区替换成普通沙漠绿洲。"
+        }
+      ],
+      "source_route_ids": [
+        "wall_to_ferment"
+      ],
+      "additional_paths": [
+        {
+          "id": "wall_to_ferment",
+          "points": [
+            [
+              143.3,
+              233.3
+            ],
+            [
+              127,
+              235
+            ],
+            [
+              107,
+              226
+            ],
+            [
+              94,
+              201
+            ],
+            [
+              96,
+              179
+            ],
+            [
+              110,
+              166.7
+            ],
+            [
+              102,
+              149
+            ],
+            [
+              96.7,
+              132
+            ]
+          ],
+          "z": [
+            0.15,
+            1.25,
+            3.65,
+            6.0,
+            6.7,
+            6.85,
+            7.4,
+            8.0
+          ]
+        }
+      ],
+      "source_palette_hex": "#FBE7A0",
+      "proposed_support_palette": [
+        {
+          "hex": "#FFE7A0",
+          "use": "黄油流体高光"
+        },
+        {
+          "hex": "#D9944B",
+          "use": "发酵隆起边缘/烘烤阴影"
+        },
+        {
+          "hex": "#A96B54",
+          "use": "裂隙深处暖暗色"
+        }
+      ],
+      "hero_shot": {
+        "name_cn": "从破壁口旁向上看完整黄油瀑布链",
+        "camera_cn": "从东南侧、溪流下游靠破壁入口的位置朝上游斜俯视；取较宽构图，让瀑布高差成为主焦点。",
+        "foreground_cn": "裂沟之间的破壁口、流来的浅溪与小比例玩家，清楚指出唯一穿越处。",
+        "midground_cn": "奶油色潭水和第一段高坎，普通地面绕着潭延伸；菌芽放在路边。",
+        "background_cn": "向西北隆起的多层面团高地和黄油瀑布顶，沿侧面能读出爬升路线。",
+        "scale_cn": "瀑布需表现约15m总落差，不能缩成玩家腰高的小水景；无新增瀑布内部道路。"
+      },
+      "optional_detail_shot_cn": "黄油流体材质与气泡崖面接触近景；破壁口与两侧干裂深沟的正面可读性小景。",
+      "fantastic_reuse": [],
+      "custom_assets": [
+        {
+          "asset_cn": "黄油瀑布三段流片/潭面/浅溪",
+          "function_cn": "以相连水体和厚重边缘表达黏稠液体，后续拆为静态曲面/材质与少量动效",
+          "reuse_across_regions": [
+            "fajiao"
+          ]
+        },
+        {
+          "asset_cn": "发酵鼓胀崖面与泡孔切面",
+          "function_cn": "可复用块面与边缘层级",
+          "reuse_across_regions": [
+            "fajiao",
+            "qianceng",
+            "jiaomu"
+          ]
+        },
+        {
+          "asset_cn": "原创酵母芽/团簇植被",
+          "function_cn": "与参考色形统一，不使用被排除的商业Mushroom包",
+          "reuse_across_regions": [
+            "fajiao",
+            "jiaomu"
+          ]
+        },
+        {
+          "asset_cn": "干化破壁与裂沟边缘模块",
+          "function_cn": "明确唯一门口与封边轮廓",
+          "reuse_across_regions": [
+            "fajiao",
+            "qianceng"
+          ]
+        }
+      ],
+      "avoid_cn": [
+        "本区无需为了使用Fantastic而摆木屋或码头。",
+        "不画白水/海浪式瀑布，不让亮金液体吞没路径轮廓。",
+        "瀑布入口与破壁入口不能成为两个平行的区域通道。"
+      ]
+    },
+    {
+      "id": "jiaomu",
+      "title_cn": "04 酵母高地：原创菌落与狭缝入口",
+      "concept_goal_cn": "具有生命生长感的高地据点，依靠有机团簇与少量光色建立辨识度。",
+      "source_region": {
+        "name_cn": "酵母生态区",
+        "center_xy_m": [
+          70.0,
+          83.3
+        ],
+        "radius_xy_m": [
+          66.7,
+          63.3
+        ],
+        "color_hex": "#FCE7B8",
+        "elevation_gray_reference": 195,
+        "representative_depth_z_m": 9.04616
+      },
+      "must_preserve": [
+        {
+          "name_cn": "高地和封闭边缘",
+          "source_refs": [
+            "regions/jiaomu",
+            "boundaries/jiaomu"
+          ],
+          "preserve_cn": "中心(70,83.3)，代表高度约+9.05m；四周陡坡与密集菌丝形成连续边缘，仅在(96.7,132)与发酵区相连。"
+        },
+        {
+          "name_cn": "哨戒狭缝唯一入口",
+          "source_refs": [
+            "mechanisms/mech_gap_sentry"
+          ],
+          "preserve_cn": "哨戒缝隙位于(96.7,132)，设计开口宽约3m；画面需体现低矮/狭窄通道与两侧生态哨戒，不另增宽门。机制要求是面团形态通过与酵母阵营竞争，概念图不代表机制已实现。"
+        },
+        {
+          "name_cn": "由入口到资源再到菌落的路径",
+          "source_refs": [
+            "paths_additive/sentry_to_yeast",
+            "resources/special_yeast_strain"
+          ],
+          "preserve_cn": "进入后先经特殊酵母菌株(100,106.7)，再沿(83.3,93.3)至(60,66.7)推进，约8→9.1m缓升。资源点不能移到整座高地顶端而改变路线。"
+        },
+        {
+          "name_cn": "两处中立酵母实体",
+          "source_refs": [
+            "monsters/yeast_neutral_jiaomu_1",
+            "monsters/yeast_neutral_jiaomu_2"
+          ],
+          "preserve_cn": "两实体在(60,66.7)和(83.3,93.3)，以相近族群不同姿态提供生物尺度，保留中立生态感。"
+        },
+        {
+          "name_cn": "大型菌落的生态方向",
+          "source_refs": [
+            "art_reference_pins/ref_glow_mushroom",
+            "art_reference_pins/ref_leaf_texture"
+          ],
+          "preserve_cn": "原意向强调大型菌落/伞状组织与可选叶纹。按新的参考重新设计原创酵母囊与发芽面团团簇；参考pin(80,60)/(21.7,86.7)不等于需要放置一个实体，更不重用用户已排除的Mushroom包。"
+        }
+      ],
+      "source_route_ids": [
+        "sentry_to_yeast"
+      ],
+      "additional_paths": [
+        {
+          "id": "sentry_to_yeast",
+          "points": [
+            [
+              96.7,
+              132
+            ],
+            [
+              93,
+              118
+            ],
+            [
+              100,
+              106.7
+            ],
+            [
+              83.3,
+              93.3
+            ],
+            [
+              60,
+              66.7
+            ]
+          ],
+          "z": [
+            8.0,
+            8.35,
+            8.6,
+            9.0,
+            9.1
+          ]
+        }
+      ],
+      "source_palette_hex": "#FCE7B8",
+      "proposed_support_palette": [
+        {
+          "hex": "#E5AE86",
+          "use": "温暖囊体/团簇过渡色"
+        },
+        {
+          "hex": "#8DB7A0",
+          "use": "少量生态冷色与发光点"
+        },
+        {
+          "hex": "#B99267",
+          "use": "高地和菌柄阴影"
+        }
+      ],
+      "hero_shot": {
+        "name_cn": "穿过哨戒狭缝后首次看见酵母菌落",
+        "camera_cn": "从高地南侧入口附近朝西北斜俯视；以前景窄口打开到较宽生态台地的构图。",
+        "foreground_cn": "左右有机菌丝与坡壁框出唯一窄口，保留通道中心净空。",
+        "midground_cn": "近入口的特殊菌株和一位中立酵母提供尺度，低矮团簇引导路径。",
+        "background_cn": "高低错落的大型原创酵母囊/菌落形成天际线，第二位酵母沿路径可见，远坡封边。",
+        "scale_cn": "几何体用“大团簇—中型芽—小菌株”三级尺度；巨型冠部放后景，玩家路径不被连续遮满。"
+      },
+      "optional_detail_shot_cn": "一组原创酵母囊/发芽面团团簇的造型转面与材质近景；狭缝入口尺度小景。",
+      "fantastic_reuse": [],
+      "custom_assets": [
+        {
+          "asset_cn": "原创酵母囊/菌落主形体族",
+          "function_cn": "先概念确定冠/囊/芽语言，拆成可分别遮挡处理的上冠与下部",
+          "reuse_across_regions": [
+            "jiaomu",
+            "fajiao"
+          ]
+        },
+        {
+          "asset_cn": "特殊酵母菌株资源外观",
+          "function_cn": "与背景菌落可区分，保留原坐标",
+          "reuse_across_regions": [
+            "jiaomu"
+          ]
+        },
+        {
+          "asset_cn": "菌丝围边与陡坡接触模块",
+          "function_cn": "连续封边但不糊成一整团墙",
+          "reuse_across_regions": [
+            "jiaomu",
+            "fajiao",
+            "meijun"
+          ]
+        },
+        {
+          "asset_cn": "中立酵母角色外观",
+          "function_cn": "延续生态族群，避免通用人类守卫",
+          "reuse_across_regions": [
+            "jiaomu",
+            "fajiao"
+          ]
+        }
+      ],
+      "avoid_cn": [
+        "本区不必使用Fantastic家具，也不新增城镇房屋。",
+        "不临时推荐另一套商业蘑菇包；原创菌落接受新的整体配色与造型指导。",
+        "不把原意向图pin位置当成建筑/角色坐标。"
+      ]
+    },
+    {
+      "id": "meijun",
+      "title_cn": "05 霉菌低地：废墟、可选木桥与深渊入口",
+      "concept_goal_cn": "塌陷且腐败的区域依然保持手绘清楚块面，危险空间与可走路线一眼可辨。",
+      "source_region": {
+        "name_cn": "霉菌腐败区",
+        "center_xy_m": [
+          380.0,
+          186.7
+        ],
+        "radius_xy_m": [
+          76.7,
+          70.0
+        ],
+        "color_hex": "#E6C7C0",
+        "elevation_gray_reference": 80,
+        "representative_depth_z_m": -4.16061
+      },
+      "must_preserve": [
+        {
+          "name_cn": "塌陷低地和破败面团聚落",
+          "source_refs": [
+            "regions/meijun",
+            "buildings/ruined_settlement",
+            "paths_additive/mold_ruins"
+          ],
+          "preserve_cn": "霉菌中心(380,186.7)约−4.16m；废墟(333.3,166.7)约−4.30m，由基地东侧逐步下降可达。废墟为破败面团房体，不变成石制要塞。"
+        },
+        {
+          "name_cn": "坍塌孔与深渊之孔必须不同",
+          "source_refs": [
+            "holes/hole_collapse_1",
+            "holes/hole_abyss",
+            "hole_abyss_interaction"
+          ],
+          "preserve_cn": "坍塌孔(350,213.3)半径5.5m是可能误落的陷阱；深渊之孔(410,140)半径8m为明确边缘、主动确认后前往地下的单向入口。不能把大深渊画成普通可跨越水坑，也不能把两者当同一洞。"
+        },
+        {
+          "name_cn": "桥是可选近道，外侧还有绕行",
+          "source_refs": [
+            "mechanisms/mech_plate_1",
+            "paths_additive/mold_alternate"
+          ],
+          "preserve_cn": "当前设计压力板位于(393.3,180)；木桥跨塌陷孔群，通向深渊与孢核方向。既有桥体中心约(393.3,170)是结构位置，不能写成压力板坐标。保留经区域东侧至深渊边缘(418.2,146)的绕远路，不把桥改成唯一通路。"
+        },
+        {
+          "name_cn": "资源和驻守/伏击位置",
+          "source_refs": [
+            "resources/corrupt_spore_core",
+            "monsters/spore_mold_1",
+            "monsters/thread_ambush_1",
+            "monsters/mold_guard_meijun"
+          ],
+          "preserve_cn": "腐败孢核(416.7,196.7)、喷孢霉菌(350,156.7)、菌丝伏击者(380,196.7)、腐败护卫(360,220)保持其空间关系；敌人作为尺度和危险提示，不需概念图全部同框。"
+        },
+        {
+          "name_cn": "菌丝网络和蜂窝孔群",
+          "source_refs": [
+            "flora/mycelium_meijun_1",
+            "flora/mycelium_meijun_2",
+            "art_reference_pins/ref_pit_crater",
+            "art_reference_pins/ref_porous_texture"
+          ],
+          "preserve_cn": "菌丝网(393.3,186.7)/(360,210)连接地表腐败线索；参考pin用于天坑/孔群质感，不是新增建筑。腐败色需和可走土体保留明度区分。"
+        }
+      ],
+      "source_route_ids": [
+        "base_to_mold",
+        "mold_ruins",
+        "mold_alternate"
+      ],
+      "additional_paths": [
+        {
+          "id": "base_to_mold",
+          "points": [
+            [
+              270,
+              233.3
+            ],
+            [
+              292,
+              239
+            ],
+            [
+              315,
+              238
+            ],
+            [
+              337,
+              231
+            ],
+            [
+              360,
+              220
+            ]
+          ],
+          "z": [
+            6.4,
+            4.45,
+            1.4,
+            -2.0,
+            -4.25
+          ]
+        },
+        {
+          "id": "mold_ruins",
+          "points": [
+            [
+              337,
+              231
+            ],
+            [
+              324,
+              205
+            ],
+            [
+              328,
+              183
+            ],
+            [
+              333.3,
+              166.7
+            ],
+            [
+              350,
+              156.7
+            ]
+          ],
+          "z": [
+            -2,
+            -3.3,
+            -4.0,
+            -4.3,
+            -4.5
+          ]
+        },
+        {
+          "id": "mold_alternate",
+          "points": [
+            [
+              360,
+              220
+            ],
+            [
+              373,
+              233
+            ],
+            [
+              400,
+              232
+            ],
+            [
+              428,
+              216
+            ],
+            [
+              434,
+              192
+            ],
+            [
+              431,
+              167
+            ],
+            [
+              421,
+              148
+            ],
+            [
+              418.2,
+              146
+            ]
+          ],
+          "z": [
+            -4.25,
+            -4.3,
+            -4.45,
+            -4.6,
+            -4.7,
+            -4.8,
+            -4.75,
+            -4.7
+          ],
+          "end_note": "Approach ends outside abyss rim; original hole center remains (410,140), reached by explicit interaction, not a walkable path."
+        }
+      ],
+      "source_palette_hex": "#E6C7C0",
+      "proposed_support_palette": [
+        {
+          "hex": "#91808F",
+          "use": "腐败阴影/凹地层次"
+        },
+        {
+          "hex": "#828A70",
+          "use": "低饱和霉斑与菌丝"
+        },
+        {
+          "hex": "#625B67",
+          "use": "孔底与深渊暗部"
+        }
+      ],
+      "hero_shot": {
+        "name_cn": "从废墟边缘看木桥和远处深渊",
+        "camera_cn": "从区域西南较高的过渡坡向东北斜俯视；以宽幅对角构图连接前景废墟、中景桥与后景大孔。",
+        "foreground_cn": "破败面团墙/残顶和散落Fantastic木板箱筐构成框景，仍留通往废墟内部的口。",
+        "midground_cn": "木桥跨过孔群；桥旁的压力板与可推动块是形体提示；另一侧能看见外圈绕行带。",
+        "background_cn": "大深渊清楚的完整边缘和接近它的道路终止处；保留地表封闭山脊，不透视出地表Boss盆地。",
+        "scale_cn": "小坍塌孔、大深渊和桥要有不同尺度；木器作为废弃生活线索，地形与孔口是主体。"
+      },
+      "optional_detail_shot_cn": "深渊主动进入边缘与坍塌孔危险边缘并排对照；废墟木构与面团残墙结合近景。",
+      "fantastic_reuse": [
+        {
+          "mesh": "SM_PROP_planks_01",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_planks_01",
+          "use_cn": "废墟散板"
+        },
+        {
+          "mesh": "SM_PROP_planks_02",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_planks_02",
+          "use_cn": "废墟散板变化"
+        },
+        {
+          "mesh": "SM_PROP_market_shelf_02",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_market_shelf_02",
+          "use_cn": "倒败生活设施"
+        },
+        {
+          "mesh": "SM_PROP_box_02",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_box_02",
+          "use_cn": "废墟箱"
+        },
+        {
+          "mesh": "SM_PROP_box_lid_02",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_box_lid_02",
+          "use_cn": "侧靠箱盖"
+        },
+        {
+          "mesh": "SM_PROP_cart_03",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_cart_03",
+          "use_cn": "废弃运输道具"
+        },
+        {
+          "mesh": "SM_PROP_cart_wheel_small",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_cart_wheel_small",
+          "use_cn": "边缘车轮"
+        },
+        {
+          "mesh": "SM_PROP_barrel_01",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_barrel_01",
+          "use_cn": "废墟与桥端桶"
+        },
+        {
+          "mesh": "SM_PROP_basket_01",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_basket_01",
+          "use_cn": "少量废弃篮筐"
+        },
+        {
+          "mesh": "SM_PROP_walkway_wood",
+          "destination_package": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_walkway_wood",
+          "use_cn": "现有木桥外观"
+        }
+      ],
+      "custom_assets": [
+        {
+          "asset_cn": "腐败面团残墙/断顶/孔群切面",
+          "function_cn": "可复用基地模块的破败变体，保持面团原生形体",
+          "reuse_across_regions": [
+            "meijun",
+            "jidi"
+          ]
+        },
+        {
+          "asset_cn": "坍塌孔/深渊大孔口与内壁",
+          "function_cn": "主动入口和误落孔通过边缘形体区别，内壁独立成件",
+          "reuse_across_regions": [
+            "meijun",
+            "qianceng",
+            "shendu"
+          ]
+        },
+        {
+          "asset_cn": "菌丝网/霉斑表面族",
+          "function_cn": "贴合土体与孔边的不同密度",
+          "reuse_across_regions": [
+            "meijun",
+            "shendu"
+          ]
+        },
+        {
+          "asset_cn": "压力板与干化面团块外观",
+          "function_cn": "明确现有可选分支；不在概念图阶段实现机关",
+          "reuse_across_regions": [
+            "meijun"
+          ]
+        },
+        {
+          "asset_cn": "腐败孢核与霉菌角色外观",
+          "function_cn": "资源/敌人轮廓区分",
+          "reuse_across_regions": [
+            "meijun",
+            "shendu"
+          ]
+        }
+      ],
+      "avoid_cn": [
+        "不要把腐败区全部刷成纯黑或血红，维持源色粉灰与清楚通行面。",
+        "不把桥设为深渊唯一入口。",
+        "不将深渊入口直接等同于地下Boss房开顶露天展示。"
+      ]
+    },
+    {
+      "id": "shendu",
+      "title_cn": "06 地下：菌核祭坛与面团内部腔体",
+      "concept_goal_cn": "有机、低光、安静而压迫；以中央菌核和清楚的战斗活动面组织空间。",
+      "source_region": {
+        "name_cn": "世界深层",
+        "center_xy_m": [
+          436.7,
+          83.3
+        ],
+        "radius_xy_m": [
+          66.7,
+          63.3
+        ],
+        "color_hex": "#E8D9EE",
+        "elevation_gray_reference": 30,
+        "representative_depth_z_m": -60.0
+      },
+      "must_preserve": [
+        {
+          "name_cn": "独立地下层，不是地表盆地",
+          "source_refs": [
+            "regions/shendu",
+            "underground"
+          ],
+          "preserve_cn": "世界深层基准Z=−60m，原XY保持；同一投影位置的地表是封闭背景山脊，不能从地表直接走到Boss。高度图不能代替洞顶。"
+        },
+        {
+          "name_cn": "祭坛与Boss共用中心",
+          "source_refs": [
+            "buildings/core_altar",
+            "monsters/boss_core"
+          ],
+          "preserve_cn": "核心祭坛和腐败菌核位于(436.7,83.3)，约80×60m活动范围围绕它组织；中央地面可读且有足够空白，不塞满尖刺和货物。"
+        },
+        {
+          "name_cn": "两侧护卫构成中心压力",
+          "source_refs": [
+            "monsters/mold_guard_shendu_1",
+            "monsters/mold_guard_shendu_2"
+          ],
+          "preserve_cn": "腐败护卫(403.3,60)/(466.7,60)位于主空间两侧；用分离剪影维持空间尺度和对称压力，不增设人类武装守卫。"
+        },
+        {
+          "name_cn": "活性菌种和菌丝支线",
+          "source_refs": [
+            "resources/active_spore",
+            "flora/mycelium_shendu"
+          ],
+          "preserve_cn": "活性菌种(453.3,106.7)位于祭坛东南侧，菌丝网(443.3,66.7)在后侧；资源与Boss主体颜色/发光强度有层级。"
+        },
+        {
+          "name_cn": "地下入口与周边立体层次",
+          "source_refs": [
+            "hole_abyss_interaction",
+            "underground",
+            "art_reference_pins/ref_cave_altar"
+          ],
+          "preserve_cn": "经深渊主动确认进入地下入口，入口具体落点本次不新增坐标；局部地坪为0，外圈沟槽−4至−2m，背景壁高8–16m。祭坛参考pin(265,33.3)仅为意向，不是祭坛实际位置。"
+        }
+      ],
+      "source_route_ids": [],
+      "additional_paths": [],
+      "source_palette_hex": "#E8D9EE",
+      "proposed_support_palette": [
+        {
+          "hex": "#6B657F",
+          "use": "洞壁中间调"
+        },
+        {
+          "hex": "#383249",
+          "use": "深槽/远处内腔暗部"
+        },
+        {
+          "hex": "#8FC8B1",
+          "use": "少量菌核/资源生物光"
+        }
+      ],
+      "hero_shot": {
+        "name_cn": "从地下入口侧首次看见菌核祭坛",
+        "camera_cn": "从活动空间南侧朝北斜俯视，借前景两侧上方内腔薄片框景；镜头看见中央地坪而非被洞顶遮满。",
+        "foreground_cn": "入口附近低平台和可行走空地，少量面筋纤维连接土体，玩家剪影提供尺度。",
+        "midground_cn": "中央祭坛与菌核为主焦点；右前侧活性菌种是小次焦点，通往中心的路线清楚。",
+        "background_cn": "两侧护卫、菌丝网和8–16m层叠有机内壁；洞顶仅作框景和体量说明，可拆分。",
+        "scale_cn": "把80×60m活动范围画成有呼吸空间的场地；菌核醒目但不占满全部地面。"
+      },
+      "optional_detail_shot_cn": "祭坛/菌核的形体与材质近景；洞顶、上壁、底壁、沟槽的拆分示意小景。",
+      "fantastic_reuse": [],
+      "custom_assets": [
+        {
+          "asset_cn": "面团内腔壁/顶/凹槽模块",
+          "function_cn": "建立真正地下空间，洞顶与上墙独立适配遮挡处理",
+          "reuse_across_regions": [
+            "shendu",
+            "meijun"
+          ]
+        },
+        {
+          "asset_cn": "菌核祭坛与Boss外观",
+          "function_cn": "祭坛地貌底座与生命体分开，保留原中心",
+          "reuse_across_regions": [
+            "shendu"
+          ]
+        },
+        {
+          "asset_cn": "地下菌丝/发光囊/活性菌种",
+          "function_cn": "主光与路径点缀控制层级，避免整面发光",
+          "reuse_across_regions": [
+            "shendu",
+            "meijun",
+            "jiaomu"
+          ]
+        },
+        {
+          "asset_cn": "腐败护卫角色外观",
+          "function_cn": "与地上同族复用而非新增人类资产",
+          "reuse_across_regions": [
+            "shendu",
+            "meijun"
+          ]
+        }
+      ],
+      "avoid_cn": [
+        "Fantastic没有承担本区核心形体的必需资产，不为填空摆中世纪祭坛或宝箱。",
+        "不复刻参考里的城堡、祭坛外形、标识、IP符号或签名。",
+        "不把概念图剖切展示当成实际洞顶缺失或地表可直达。"
+      ]
+    }
+  ]
+}

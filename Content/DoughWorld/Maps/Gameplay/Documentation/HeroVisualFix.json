@@ -1,0 +1,8 @@
+{
+  "blueprint": "/Game/DoughWorld/Maps/Gameplay/Blueprints/BP_DWTopDownCharacter.BP_DWTopDownCharacter",
+  "saved_material": true,
+  "saved_blueprint": true,
+  "used_with_skeletal_mesh": true,
+  "rotation": "<Struct 'Rotator' (0x000001F8F3212998) {pitch: -0.000000, yaw: -90.000000, roll: -0.000000}>",
+  "live": []
+}

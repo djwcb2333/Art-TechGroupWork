@@ -1,0 +1,236 @@
+{
+  "complete": true,
+  "interaction_checks": 48,
+  "transform_audio_checks": 77,
+  "language_restart_passed": true,
+  "source_files": [
+    {
+      "name": "DWAlcoholArea.cpp",
+      "sha256": "7643892dfb007d762eb42c0b4c9370381b3f222f1830895da853d39a3cdb9c0f"
+    },
+    {
+      "name": "DWAlcoholArea.h",
+      "sha256": "21c2f2458c2789394b84c3ebe82175bcb76687f6ff863da5b63b69033a511cd6"
+    },
+    {
+      "name": "DWAlcoholProjectile.cpp",
+      "sha256": "3c21f9c3603cb3e62413302bc7f708023b5c43f0a81b2d9876c34e82c31b0f6e"
+    },
+    {
+      "name": "DWAlcoholProjectile.h",
+      "sha256": "92b72c25da5254afed82015d497ac61cec3691e0e9f495b61208453e0c4026ba"
+    },
+    {
+      "name": "DWAudioLibrary.cpp",
+      "sha256": "de05273811a5b90f29d3cc257ef14126640675fbd679b8c91553f52a8829ad82"
+    },
+    {
+      "name": "DWAudioLibrary.h",
+      "sha256": "cff89d6925a55d1865d7f09d924a73ef0735d6fa48107cf6bcd6a8734e9dda41"
+    },
+    {
+      "name": "DWCombatTests.cpp",
+      "sha256": "51df211d925d390cc5d8bf7f28c0c02f81d53e674ac6f43be42b96e37cbd98a7"
+    },
+    {
+      "name": "DWDashTrailActor.cpp",
+      "sha256": "46178edf75f4d64289e27d3319d0b9945ad64a9ecd0e2702c96dace89fd0b84a"
+    },
+    {
+      "name": "DWDashTrailActor.h",
+      "sha256": "4b88f55bbda3904ae2e63cdd6877bcafe195c64e44d86e910b29f1e45abdae0c"
+    },
+    {
+      "name": "DWEnemyCharacter.cpp",
+      "sha256": "f4e9229080a82659b97b4df619889654f6725499704cff4b28fcb623b78c2634"
+    },
+    {
+      "name": "DWEnemyCharacter.h",
+      "sha256": "ed3083c59fbae5037d178232743b7b6dfacf77deada8e5cc01416298cd3090bb"
+    },
+    {
+      "name": "DWEnemyNest.cpp",
+      "sha256": "bd1ada823c93781730f3cb0cc329ee004b1b3fe098a8ec1ac6ccf2918da8d49e"
+    },
+    {
+      "name": "DWEnemyNest.h",
+      "sha256": "a6551d896d6f244a03d13c9f5683926816edd00bb9ae954904188d478d3a076e"
+    },
+    {
+      "name": "DWGameInstance.cpp",
+      "sha256": "e1f990e59e35b8de1f099e7424b1d0405a0b56379b79f58a18bac79fd27d863e"
+    },
+    {
+      "name": "DWGameInstance.h",
+      "sha256": "324b9ace6c2406359856caa9293a670a323bcbdbea8b54906228a996df4517d6"
+    },
+    {
+      "name": "DWGameplayConfig.cpp",
+      "sha256": "c8c38b5f62bd0de8756cc01de6049f6c567fdb3c5e2a154f99b7c3ad9536310f"
+    },
+    {
+      "name": "DWGameplayConfig.h",
+      "sha256": "48d90014196fa80dd89bc9fd11a8e416c38e4bd8654b2fe757161f5dea51e4d4"
+    },
+    {
+      "name": "DWGameplayCoreTests.cpp",
+      "sha256": "0806c48e189628ff148692c408038c93150ccc6fdcf71bf84b670eeef6b4507f"
+    },
+    {
+      "name": "DWGameplayDebugLibrary.cpp",
+      "sha256": "f8472def3980368b2de6fa9ec38faa3b6a4194ac3fd99475557232b339815129"
+    },
+    {
+      "name": "DWGameplayDebugLibrary.h",
+      "sha256": "3732847631af70eafd0732a520a2f8ccbf0c9d6e9178f756095635c72c0a6b67"
+    },
+    {
+      "name": "DWGameplayGameMode.cpp",
+      "sha256": "72cdd8dc5db5f00249ad634e4b4d04d568b3a055be53a3c95fbbb4c72e679bdd"
+    },
+    {
+      "name": "DWGameplayGameMode.h",
+      "sha256": "fe8b81cfe807f05e83ceb8f132ca59a3b7f84960beb6ccd8f63e56c184ca68ea"
+    },
+    {
+      "name": "DWGameplayHUD.cpp",
+      "sha256": "8bf2f54e23d8ff5ff78ef3479bb227501e519bd30fad3ba3958369625dd5a736"
+    },
+    {
+      "name": "DWGameplayHUD.h",
+      "sha256": "929e0cc47692405843fac64bd87ef5cf0c11f117cda23ce936fda1ddc5146395"
+    },
+    {
+      "name": "DWGameplayTimerTests.cpp",
+      "sha256": "0fd2859b3cb9f960534f3e5f7cb6e85f17cff5685e0e7e02ac419dc1ceca282a"
+    },
+    {
+      "name": "DWGameplayTypes.h",
+      "sha256": "97de4d17fe21eee1a0b219c338429ac42b85a5d9b9ee9fcb6a3a101806b69e2e"
+    },
+    {
+      "name": "DWGameplayWidget.cpp",
+      "sha256": "4afc1855e9a351d9e5e7a223ff477c9d38647cb6d9f486899c1c3ab4574c60ef"
+    },
+    {
+      "name": "DWGameplayWidget.h",
+      "sha256": "81dbf37fe336e526642b46890a7aa14b054bea4d5176ea690d3650da0af87d26"
+    },
+    {
+      "name": "DWInteractionAuthoringLibrary.cpp",
+      "sha256": "fdc3f0841bf368c29eb43f745e726e861bf33f3e77b683dbeed4397a98125e34"
+    },
+    {
+      "name": "DWInteractionAuthoringLibrary.h",
+      "sha256": "b67f719efbc3e8b6d07d3c21e9be5a17aaf6dda7df9eddcf510e741b7751d332"
+    },
+    {
+      "name": "DWInteractionPromptComponent.cpp",
+      "sha256": "74b3b8a67791cb8ba0ba9996c4ca3d1a545067bbb2e33464afd5e1a0fb509547"
+    },
+    {
+      "name": "DWInteractionPromptComponent.h",
+      "sha256": "8940643a99607daf9dd65e1b61d263215fb9028b40f84b14883c1e2b27011c46"
+    },
+    {
+      "name": "DWInteractionPromptStyle.h",
+      "sha256": "1e2867c64acef830a3ad7e7f3195af70e0da85d38cfb327c1d63aa6c4f053b90"
+    },
+    {
+      "name": "DWInteractionPromptWidget.cpp",
+      "sha256": "6e6f42dead7d3f54b63149c2233710482dd47c1cede5828e61fde2f7aabb1bcb"
+    },
+    {
+      "name": "DWInteractionPromptWidget.h",
+      "sha256": "68c23ec6cbe237312af2b80acada8c6e53b8eb80f75a4eb88b3a8086eedde5d3"
+    },
+    {
+      "name": "DWInventoryComponent.cpp",
+      "sha256": "baf0507e94493778ec0ea318d33f2f3850b0bf59108a3da617bda9184eea347a"
+    },
+    {
+      "name": "DWInventoryComponent.h",
+      "sha256": "198fb2f87ef8702bc8cb8bd1a09520dd42388458e901cfacbcdf0863e07157ae"
+    },
+    {
+      "name": "DWLocalizationCatalog.inl",
+      "sha256": "1a6facb7eb76ffdd539f0b797cefeeb2340148077bc6c782c3f0544571cffa23"
+    },
+    {
+      "name": "DWLocalizationLibrary.cpp",
+      "sha256": "835dd75ab9d8a0aa0a5b8f810176b3488b1c61fd98b19172a1fce39ee6c6ace0"
+    },
+    {
+      "name": "DWLocalizationLibrary.h",
+      "sha256": "ca86d0a466dd71bff1160b888f4de85ae83a4de483fc29dfe151da8313147bdd"
+    },
+    {
+      "name": "DWPlayerCharacter.cpp",
+      "sha256": "0254d96193f63785399489b95fb8c8a424f34008b0a41cf8ad300c95a651cd5d"
+    },
+    {
+      "name": "DWPlayerCharacter.h",
+      "sha256": "b277ca173a33f61fa5ac7572f2b28be5a14c1523d886f20d4bf627f8ee43f1c8"
+    },
+    {
+      "name": "DWPlayerController.cpp",
+      "sha256": "24248ce90d26d6685faa08da5d645f9272697c8940dd7ec4790b24e48c0ec8a7"
+    },
+    {
+      "name": "DWPlayerController.h",
+      "sha256": "428ff94acbf9f58bb695b65e6f86249042f3814f3192dcfce7e574f0fa16cb77"
+    },
+    {
+      "name": "DWProgressRing.cpp",
+      "sha256": "db00fb0b0f8417e7842d71336c56922df58c44b88760ce162bddb9d91bb46654"
+    },
+    {
+      "name": "DWProgressRing.h",
+      "sha256": "c020dae495f47da42c8380792f7ed545599701134cdeb17073ac9b4e07313bf9"
+    },
+    {
+      "name": "DWResourceNode.cpp",
+      "sha256": "235fc834d3f54e47772a437a7199652b7cd8bbf20c73e6d5f79919ff957d1662"
+    },
+    {
+      "name": "DWResourceNode.h",
+      "sha256": "6d946b757e330545e182ccbd65d844c0a60aa51b41f2ef9edfcb09efcbf36c97"
+    },
+    {
+      "name": "DWSaveGame.h",
+      "sha256": "081fd32bd3f35b8719946d15d03aa53e4d970c3c050b2ae6fb50d7366831d523"
+    },
+    {
+      "name": "DWUIAuthoringLibrary.cpp",
+      "sha256": "79bc1e73f8182d797ffa49313e4a662adc6c183e3ed01d6236dcd593dde79543"
+    },
+    {
+      "name": "DWUIAuthoringLibrary.h",
+      "sha256": "863b3e51296dfa747e295ed97372481fb7c6265464fe224235206c47469fd862"
+    },
+    {
+      "name": "DWUIEntryWidgets.cpp",
+      "sha256": "e4152def01e1e32f5e0b1bbcb9d37944c4ec412ef25dfd6784a923cdfa964b36"
+    },
+    {
+      "name": "DWUIEntryWidgets.h",
+      "sha256": "177e2d4200b5fe846ea33a9e8a038fc4dd5a893328ee7e4f221cada380f326d5"
+    },
+    {
+      "name": "SDWRingProgress.h",
+      "sha256": "d10d22f5fd6d81d699a6d4e3293815ef9b92470b1c5c5e7db99d2561d12f9e83"
+    }
+  ],
+  "saved_slot_3_unchanged": true,
+  "limits": [
+    "No packaged executable/cook was produced this round.",
+    "Audio dispatch and loop lifecycle were verified; subjective listening is still up to the user."
+  ],
+  "bilingual_hud_layout": {
+    "complete": true,
+    "errors": [],
+    "old_size": "<Struct 'Vector2D' (0x000001C190F9C760) {x: 185.000000, y: 242.000000}>",
+    "new_size": "<Struct 'Vector2D' (0x000001C1908BFCA0) {x: 300.000000, y: 290.000000}>"
+  },
+  "final_language_preferences": "[Language]\nCode=zh-Hans\n\n"
+}

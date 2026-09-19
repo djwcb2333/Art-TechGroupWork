@@ -1,0 +1,536 @@
+{
+  "timestamp": "2026-09-13T23:52:18.627234",
+  "actor_count": 1171,
+  "village_count": 60,
+  "errors": [],
+  "transforms": [
+    {
+      "label": "FV__Workbench",
+      "bottom_error_m": 0.0,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__MixingBowl",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__BreadBoard",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__FreshBread",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__BreadRoll",
+      "bottom_error_m": 0.0,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__WoodenSpoon",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__WorkbenchFlourBag0",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__WorkbenchFlourBag1",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__WorkbenchFlourBag2",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__WorkbenchStool",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__WaterBucket",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__StorageRack",
+      "bottom_error_m": 2.6645352591003757e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__StorageBox0",
+      "bottom_error_m": 0.0,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__StorageLeaningLid0",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__StorageBox1",
+      "bottom_error_m": 0.0,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__StorageBox2",
+      "bottom_error_m": 0.0,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__StorageLeaningLid2",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RackBreadBasket0",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RackBreadBasket1",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RackBreadBasket2",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RackFlour0",
+      "bottom_error_m": 0.0,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RackFlour1",
+      "bottom_error_m": 0.0,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RackFlour2",
+      "bottom_error_m": 0.0,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RackFlour3",
+      "bottom_error_m": 0.0,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RepairTable",
+      "bottom_error_m": 2.6645352591003757e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RepairPlanks",
+      "bottom_error_m": 2.6645352591003757e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RepairWheel",
+      "bottom_error_m": 0.0,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__StorageBarrel",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__StorageBagA",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__StorageBagB",
+      "bottom_error_m": 0.0,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__HutBackBench",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__HutSideTable",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__HutBread",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__HutBasket",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__HutJug",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__HutFrontBench",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__HutFrontBasket",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__SupplyCart",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__CartSideBarrel",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__CartBagA",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__CartBagB",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RuinPlanks0",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RuinPlanks1",
+      "bottom_error_m": 2.842170943040401e-14,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RuinPlanks2",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RuinPlanks3",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RuinShelf",
+      "bottom_error_m": 2.6645352591003757e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RuinOpenBox",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RuinLid",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RuinBarrel",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RuinWheel",
+      "bottom_error_m": 0.0,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RuinBasket",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__RuinCart",
+      "bottom_error_m": 5.685035733124713e-14,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__BridgeWoodDeck0",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__BridgeWoodDeck1",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__BridgeWoodDeck2",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__BridgeSupplyBarrel0",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__BridgeSupplyBag0",
+      "bottom_error_m": 8.881784197001252e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__BridgeSupplyBarrel1",
+      "bottom_error_m": 1.7763568394002505e-15,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__BridgeSupplyBag1",
+      "bottom_error_m": 4.440892098500626e-16,
+      "scale_error": 0.0
+    },
+    {
+      "label": "FV__CartLoad0",
+      "bottom_error_m": 0.0,
+      "scale_error": 0.0
+    }
+  ],
+  "hidden_proxy_checks": [
+    {
+      "label": "DWG__jidi_03__buildings__workbench__workbench_tabletop",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_03__buildings__workbench__workbench_lower_shelf",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_03__buildings__workbench__workbench_leg_0",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_03__buildings__workbench__workbench_leg_1",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_03__buildings__workbench__workbench_leg_2",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_03__buildings__workbench__workbench_leg_3",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_03__buildings__workbench__mixing_bowl",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__rack_post_0",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__rack_post_1",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__rack_post_2",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__rack_post_3",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__rack_shelf_0",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__rack_shelf_1",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__rack_shelf_2",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_0_bottom",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_0_wall_0",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_0_wall_1",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_0_wall_2",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_0_wall_3",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_0_independent_lid",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_1_bottom",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_1_wall_0",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_1_wall_1",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_1_wall_2",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_1_wall_3",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_1_independent_lid",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_2_bottom",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_2_wall_0",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_2_wall_1",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_2_wall_2",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_2_wall_3",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_2_independent_lid",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__repair_table_tabletop",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__repair_table_leg_0",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__repair_table_leg_1",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__repair_table_leg_2",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__repair_table_leg_3",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__repair_table_lower_shelf",
+      "passed": true
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__repair_tray",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_0",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_1",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_2",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_3",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_4",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_5",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_6",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_7",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_8",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_9",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_10",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_11",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_12",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_13",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_14",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_15",
+      "passed": true
+    },
+    {
+      "label": "BridgeDeck_16",
+      "passed": true
+    }
+  ],
+  "source_anchor_max_delta_cm": 0.0,
+  "passed": true
+}

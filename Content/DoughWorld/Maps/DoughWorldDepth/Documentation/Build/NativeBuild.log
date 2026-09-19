@@ -1,0 +1,30 @@
+Using bundled DotNet SDK version: 10.0 win-x64
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" GDATtestEditor Win64 Development "-Project=E:/Unreal Project/GDATtest/GDATtest.uproject" -WaitMutex -NoHotReloadFromIDE
+Log file: C:\Users\67582\AppData\Local\UnrealBuildTool\Log.txt
+Determining max actions to execute in parallel (24 physical cores, 24 logical cores)
+  Executing up to 24 processes, one per physical core
+  Requested 1.5 GB memory per action, 31.43 GB available: limiting max parallel actions to 20
+UbaServer - Listening on 0.0.0.0:1345
+Building GDATtestEditor...
+===== Toolchain Information =====
+Using ISPC compiler (E:\Unreal\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) 
+Using Visual Studio 14.44.35226 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+[Adaptive Build] Excluded from GDATtest unity file: CameraOccluderFadeComponent.cpp, DepthAbyssPortalProxy.cpp, DepthEnvironmentActor.cpp, DepthInteractionFocusActor.cpp, DepthLandscapeTools.cpp, GDATtest.cpp, GDATtestCharacter.cpp, GDATtestGameMode.cpp, GDATtestPlayerController.cpp, TopDownActionCharacter.cpp, EnvQueryContext_MoveGoal.cpp, StrategyGameMode.cpp, StrategyPawn.cpp, StrategyPlayerController.cpp, StrategyUnit.cpp, StrategyHUD.cpp, StrategyTouchControls.cpp, StrategyUI.cpp, TwinStickCharacter.cpp, TwinStickGameMode.cpp, TwinStickPlayerController.cpp, TwinStickAIController.cpp, TwinStickNPC.cpp, TwinStickNPCDestruction.cpp, TwinStickSpawner.cpp, TwinStickStateTreeUtility.cpp, TwinStickAoEAttack.cpp, TwinStickPickup.cpp, TwinStickProjectile.cpp, TwinStickUI.cpp
+=================================
+Using Unreal Build Accelerator local executor to run 4 action(s)
+  CPU 24 physical cores, 24 logical cores
+  Memory 31.43 GB physical, 19.64 GB/49.43 GB committed
+  UBA Storage capacity 40 GB
+[1/4] Compile [x64] TopDownActionCharacter.cpp
+[2/4] Link [x64] UnrealEditor-GDATtest.lib
+  正在创建库 E:/Unreal Project/GDATtest/Intermediate/Build/Win64/x64/UnrealEditor/Development/GDATtest/UnrealEditor-GDATtest.lib 和对象 E:/Unreal Project/GDATtest/Intermediate/Build/Win64/x64/UnrealEditor/Development/GDATtest/UnrealEditor-GDATtest.exp
+[3/4] Link [x64] UnrealEditor-GDATtest.dll
+[4/4] WriteMetadata GDATtestEditor.target [NoUba]
+
+Total time in Unreal Build Accelerator local executor: 3.87 seconds
+Output binary: E:\Unreal\UE_5.8\Engine\Binaries\Win64\UnrealEditor.exe
+
+Result: Succeeded
+Total execution time: 5.17 seconds
+Trace written to file C:\Users\67582\AppData\Local\UnrealBuildTool\Trace.uba with size 5.7kb

@@ -1,0 +1,118 @@
+{
+  "passed": true,
+  "material": "/Game/Maps/DoughWorldDepth/Materials/MI_Dough",
+  "checks": [
+    {
+      "name": "multilayer_independent_mid_original_baseline",
+      "passed": true,
+      "a": {
+        "fade": 0.13999998569488525,
+        "baseline": 0.699999988079071,
+        "strength": 1.0,
+        "owns": true,
+        "occluded": true,
+        "mid": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_0.CameraFadeComponent.MID_MID_MI_Dough_0"
+      },
+      "b": {
+        "fade": 0.19999998807907104,
+        "baseline": 1.0,
+        "strength": 1.0,
+        "owns": true,
+        "occluded": true,
+        "mid": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_1.CameraFadeComponent.MID_MID_MI_Dough_0"
+      },
+      "clear": {
+        "fade": 1.0,
+        "baseline": 1.0,
+        "strength": 0.0,
+        "owns": true,
+        "occluded": false,
+        "mid": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_2.CameraFadeComponent.MID_MID_MI_Dough_0"
+      }
+    },
+    {
+      "name": "leave_occlusion_restores_original_parameter",
+      "passed": true,
+      "a": {
+        "fade": 0.699999988079071,
+        "baseline": 0.699999988079071,
+        "strength": 0.0,
+        "owns": true,
+        "occluded": false,
+        "mid": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_0.CameraFadeComponent.MID_MID_MI_Dough_0"
+      },
+      "b": {
+        "fade": 1.0,
+        "baseline": 1.0,
+        "strength": 0.0,
+        "owns": true,
+        "occluded": false,
+        "mid": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_1.CameraFadeComponent.MID_MID_MI_Dough_0"
+      }
+    },
+    {
+      "name": "untagged_component_not_managed",
+      "passed": true
+    },
+    {
+      "name": "additional_interaction_actor_target",
+      "passed": true,
+      "status": {
+        "fade": 0.19999998807907104,
+        "baseline": 1.0,
+        "strength": 1.0,
+        "owns": true,
+        "occluded": true,
+        "mid": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_4.CameraFadeComponent.MID_MID_MI_Dough_2"
+      }
+    },
+    {
+      "name": "clear_target_and_external_material_ownership",
+      "passed": true
+    },
+    {
+      "name": "deactivate_restores_owned_material_camera_unchanged",
+      "passed": true,
+      "before": {
+        "valid": true,
+        "location": [
+          13057.345462518291,
+          -9272.654537481714,
+          1253.9655844752024
+        ],
+        "rotation": [
+          -49.99999999999989,
+          44.99999999999991,
+          4.9480647005852166e-15
+        ],
+        "fov": 55.0,
+        "ortho_width": 512.0,
+        "aspect_ratio": 1.7777780294418335,
+        "orthographic": false,
+        "distance_to_pawn": 2800.0
+      },
+      "after": {
+        "valid": true,
+        "location": [
+          13057.345462518291,
+          -9272.654537481714,
+          1253.9655844752024
+        ],
+        "rotation": [
+          -49.99999999999989,
+          44.99999999999991,
+          4.9480647005852166e-15
+        ],
+        "fov": 55.0,
+        "ortho_width": 512.0,
+        "aspect_ratio": 1.7777780294418335,
+        "orthographic": false,
+        "distance_to_pawn": 2800.0
+      }
+    }
+  ],
+  "error": null,
+  "cleanup_errors": [],
+  "visual_opacity_verified_by_this_script": false,
+  "collision_unchanged_verified_by_this_script": false
+}

@@ -1,0 +1,309 @@
+{
+  "schema_version": "1.0",
+  "mode": "additive_depth_only",
+  "source_map_is_authoritative_for_existing_data": true,
+  "source_mutation_allowed": false,
+  "replace_plan_layout": false,
+  "original_xy_changes_allowed": false,
+  "camera": {
+    "occlusion": "selective_component_fade_requires_implementation",
+    "heading": "preserve_actual",
+    "zoom_allowed": false,
+    "distance": "preserve_actual"
+  },
+  "units": "proposed meters; original gray elevations retained unchanged",
+  "excluded_previous_inputs": [
+    "V3/V4/V5 replacement coordinates",
+    "V5 terrain heightmap",
+    "V5 generated instance coordinates",
+    "V5 new route topology",
+    "V5 fixed building reserve rectangles"
+  ],
+  "regions": [
+    {
+      "source_ref": "regions/jidi",
+      "preserve_source_xy": true,
+      "proposed_activity_elevation_m": [
+        6,
+        8
+      ],
+      "vertical_frame": "shallow_ground_zero",
+      "status": "proposed_not_built"
+    },
+    {
+      "source_ref": "regions/qianceng",
+      "preserve_source_xy": true,
+      "proposed_activity_elevation_m": [
+        0,
+        3
+      ],
+      "vertical_frame": "shallow_ground_zero",
+      "status": "proposed_not_built"
+    },
+    {
+      "source_ref": "regions/fajiao",
+      "preserve_source_xy": true,
+      "proposed_activity_elevation_m": [
+        5,
+        9
+      ],
+      "vertical_frame": "shallow_ground_zero",
+      "status": "proposed_not_built"
+    },
+    {
+      "source_ref": "regions/meijun",
+      "preserve_source_xy": true,
+      "proposed_activity_elevation_m": [
+        -6,
+        -3
+      ],
+      "vertical_frame": "shallow_ground_zero",
+      "status": "proposed_not_built"
+    },
+    {
+      "source_ref": "regions/jiaomu",
+      "preserve_source_xy": true,
+      "proposed_activity_elevation_m": [
+        7,
+        11
+      ],
+      "vertical_frame": "shallow_ground_zero",
+      "status": "proposed_not_built"
+    },
+    {
+      "source_ref": "regions/shendu",
+      "preserve_source_xy": true,
+      "proposed_activity_elevation_m": [
+        0,
+        0
+      ],
+      "vertical_frame": "independent_underground_local",
+      "status": "proposed_not_built"
+    }
+  ],
+  "existing_anchor_constraints": [
+    {
+      "source_ref": "buildings/base_hut",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "buildings/workbench",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "buildings/storage_repair",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "buildings/ruined_settlement",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "buildings/core_altar",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "monsters/dough_neutral_1",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "monsters/yeast_neutral_fajiao",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "monsters/yeast_neutral_jiaomu_1",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "monsters/yeast_neutral_jiaomu_2",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "monsters/spore_mold_1",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "monsters/thread_ambush_1",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "monsters/mold_guard_meijun",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "monsters/mold_guard_shendu_1",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "monsters/mold_guard_shendu_2",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "monsters/boss_core",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "monsters/small_mold_1",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "monsters/small_mold_2",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "monsters/small_mold_3",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "resources/flour_demo",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "resources/corrupt_spore_core",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "resources/special_yeast_strain",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "resources/active_spore",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "flora/gluten_whiskers_1",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "flora/gluten_whiskers_2",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "flora/yeast_buds_fajiao",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "flora/mycelium_meijun_1",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "flora/mycelium_meijun_2",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "flora/mycelium_shendu",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "holes/hole_small_1",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "holes/hole_collapse_1",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "holes/hole_vent_1",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "holes/hole_abyss",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "mechanisms/mech_wall_1",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "mechanisms/mech_gap_sentry",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "mechanisms/mech_plate_1",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    },
+    {
+      "source_ref": "mechanisms/mech_hole_shortcut",
+      "xy_policy": "read_original_unchanged",
+      "z_policy": "derive_from_local_ground_after_fixed_camera_and_traversal_test"
+    }
+  ],
+  "landmark_profiles": [
+    {
+      "pool_proposed_z_m": [
+        0,
+        1
+      ],
+      "crest_proposed_z_m": [
+        14,
+        18
+      ],
+      "note": "Falls nontraversable; stream must not bypass mandatory wall",
+      "xy_fields": "crest_pos, pool_pos, stream_to: read original unchanged",
+      "source_ref": "landmarks/butter_waterfall"
+    }
+  ],
+  "route_rules": {
+    "hole_abyss": "explicit interaction, separate deep destination",
+    "demo": "Preserve original JSON sequence by default; PNG differences recorded under source_conflict_policy.",
+    "mech_gap_sentry": "only ferment-yeast crossing",
+    "mech_wall_1": "only shallow-ferment crossing",
+    "mech_plate_1": "optional shortcut; preserve alternative"
+  },
+  "geometry_guidance": {
+    "build_slope_target_degrees": 2,
+    "local_terrace_height_m": [
+      2,
+      5
+    ],
+    "on_conflict": "reduce local height instead of moving source XY",
+    "daily_path_slope_target_degrees": 12,
+    "short_exploration_slope_target_degrees": 18
+  },
+  "placement_policy": {
+    "new_decor": "additive records only; no new gameplay nodes",
+    "missing_asset": "composite placeholder with correct parts and volume",
+    "all_six_regions_required": true
+  },
+  "validation_state": "source reference and file checks only; no Unreal implementation or runtime validation",
+  "source_files": [
+    "Originals/原地图.json",
+    "Originals/原概念.png"
+  ],
+  "source_conflict_policy": "Use confirmed existing layout where evidenced; otherwise original JSON metric XY/demo sequence, PNG visual contours and art intent; record discrepancies; never alter originals."
+}

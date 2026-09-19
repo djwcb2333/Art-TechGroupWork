@@ -1,0 +1,38 @@
+{
+  "error": null,
+  "before": {
+    "location": [
+      -4102.65453748172,
+      -1942.6545374817201,
+      2895.1894463708536
+    ],
+    "rotation": [
+      -49.99999999999989,
+      44.99999999999991,
+      4.9480647005852166e-15
+    ],
+    "fov": 55.0,
+    "arm": 2800.0
+  },
+  "after": {
+    "location": [
+      -4102.65453748172,
+      -1942.6545374817201,
+      2895.1894463708536
+    ],
+    "rotation": [
+      -49.99999999999989,
+      44.99999999999991,
+      4.9480647005852166e-15
+    ],
+    "fov": 55.0,
+    "arm": 2800.0
+  },
+  "camera_position_delta_cm": 0.0,
+  "same_collision": true,
+  "captures": [
+    "19_RoofOpaque.png",
+    "20_RoofFaded.png"
+  ],
+  "camera_lag_settled_before_first_capture": true
+}

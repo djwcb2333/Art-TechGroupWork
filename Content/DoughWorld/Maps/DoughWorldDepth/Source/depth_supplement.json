@@ -1,0 +1,1491 @@
+{
+  "schema": "doughworld_additive_depth_1.0",
+  "original_xy_mutations": 0,
+  "original_demo_order_mutations": 0,
+  "coordinate_transform": {
+    "unreal_x_cm": "(original_x_m-250)*100",
+    "unreal_y_cm": "(original_y_m-250)*100",
+    "unreal_z_cm": "added_z_m*100"
+  },
+  "anchors": [
+    {
+      "source_ref": "regions/jidi",
+      "source_xy_m": [
+        253.3,
+        253.3
+      ],
+      "unreal_cm": [
+        330.00000000000114,
+        330.00000000000114,
+        642.2458447410984
+      ],
+      "z_m": 6.42246,
+      "surface_z_m": 6.42246,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": false
+    },
+    {
+      "source_ref": "regions/qianceng",
+      "source_xy_m": [
+        253.3,
+        253.3
+      ],
+      "unreal_cm": [
+        330.00000000000114,
+        330.00000000000114,
+        642.2458447410984
+      ],
+      "z_m": 6.42246,
+      "surface_z_m": 6.42246,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": false
+    },
+    {
+      "source_ref": "regions/fajiao",
+      "source_xy_m": [
+        126.7,
+        186.7
+      ],
+      "unreal_cm": [
+        -12330.0,
+        -6330.000000000001,
+        661.2485760670895
+      ],
+      "z_m": 6.61249,
+      "surface_z_m": 6.61249,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": false
+    },
+    {
+      "source_ref": "regions/meijun",
+      "source_xy_m": [
+        380.0,
+        186.7
+      ],
+      "unreal_cm": [
+        13000.0,
+        -6330.000000000001,
+        -416.06100273194403
+      ],
+      "z_m": -4.16061,
+      "surface_z_m": -4.16061,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": false
+    },
+    {
+      "source_ref": "regions/jiaomu",
+      "source_xy_m": [
+        70.0,
+        83.3
+      ],
+      "unreal_cm": [
+        -18000.0,
+        -16670.0,
+        904.6157107572963
+      ],
+      "z_m": 9.04616,
+      "surface_z_m": 9.04616,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": false
+    },
+    {
+      "source_ref": "regions/shendu",
+      "source_xy_m": [
+        436.7,
+        83.3
+      ],
+      "unreal_cm": [
+        18670.0,
+        -16670.0,
+        -6000.0
+      ],
+      "z_m": -60.0,
+      "surface_z_m": 7.22237,
+      "vertical_frame": "underground_at_world_minus_60m",
+      "spawn_object": false
+    },
+    {
+      "source_ref": "buildings/base_hut",
+      "source_xy_m": [
+        221.7,
+        243.3
+      ],
+      "unreal_cm": [
+        -2830.000000000001,
+        -669.9999999999989,
+        637.1150000000001
+      ],
+      "z_m": 6.37115,
+      "surface_z_m": 6.37115,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "buildings/workbench",
+      "source_xy_m": [
+        221.7,
+        266.7
+      ],
+      "unreal_cm": [
+        -2830.000000000001,
+        1669.9999999999989,
+        640.6250000000001
+      ],
+      "z_m": 6.40625,
+      "surface_z_m": 6.40625,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "buildings/storage_repair",
+      "source_xy_m": [
+        196.7,
+        256.7
+      ],
+      "unreal_cm": [
+        -5330.000000000001,
+        669.9999999999989,
+        636.625
+      ],
+      "z_m": 6.36625,
+      "surface_z_m": 6.36625,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "buildings/ruined_settlement",
+      "source_xy_m": [
+        333.3,
+        166.7
+      ],
+      "unreal_cm": [
+        8330.000000000002,
+        -8330.000000000002,
+        -429.9752087888441
+      ],
+      "z_m": -4.29975,
+      "surface_z_m": -4.29975,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "buildings/core_altar",
+      "source_xy_m": [
+        436.7,
+        83.3
+      ],
+      "unreal_cm": [
+        18670.0,
+        -16670.0,
+        -6000.0
+      ],
+      "z_m": -60.0,
+      "surface_z_m": 7.22237,
+      "vertical_frame": "underground_at_world_minus_60m",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "monsters/dough_neutral_1",
+      "source_xy_m": [
+        153.3,
+        233.3
+      ],
+      "unreal_cm": [
+        -9669.999999999998,
+        -1669.9999999999989,
+        81.64891958219846
+      ],
+      "z_m": 0.81649,
+      "surface_z_m": 0.81649,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "monsters/yeast_neutral_fajiao",
+      "source_xy_m": [
+        110.0,
+        166.7
+      ],
+      "unreal_cm": [
+        -14000.0,
+        -8330.000000000002,
+        684.9237209340896
+      ],
+      "z_m": 6.84924,
+      "surface_z_m": 6.84924,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "monsters/yeast_neutral_jiaomu_1",
+      "source_xy_m": [
+        60.0,
+        66.7
+      ],
+      "unreal_cm": [
+        -19000.0,
+        -18330.0,
+        909.9449920687498
+      ],
+      "z_m": 9.09945,
+      "surface_z_m": 9.09945,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "monsters/yeast_neutral_jiaomu_2",
+      "source_xy_m": [
+        83.3,
+        93.3
+      ],
+      "unreal_cm": [
+        -16670.0,
+        -15669.999999999998,
+        899.9575630056985
+      ],
+      "z_m": 8.99958,
+      "surface_z_m": 8.99958,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "monsters/spore_mold_1",
+      "source_xy_m": [
+        350.0,
+        156.7
+      ],
+      "unreal_cm": [
+        10000.0,
+        -9330.000000000002,
+        -449.8600758187973
+      ],
+      "z_m": -4.4986,
+      "surface_z_m": -4.4986,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "monsters/thread_ambush_1",
+      "source_xy_m": [
+        380.0,
+        196.7
+      ],
+      "unreal_cm": [
+        13000.0,
+        -5330.000000000001,
+        -436.8606168138067
+      ],
+      "z_m": -4.36861,
+      "surface_z_m": -4.36861,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "monsters/mold_guard_meijun",
+      "source_xy_m": [
+        360.0,
+        220.0
+      ],
+      "unreal_cm": [
+        11000.0,
+        -3000.0,
+        -424.16593406593404
+      ],
+      "z_m": -4.24166,
+      "surface_z_m": -4.24166,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "monsters/mold_guard_shendu_1",
+      "source_xy_m": [
+        403.3,
+        60.0
+      ],
+      "unreal_cm": [
+        15330.000000000002,
+        -19000.0,
+        -6000.0
+      ],
+      "z_m": -60.0,
+      "surface_z_m": 8.62364,
+      "vertical_frame": "underground_at_world_minus_60m",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "monsters/mold_guard_shendu_2",
+      "source_xy_m": [
+        466.7,
+        60.0
+      ],
+      "unreal_cm": [
+        21670.0,
+        -19000.0,
+        -6000.0
+      ],
+      "z_m": -60.0,
+      "surface_z_m": 1.51656,
+      "vertical_frame": "underground_at_world_minus_60m",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "monsters/boss_core",
+      "source_xy_m": [
+        436.7,
+        83.3
+      ],
+      "unreal_cm": [
+        18670.0,
+        -16670.0,
+        -6000.0
+      ],
+      "z_m": -60.0,
+      "surface_z_m": 7.22237,
+      "vertical_frame": "underground_at_world_minus_60m",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "monsters/small_mold_1",
+      "source_xy_m": [
+        196.7,
+        276.7
+      ],
+      "unreal_cm": [
+        -5330.000000000001,
+        2669.999999999999,
+        618.374173881918
+      ],
+      "z_m": 6.18374,
+      "surface_z_m": 6.18374,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "monsters/small_mold_2",
+      "source_xy_m": [
+        243.3,
+        240.0
+      ],
+      "unreal_cm": [
+        -669.9999999999989,
+        -1000.0,
+        637.4835697493091
+      ],
+      "z_m": 6.37484,
+      "surface_z_m": 6.37484,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "monsters/small_mold_3",
+      "source_xy_m": [
+        266.7,
+        283.3
+      ],
+      "unreal_cm": [
+        1669.9999999999989,
+        3330.000000000001,
+        647.5602697167818
+      ],
+      "z_m": 6.4756,
+      "surface_z_m": 6.4756,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "resources/flour_demo",
+      "source_xy_m": [
+        200.0,
+        233.3
+      ],
+      "unreal_cm": [
+        -5000.0,
+        -1669.9999999999989,
+        633.448968585827
+      ],
+      "z_m": 6.33449,
+      "surface_z_m": 6.33449,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "resources/corrupt_spore_core",
+      "source_xy_m": [
+        416.7,
+        196.7
+      ],
+      "unreal_cm": [
+        16670.0,
+        -5330.000000000001,
+        -438.25235885826254
+      ],
+      "z_m": -4.38252,
+      "surface_z_m": -4.38252,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "resources/special_yeast_strain",
+      "source_xy_m": [
+        100.0,
+        106.7
+      ],
+      "unreal_cm": [
+        -15000.0,
+        -14330.000000000002,
+        859.8946551135366
+      ],
+      "z_m": 8.59895,
+      "surface_z_m": 8.59895,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "resources/active_spore",
+      "source_xy_m": [
+        453.3,
+        106.7
+      ],
+      "unreal_cm": [
+        20330.0,
+        -14330.000000000002,
+        -6000.0
+      ],
+      "z_m": -60.0,
+      "surface_z_m": 13.24091,
+      "vertical_frame": "underground_at_world_minus_60m",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "flora/gluten_whiskers_1",
+      "source_xy_m": [
+        186.7,
+        206.7
+      ],
+      "unreal_cm": [
+        -6330.000000000001,
+        -4330.000000000001,
+        201.1716603592225
+      ],
+      "z_m": 2.01172,
+      "surface_z_m": 2.01172,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "flora/gluten_whiskers_2",
+      "source_xy_m": [
+        293.3,
+        316.7
+      ],
+      "unreal_cm": [
+        4330.000000000001,
+        6669.999999999999,
+        105.89915732162531
+      ],
+      "z_m": 1.05899,
+      "surface_z_m": 1.05899,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "flora/yeast_buds_fajiao",
+      "source_xy_m": [
+        110.0,
+        196.7
+      ],
+      "unreal_cm": [
+        -14000.0,
+        -5330.000000000001,
+        678.6043671239779
+      ],
+      "z_m": 6.78604,
+      "surface_z_m": 6.78604,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "flora/mycelium_meijun_1",
+      "source_xy_m": [
+        393.3,
+        186.7
+      ],
+      "unreal_cm": [
+        14330.000000000002,
+        -6330.000000000001,
+        -415.77021798448436
+      ],
+      "z_m": -4.1577,
+      "surface_z_m": -4.1577,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "flora/mycelium_meijun_2",
+      "source_xy_m": [
+        360.0,
+        210.0
+      ],
+      "unreal_cm": [
+        11000.0,
+        -4000.0,
+        -453.92436794901505
+      ],
+      "z_m": -4.53924,
+      "surface_z_m": -4.53924,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "flora/mycelium_shendu",
+      "source_xy_m": [
+        443.3,
+        66.7
+      ],
+      "unreal_cm": [
+        19330.0,
+        -18330.0,
+        -6000.0
+      ],
+      "z_m": -60.0,
+      "surface_z_m": 2.42345,
+      "vertical_frame": "underground_at_world_minus_60m",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "holes/hole_small_1",
+      "source_xy_m": [
+        173.3,
+        300.0
+      ],
+      "unreal_cm": [
+        -7669.999999999999,
+        5000.0,
+        97.92036634762451
+      ],
+      "z_m": 0.9792,
+      "surface_z_m": -2.2208,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "holes/hole_collapse_1",
+      "source_xy_m": [
+        350.0,
+        213.3
+      ],
+      "unreal_cm": [
+        10000.0,
+        -3669.999999999999,
+        -454.73378548307846
+      ],
+      "z_m": -4.54734,
+      "surface_z_m": -10.54734,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "holes/hole_vent_1",
+      "source_xy_m": [
+        180.0,
+        156.7
+      ],
+      "unreal_cm": [
+        -7000.0,
+        -9330.000000000002,
+        103.39838774604092
+      ],
+      "z_m": 1.03398,
+      "surface_z_m": -2.96602,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "holes/hole_abyss",
+      "source_xy_m": [
+        410.0,
+        140.0
+      ],
+      "unreal_cm": [
+        16000.0,
+        -11000.0,
+        -391.29641434327726
+      ],
+      "z_m": -3.91296,
+      "surface_z_m": -13.91296,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "mechanisms/mech_wall_1",
+      "source_xy_m": [
+        143.3,
+        233.3
+      ],
+      "unreal_cm": [
+        -10669.999999999998,
+        -1669.9999999999989,
+        15.105387557512415
+      ],
+      "z_m": 0.15105,
+      "surface_z_m": 0.15105,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "mechanisms/mech_gap_sentry",
+      "source_xy_m": [
+        96.7,
+        132.0
+      ],
+      "unreal_cm": [
+        -15330.000000000002,
+        -11800.0,
+        799.6770515932596
+      ],
+      "z_m": 7.99677,
+      "surface_z_m": 7.99677,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "mechanisms/mech_plate_1",
+      "source_xy_m": [
+        393.3,
+        180.0
+      ],
+      "unreal_cm": [
+        14330.000000000002,
+        -7000.0,
+        -402.6923933939911
+      ],
+      "z_m": -4.02692,
+      "surface_z_m": -4.02692,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "mechanisms/mech_hole_shortcut",
+      "source_xy_m": [
+        173.3,
+        300.0
+      ],
+      "unreal_cm": [
+        -7669.999999999999,
+        5000.0,
+        97.92036634762451
+      ],
+      "z_m": 0.9792,
+      "surface_z_m": -2.2208,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "art_reference_pins/ref_glow_mushroom",
+      "source_xy_m": [
+        80.0,
+        60.0
+      ],
+      "unreal_cm": [
+        -17000.0,
+        -19000.0,
+        924.3740458345025
+      ],
+      "z_m": 9.24374,
+      "surface_z_m": 9.24374,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": false
+    },
+    {
+      "source_ref": "art_reference_pins/ref_leaf_texture",
+      "source_xy_m": [
+        21.7,
+        86.7
+      ],
+      "unreal_cm": [
+        -22830.0,
+        -16330.000000000002,
+        1128.2134337662678
+      ],
+      "z_m": 11.28213,
+      "surface_z_m": 11.28213,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": false
+    },
+    {
+      "source_ref": "art_reference_pins/ref_cave_altar",
+      "source_xy_m": [
+        265.0,
+        33.3
+      ],
+      "unreal_cm": [
+        1500.0,
+        -21670.0,
+        129.50479048800892
+      ],
+      "z_m": 1.29505,
+      "surface_z_m": 1.29505,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": false
+    },
+    {
+      "source_ref": "art_reference_pins/ref_pit_crater",
+      "source_xy_m": [
+        336.7,
+        125.0
+      ],
+      "unreal_cm": [
+        8669.999999999998,
+        -12500.0,
+        -264.9216893443065
+      ],
+      "z_m": -2.64922,
+      "surface_z_m": -2.64922,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": false
+    },
+    {
+      "source_ref": "art_reference_pins/ref_porous_texture",
+      "source_xy_m": [
+        293.3,
+        193.3
+      ],
+      "unreal_cm": [
+        4330.000000000001,
+        -5669.999999999999,
+        27.77086535749357
+      ],
+      "z_m": 0.27771,
+      "surface_z_m": 0.27771,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": false
+    },
+    {
+      "source_ref": "demo_route/1",
+      "source_xy_m": [
+        233.3,
+        373.3
+      ],
+      "unreal_cm": [
+        -1669.9999999999989,
+        12330.000000000002,
+        115.25499085228049
+      ],
+      "z_m": 1.15255,
+      "surface_z_m": 1.15255,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "demo_route/2",
+      "source_xy_m": [
+        210.0,
+        343.3
+      ],
+      "unreal_cm": [
+        -4000.0,
+        9330.000000000002,
+        164.95592343811225
+      ],
+      "z_m": 1.64956,
+      "surface_z_m": 1.64956,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "demo_route/3",
+      "source_xy_m": [
+        190.0,
+        310.0
+      ],
+      "unreal_cm": [
+        -6000.0,
+        6000.0,
+        212.39836334112584
+      ],
+      "z_m": 2.12398,
+      "surface_z_m": 2.12398,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "demo_route/4",
+      "source_xy_m": [
+        196.7,
+        276.7
+      ],
+      "unreal_cm": [
+        -5330.000000000001,
+        2669.999999999999,
+        618.374173881918
+      ],
+      "z_m": 6.18374,
+      "surface_z_m": 6.18374,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "demo_route/5",
+      "source_xy_m": [
+        216.7,
+        253.3
+      ],
+      "unreal_cm": [
+        -3330.000000000001,
+        330.00000000000114,
+        636.625
+      ],
+      "z_m": 6.36625,
+      "surface_z_m": 6.36625,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "demo_route/6",
+      "source_xy_m": [
+        243.3,
+        240.0
+      ],
+      "unreal_cm": [
+        -669.9999999999989,
+        -1000.0,
+        637.4835697493091
+      ],
+      "z_m": 6.37484,
+      "surface_z_m": 6.37484,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "demo_route/7",
+      "source_xy_m": [
+        270.0,
+        233.3
+      ],
+      "unreal_cm": [
+        2000.0,
+        -1669.9999999999989,
+        638.8280502995219
+      ],
+      "z_m": 6.38828,
+      "surface_z_m": 6.38828,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "demo_route/8",
+      "source_xy_m": [
+        260.0,
+        250.0
+      ],
+      "unreal_cm": [
+        1000.0,
+        0.0,
+        641.9470129957725
+      ],
+      "z_m": 6.41947,
+      "surface_z_m": 6.41947,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    },
+    {
+      "source_ref": "demo_route/9",
+      "source_xy_m": [
+        266.7,
+        283.3
+      ],
+      "unreal_cm": [
+        1669.9999999999989,
+        3330.000000000001,
+        647.5602697167818
+      ],
+      "z_m": 6.4756,
+      "surface_z_m": 6.4756,
+      "vertical_frame": "surface_shallow_zero",
+      "spawn_object": true
+    }
+  ],
+  "boundaries": [
+    {
+      "region": "fajiao",
+      "closed": true,
+      "polyline_m": [
+        [
+          96.7,
+          132
+        ],
+        [
+          116,
+          132
+        ],
+        [
+          140,
+          145
+        ],
+        [
+          151,
+          161
+        ],
+        [
+          143,
+          179
+        ],
+        [
+          133,
+          195
+        ],
+        [
+          135,
+          215
+        ],
+        [
+          143.3,
+          233.3
+        ],
+        [
+          134,
+          247
+        ],
+        [
+          109,
+          260
+        ],
+        [
+          80,
+          249
+        ],
+        [
+          57,
+          229
+        ],
+        [
+          44,
+          201
+        ],
+        [
+          49,
+          180
+        ],
+        [
+          67,
+          161
+        ],
+        [
+          84,
+          143
+        ],
+        [
+          96.7,
+          132
+        ]
+      ],
+      "gaps": [
+        {
+          "id": "mech_wall_1",
+          "xy": [
+            143.3,
+            233.3
+          ],
+          "width_m": 5.5,
+          "inward_normal_xy": [
+            -0.999512,
+            -0.031235
+          ],
+          "tangent_xy": [
+            -0.031235,
+            0.999512
+          ],
+          "unreal_inward_yaw_degrees": -178.2101,
+          "unreal_xy_cm": [
+            -10669.999999999998,
+            -1669.9999999999989
+          ]
+        },
+        {
+          "id": "mech_gap_sentry",
+          "xy": [
+            96.7,
+            132
+          ],
+          "width_m": 3.0,
+          "inward_normal_xy": [
+            0.32508,
+            0.945687
+          ],
+          "tangent_xy": [
+            0.945687,
+            -0.32508
+          ],
+          "unreal_inward_yaw_degrees": 71.0296,
+          "unreal_xy_cm": [
+            -15330.000000000002,
+            -11800
+          ]
+        }
+      ],
+      "external_trench_offset_m": 2.7,
+      "trench_depth_m": 3.8,
+      "minimum_collision_wall_above_walkable_m": 5.0,
+      "gap_collision_policy": "side walls close to physical gate leaves; no hidden opening beside portal",
+      "status": "terrain_cut_generated; vertical_mesh_and_collision_required"
+    },
+    {
+      "region": "jiaomu",
+      "closed": true,
+      "polyline_m": [
+        [
+          96.7,
+          132
+        ],
+        [
+          77,
+          139
+        ],
+        [
+          48,
+          123
+        ],
+        [
+          23,
+          110
+        ],
+        [
+          9,
+          87
+        ],
+        [
+          13,
+          63
+        ],
+        [
+          21,
+          39
+        ],
+        [
+          39,
+          27
+        ],
+        [
+          70,
+          29
+        ],
+        [
+          100,
+          41
+        ],
+        [
+          119,
+          61
+        ],
+        [
+          123,
+          87
+        ],
+        [
+          113,
+          112
+        ],
+        [
+          96.7,
+          132
+        ]
+      ],
+      "gaps": [
+        {
+          "id": "mech_gap_sentry",
+          "xy": [
+            96.7,
+            132
+          ],
+          "width_m": 3.0,
+          "inward_normal_xy": [
+            -0.6,
+            -0.8
+          ],
+          "tangent_xy": [
+            -0.8,
+            0.6
+          ],
+          "unreal_inward_yaw_degrees": -126.8699,
+          "unreal_xy_cm": [
+            -15330.000000000002,
+            -11800
+          ]
+        }
+      ],
+      "external_trench_offset_m": 2.7,
+      "trench_depth_m": 3.8,
+      "minimum_collision_wall_above_walkable_m": 5.0,
+      "gap_collision_policy": "side walls close to physical gate leaves; no hidden opening beside portal",
+      "status": "terrain_cut_generated; vertical_mesh_and_collision_required"
+    }
+  ],
+  "holes": [
+    {
+      "source_id": "hole_small_1",
+      "xy_m": [
+        173.3,
+        300.0
+      ],
+      "rim_z_m": 0.9792036634762451,
+      "radius_m": 2.7,
+      "depression_depth_m": 3.2,
+      "inner_floor_z_m": -2.220796336523755,
+      "note": "Requires independently modelled rim, inner wall and aperture/portal semantics; heightmap cannot form cave ceiling."
+    },
+    {
+      "source_id": "hole_collapse_1",
+      "xy_m": [
+        350.0,
+        213.3
+      ],
+      "rim_z_m": -4.547337854830785,
+      "radius_m": 5.5,
+      "depression_depth_m": 6.0,
+      "inner_floor_z_m": -10.547337854830785,
+      "note": "Requires independently modelled rim, inner wall and aperture/portal semantics; heightmap cannot form cave ceiling."
+    },
+    {
+      "source_id": "hole_vent_1",
+      "xy_m": [
+        180.0,
+        156.7
+      ],
+      "rim_z_m": 1.0339838774604093,
+      "radius_m": 3.3,
+      "depression_depth_m": 4.0,
+      "inner_floor_z_m": -2.9660161225395907,
+      "note": "Requires independently modelled rim, inner wall and aperture/portal semantics; heightmap cannot form cave ceiling."
+    },
+    {
+      "source_id": "hole_abyss",
+      "xy_m": [
+        410.0,
+        140.0
+      ],
+      "rim_z_m": -3.912964143432773,
+      "radius_m": 8,
+      "depression_depth_m": 10,
+      "inner_floor_z_m": -13.912964143432774,
+      "note": "Requires independently modelled rim, inner wall and aperture/portal semantics; heightmap cannot form cave ceiling."
+    }
+  ],
+  "waterfall": {
+    "source_ref": "landmarks/butter_waterfall",
+    "flow_direction_xy": [
+      0.4324498697692417,
+      0.9016579784688681
+    ],
+    "shelves": [
+      {
+        "flow_t": 0,
+        "z_m": 15.75
+      },
+      {
+        "flow_t": 0.255,
+        "z_m": 10.73
+      },
+      {
+        "flow_t": 0.565,
+        "z_m": 5.255
+      },
+      {
+        "flow_t": 0.835,
+        "z_m": 0.333
+      }
+    ],
+    "fall_face_start_t": [
+      0.21,
+      0.52,
+      0.79
+    ],
+    "fall_face_end_t": [
+      0.255,
+      0.565,
+      0.835
+    ],
+    "shelf_half_width_m": 7,
+    "water_surface": {
+      "crest_pos": {
+        "xy_m": [
+          123.3,
+          160.0
+        ],
+        "ground_z_m": 15.749668199208802,
+        "water_z_m": 15.85
+      },
+      "pool_pos": {
+        "xy_m": [
+          143.3,
+          201.7
+        ],
+        "ground_z_m": 0.39831054852320685,
+        "water_z_m": 0.65
+      },
+      "stream_to": {
+        "xy_m": [
+          143.3,
+          233.3
+        ],
+        "ground_z_m": 0.15105387557512415,
+        "water_z_m": 0.2
+      }
+    },
+    "requires_geometric_faces": true
+  },
+  "underground": {
+    "base_z_m": -60,
+    "original_xy_preserved": true,
+    "surface_shendu_policy": "sealed positive background ridge, no open reachable surface boss basin",
+    "arena_bounds_reference": {
+      "center_m": [
+        436.7,
+        83.3
+      ],
+      "activity_envelope_m": [
+        80,
+        60
+      ]
+    },
+    "local_floor_z_m": 0,
+    "peripheral_groove_z_m": [
+      -4,
+      -2
+    ],
+    "background_wall_height_m": [
+      8,
+      16
+    ],
+    "terrain_heightmap_not_used_as_underground_ceiling": true
+  },
+  "paths_additive": [
+    {
+      "id": "base_to_wall",
+      "points": [
+        [
+          216.7,
+          253.3
+        ],
+        [
+          196.7,
+          256.7
+        ],
+        [
+          177,
+          249
+        ],
+        [
+          159,
+          237
+        ],
+        [
+          143.3,
+          233.3
+        ]
+      ],
+      "z": [
+        6.34,
+        6.365,
+        4.2,
+        1.45,
+        0.15
+      ]
+    },
+    {
+      "id": "wall_to_ferment",
+      "points": [
+        [
+          143.3,
+          233.3
+        ],
+        [
+          127,
+          235
+        ],
+        [
+          107,
+          226
+        ],
+        [
+          94,
+          201
+        ],
+        [
+          96,
+          179
+        ],
+        [
+          110,
+          166.7
+        ],
+        [
+          102,
+          149
+        ],
+        [
+          96.7,
+          132
+        ]
+      ],
+      "z": [
+        0.15,
+        1.25,
+        3.65,
+        6.0,
+        6.7,
+        6.85,
+        7.4,
+        8.0
+      ]
+    },
+    {
+      "id": "sentry_to_yeast",
+      "points": [
+        [
+          96.7,
+          132
+        ],
+        [
+          93,
+          118
+        ],
+        [
+          100,
+          106.7
+        ],
+        [
+          83.3,
+          93.3
+        ],
+        [
+          60,
+          66.7
+        ]
+      ],
+      "z": [
+        8.0,
+        8.35,
+        8.6,
+        9.0,
+        9.1
+      ]
+    },
+    {
+      "id": "base_to_mold",
+      "points": [
+        [
+          270,
+          233.3
+        ],
+        [
+          292,
+          239
+        ],
+        [
+          315,
+          238
+        ],
+        [
+          337,
+          231
+        ],
+        [
+          360,
+          220
+        ]
+      ],
+      "z": [
+        6.4,
+        4.45,
+        1.4,
+        -2.0,
+        -4.25
+      ]
+    },
+    {
+      "id": "mold_alternate",
+      "points": [
+        [
+          360,
+          220
+        ],
+        [
+          373,
+          233
+        ],
+        [
+          400,
+          232
+        ],
+        [
+          428,
+          216
+        ],
+        [
+          434,
+          192
+        ],
+        [
+          431,
+          167
+        ],
+        [
+          421,
+          148
+        ],
+        [
+          418.2,
+          146
+        ]
+      ],
+      "z": [
+        -4.25,
+        -4.3,
+        -4.45,
+        -4.6,
+        -4.7,
+        -4.8,
+        -4.75,
+        -4.7
+      ],
+      "end_note": "Approach ends outside abyss rim; original hole center remains (410,140), reached by explicit interaction, not a walkable path."
+    },
+    {
+      "id": "mold_ruins",
+      "points": [
+        [
+          337,
+          231
+        ],
+        [
+          324,
+          205
+        ],
+        [
+          328,
+          183
+        ],
+        [
+          333.3,
+          166.7
+        ],
+        [
+          350,
+          156.7
+        ]
+      ],
+      "z": [
+        -2,
+        -3.3,
+        -4.0,
+        -4.3,
+        -4.5
+      ]
+    }
+  ],
+  "visibility_notes": [
+    "Actual fixed camera must be tested in Unreal; this offline heightmap cannot prove visibility.",
+    "Boundary meshes and collisions must complete the two closed rings except exact gate openings.",
+    "Deep-world original art reference pins are references, never entity placements."
+  ]
+}

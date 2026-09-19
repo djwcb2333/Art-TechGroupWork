@@ -1,0 +1,50 @@
+[
+  {
+    "source": "DoughWorld_Complete_Handoff/00_开始这里.md",
+    "extracted": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\00_document.md"
+  },
+  {
+    "source": "DoughWorld_Complete_Handoff/01_直接发给Codex.md",
+    "extracted": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\01_document.md"
+  },
+  {
+    "source": "DoughWorld_Complete_Handoff/04_验收与交付.md",
+    "extracted": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\02_document.md"
+  },
+  {
+    "source": "DoughWorld_Complete_Handoff/manifest.json",
+    "extracted": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\manifest.json"
+  },
+  {
+    "source": "DoughWorld_Complete_Handoff/Code/CameraOccluderFadeComponent.cpp",
+    "extracted": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Code\\CameraOccluderFadeComponent.cpp"
+  },
+  {
+    "source": "DoughWorld_Complete_Handoff/Code/CameraOccluderFadeComponent.h",
+    "extracted": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Code\\CameraOccluderFadeComponent.h"
+  },
+  {
+    "source": "DoughWorld_Complete_Handoff/Data/depth_overlay.json",
+    "extracted": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Data\\depth_overlay.json"
+  },
+  {
+    "source": "DoughWorld_Complete_Handoff/Data/module_requirements.json",
+    "extracted": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Data\\module_requirements.json"
+  },
+  {
+    "source": "DoughWorld_Complete_Handoff/Design/相机遮挡接入.md",
+    "extracted": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Design\\08_document.md"
+  },
+  {
+    "source": "DoughWorld_Complete_Handoff/Design/纵深设计.md",
+    "extracted": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Design\\09_document.md"
+  },
+  {
+    "source": "DoughWorld_Complete_Handoff/Originals/原地图.json",
+    "extracted": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Originals\\10_document.json"
+  },
+  {
+    "source": "DoughWorld_Complete_Handoff/Originals/原概念.png",
+    "extracted": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Originals\\11_document.png"
+  }
+]

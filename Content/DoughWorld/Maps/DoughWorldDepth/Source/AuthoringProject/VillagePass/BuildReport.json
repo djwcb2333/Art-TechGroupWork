@@ -1,0 +1,2180 @@
+{
+  "timestamp": "2026-09-13T23:42:54.552082",
+  "level": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth",
+  "new_assets": [
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_table_02",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_table_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_bowl_wood_01",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_bowl_wood_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_03.MI_wood_03"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/deco/SM_PROP_plate_wood",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_plate_wood",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_07.MI_wood_07"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_food_bread_02",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_food_bread_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_food_bread_05",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_food_bread_05",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/deco/SM_PROP_spoon_01",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_spoon_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_01.MI_metal_01"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_01",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_02",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_03",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_03",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_stool_01",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_stool_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_06.MI_wood_06"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_bucket_01",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_bucket_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_07.MI_wood_planks_07",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_market_shelf_03",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_market_shelf_03",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_box_02",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_box_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_01.MI_wood_planks_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_box_lid_02",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_box_lid_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_01.MI_wood_planks_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_basket_01",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_basket_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_rope.MI_rope"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_table_01",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_table_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/construction/SM_PROP_planks_03",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_planks_03",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/vehicles/SM_PROP_cart_wheel_small",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_cart_wheel_small",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_07.MI_wood_07",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_barrel_01",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_barrel_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_05",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_05",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_06",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_06",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_bench_01",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_bench_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_table_03",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_table_03",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_food_bread_08",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_food_bread_08",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/vehicles/SM_PROP_cart_01",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_cart_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_07.MI_wood_07",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02",
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_detail_01.MI_wood_detail_01"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/construction/SM_PROP_planks_01",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_planks_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/construction/SM_PROP_planks_02",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_planks_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_market_shelf_02",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_market_shelf_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/vehicles/SM_PROP_cart_03",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_cart_03",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_07.MI_wood_07",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02",
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_detail_01.MI_wood_detail_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_hay.MI_PROP_hay"
+      ]
+    },
+    {
+      "source": "/Game/Fantastic_Village_Pack/meshes/props/construction/SM_PROP_walkway_wood",
+      "destination": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_walkway_wood",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_07.MI_wood_planks_07"
+      ]
+    }
+  ],
+  "replaced_visuals": [
+    {
+      "label": "DWG__jidi_03__buildings__workbench__workbench_tabletop",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_716",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_03__buildings__workbench__workbench_lower_shelf",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_721",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_03__buildings__workbench__workbench_leg_0",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_717",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_03__buildings__workbench__workbench_leg_1",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_718",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_03__buildings__workbench__workbench_leg_2",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_719",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_03__buildings__workbench__workbench_leg_3",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_720",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_03__buildings__workbench__mixing_bowl",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_722",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__rack_post_0",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_725",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__rack_post_1",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_726",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__rack_post_2",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_727",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__rack_post_3",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_728",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__rack_shelf_0",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_729",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__rack_shelf_1",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_730",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__rack_shelf_2",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_731",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_0_bottom",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_732",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_0_wall_0",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_733",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_0_wall_1",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_734",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_0_wall_2",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_735",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_0_wall_3",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_736",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_0_independent_lid",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_737",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_1_bottom",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_738",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_1_wall_0",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_739",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_1_wall_1",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_740",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_1_wall_2",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_741",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_1_wall_3",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_742",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_1_independent_lid",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_743",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_2_bottom",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_744",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_2_wall_0",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_745",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_2_wall_1",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_746",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_2_wall_2",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_747",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_2_wall_3",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_748",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__crate_2_independent_lid",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_749",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__repair_table_tabletop",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_750",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__repair_table_leg_0",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_751",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__repair_table_leg_1",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_752",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__repair_table_leg_2",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_753",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__repair_table_leg_3",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_754",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__repair_table_lower_shelf",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_755",
+      "retained_collision": false
+    },
+    {
+      "label": "DWG__jidi_04__buildings__storage_repair__repair_tray",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_756",
+      "retained_collision": false
+    },
+    {
+      "label": "BridgeDeck_0",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_618",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_1",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_619",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_2",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_620",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_3",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_621",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_4",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_622",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_5",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_623",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_6",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_624",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_7",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_625",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_8",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_626",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_9",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_627",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_10",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_628",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_11",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_629",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_12",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_630",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_13",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_631",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_14",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_632",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_15",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_633",
+      "retained_collision": true
+    },
+    {
+      "label": "BridgeDeck_16",
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_634",
+      "retained_collision": true
+    }
+  ],
+  "placements": [
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_5",
+      "label": "FV__Workbench",
+      "module": "jidi_03",
+      "source_ref": "buildings/workbench",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_table_02.SM_PROP_table_02",
+      "bottom_xyz_m": [
+        221.7,
+        266.7,
+        6.40625
+      ],
+      "dimensions_m": [
+        2.7999999999999994,
+        1.5911873660568578,
+        0.9114816876639961
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_table_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_6",
+      "label": "FV__MixingBowl",
+      "module": "jidi_03",
+      "source_ref": "buildings/workbench",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_bowl_wood_01.SM_PROP_bowl_wood_01",
+      "bottom_xyz_m": [
+        221.05,
+        266.7,
+        7.282731687663996
+      ],
+      "dimensions_m": [
+        0.6,
+        0.5841301523303355,
+        0.22010636162484035
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_bowl_wood_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_03.MI_wood_03"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_7",
+      "label": "FV__BreadBoard",
+      "module": "jidi_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_plate_wood.SM_PROP_plate_wood",
+      "bottom_xyz_m": [
+        221.85,
+        266.75,
+        7.282731687663996
+      ],
+      "dimensions_m": [
+        0.48,
+        0.4695448446746036,
+        0.07901448820460562
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/deco/SM_PROP_plate_wood",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_07.MI_wood_07"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_8",
+      "label": "FV__FreshBread",
+      "module": "jidi_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_food_bread_02.SM_PROP_food_bread_02",
+      "bottom_xyz_m": [
+        221.85,
+        266.75,
+        7.327731687663996
+      ],
+      "dimensions_m": [
+        0.32,
+        0.32,
+        0.0898175644016748
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_food_bread_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_9",
+      "label": "FV__BreadRoll",
+      "module": "jidi_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_food_bread_05.SM_PROP_food_bread_05",
+      "bottom_xyz_m": [
+        222.65,
+        266.4,
+        7.282731687663996
+      ],
+      "dimensions_m": [
+        0.25,
+        0.25,
+        0.16891070369429353
+      ],
+      "yaw": 40,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_food_bread_05",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_10",
+      "label": "FV__WoodenSpoon",
+      "module": "jidi_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_spoon_01.SM_PROP_spoon_01",
+      "bottom_xyz_m": [
+        221.5,
+        266.3,
+        7.312731687663996
+      ],
+      "dimensions_m": [
+        0.0908432397842407,
+        0.30044785308837885,
+        0.052067107200622555
+      ],
+      "yaw": 55,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/deco/SM_PROP_spoon_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_01.MI_metal_01"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_11",
+      "label": "FV__WorkbenchFlourBag0",
+      "module": "jidi_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_01.SM_PROP_sack_01",
+      "bottom_xyz_m": [
+        223.65,
+        266.3,
+        6.382598605683199
+      ],
+      "dimensions_m": [
+        0.8,
+        0.7163283727738472,
+        0.5629782089708291
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_12",
+      "label": "FV__WorkbenchFlourBag1",
+      "module": "jidi_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_02.SM_PROP_sack_02",
+      "bottom_xyz_m": [
+        223.65,
+        267.15,
+        6.383872736000001
+      ],
+      "dimensions_m": [
+        0.8,
+        0.7163283727738472,
+        0.5629782089708291
+      ],
+      "yaw": 25,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_13",
+      "label": "FV__WorkbenchFlourBag2",
+      "module": "jidi_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_03.SM_PROP_sack_03",
+      "bottom_xyz_m": [
+        224.35,
+        266.65,
+        6.383823622073599
+      ],
+      "dimensions_m": [
+        0.8,
+        0.7163283727738472,
+        0.5629782089708291
+      ],
+      "yaw": 50,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_03",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_14",
+      "label": "FV__WorkbenchStool",
+      "module": "jidi_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_stool_01.SM_PROP_stool_01",
+      "bottom_xyz_m": [
+        220.1,
+        266.6,
+        6.379503043942399
+      ],
+      "dimensions_m": [
+        0.5156509399414062,
+        0.8348685970306396,
+        0.4729988899230957
+      ],
+      "yaw": 70,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_stool_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_06.MI_wood_06"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_15",
+      "label": "FV__WaterBucket",
+      "module": "jidi_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_bucket_01.SM_PROP_bucket_01",
+      "bottom_xyz_m": [
+        222.6,
+        265.55,
+        6.3804230878848
+      ],
+      "dimensions_m": [
+        0.6514246215820313,
+        0.7226692199707031,
+        0.43012367248535155
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_bucket_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_07.MI_wood_planks_07",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_16",
+      "label": "FV__StorageRack",
+      "module": "jidi_04",
+      "source_ref": "buildings/storage_repair",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_market_shelf_03.SM_PROP_market_shelf_03",
+      "bottom_xyz_m": [
+        196.7,
+        256.7,
+        6.36625
+      ],
+      "dimensions_m": [
+        4.1,
+        1.5627860048160676,
+        2.2329385473160848
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_market_shelf_03",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_17",
+      "label": "FV__StorageBox0",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_box_02.SM_PROP_box_02",
+      "bottom_xyz_m": [
+        195.45,
+        256.7,
+        6.43
+      ],
+      "dimensions_m": [
+        0.94,
+        0.9545830123281172,
+        0.8773473808755331
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_box_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_01.MI_wood_planks_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_18",
+      "label": "FV__StorageLeaningLid0",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_box_lid_02.SM_PROP_box_lid_02",
+      "bottom_xyz_m": [
+        195.45,
+        255.95,
+        6.43
+      ],
+      "dimensions_m": [
+        0.94,
+        0.7188355207424677,
+        0.8151962763453965
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_box_lid_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_01.MI_wood_planks_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_19",
+      "label": "FV__StorageBox1",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_box_02.SM_PROP_box_02",
+      "bottom_xyz_m": [
+        196.7,
+        256.7,
+        6.43
+      ],
+      "dimensions_m": [
+        0.94,
+        0.9545830123281172,
+        0.8773473808755331
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_box_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_01.MI_wood_planks_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_20",
+      "label": "FV__StorageBox2",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_box_02.SM_PROP_box_02",
+      "bottom_xyz_m": [
+        197.95,
+        256.7,
+        6.43
+      ],
+      "dimensions_m": [
+        0.94,
+        0.9545830123281172,
+        0.8773473808755331
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_box_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_01.MI_wood_planks_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_21",
+      "label": "FV__StorageLeaningLid2",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_box_lid_02.SM_PROP_box_lid_02",
+      "bottom_xyz_m": [
+        197.95,
+        255.95,
+        6.43
+      ],
+      "dimensions_m": [
+        0.94,
+        0.7188355207424677,
+        0.8151962763453965
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_box_lid_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_01.MI_wood_planks_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_22",
+      "label": "FV__RackBreadBasket0",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_basket_01.SM_PROP_basket_01",
+      "bottom_xyz_m": [
+        195.7,
+        256.7,
+        7.49
+      ],
+      "dimensions_m": [
+        0.63,
+        0.6162663119819198,
+        0.27279357371115437
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_basket_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_rope.MI_rope"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_23",
+      "label": "FV__RackBreadBasket1",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_basket_01.SM_PROP_basket_01",
+      "bottom_xyz_m": [
+        196.65,
+        256.7,
+        7.49
+      ],
+      "dimensions_m": [
+        0.63,
+        0.6162663119819198,
+        0.27279357371115437
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_basket_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_rope.MI_rope"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_24",
+      "label": "FV__RackBreadBasket2",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_basket_01.SM_PROP_basket_01",
+      "bottom_xyz_m": [
+        197.55,
+        256.7,
+        7.49
+      ],
+      "dimensions_m": [
+        0.63,
+        0.6162663119819198,
+        0.27279357371115437
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_basket_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_rope.MI_rope"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_25",
+      "label": "FV__RackFlour0",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_01.SM_PROP_sack_01",
+      "bottom_xyz_m": [
+        195.3,
+        256.8,
+        8.11
+      ],
+      "dimensions_m": [
+        0.61,
+        0.5462003842400586,
+        0.4292708843402572
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_26",
+      "label": "FV__RackFlour1",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_02.SM_PROP_sack_02",
+      "bottom_xyz_m": [
+        196.25,
+        256.8,
+        8.11
+      ],
+      "dimensions_m": [
+        0.61,
+        0.5462003842400586,
+        0.4292708843402572
+      ],
+      "yaw": 30,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_27",
+      "label": "FV__RackFlour2",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_03.SM_PROP_sack_03",
+      "bottom_xyz_m": [
+        197.25,
+        256.8,
+        8.11
+      ],
+      "dimensions_m": [
+        0.61,
+        0.5462003842400586,
+        0.4292708843402572
+      ],
+      "yaw": 60,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_03",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_28",
+      "label": "FV__RackFlour3",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_01.SM_PROP_sack_01",
+      "bottom_xyz_m": [
+        198.1,
+        256.8,
+        8.11
+      ],
+      "dimensions_m": [
+        0.61,
+        0.5462003842400586,
+        0.4292708843402572
+      ],
+      "yaw": 90,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_29",
+      "label": "FV__RepairTable",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_table_01.SM_PROP_table_01",
+      "bottom_xyz_m": [
+        200.2,
+        256.7,
+        6.36625
+      ],
+      "dimensions_m": [
+        2.3,
+        1.4653699762841599,
+        1.0572522922534264
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_table_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_30",
+      "label": "FV__RepairPlanks",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_planks_03.SM_PROP_planks_03",
+      "bottom_xyz_m": [
+        200.2,
+        256.7,
+        7.388502292253426
+      ],
+      "dimensions_m": [
+        1.3,
+        0.7866704920462564,
+        0.08791108472654237
+      ],
+      "yaw": 8,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/construction/SM_PROP_planks_03",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_31",
+      "label": "FV__RepairWheel",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_cart_wheel_small.SM_PROP_cart_wheel_small",
+      "bottom_xyz_m": [
+        201.45,
+        256.1,
+        6.34125
+      ],
+      "dimensions_m": [
+        0.14557093620300293,
+        0.984330825805664,
+        0.9843249893188477
+      ],
+      "yaw": 90,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/vehicles/SM_PROP_cart_wheel_small",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_07.MI_wood_07",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_32",
+      "label": "FV__StorageBarrel",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_barrel_01.SM_PROP_barrel_01",
+      "bottom_xyz_m": [
+        193.6,
+        256.5,
+        6.34125
+      ],
+      "dimensions_m": [
+        0.8621136894226074,
+        0.8873183708190917,
+        1.0268182525634764
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_barrel_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_33",
+      "label": "FV__StorageBagA",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_05.SM_PROP_sack_05",
+      "bottom_xyz_m": [
+        193.55,
+        257.8,
+        6.341249999999999
+      ],
+      "dimensions_m": [
+        0.5301313018798828,
+        0.8134810066223144,
+        0.7855458068847656
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_05",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_34",
+      "label": "FV__StorageBagB",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_06.SM_PROP_sack_06",
+      "bottom_xyz_m": [
+        194.15,
+        258.2,
+        6.34125
+      ],
+      "dimensions_m": [
+        0.8762724227905274,
+        0.7209421005249025,
+        0.298509370803833
+      ],
+      "yaw": 35,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_06",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_35",
+      "label": "FV__HutBackBench",
+      "module": "jidi_02",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_bench_01.SM_PROP_bench_01",
+      "bottom_xyz_m": [
+        221.7,
+        240.95,
+        6.52115
+      ],
+      "dimensions_m": [
+        2.8,
+        0.9915129578021498,
+        0.6842550045055542
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_bench_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_36",
+      "label": "FV__HutSideTable",
+      "module": "jidi_02",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_table_03.SM_PROP_table_03",
+      "bottom_xyz_m": [
+        224.7,
+        241.5,
+        6.52115
+      ],
+      "dimensions_m": [
+        1.4500000000000002,
+        1.3107350294625528,
+        0.872465783810124
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_table_03",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_37",
+      "label": "FV__HutBread",
+      "module": "jidi_02",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_food_bread_08.SM_PROP_food_bread_08",
+      "bottom_xyz_m": [
+        224.7,
+        241.5,
+        7.354
+      ],
+      "dimensions_m": [
+        0.3056799411773682,
+        0.7759653205871582,
+        0.1792864017486572
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_food_bread_08",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_38",
+      "label": "FV__HutBasket",
+      "module": "jidi_02",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_basket_01.SM_PROP_basket_01",
+      "bottom_xyz_m": [
+        218.55,
+        241.05,
+        6.52115
+      ],
+      "dimensions_m": [
+        0.8,
+        0.7825603961675173,
+        0.34640453804591037
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_basket_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_rope.MI_rope"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_39",
+      "label": "FV__HutJug",
+      "module": "jidi_02",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_bucket_01.SM_PROP_bucket_01",
+      "bottom_xyz_m": [
+        218.55,
+        242.0,
+        6.52115
+      ],
+      "dimensions_m": [
+        0.6514246215820313,
+        0.7226692199707031,
+        0.43012367248535155
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_bucket_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_07.MI_wood_planks_07",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_40",
+      "label": "FV__HutFrontBench",
+      "module": "jidi_02",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_bench_01.SM_PROP_bench_01",
+      "bottom_xyz_m": [
+        225.1,
+        247.7,
+        6.3561392622336
+      ],
+      "dimensions_m": [
+        2.25,
+        0.7967514839481561,
+        0.5498477714776776
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_bench_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_41",
+      "label": "FV__HutFrontBasket",
+      "module": "jidi_02",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_basket_01.SM_PROP_basket_01",
+      "bottom_xyz_m": [
+        218.65,
+        247.8,
+        6.344168027955199
+      ],
+      "dimensions_m": [
+        0.8,
+        0.7825603961675173,
+        0.34640453804591037
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_basket_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_rope.MI_rope"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_42",
+      "label": "FV__SupplyCart",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_cart_01.SM_PROP_cart_01",
+      "bottom_xyz_m": [
+        228.5,
+        262.5,
+        6.381748719999999
+      ],
+      "dimensions_m": [
+        2.0558160766601565,
+        3.8556890624999998,
+        1.4762690185546874
+      ],
+      "yaw": -18,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/vehicles/SM_PROP_cart_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_07.MI_wood_07",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02",
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_detail_01.MI_wood_detail_01"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_43",
+      "label": "FV__CartSideBarrel",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_barrel_01.SM_PROP_barrel_01",
+      "bottom_xyz_m": [
+        230.4,
+        262.5,
+        6.3836502272
+      ],
+      "dimensions_m": [
+        0.7871472816467285,
+        0.8101602516174317,
+        0.9375297088623047
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_barrel_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_44",
+      "label": "FV__CartBagA",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_01.SM_PROP_sack_01",
+      "bottom_xyz_m": [
+        230.0,
+        263.7,
+        6.385047903999999
+      ],
+      "dimensions_m": [
+        0.8500000000000001,
+        0.7610988960722127,
+        0.598164347031506
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_45",
+      "label": "FV__CartBagB",
+      "module": "jidi_04",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_03.SM_PROP_sack_03",
+      "bottom_xyz_m": [
+        230.6,
+        263.8,
+        6.3857972465407995
+      ],
+      "dimensions_m": [
+        0.7199999999999999,
+        0.6446955354964624,
+        0.5066803880737462
+      ],
+      "yaw": 65,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_03",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_46",
+      "label": "FV__RuinPlanks0",
+      "module": "meijun_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_planks_01.SM_PROP_planks_01",
+      "bottom_xyz_m": [
+        330.0,
+        164.4,
+        -4.09
+      ],
+      "dimensions_m": [
+        2.0,
+        1.0810533773976,
+        0.3865792100448469
+      ],
+      "yaw": 35,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/construction/SM_PROP_planks_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_47",
+      "label": "FV__RuinPlanks1",
+      "module": "meijun_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_planks_02.SM_PROP_planks_02",
+      "bottom_xyz_m": [
+        330.8,
+        165.6,
+        -4.09
+      ],
+      "dimensions_m": [
+        2.13,
+        2.126380607093125,
+        0.2951427745337239
+      ],
+      "yaw": -30,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/construction/SM_PROP_planks_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_48",
+      "label": "FV__RuinPlanks2",
+      "module": "meijun_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_planks_01.SM_PROP_planks_01",
+      "bottom_xyz_m": [
+        336.7,
+        163.9,
+        -4.09
+      ],
+      "dimensions_m": [
+        2.26,
+        1.221590316459288,
+        0.436834507350677
+      ],
+      "yaw": 80,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/construction/SM_PROP_planks_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_49",
+      "label": "FV__RuinPlanks3",
+      "module": "meijun_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_planks_02.SM_PROP_planks_02",
+      "bottom_xyz_m": [
+        337.2,
+        168.2,
+        -4.351172036275201
+      ],
+      "dimensions_m": [
+        2.39,
+        2.385938803264117,
+        0.3311695920824414
+      ],
+      "yaw": 12,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/construction/SM_PROP_planks_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_50",
+      "label": "FV__RuinShelf",
+      "module": "meijun_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_market_shelf_02.SM_PROP_market_shelf_02",
+      "bottom_xyz_m": [
+        332.6,
+        163.8,
+        -4.09975
+      ],
+      "dimensions_m": [
+        2.6,
+        0.9910353049965736,
+        0.7110782212337549
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/furniture/SM_PROP_market_shelf_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_05.MI_wood_planks_05"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_51",
+      "label": "FV__RuinOpenBox",
+      "module": "meijun_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_box_02.SM_PROP_box_02",
+      "bottom_xyz_m": [
+        336.9,
+        166.5,
+        -4.09975
+      ],
+      "dimensions_m": [
+        1.05,
+        1.0662895350473651,
+        0.9800156914035211
+      ],
+      "yaw": 28,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_box_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_01.MI_wood_planks_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_52",
+      "label": "FV__RuinLid",
+      "module": "meijun_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_box_lid_02.SM_PROP_box_lid_02",
+      "bottom_xyz_m": [
+        336.4,
+        165.65,
+        -4.09975
+      ],
+      "dimensions_m": [
+        1.05,
+        0.8029545710421183,
+        0.9105915852794325
+      ],
+      "yaw": 28,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_box_lid_02",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_01.MI_wood_planks_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_53",
+      "label": "FV__RuinBarrel",
+      "module": "meijun_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_barrel_01.SM_PROP_barrel_01",
+      "bottom_xyz_m": [
+        330.0,
+        167.8,
+        -4.09975
+      ],
+      "dimensions_m": [
+        0.824630485534668,
+        0.8487393112182618,
+        0.9821739807128907
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_barrel_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_54",
+      "label": "FV__RuinWheel",
+      "module": "meijun_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_cart_wheel_small.SM_PROP_cart_wheel_small",
+      "bottom_xyz_m": [
+        329.25,
+        166.7,
+        -4.09975
+      ],
+      "dimensions_m": [
+        0.17468512344360354,
+        1.181196990966797,
+        1.1811899871826173
+      ],
+      "yaw": 10,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/vehicles/SM_PROP_cart_wheel_small",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_07.MI_wood_07",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_55",
+      "label": "FV__RuinBasket",
+      "module": "meijun_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_basket_01.SM_PROP_basket_01",
+      "bottom_xyz_m": [
+        334.0,
+        163.7,
+        -4.09975
+      ],
+      "dimensions_m": [
+        0.8,
+        0.7825603961675173,
+        0.34640453804591037
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_basket_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_rope.MI_rope"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_56",
+      "label": "FV__RuinCart",
+      "module": "meijun_03",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_cart_03.SM_PROP_cart_03",
+      "bottom_xyz_m": [
+        340.8,
+        168.2,
+        -4.3674949046784
+      ],
+      "dimensions_m": [
+        2.2759385528564455,
+        3.724246154785156,
+        1.9495207061767577
+      ],
+      "yaw": 115,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/vehicles/SM_PROP_cart_03",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_07.MI_wood_07",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02",
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_detail_01.MI_wood_detail_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_hay.MI_PROP_hay"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_57",
+      "label": "FV__BridgeWoodDeck0",
+      "module": "meijun_06",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_walkway_wood.SM_PROP_walkway_wood",
+      "bottom_xyz_m": [
+        393.3,
+        164.32,
+        -3.89109
+      ],
+      "dimensions_m": [
+        4.2,
+        5.7,
+        0.31
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/construction/SM_PROP_walkway_wood",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_07.MI_wood_planks_07"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_58",
+      "label": "FV__BridgeWoodDeck1",
+      "module": "meijun_06",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_walkway_wood.SM_PROP_walkway_wood",
+      "bottom_xyz_m": [
+        393.3,
+        170,
+        -3.89109
+      ],
+      "dimensions_m": [
+        4.2,
+        5.7,
+        0.31
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/construction/SM_PROP_walkway_wood",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_07.MI_wood_planks_07"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_59",
+      "label": "FV__BridgeWoodDeck2",
+      "module": "meijun_06",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_walkway_wood.SM_PROP_walkway_wood",
+      "bottom_xyz_m": [
+        393.3,
+        175.68,
+        -3.89109
+      ],
+      "dimensions_m": [
+        4.2,
+        5.7,
+        0.31
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/construction/SM_PROP_walkway_wood",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_07.MI_wood_planks_07"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_60",
+      "label": "FV__BridgeSupplyBarrel0",
+      "module": "meijun_06",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_barrel_01.SM_PROP_barrel_01",
+      "bottom_xyz_m": [
+        390.1,
+        179.7,
+        -4.0442135687168
+      ],
+      "dimensions_m": [
+        0.7871472816467285,
+        0.8101602516174317,
+        0.9375297088623047
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_barrel_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_61",
+      "label": "FV__BridgeSupplyBag0",
+      "module": "meijun_06",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_05.SM_PROP_sack_05",
+      "bottom_xyz_m": [
+        390.85,
+        179.7,
+        -4.0445571676928
+      ],
+      "dimensions_m": [
+        0.5301313018798828,
+        0.8134810066223144,
+        0.7855458068847656
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_05",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_62",
+      "label": "FV__BridgeSupplyBarrel1",
+      "module": "meijun_06",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_barrel_01.SM_PROP_barrel_01",
+      "bottom_xyz_m": [
+        396.5,
+        160.1,
+        -3.8007639013119996
+      ],
+      "dimensions_m": [
+        0.7871472816467285,
+        0.8101602516174317,
+        0.9375297088623047
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/container/SM_PROP_barrel_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_wood_planks_03.MI_wood_planks_03",
+        "/Game/Fantastic_Village_Pack/materials/MI_metal_02.MI_metal_02"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_63",
+      "label": "FV__BridgeSupplyBag1",
+      "module": "meijun_06",
+      "source_ref": "",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_05.SM_PROP_sack_05",
+      "bottom_xyz_m": [
+        397.25,
+        160.1,
+        -3.803760196287999
+      ],
+      "dimensions_m": [
+        0.5301313018798828,
+        0.8134810066223144,
+        0.7855458068847656
+      ],
+      "yaw": 0,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_05",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01"
+      ]
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_64",
+      "label": "FV__CartLoad0",
+      "module": "jidi_04",
+      "source_ref": "buildings/storage_repair",
+      "mesh": "/Game/Maps/DoughWorldDepth/Village/Meshes/SM_PROP_sack_01.SM_PROP_sack_01",
+      "bottom_xyz_m": [
+        228.5,
+        262.5,
+        7.0255469131469725
+      ],
+      "dimensions_m": [
+        0.7999999999999999,
+        0.7163283727738473,
+        0.5629782089708292
+      ],
+      "yaw": 10,
+      "material": null,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "fade": false,
+      "art_pass": "FantasticVillage_20260913",
+      "source_asset": "/Game/Fantastic_Village_Pack/meshes/props/food/SM_PROP_sack_01",
+      "materials": [
+        "/Game/Fantastic_Village_Pack/materials/MI_cloth_01.MI_cloth_01",
+        "/Game/Fantastic_Village_Pack/materials/MI_PROP_food.MI_PROP_food"
+      ]
+    }
+  ],
+  "errors": [],
+  "saved": true,
+  "support_refinements": [
+    {
+      "label": "FV__RackFlour0",
+      "previous_bottom_z_m": 8.11,
+      "final_bottom_z_m": 8.384112575531006,
+      "scale_ratio": 1
+    },
+    {
+      "label": "FV__RackFlour1",
+      "previous_bottom_z_m": 8.11,
+      "final_bottom_z_m": 8.384466388702393,
+      "scale_ratio": 1
+    },
+    {
+      "label": "FV__RackFlour2",
+      "previous_bottom_z_m": 8.11,
+      "final_bottom_z_m": 8.381820776939392,
+      "scale_ratio": 1
+    },
+    {
+      "label": "FV__RackFlour3",
+      "previous_bottom_z_m": 8.11,
+      "final_bottom_z_m": 8.380375602722168,
+      "scale_ratio": 1
+    },
+    {
+      "label": "FV__RackBreadBasket0",
+      "previous_bottom_z_m": 7.49,
+      "final_bottom_z_m": 7.235239663600922,
+      "scale_ratio": 1
+    },
+    {
+      "label": "FV__StorageBox0",
+      "previous_bottom_z_m": 6.43,
+      "final_bottom_z_m": 6.39,
+      "scale_ratio": 0.9361702127659575
+    },
+    {
+      "label": "FV__RackBreadBasket1",
+      "previous_bottom_z_m": 7.49,
+      "final_bottom_z_m": 7.2332852869033815,
+      "scale_ratio": 1
+    },
+    {
+      "label": "FV__StorageBox1",
+      "previous_bottom_z_m": 6.43,
+      "final_bottom_z_m": 6.39,
+      "scale_ratio": 0.9361702127659575
+    },
+    {
+      "label": "FV__RackBreadBasket2",
+      "previous_bottom_z_m": 7.49,
+      "final_bottom_z_m": 7.232225635528565,
+      "scale_ratio": 1
+    },
+    {
+      "label": "FV__StorageBox2",
+      "previous_bottom_z_m": 6.43,
+      "final_bottom_z_m": 6.39,
+      "scale_ratio": 0.9361702127659575
+    },
+    {
+      "label": "FV__HutBread",
+      "previous_bottom_z_m": 7.354,
+      "final_bottom_z_m": 7.377961316585541,
+      "scale_ratio": 1
+    }
+  ],
+  "final_timestamp": "2026-09-13T23:48:35.814641"
+}

@@ -1,0 +1,16 @@
+{
+  "source_xy_changes": 0,
+  "heightmap": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\TerrainDesign\\DoughWorldDepth_505.r16",
+  "deep_floor_z_m": -60,
+  "deep_entry_additive_xyz_m": [
+    411.7,
+    109.3,
+    -60
+  ],
+  "portal_confirmed_destination_cm": [
+    16169.999999999998,
+    -14069.999999999998,
+    -5895.0
+  ],
+  "camera_change": false
+}

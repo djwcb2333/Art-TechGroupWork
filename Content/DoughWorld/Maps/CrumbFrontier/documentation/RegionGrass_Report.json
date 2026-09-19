@@ -1,0 +1,287 @@
+{
+  "level": "/Game/Maps/CrumbFrontier/Levels/L_CrumbFrontier_ArtPass.L_CrumbFrontier_ArtPass",
+  "usesRVT": false,
+  "nativeFoliage": true,
+  "regions": [
+    {
+      "region": "Zone_00_出生点",
+      "foliageType": "/Game/Maps/CrumbFrontier/Foliage/Types/FT_Grass_Spawn.FT_Grass_Spawn",
+      "count": 431,
+      "groundZ": 0.0,
+      "linearColor": [
+        0.24,
+        0.34,
+        0.23
+      ],
+      "spacingCm": 85,
+      "samples": [
+        [
+          -847.5796762280079,
+          -724.1981753308772,
+          6.605357292736237,
+          0.9633321068722646
+        ],
+        [
+          -845.2942354231285,
+          -552.88806707445,
+          6.922128479369495,
+          1.0095303428028806
+        ],
+        [
+          -852.2690535245664,
+          -494.011170612989,
+          6.102468700451806,
+          0.8899903169194143
+        ],
+        [
+          -845.3497086484757,
+          -403.9439117218995,
+          8.274410859133889,
+          1.2067485970549587
+        ],
+        [
+          -855.7331870124991,
+          -311.049454927468,
+          6.355023635990465,
+          0.9268231886886661
+        ]
+      ]
+    },
+    {
+      "region": "Zone_01_麦谷 Wheat Valley",
+      "foliageType": "/Game/Maps/CrumbFrontier/Foliage/Types/FT_Grass_WheatValley.FT_Grass_WheatValley",
+      "count": 10507,
+      "groundZ": 300.0,
+      "linearColor": [
+        0.55,
+        0.34,
+        0.055
+      ],
+      "spacingCm": 65,
+      "samples": [
+        [
+          -7054.825356135654,
+          -7706.566371905482,
+          307.503633908526,
+          1.0943376931702926
+        ],
+        [
+          -7060.923075055123,
+          -7646.61460834962,
+          307.52822606635704,
+          1.097924238782583
+        ],
+        [
+          -7074.22282856461,
+          -7505.911863160847,
+          307.1679091918035,
+          1.0453752549014295
+        ],
+        [
+          -7071.350232725281,
+          -7445.175718207036,
+          307.345011491378,
+          1.0712040365736342
+        ],
+        [
+          -7074.275196780175,
+          -7381.38794603951,
+          307.29477577808,
+          1.0638776084355523
+        ]
+      ]
+    },
+    {
+      "region": "Zone_02_大烤原 The Great Crumb Frontier",
+      "foliageType": "/Game/Maps/CrumbFrontier/Foliage/Types/FT_Grass_CrumbFrontier.FT_Grass_CrumbFrontier",
+      "count": 12505,
+      "groundZ": 450.0,
+      "linearColor": [
+        0.32,
+        0.12,
+        0.43
+      ],
+      "spacingCm": 65,
+      "samples": [
+        [
+          -11915.535843312668,
+          4288.1780216719135,
+          456.207645234001,
+          0.9053293708368878
+        ],
+        [
+          -11911.810842352797,
+          4360.185232330647,
+          457.95701111338417,
+          1.1604586914157813
+        ],
+        [
+          -11914.187703774078,
+          4429.9202221569185,
+          458.67286652522,
+          1.2648597815518225
+        ],
+        [
+          -11846.993940054672,
+          3401.5047575715635,
+          455.98440564623985,
+          0.8727718795635979
+        ],
+        [
+          -11855.625293668412,
+          3447.9203743122866,
+          455.99578649764476,
+          0.8744316746474966
+        ]
+      ]
+    },
+    {
+      "region": "Zone_03_麦村",
+      "foliageType": "/Game/Maps/CrumbFrontier/Foliage/Types/FT_Grass_WheatVillage.FT_Grass_WheatVillage",
+      "count": 360,
+      "groundZ": 330.0,
+      "linearColor": [
+        0.65,
+        0.43,
+        0.085
+      ],
+      "spacingCm": 80,
+      "samples": [
+        [
+          -2794.631721353545,
+          -7815.475682918156,
+          338.62059492042533,
+          1.2572364369022027
+        ],
+        [
+          -2803.3556078862143,
+          -7738.044636741661,
+          338.0007815277749,
+          1.1668422137061003
+        ],
+        [
+          -2804.0935843293155,
+          -7663.931283160034,
+          336.8895406041886,
+          1.0047776935417982
+        ],
+        [
+          -2802.274076068844,
+          -7595.101997802477,
+          337.4148252631223,
+          1.0813857489084178
+        ],
+        [
+          -2793.883650123739,
+          -7498.949974745658,
+          336.7004484504208,
+          0.9772002991921471
+        ]
+      ]
+    },
+    {
+      "region": "Zone_04_霉沼",
+      "foliageType": "/Game/Maps/CrumbFrontier/Foliage/Types/FT_Grass_MoldSwamp.FT_Grass_MoldSwamp",
+      "count": 5923,
+      "groundZ": 100.0,
+      "linearColor": [
+        0.075,
+        0.22,
+        0.105
+      ],
+      "spacingCm": 65,
+      "samples": [
+        [
+          -4125.170349470729,
+          8885.400846624247,
+          106.41514341559942,
+          0.9355911192318136
+        ],
+        [
+          -4130.96770767483,
+          9248.79588093627,
+          107.60875882724964,
+          1.1096692195284743
+        ],
+        [
+          -4062.5682601376366,
+          8492.649596191,
+          107.55992598369426,
+          1.1025473873577156
+        ],
+        [
+          -4068.0932041087663,
+          8544.621291309984,
+          107.54751128159583,
+          1.1007368144244662
+        ],
+        [
+          -4062.1170012041944,
+          8618.467810053347,
+          108.47960643024358,
+          1.2366745303659887
+        ]
+      ]
+    },
+    {
+      "region": "Zone_05_酵母镇",
+      "foliageType": "/Game/Maps/CrumbFrontier/Foliage/Types/FT_Grass_YeastTown.FT_Grass_YeastTown",
+      "count": 1021,
+      "groundZ": 460.0,
+      "linearColor": [
+        0.41,
+        0.21,
+        0.52
+      ],
+      "spacingCm": 80,
+      "samples": [
+        [
+          -8897.747978084572,
+          3990.02545616818,
+          468.1248739934033,
+          1.1849399866293338
+        ],
+        [
+          -8899.91382095962,
+          4287.522012928131,
+          466.6263116345698,
+          0.9663881096548614
+        ],
+        [
+          -8896.17274923866,
+          4530.561602521896,
+          467.8341509886129,
+          1.1425406443516803
+        ],
+        [
+          -8830.063156886667,
+          3497.7125596109304,
+          468.7084418798026,
+          1.2700481278840474
+        ],
+        [
+          -8828.133200737746,
+          3574.7053803977037,
+          468.67037274412166,
+          1.2644960859494392
+        ]
+      ]
+    }
+  ],
+  "assets": [
+    "/Game/Maps/CrumbFrontier/Foliage/Types/FT_Grass_Spawn.FT_Grass_Spawn",
+    "/Game/Maps/CrumbFrontier/Foliage/Materials/MI_Grass_Spawn.MI_Grass_Spawn",
+    "/Game/Maps/CrumbFrontier/Foliage/Types/FT_Grass_WheatValley.FT_Grass_WheatValley",
+    "/Game/Maps/CrumbFrontier/Foliage/Materials/MI_Grass_WheatValley.MI_Grass_WheatValley",
+    "/Game/Maps/CrumbFrontier/Foliage/Types/FT_Grass_CrumbFrontier.FT_Grass_CrumbFrontier",
+    "/Game/Maps/CrumbFrontier/Foliage/Materials/MI_Grass_CrumbFrontier.MI_Grass_CrumbFrontier",
+    "/Game/Maps/CrumbFrontier/Foliage/Types/FT_Grass_WheatVillage.FT_Grass_WheatVillage",
+    "/Game/Maps/CrumbFrontier/Foliage/Materials/MI_Grass_WheatVillage.MI_Grass_WheatVillage",
+    "/Game/Maps/CrumbFrontier/Foliage/Types/FT_Grass_MoldSwamp.FT_Grass_MoldSwamp",
+    "/Game/Maps/CrumbFrontier/Foliage/Materials/MI_Grass_MoldSwamp.MI_Grass_MoldSwamp",
+    "/Game/Maps/CrumbFrontier/Foliage/Types/FT_Grass_YeastTown.FT_Grass_YeastTown",
+    "/Game/Maps/CrumbFrontier/Foliage/Materials/MI_Grass_YeastTown.MI_Grass_YeastTown"
+  ],
+  "total": 30747,
+  "saved": true
+}

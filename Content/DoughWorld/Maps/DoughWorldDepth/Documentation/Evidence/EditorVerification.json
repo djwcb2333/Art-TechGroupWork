@@ -1,0 +1,1213 @@
+{
+  "map": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth",
+  "actors": 1111,
+  "source_positions": [
+    {
+      "source_ref": "buildings/base_hut",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.37115,
+      "actual_z_m": 6.37115,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_50"
+    },
+    {
+      "source_ref": "buildings/workbench",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.40625,
+      "actual_z_m": 6.40625,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_51"
+    },
+    {
+      "source_ref": "buildings/storage_repair",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.36625,
+      "actual_z_m": 6.36625,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_52"
+    },
+    {
+      "source_ref": "buildings/ruined_settlement",
+      "xy_error_m": 0.0,
+      "expected_z_m": -4.29975,
+      "actual_z_m": -4.29975,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_53"
+    },
+    {
+      "source_ref": "buildings/core_altar",
+      "xy_error_m": 1.4210854715202004e-14,
+      "expected_z_m": -60.0,
+      "actual_z_m": -60.0,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_54"
+    },
+    {
+      "source_ref": "monsters/dough_neutral_1",
+      "xy_error_m": 0.0,
+      "expected_z_m": 0.81649,
+      "actual_z_m": 0.81649,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_55"
+    },
+    {
+      "source_ref": "monsters/yeast_neutral_fajiao",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.84924,
+      "actual_z_m": 6.84924,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_56"
+    },
+    {
+      "source_ref": "monsters/yeast_neutral_jiaomu_1",
+      "xy_error_m": 1.4210854715202004e-14,
+      "expected_z_m": 9.09945,
+      "actual_z_m": 9.09945,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_57"
+    },
+    {
+      "source_ref": "monsters/yeast_neutral_jiaomu_2",
+      "xy_error_m": 2.0097183471152322e-14,
+      "expected_z_m": 8.99958,
+      "actual_z_m": 8.99958,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_58"
+    },
+    {
+      "source_ref": "monsters/spore_mold_1",
+      "xy_error_m": 0.0,
+      "expected_z_m": -4.4986,
+      "actual_z_m": -4.4986,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_59"
+    },
+    {
+      "source_ref": "monsters/thread_ambush_1",
+      "xy_error_m": 0.0,
+      "expected_z_m": -4.36861,
+      "actual_z_m": -4.36861,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_60"
+    },
+    {
+      "source_ref": "monsters/mold_guard_meijun",
+      "xy_error_m": 0.0,
+      "expected_z_m": -4.24166,
+      "actual_z_m": -4.24166,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_61"
+    },
+    {
+      "source_ref": "monsters/mold_guard_shendu_1",
+      "xy_error_m": 0.0,
+      "expected_z_m": -60.0,
+      "actual_z_m": -60.0,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_62"
+    },
+    {
+      "source_ref": "monsters/mold_guard_shendu_2",
+      "xy_error_m": 0.0,
+      "expected_z_m": -60.0,
+      "actual_z_m": -60.0,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_63"
+    },
+    {
+      "source_ref": "monsters/boss_core",
+      "xy_error_m": 1.4210854715202004e-14,
+      "expected_z_m": -60.0,
+      "actual_z_m": -60.0,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_64"
+    },
+    {
+      "source_ref": "monsters/small_mold_1",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.18374,
+      "actual_z_m": 6.18374,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_65"
+    },
+    {
+      "source_ref": "monsters/small_mold_2",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.37484,
+      "actual_z_m": 6.374840000000001,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_66"
+    },
+    {
+      "source_ref": "monsters/small_mold_3",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.4756,
+      "actual_z_m": 6.475599999999999,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_67"
+    },
+    {
+      "source_ref": "resources/flour_demo",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.33449,
+      "actual_z_m": 6.33449,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_68"
+    },
+    {
+      "source_ref": "resources/corrupt_spore_core",
+      "xy_error_m": 0.0,
+      "expected_z_m": -4.38252,
+      "actual_z_m": -4.38252,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_69"
+    },
+    {
+      "source_ref": "resources/special_yeast_strain",
+      "xy_error_m": 1.4210854715202004e-14,
+      "expected_z_m": 8.59895,
+      "actual_z_m": 8.59895,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_70"
+    },
+    {
+      "source_ref": "resources/active_spore",
+      "xy_error_m": 1.4210854715202004e-14,
+      "expected_z_m": -60.0,
+      "actual_z_m": -60.0,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_71"
+    },
+    {
+      "source_ref": "flora/gluten_whiskers_1",
+      "xy_error_m": 0.0,
+      "expected_z_m": 2.01172,
+      "actual_z_m": 2.01172,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_72"
+    },
+    {
+      "source_ref": "flora/gluten_whiskers_2",
+      "xy_error_m": 0.0,
+      "expected_z_m": 1.05899,
+      "actual_z_m": 1.05899,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_73"
+    },
+    {
+      "source_ref": "flora/yeast_buds_fajiao",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.78604,
+      "actual_z_m": 6.786040000000001,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_74"
+    },
+    {
+      "source_ref": "flora/mycelium_meijun_1",
+      "xy_error_m": 0.0,
+      "expected_z_m": -4.1577,
+      "actual_z_m": -4.1577,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_75"
+    },
+    {
+      "source_ref": "flora/mycelium_meijun_2",
+      "xy_error_m": 0.0,
+      "expected_z_m": -4.53924,
+      "actual_z_m": -4.53924,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_76"
+    },
+    {
+      "source_ref": "flora/mycelium_shendu",
+      "xy_error_m": 1.4210854715202004e-14,
+      "expected_z_m": -60.0,
+      "actual_z_m": -60.0,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_77"
+    },
+    {
+      "source_ref": "holes/hole_small_1",
+      "xy_error_m": 0.0,
+      "expected_z_m": 0.9792,
+      "actual_z_m": 0.9792000000000001,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_78"
+    },
+    {
+      "source_ref": "holes/hole_collapse_1",
+      "xy_error_m": 0.0,
+      "expected_z_m": -4.54734,
+      "actual_z_m": -4.54734,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_79"
+    },
+    {
+      "source_ref": "holes/hole_vent_1",
+      "xy_error_m": 0.0,
+      "expected_z_m": 1.03398,
+      "actual_z_m": 1.03398,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_80"
+    },
+    {
+      "source_ref": "holes/hole_abyss",
+      "xy_error_m": 0.0,
+      "expected_z_m": -3.91296,
+      "actual_z_m": -3.91296,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_81"
+    },
+    {
+      "source_ref": "mechanisms/mech_wall_1",
+      "xy_error_m": 0.0,
+      "expected_z_m": 0.15105,
+      "actual_z_m": 0.15105,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_82"
+    },
+    {
+      "source_ref": "mechanisms/mech_gap_sentry",
+      "xy_error_m": 1.4210854715202004e-14,
+      "expected_z_m": 7.99677,
+      "actual_z_m": 7.996770000000001,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_83"
+    },
+    {
+      "source_ref": "mechanisms/mech_plate_1",
+      "xy_error_m": 0.0,
+      "expected_z_m": -4.02692,
+      "actual_z_m": -4.02692,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_84"
+    },
+    {
+      "source_ref": "mechanisms/mech_hole_shortcut",
+      "xy_error_m": 0.0,
+      "expected_z_m": 0.9792,
+      "actual_z_m": 0.9792000000000001,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_85"
+    },
+    {
+      "source_ref": "art_reference_pins/ref_glow_mushroom",
+      "xy_error_m": 0.0,
+      "expected_z_m": 9.24374,
+      "actual_z_m": 9.24374,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_86"
+    },
+    {
+      "source_ref": "art_reference_pins/ref_leaf_texture",
+      "xy_error_m": 1.7763568394002505e-14,
+      "expected_z_m": 11.28213,
+      "actual_z_m": 11.28213,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_87"
+    },
+    {
+      "source_ref": "art_reference_pins/ref_cave_altar",
+      "xy_error_m": 1.4210854715202004e-14,
+      "expected_z_m": 1.29505,
+      "actual_z_m": 1.29505,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_88"
+    },
+    {
+      "source_ref": "art_reference_pins/ref_pit_crater",
+      "xy_error_m": 0.0,
+      "expected_z_m": -2.64922,
+      "actual_z_m": -2.64922,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_89"
+    },
+    {
+      "source_ref": "art_reference_pins/ref_porous_texture",
+      "xy_error_m": 0.0,
+      "expected_z_m": 0.27771,
+      "actual_z_m": 0.27771,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_90"
+    },
+    {
+      "source_ref": "demo_route/1",
+      "xy_error_m": 0.0,
+      "expected_z_m": 1.15255,
+      "actual_z_m": 1.15255,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_91"
+    },
+    {
+      "source_ref": "demo_route/2",
+      "xy_error_m": 0.0,
+      "expected_z_m": 1.64956,
+      "actual_z_m": 1.64956,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_92"
+    },
+    {
+      "source_ref": "demo_route/3",
+      "xy_error_m": 0.0,
+      "expected_z_m": 2.12398,
+      "actual_z_m": 2.12398,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_93"
+    },
+    {
+      "source_ref": "demo_route/4",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.18374,
+      "actual_z_m": 6.18374,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_94"
+    },
+    {
+      "source_ref": "demo_route/5",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.36625,
+      "actual_z_m": 6.36625,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_95"
+    },
+    {
+      "source_ref": "demo_route/6",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.37484,
+      "actual_z_m": 6.374840000000001,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_96"
+    },
+    {
+      "source_ref": "demo_route/7",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.38828,
+      "actual_z_m": 6.38828,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_97"
+    },
+    {
+      "source_ref": "demo_route/8",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.41947,
+      "actual_z_m": 6.4194700000000005,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_98"
+    },
+    {
+      "source_ref": "demo_route/9",
+      "xy_error_m": 0.0,
+      "expected_z_m": 6.4756,
+      "actual_z_m": 6.475599999999999,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.TargetPoint_99"
+    }
+  ],
+  "terrain": [
+    {
+      "name": "出生点",
+      "expected_z_m": 1.1525519363583998,
+      "actual_z_m": 1.1539936065673828,
+      "error_m": 0.0014416702089830036
+    },
+    {
+      "name": "面粉",
+      "expected_z_m": 1.6495618816000004,
+      "actual_z_m": 1.650559902191162,
+      "error_m": 0.000998020591161719
+    },
+    {
+      "name": "水源",
+      "expected_z_m": 2.1239834879999986,
+      "actual_z_m": 2.1190237998962402,
+      "error_m": 0.004959688103758353
+    },
+    {
+      "name": "战斗①",
+      "expected_z_m": 6.183742346188802,
+      "actual_z_m": 6.182205677032471,
+      "error_m": 0.0015366691563309942
+    },
+    {
+      "name": "障碍锁",
+      "expected_z_m": 6.36625,
+      "actual_z_m": 6.367170810699463,
+      "error_m": 0.0009208106994629262
+    },
+    {
+      "name": "战斗②",
+      "expected_z_m": 6.374833875839999,
+      "actual_z_m": 6.37498140335083,
+      "error_m": 0.0001475275108306917
+    },
+    {
+      "name": "补给",
+      "expected_z_m": 6.388281610239998,
+      "actual_z_m": 6.384601593017578,
+      "error_m": 0.0036800172224200622
+    },
+    {
+      "name": "基地",
+      "expected_z_m": 6.4194704,
+      "actual_z_m": 6.421794891357422,
+      "error_m": 0.002324491357422076
+    },
+    {
+      "name": "终点",
+      "expected_z_m": 6.4756032941568,
+      "actual_z_m": 6.476562023162842,
+      "error_m": 0.0009587290060419917
+    },
+    {
+      "name": "jidi",
+      "expected_z_m": 6.422457502848,
+      "actual_z_m": 6.421794891357422,
+      "error_m": 0.0006626114905783353
+    },
+    {
+      "name": "qianceng",
+      "expected_z_m": 6.422457502848,
+      "actual_z_m": 6.421794891357422,
+      "error_m": 0.0006626114905783353
+    },
+    {
+      "name": "fajiao",
+      "expected_z_m": 6.612484369587222,
+      "actual_z_m": 6.688055992126465,
+      "error_m": 0.07557162253924243
+    },
+    {
+      "name": "meijun",
+      "expected_z_m": -4.1606121395199995,
+      "actual_z_m": -4.160885810852051,
+      "error_m": 0.0002736713320512507
+    },
+    {
+      "name": "jiaomu",
+      "expected_z_m": 9.04615694784,
+      "actual_z_m": 9.046876430511475,
+      "error_m": 0.0007194826714744806
+    },
+    {
+      "name": "shendu",
+      "expected_z_m": 7.222371265126398,
+      "actual_z_m": 7.220742702484131,
+      "error_m": 0.001628562642267184
+    },
+    {
+      "name": "crest",
+      "expected_z_m": 15.74966803712,
+      "actual_z_m": 15.74981689453125,
+      "error_m": 0.0001488574112507024
+    },
+    {
+      "name": "pool",
+      "expected_z_m": 0.3983096960000001,
+      "actual_z_m": 0.3983759880065918,
+      "error_m": 6.629200659169499e-05
+    }
+  ],
+  "holes": [
+    {
+      "id": "hole_small_1",
+      "landscape_has_no_center_collision": true,
+      "all_geometry_hit": {
+        "z_m": -2.234787940979004,
+        "position_cm": [
+          -7669.999999999999,
+          5000.0,
+          -223.4787940979004
+        ],
+        "tuple": "(True, False, 0.5093116164207458, 12223.4794921875, <Struct 'Vector' (0x000001302B748330) {x: -7670.000000, y: 5000.000000, z: -223.478794}>, <Struct 'Vector' (0x000001302B7488D0) {x: -7670.000000, y: 5000.000000, z: -223.479635}>, <Struct 'Vector' (0x000001302B74A360) {x: 0.000000, y: 0.000000, z: 1.000000}>, <Struct 'Vector' (0x000001301FAC0100) {x: 0.000000, y: 0.000000, z: 1.000000}>, None, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_590' (0x000001339551F500) Class 'StaticMeshActor'>, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_590.StaticMeshComponent0' (0x00000133665D1E00) Class 'StaticMeshComponent'>, Name(\"None\"), Name(\"None\"), -1, 0, 1065, <Struct 'Vector' (0x000001301FAC00B0) {x: -7670.000000, y: 5000.000000, z: 12000.000000}>, <Struct 'Vector' (0x000001301FAC01A0) {x: -7670.000000, y: 5000.000000, z: -12000.000000}>)"
+      }
+    },
+    {
+      "id": "hole_collapse_1",
+      "landscape_has_no_center_collision": true,
+      "all_geometry_hit": {
+        "z_m": -10.5613374710083,
+        "position_cm": [
+          10000.0,
+          -3669.999999999999,
+          -1056.13374710083
+        ],
+        "tuple": "(True, False, 0.5440055727958679, 13056.1337890625, <Struct 'Vector' (0x000001302B748330) {x: 10000.000000, y: -3670.000000, z: -1056.133747}>, <Struct 'Vector' (0x000001302B7488D0) {x: 10000.000000, y: -3670.000000, z: -1056.133787}>, <Struct 'Vector' (0x000001302B74A360) {x: 0.000000, y: 0.000000, z: 1.000000}>, <Struct 'Vector' (0x000001301FAC0100) {x: 0.000000, y: 0.000000, z: 1.000000}>, None, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_593' (0x00000133665E0500) Class 'StaticMeshActor'>, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_593.StaticMeshComponent0' (0x00000133665D3C00) Class 'StaticMeshComponent'>, Name(\"None\"), Name(\"None\"), -1, 0, 1150, <Struct 'Vector' (0x000001301FAC00B0) {x: 10000.000000, y: -3670.000000, z: 12000.000000}>, <Struct 'Vector' (0x000001301FAC01A0) {x: 10000.000000, y: -3670.000000, z: -12000.000000}>)"
+      }
+    },
+    {
+      "id": "hole_vent_1",
+      "landscape_has_no_center_collision": true,
+      "all_geometry_hit": {
+        "z_m": -2.980012893676758,
+        "position_cm": [
+          -7000.0,
+          -9330.000000000002,
+          -298.0012893676758
+        ],
+        "tuple": "(True, False, 0.5124167203903198, 12298.001953125, <Struct 'Vector' (0x000001302B748330) {x: -7000.000000, y: -9330.000000, z: -298.001289}>, <Struct 'Vector' (0x000001302B7488D0) {x: -7000.000000, y: -9330.000000, z: -298.001614}>, <Struct 'Vector' (0x000001302B74A360) {x: 0.000000, y: 0.000000, z: 1.000000}>, <Struct 'Vector' (0x000001301FAC0100) {x: 0.000000, y: 0.000000, z: 1.000000}>, None, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_596' (0x00000133665E1400) Class 'StaticMeshActor'>, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_596.StaticMeshComponent0' (0x00000133665D5A00) Class 'StaticMeshComponent'>, Name(\"None\"), Name(\"None\"), -1, 0, 1150, <Struct 'Vector' (0x000001301FAC00B0) {x: -7000.000000, y: -9330.000000, z: 12000.000000}>, <Struct 'Vector' (0x000001301FAC01A0) {x: -7000.000000, y: -9330.000000, z: -12000.000000}>)"
+      }
+    },
+    {
+      "id": "hole_abyss",
+      "landscape_has_no_center_collision": true,
+      "all_geometry_hit": {
+        "z_m": -13.926973342895508,
+        "position_cm": [
+          16000.0,
+          -11000.0,
+          -1392.6973342895508
+        ],
+        "tuple": "(True, False, 0.558029055595398, 13392.697265625, <Struct 'Vector' (0x000001302B748330) {x: 16000.000000, y: -11000.000000, z: -1392.697334}>, <Struct 'Vector' (0x000001302B7488D0) {x: 16000.000000, y: -11000.000000, z: -1392.696416}>, <Struct 'Vector' (0x000001302B74A360) {x: 0.000000, y: 0.000000, z: 1.000000}>, <Struct 'Vector' (0x000001301FAC0100) {x: 0.000000, y: 0.000000, z: 1.000000}>, None, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_604' (0x00000133665E3C00) Class 'StaticMeshActor'>, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_604.StaticMeshComponent0' (0x00000133665DAA00) Class 'StaticMeshComponent'>, Name(\"None\"), Name(\"None\"), -1, 0, 1150, <Struct 'Vector' (0x000001301FAC00B0) {x: 16000.000000, y: -11000.000000, z: 12000.000000}>, <Struct 'Vector' (0x000001301FAC01A0) {x: 16000.000000, y: -11000.000000, z: -12000.000000}>)"
+      }
+    }
+  ],
+  "navigation": [
+    {
+      "name": "Demo_1_2",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        -1669.9999999999989,
+        12330.000000000002,
+        130.0
+      ],
+      "projected_end_cm": [
+        -4000.0,
+        9330.000000000002,
+        180.80971659919032
+      ],
+      "points": [
+        [
+          -1669.9999999999989,
+          12330.000000000002,
+          130.0
+        ],
+        [
+          -2964.0,
+          10868.0,
+          150.0
+        ],
+        [
+          -4000.0,
+          9330.000000000002,
+          180.80971659919032
+        ]
+      ]
+    },
+    {
+      "name": "Demo_2_3",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        -4000.0,
+        9330.000000000002,
+        180.80971659919032
+      ],
+      "projected_end_cm": [
+        -6000.0,
+        6000.0,
+        228.5425101214575
+      ],
+      "points": [
+        [
+          -4000.0,
+          9330.000000000002,
+          180.80971659919032
+        ],
+        [
+          -4940.0,
+          7904.0,
+          190.0
+        ],
+        [
+          -6000.0,
+          6000.0,
+          228.5425101214575
+        ]
+      ]
+    },
+    {
+      "name": "Demo_3_4",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        -6000.0,
+        6000.0,
+        228.5425101214575
+      ],
+      "projected_end_cm": [
+        -5261.3,
+        2692.8999999999996,
+        625.4473684210527
+      ],
+      "points": [
+        [
+          -6000.0,
+          6000.0,
+          228.5425101214575
+        ],
+        [
+          -5928.0,
+          4940.0,
+          330.0
+        ],
+        [
+          -5261.3,
+          2692.8999999999996,
+          625.4473684210526
+        ]
+      ]
+    },
+    {
+      "name": "Demo_4_5",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        -5261.3,
+        2692.8999999999996,
+        625.4473684210527
+      ],
+      "projected_end_cm": [
+        -3330.000000000001,
+        330.00000000000114,
+        640.0
+      ],
+      "points": [
+        [
+          -5261.3,
+          2692.8999999999996,
+          625.4473684210526
+        ],
+        [
+          -3330.000000000001,
+          330.00000000000114,
+          640.0
+        ]
+      ]
+    },
+    {
+      "name": "Demo_5_6",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        -3330.000000000001,
+        330.00000000000114,
+        640.0
+      ],
+      "projected_end_cm": [
+        -669.9999999999989,
+        -1083.0,
+        640.0
+      ],
+      "points": [
+        [
+          -3330.000000000001,
+          330.00000000000114,
+          640.0
+        ],
+        [
+          -2526.1803921568626,
+          -0.0,
+          640.0
+        ],
+        [
+          -741.0,
+          -1083.0,
+          640.0
+        ],
+        [
+          -669.9999999999989,
+          -1083.0,
+          640.0
+        ]
+      ]
+    },
+    {
+      "name": "Demo_6_7",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        -669.9999999999989,
+        -1083.0,
+        640.0
+      ],
+      "projected_end_cm": [
+        2000.0,
+        -1669.9999999999989,
+        638.7689151835234
+      ],
+      "points": [
+        [
+          -669.9999999999989,
+          -1083.0,
+          640.0
+        ],
+        [
+          2000.0,
+          -1669.9999999999989,
+          638.7689151835234
+        ]
+      ]
+    },
+    {
+      "name": "Demo_7_8",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        2000.0,
+        -1669.9999999999989,
+        638.7689151835234
+      ],
+      "projected_end_cm": [
+        1000.0,
+        -0.0,
+        650.0
+      ],
+      "points": [
+        [
+          2000.0,
+          -1669.9999999999989,
+          638.7689151835234
+        ],
+        [
+          1000.0,
+          -0.0,
+          650.0
+        ]
+      ]
+    },
+    {
+      "name": "Demo_8_9",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        1000.0,
+        -0.0,
+        650.0
+      ],
+      "projected_end_cm": [
+        1669.9999999999989,
+        3249.0,
+        650.0
+      ],
+      "points": [
+        [
+          1000.0,
+          -0.0,
+          650.0
+        ],
+        [
+          1669.9999999999989,
+          3249.0,
+          650.0
+        ]
+      ]
+    },
+    {
+      "name": "BaseToHut",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        -2830.000000000001,
+        -50.0,
+        641.7543859649123
+      ],
+      "projected_end_cm": [
+        -2830.000000000001,
+        -669.9999999999989,
+        660.0
+      ],
+      "points": [
+        [
+          -2830.000000000001,
+          -50.0,
+          641.7543859649123
+        ],
+        [
+          -2830.000000000001,
+          -669.9999999999989,
+          660.0
+        ]
+      ]
+    },
+    {
+      "name": "BaseToWorkbench",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        -2830.000000000001,
+        -50.0,
+        641.7543859649123
+      ],
+      "projected_end_cm": [
+        -2830.000000000001,
+        1900.0,
+        650.0
+      ],
+      "points": [
+        [
+          -2830.000000000001,
+          -50.0,
+          641.7543859649123
+        ],
+        [
+          -2830.000000000001,
+          1900.0,
+          650.0
+        ]
+      ]
+    },
+    {
+      "name": "BaseToStorage",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        -2830.000000000001,
+        -50.0,
+        641.7543859649123
+      ],
+      "projected_end_cm": [
+        -5330.000000000001,
+        1019.9999999999989,
+        640.0
+      ],
+      "points": [
+        [
+          -2830.000000000001,
+          -50.0,
+          641.7543859649123
+        ],
+        [
+          -2964.0,
+          -0.0,
+          640.0
+        ],
+        [
+          -5330.000000000001,
+          1019.9999999999989,
+          640.0
+        ]
+      ]
+    },
+    {
+      "name": "BaseToWall",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        -3330.000000000001,
+        330.00000000000114,
+        640.0
+      ],
+      "projected_end_cm": [
+        -10100.0,
+        -1669.9999999999989,
+        51.2658569500675
+      ],
+      "points": [
+        [
+          -3330.000000000001,
+          330.00000000000114,
+          640.0
+        ],
+        [
+          -5928.0,
+          -0.0,
+          640.0
+        ],
+        [
+          -9633.0,
+          -1748.0,
+          90.0
+        ],
+        [
+          -9747.0,
+          -1748.0,
+          80.0
+        ],
+        [
+          -10100.0,
+          -1669.9999999999989,
+          51.2658569500675
+        ]
+      ]
+    },
+    {
+      "name": "MoldDetour",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        11000.0,
+        -2907.0,
+        -415.6390977443609
+      ],
+      "projected_end_cm": [
+        16820.0,
+        -10400.0,
+        -457.1253088318074
+      ],
+      "points": [
+        [
+          11000.0,
+          -2907.0,
+          -415.6390977443609
+        ],
+        [
+          11058.0,
+          -2907.0,
+          -420.0
+        ],
+        [
+          11115.0,
+          -2964.0,
+          -420.0
+        ],
+        [
+          14820.0,
+          -6916.0,
+          -400.0
+        ],
+        [
+          16820.0,
+          -10400.0,
+          -457.1253088318074
+        ]
+      ]
+    },
+    {
+      "name": "BridgeCross",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        14330.000000000002,
+        -6900.0,
+        -372.59259259259255
+      ],
+      "projected_end_cm": [
+        14330.000000000002,
+        -9100.0,
+        -370.0
+      ],
+      "points": [
+        [
+          14330.000000000002,
+          -6900.0,
+          -372.59259259259255
+        ],
+        [
+          14330.000000000002,
+          -9100.0,
+          -370.0
+        ]
+      ]
+    },
+    {
+      "name": "DeepEntryToAltar",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        16169.999999999998,
+        -14069.999999999998,
+        -5990.0
+      ],
+      "projected_end_cm": [
+        18670.0,
+        -15900.0,
+        -5990.0
+      ],
+      "points": [
+        [
+          16169.999999999998,
+          -14069.999999999998,
+          -5990.0
+        ],
+        [
+          18670.0,
+          -15900.0,
+          -5990.0
+        ]
+      ]
+    },
+    {
+      "name": "DeepGuards",
+      "complete": true,
+      "expected_complete": true,
+      "projected_start_cm": [
+        15330.000000000002,
+        -18600.0,
+        -5990.0
+      ],
+      "projected_end_cm": [
+        21670.0,
+        -18600.0,
+        -5990.0
+      ],
+      "points": [
+        [
+          15330.000000000002,
+          -18600.0,
+          -5990.0
+        ],
+        [
+          21670.0,
+          -18600.0,
+          -5990.0
+        ]
+      ]
+    },
+    {
+      "name": "ClosedBreakwall",
+      "complete": false,
+      "expected_complete": false,
+      "projected_start_cm": [
+        -10100.0,
+        -1669.9999999999989,
+        51.2658569500675
+      ],
+      "projected_end_cm": [
+        -11300.0,
+        -1690.0000000000005,
+        57.527530523009965
+      ],
+      "points": [
+        [
+          -10100.0,
+          -1669.9999999999989,
+          51.2658569500675
+        ],
+        [
+          -10564.0,
+          -1690.0000000000005,
+          20.0
+        ]
+      ]
+    },
+    {
+      "name": "FermentEastBypass",
+      "complete": false,
+      "expected_complete": false,
+      "projected_start_cm": [
+        -10500.0,
+        -5000.0,
+        46.768045818110004
+      ],
+      "projected_end_cm": [
+        -12700.0,
+        -5000.0,
+        694.56654760076
+      ],
+      "points": [
+        [
+          -10500.0,
+          -5000.0,
+          46.768045818110004
+        ],
+        [
+          -11420.493150684932,
+          -5134.684931506849,
+          50.7858687815429
+        ]
+      ]
+    },
+    {
+      "name": "FermentWestBypass",
+      "complete": false,
+      "expected_complete": false,
+      "projected_start_cm": [
+        -22300.0,
+        -4800.0,
+        455.08863975655873
+      ],
+      "projected_end_cm": [
+        -18400.0,
+        -4800.0,
+        656.5740406467206
+      ],
+      "points": [
+        [
+          -22300.0,
+          -4800.0,
+          455.08863975655873
+        ],
+        [
+          -20672.0,
+          -3781.0,
+          500.0
+        ]
+      ]
+    },
+    {
+      "name": "YeastNorthBypass",
+      "complete": false,
+      "expected_complete": false,
+      "projected_start_cm": [
+        -18000.0,
+        -23500.0,
+        431.7004048582996
+      ],
+      "projected_end_cm": [
+        -18000.0,
+        -20500.0,
+        923.6114363620964
+      ],
+      "points": [
+        [
+          -18000.0,
+          -23500.0,
+          431.7004048582996
+        ],
+        [
+          -17157.0,
+          -22344.0,
+          690.0
+        ]
+      ]
+    }
+  ],
+  "warnings": [],
+  "bridge_underpass_center_landscape": null,
+  "underground_floor_samples": [
+    {
+      "xy": [
+        396.7,
+        48.3
+      ],
+      "hit": {
+        "z_m": -60.00000022351742,
+        "position_cm": [
+          14669.999999999998,
+          -20170.0,
+          -6000.000022351742
+        ],
+        "tuple": "(True, False, 0.1428571492433548, 500.0, <Struct 'Vector' (0x000001302B748330) {x: 14670.000000, y: -20170.000000, z: -6000.000022}>, <Struct 'Vector' (0x000001302B7488D0) {x: 14670.000000, y: -20170.000000, z: -6000.000000}>, <Struct 'Vector' (0x000001302B74A360) {x: 0.000000, y: 0.000000, z: 1.000000}>, <Struct 'Vector' (0x000001301FAC0100) {x: 0.000000, y: 0.000000, z: 1.000000}>, None, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_643' (0x0000013395590000) Class 'StaticMeshActor'>, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_643.StaticMeshComponent0' (0x0000013395583C00) Class 'StaticMeshComponent'>, Name(\"None\"), Name(\"None\"), -1, 1, 15, <Struct 'Vector' (0x000001301FAC00B0) {x: 14670.000000, y: -20170.000000, z: -5500.000000}>, <Struct 'Vector' (0x000001301FAC01A0) {x: 14670.000000, y: -20170.000000, z: -9000.000000}>)"
+      }
+    },
+    {
+      "xy": [
+        436.7,
+        103.3
+      ],
+      "hit": {
+        "z_m": -60.00000022351742,
+        "position_cm": [
+          18670.0,
+          -14669.999999999998,
+          -6000.000022351742
+        ],
+        "tuple": "(True, False, 0.1428571492433548, 500.0, <Struct 'Vector' (0x000001302B7488D0) {x: 18670.000000, y: -14670.000000, z: -6000.000022}>, <Struct 'Vector' (0x000001302B748330) {x: 18670.000000, y: -14669.999878, z: -6000.000000}>, <Struct 'Vector' (0x000001302B74A360) {x: 0.000000, y: 0.000000, z: 1.000000}>, <Struct 'Vector' (0x000001301FAC0100) {x: 0.000000, y: 0.000000, z: 1.000000}>, None, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_643' (0x0000013395590000) Class 'StaticMeshActor'>, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_643.StaticMeshComponent0' (0x0000013395583C00) Class 'StaticMeshComponent'>, Name(\"None\"), Name(\"None\"), -1, 1, 11, <Struct 'Vector' (0x000001301FAC00B0) {x: 18670.000000, y: -14670.000000, z: -5500.000000}>, <Struct 'Vector' (0x000001301FAC01A0) {x: 18670.000000, y: -14670.000000, z: -9000.000000}>)"
+      }
+    },
+    {
+      "xy": [
+        466.7,
+        60
+      ],
+      "hit": {
+        "z_m": -57.49281458556652,
+        "position_cm": [
+          21670.0,
+          -19000.0,
+          -5749.281458556652
+        ],
+        "tuple": "(True, False, 0.07122327387332916, 249.28146362304688, <Struct 'Vector' (0x000001302B748330) {x: 21670.000000, y: -19000.000000, z: -5749.281459}>, <Struct 'Vector' (0x000001302B7488D0) {x: 21670.000000, y: -19000.000000, z: -5749.281471}>, <Struct 'Vector' (0x000001302B74A360) {x: 0.211508, y: 0.308091, z: 0.927548}>, <Struct 'Vector' (0x000001301FAC0100) {x: 0.211508, y: 0.308091, z: 0.927548}>, None, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_903' (0x0000013395701900) Class 'StaticMeshActor'>, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_903.StaticMeshComponent0' (0x00000133956EA000) Class 'StaticMeshComponent'>, Name(\"None\"), Name(\"None\"), -1, 0, 242, <Struct 'Vector' (0x000001301FAC00B0) {x: 21670.000000, y: -19000.000000, z: -5500.000000}>, <Struct 'Vector' (0x000001301FAC01A0) {x: 21670.000000, y: -19000.000000, z: -9000.000000}>)"
+      }
+    },
+    {
+      "xy": [
+        411.7,
+        109.3
+      ],
+      "hit": {
+        "z_m": -59.94002357125282,
+        "position_cm": [
+          16169.999999999998,
+          -14069.999999999998,
+          -5994.002357125282
+        ],
+        "tuple": "(True, False, 0.1411435306072235, 494.0023498535156, <Struct 'Vector' (0x000001302B7488D0) {x: 16170.000000, y: -14070.000000, z: -5994.002357}>, <Struct 'Vector' (0x000001302B748330) {x: 16170.000000, y: -14070.000000, z: -5994.002336}>, <Struct 'Vector' (0x000001302B74A360) {x: 0.000220, y: -0.000396, z: 1.000000}>, <Struct 'Vector' (0x000001301FAC0100) {x: 0.000220, y: -0.000396, z: 1.000000}>, None, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_704' (0x0000013395643200) Class 'StaticMeshActor'>, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_704.StaticMeshComponent0' (0x000001339563AA00) Class 'StaticMeshComponent'>, Name(\"None\"), Name(\"None\"), -1, 0, 505, <Struct 'Vector' (0x000001301FAC00B0) {x: 16170.000000, y: -14070.000000, z: -5500.000000}>, <Struct 'Vector' (0x000001301FAC01A0) {x: 16170.000000, y: -14070.000000, z: -9000.000000}>)"
+      }
+    },
+    {
+      "xy": [
+        430,
+        130
+      ],
+      "hit": {
+        "z_m": -63.000000044703484,
+        "position_cm": [
+          18000.0,
+          -12000.0,
+          -6300.000004470348
+        ],
+        "tuple": "(True, False, 0.22857142984867096, 800.0, <Struct 'Vector' (0x000001302B748330) {x: 18000.000000, y: -12000.000000, z: -6300.000004}>, <Struct 'Vector' (0x000001302B7488D0) {x: 18000.000000, y: -12000.000000, z: -6300.000000}>, <Struct 'Vector' (0x000001302B74A360) {x: 0.000000, y: 0.000000, z: 1.000000}>, <Struct 'Vector' (0x000001301FAC0100) {x: 0.000000, y: 0.000000, z: 1.000000}>, None, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_681' (0x000001339559BE00) Class 'StaticMeshActor'>, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_681.StaticMeshComponent0' (0x000001339562BE00) Class 'StaticMeshComponent'>, Name(\"None\"), Name(\"None\"), -1, 1, 14, <Struct 'Vector' (0x000001301FAC00B0) {x: 18000.000000, y: -12000.000000, z: -5500.000000}>, <Struct 'Vector' (0x000001301FAC01A0) {x: 18000.000000, y: -12000.000000, z: -9000.000000}>)"
+      }
+    },
+    {
+      "xy": [
+        430,
+        34
+      ],
+      "hit": {
+        "z_m": -63.000000044703484,
+        "position_cm": [
+          18000.0,
+          -21600.0,
+          -6300.000004470348
+        ],
+        "tuple": "(True, False, 0.22857142984867096, 800.0, <Struct 'Vector' (0x000001302B7488D0) {x: 18000.000000, y: -21600.000000, z: -6300.000004}>, <Struct 'Vector' (0x000001302B748330) {x: 18000.000000, y: -21600.000000, z: -6300.000000}>, <Struct 'Vector' (0x000001302B74A360) {x: 0.000000, y: 0.000000, z: 1.000000}>, <Struct 'Vector' (0x000001301FAC0100) {x: 0.000000, y: 0.000000, z: 1.000000}>, None, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_652' (0x0000013395592D00) Class 'StaticMeshActor'>, <Object '/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_652.StaticMeshComponent0' (0x0000013395589600) Class 'StaticMeshComponent'>, Name(\"None\"), Name(\"None\"), -1, 1, 15, <Struct 'Vector' (0x000001301FAC00B0) {x: 18000.000000, y: -21600.000000, z: -5500.000000}>, <Struct 'Vector' (0x000001301FAC01A0) {x: 18000.000000, y: -21600.000000, z: -9000.000000}>)"
+      }
+    }
+  ],
+  "nav_building": false,
+  "manifest_missing_actors": [],
+  "source_original_sha256": "d79b1bd9165e846604ede8fdab70a581d0a1cfe87cb90ed8ce23ef7170809fd4"
+}

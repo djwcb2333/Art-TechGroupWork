@@ -1,0 +1,318 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "Camera baseline exists while paused",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Ambient camera sway advances while paused",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Camera baseline never accumulates motion",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Disabling effects restores camera exactly",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Disabled offset is zero",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Page change triggers camera nudge",
+      "passed": true,
+      "detail": "<Struct 'Vector' (0x000001D250D0F580) {x: 0.000000, y: 0.846577, z: 0.376257}>"
+    },
+    {
+      "name": "Nudge expires and camera returns to baseline",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "<DWMenuPage.SAVE_SLOTS: 2> starts transparent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "<DWMenuPage.SAVE_SLOTS: 2> animates",
+      "passed": true,
+      "detail": [
+        0.789920449256897,
+        1.0031936168670654,
+        1.0031936168670654,
+        0.0,
+        2.0752038955688477,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "<DWMenuPage.SAVE_SLOTS: 2> restores authored transform and opacity",
+      "passed": true,
+      "detail": [
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "<DWMenuPage.SAVE_SLOTS: 2> same page does not replay",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "<DWMenuPage.SETTINGS: 6> starts transparent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "<DWMenuPage.SETTINGS: 6> animates",
+      "passed": true,
+      "detail": [
+        0.6858769059181213,
+        0.994870126247406,
+        0.994870126247406,
+        0.0,
+        4.172721862792969,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "<DWMenuPage.SETTINGS: 6> restores authored transform and opacity",
+      "passed": true,
+      "detail": [
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "<DWMenuPage.SETTINGS: 6> same page does not replay",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "<DWMenuPage.INVENTORY: 3> starts transparent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "<DWMenuPage.INVENTORY: 3> animates",
+      "passed": true,
+      "detail": [
+        0.6821260452270508,
+        0.9945700764656067,
+        0.9945700764656067,
+        0.0,
+        4.24833869934082,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "<DWMenuPage.INVENTORY: 3> restores authored transform and opacity",
+      "passed": true,
+      "detail": [
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "<DWMenuPage.INVENTORY: 3> same page does not replay",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "<DWMenuPage.CRAFTING: 4> starts transparent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "<DWMenuPage.CRAFTING: 4> animates",
+      "passed": true,
+      "detail": [
+        0.8782506585121155,
+        1.010259985923767,
+        1.010259985923767,
+        0.0,
+        0.2944660186767578,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "<DWMenuPage.CRAFTING: 4> restores authored transform and opacity",
+      "passed": true,
+      "detail": [
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "<DWMenuPage.CRAFTING: 4> same page does not replay",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "<DWMenuPage.PAUSE: 5> starts transparent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "<DWMenuPage.PAUSE: 5> animates",
+      "passed": true,
+      "detail": [
+        0.8762509226799011,
+        1.01010000705719,
+        1.01010000705719,
+        0.0,
+        0.3347816467285156,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "<DWMenuPage.PAUSE: 5> restores authored transform and opacity",
+      "passed": true,
+      "detail": [
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "<DWMenuPage.PAUSE: 5> same page does not replay",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "<DWMenuPage.DEFEAT: 7> starts transparent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "<DWMenuPage.DEFEAT: 7> animates",
+      "passed": true,
+      "detail": [
+        0.789917528629303,
+        1.0031933784484863,
+        1.0031933784484863,
+        0.0,
+        2.075263023376465,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "<DWMenuPage.DEFEAT: 7> restores authored transform and opacity",
+      "passed": true,
+      "detail": [
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "<DWMenuPage.DEFEAT: 7> same page does not replay",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Interrupted settings restored",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Rapid page turns leave no residual scale",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "User save files untouched",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "fixture": "Temporarily disable background editor CPU throttling; restore without saving settings after test.",
+  "step_lateness_seconds": [
+    0.025,
+    0.025,
+    0.003,
+    0.0,
+    0.025,
+    0.003,
+    0.006,
+    0.0,
+    0.006,
+    0.006,
+    0.012,
+    0.003,
+    0.003,
+    0.025,
+    0.0,
+    0.0,
+    0.006,
+    0.012,
+    0.012,
+    0.003,
+    0.009,
+    0.009,
+    0.0,
+    0.006,
+    0.006,
+    0.012,
+    0.0,
+    0.025
+  ],
+  "save_hashes": {
+    "DoughWorld_Final_Slot_3.sav": "b25f3f159f0da8c156018981dfc929e117f163a824d7cc63eec4c7ba1a3628aa"
+  },
+  "passed": true
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "label": "BridgeContact_Side-1",
+    "old_height": 6.55,
+    "height": 6.228076511296001,
+    "top_m": -4.0130120475519995
+  },
+  {
+    "label": "BridgeContact_End-1",
+    "old_height": 6.1,
+    "height": 6.1,
+    "top_m": -3.8462350721023997
+  },
+  {
+    "label": "BridgeContact_Side1",
+    "old_height": 6.55,
+    "height": 6.212501484032,
+    "top_m": -4.028587074816
+  },
+  {
+    "label": "BridgeContact_End1",
+    "old_height": 6.1,
+    "height": 6.1,
+    "top_m": -4.0372262952576
+  }
+]

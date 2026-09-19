@@ -1,0 +1,22 @@
+# Bread of the Wild / GDATtest: rebuildable local data only.
+# Paths are anchored at the project root. Content and both Source modules stay tracked.
+/.vs/
+/.idea/
+/.vscode/
+/Binaries/
+/DerivedDataCache/
+/Intermediate/
+/Saved/
+/*.sln
+/*.slnx
+/*.suo
+/*.VC.db
+/*.VC.opendb
+
+# Plugin build intermediates are regenerated. Do not blanket-ignore plugin Binaries:
+# a future binary-only plugin may require those files.
+/Plugins/**/Intermediate/
+
+# Keep .vsconfig, Config, Source, Content, Build and project plugin dependencies.
+# Do not ignore *.obj: this project contains OBJ mesh source assets.
+# Do not ignore __ExternalActors__, __ExternalObjects__ or *_BuiltData.uasset.

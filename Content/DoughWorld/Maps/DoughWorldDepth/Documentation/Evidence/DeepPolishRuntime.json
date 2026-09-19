@@ -1,0 +1,118 @@
+{
+  "error": null,
+  "samples": [
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\06_Deep.png",
+      "player_xyz_m": [
+        411.700004665193,
+        109.2999915926562,
+        -58.9584999773821
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [
+        {
+          "actor": "DepthEnvironmentActor_51",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_52",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_54",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_60",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_62",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_63",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_70",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_71",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_72",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        }
+      ],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\15_DeepAltar.png",
+      "player_xyz_m": [
+        436.7,
+        91.0,
+        -59.01849999904633
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [
+        {
+          "actor": "DepthEnvironmentActor_68",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_70",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_78",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_79",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_88",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_89",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        }
+      ],
+      "interaction_focus": null
+    }
+  ]
+}

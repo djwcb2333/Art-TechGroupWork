@@ -1,0 +1,68 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "Existing slot reached original gameplay map",
+      "passed": true
+    },
+    {
+      "name": "Gameplay still has original character",
+      "passed": true
+    },
+    {
+      "name": "Original gameplay WBP used",
+      "passed": true
+    },
+    {
+      "name": "<DWMenuPage.INVENTORY: 3> starts entry",
+      "passed": true
+    },
+    {
+      "name": "<DWMenuPage.INVENTORY: 3> has intermediate movement",
+      "passed": true
+    },
+    {
+      "name": "<DWMenuPage.INVENTORY: 3> ends at original appearance",
+      "passed": true
+    },
+    {
+      "name": "<DWMenuPage.CRAFTING: 4> starts entry",
+      "passed": true
+    },
+    {
+      "name": "<DWMenuPage.CRAFTING: 4> has intermediate movement",
+      "passed": true
+    },
+    {
+      "name": "<DWMenuPage.CRAFTING: 4> ends at original appearance",
+      "passed": true
+    },
+    {
+      "name": "<DWMenuPage.PAUSE: 5> starts entry",
+      "passed": true
+    },
+    {
+      "name": "<DWMenuPage.PAUSE: 5> has intermediate movement",
+      "passed": true
+    },
+    {
+      "name": "<DWMenuPage.PAUSE: 5> ends at original appearance",
+      "passed": true
+    },
+    {
+      "name": "<DWMenuPage.SETTINGS: 6> starts entry",
+      "passed": true
+    },
+    {
+      "name": "<DWMenuPage.SETTINGS: 6> has intermediate movement",
+      "passed": true
+    },
+    {
+      "name": "<DWMenuPage.SETTINGS: 6> ends at original appearance",
+      "passed": true
+    }
+  ],
+  "world": "/Game/DoughWorld/Maps/Gameplay/Levels/UEDPIE_0_L_DoughWorld_GameplayPrototype.L_DoughWorld_GameplayPrototype",
+  "widget": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWGameplay.WBP_DWGameplay_C",
+  "passed": true
+}

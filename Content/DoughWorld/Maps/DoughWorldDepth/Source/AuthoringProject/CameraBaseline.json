@@ -1,0 +1,92 @@
+{
+  "pawn_class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+  "controller_class": "/Game/TopDown/Blueprints/BP_TopDownController.BP_TopDownController_C",
+  "camera_world_location": [
+    -14142.654537481723,
+    -2602.6545374817197,
+    4789.778375435073
+  ],
+  "camera_world_rotation": {
+    "pitch": -49.99999999999989,
+    "yaw": 44.99999999999991,
+    "roll": 4.9480647005852166e-15
+  },
+  "fov": 55.0,
+  "pawn_location": [
+    -12870.0,
+    -1329.9999999999982,
+    2595.0831084291485
+  ],
+  "components": [
+    {
+      "class": "SpringArmComponent",
+      "name": "SpringArm",
+      "path": "/Game/Maps/DoughWorldV2/Levels/UEDPIE_0_L_DoughWorldV2_Desert.L_DoughWorldV2_Desert:PersistentLevel.BP_TopDownCharacter_C_0.SpringArm",
+      "properties": {
+        "relative_location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "relative_rotation": {
+          "pitch": -50.0,
+          "yaw": 45.0,
+          "roll": 0.0
+        },
+        "relative_scale3d": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "target_arm_length": 2800.0,
+        "target_offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "socket_offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "do_collision_test": false,
+        "use_pawn_control_rotation": false,
+        "inherit_pitch": true,
+        "inherit_yaw": true,
+        "inherit_roll": true,
+        "absolute_rotation": true,
+        "enable_camera_lag": true,
+        "enable_camera_rotation_lag": false
+      }
+    },
+    {
+      "class": "CameraComponent",
+      "name": "Camera",
+      "path": "/Game/Maps/DoughWorldV2/Levels/UEDPIE_0_L_DoughWorldV2_Desert.L_DoughWorldV2_Desert:PersistentLevel.BP_TopDownCharacter_C_0.Camera",
+      "properties": {
+        "relative_location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "relative_rotation": {
+          "pitch": 0.0,
+          "yaw": 0.0,
+          "roll": 0.0
+        },
+        "relative_scale3d": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "use_pawn_control_rotation": false,
+        "absolute_rotation": false,
+        "projection_mode": "<CameraProjectionMode.PERSPECTIVE: 0>",
+        "field_of_view": 55.0,
+        "ortho_width": 512.0,
+        "aspect_ratio": 1.7777780294418335,
+        "auto_calculate_ortho_planes": false
+      }
+    }
+  ]
+}

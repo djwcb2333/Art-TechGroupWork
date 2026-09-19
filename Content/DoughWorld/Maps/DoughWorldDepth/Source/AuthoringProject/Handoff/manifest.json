@@ -1,0 +1,90 @@
+{
+  "package": "DoughWorld complete additive depth handoff",
+  "original_integrity": [
+    {
+      "path": "Originals/原地图.json",
+      "sha256": "D79B1BD9165E846604EDE8FDAB70A581D0A1CFE87CB90ED8CE23EF7170809FD4",
+      "byte_identical_to_original": true
+    },
+    {
+      "path": "Originals/原概念.png",
+      "sha256": "FFAB03A93B6D78CB2B42FE861CAD24201AE5E03E9CE849394E07CD633F22E049",
+      "byte_identical_to_original": true
+    }
+  ],
+  "files": [
+    {
+      "path": "00_开始这里.md",
+      "bytes": 2963,
+      "sha256": "D0E79F924677C4DD3F0E7DECF0B29832FECD918A0CEFBCEB37B64A2C74CBF434"
+    },
+    {
+      "path": "01_直接发给Codex.md",
+      "bytes": 4066,
+      "sha256": "B6321A3115D0E2A385A28354434C25F3D2DF73F117FC550754A216ABF8C112F3"
+    },
+    {
+      "path": "04_验收与交付.md",
+      "bytes": 2755,
+      "sha256": "FAD3F85062111FE30BB9370622B128FD1E392F93F6C4E6985287F7281AF45F25"
+    },
+    {
+      "path": "Code/CameraOccluderFadeComponent.cpp",
+      "bytes": 7147,
+      "sha256": "16CB70FE517F35155E69B771A38FC560268CFE67CF2812153CD64FD534C06C70"
+    },
+    {
+      "path": "Code/CameraOccluderFadeComponent.h",
+      "bytes": 2766,
+      "sha256": "F194080F76D15E10DD958C4C861C58C338E084783EEBFC3BD62F31B8BA14F8F0"
+    },
+    {
+      "path": "Data/depth_overlay.json",
+      "bytes": 10979,
+      "sha256": "D01950C78BAE2501025B195E26F787965AC02E4BF0FA3FAA04B02ACDE5237C21"
+    },
+    {
+      "path": "Data/module_requirements.json",
+      "bytes": 20515,
+      "sha256": "1846C69F111F9EF0F06A5C421189737DBACBA42AA5D0492EA74FF0DE9107511C"
+    },
+    {
+      "path": "Design/相机遮挡接入.md",
+      "bytes": 5620,
+      "sha256": "07EB866A05D5DED6FD885517120E48F26CDEC583B2B025BA356BAFE754B3B263"
+    },
+    {
+      "path": "Design/纵深设计.md",
+      "bytes": 8356,
+      "sha256": "5B39B1401ECD3CAE83834FF23FFDD7C9E135FDE62168B6619D34DEE52B0B1943"
+    },
+    {
+      "path": "Originals/原地图.json",
+      "bytes": 16287,
+      "sha256": "D79B1BD9165E846604EDE8FDAB70A581D0A1CFE87CB90ED8CE23EF7170809FD4"
+    },
+    {
+      "path": "Originals/原概念.png",
+      "bytes": 667478,
+      "sha256": "FFAB03A93B6D78CB2B42FE861CAD24201AE5E03E9CE849394E07CD633F22E049"
+    }
+  ],
+  "module_requirement_count": 44,
+  "regions": [
+    "jidi",
+    "qianceng",
+    "fajiao",
+    "jiaomu",
+    "meijun",
+    "shendu"
+  ],
+  "validation": {
+    "unreal_compiled": false,
+    "code_present": true,
+    "unreal_runtime_verified": false,
+    "new_map_or_heightmap_included": false,
+    "originals_identical": true,
+    "all_json_parsed": true
+  },
+  "note": "manifest excludes itself; no old replacement maps or external attachment dependency"
+}

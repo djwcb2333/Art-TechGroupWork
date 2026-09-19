@@ -1,0 +1,14 @@
+{
+  "parent": "/Script/GDATtest.TopDownActionCharacter",
+  "mesh_preserved": true,
+  "game_mode": "/Game/TopDown/Blueprints/BP_TopDownGameMode.BP_TopDownGameMode",
+  "pawn_class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+  "controller_class": "/Game/TopDown/Blueprints/BP_TopDownController.BP_TopDownController_C",
+  "saved": true,
+  "settings": {
+    "JumpLaunchSpeed": 600,
+    "RollDistance": 400,
+    "RollDuration": 0.45,
+    "RollCooldown": 0.35
+  }
+}

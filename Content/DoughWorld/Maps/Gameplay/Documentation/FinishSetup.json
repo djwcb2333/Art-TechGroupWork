@@ -1,0 +1,10 @@
+{
+  "complete": true,
+  "errors": [],
+  "widget_build": "FONT REPAIR /Game/DoughWorld/Maps/Gameplay/UI/WBP_DWInventorySlot.WBP_DWInventorySlot | repaired=0 | layout preserved\nFONT REPAIR /Game/DoughWorld/Maps/Gameplay/UI/WBP_DWRecipeEntry.WBP_DWRecipeEntry | repaired=0 | layout preserved\nFONT REPAIR /Game/DoughWorld/Maps/Gameplay/UI/WBP_DWSaveSlot.WBP_DWSaveSlot | repaired=0 | layout preserved\nFONT REPAIR /Game/DoughWorld/Maps/Gameplay/UI/WBP_DWGameplay.WBP_DWGameplay | repaired=0 | layout preserved\n",
+  "player": {
+    "camera_distance": 1800.0,
+    "rotation": "<Struct 'Rotator' (0x000001F8F3212998) {pitch: -0.000000, yaw: -90.000000, roll: -0.000000}>",
+    "hero_mesh": "/Game/DoughWorld/Maps/Gameplay/Characters/Hero/SK_DoughHero.SK_DoughHero"
+  }
+}

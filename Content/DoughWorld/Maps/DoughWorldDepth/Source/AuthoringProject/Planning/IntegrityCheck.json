@@ -1,0 +1,90 @@
+[
+  {
+    "source_path": "00_开始这里.md",
+    "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\00_document.md",
+    "expected_sha256": "D0E79F924677C4DD3F0E7DECF0B29832FECD918A0CEFBCEB37B64A2C74CBF434",
+    "actual_sha256": "D0E79F924677C4DD3F0E7DECF0B29832FECD918A0CEFBCEB37B64A2C74CBF434",
+    "matches": true,
+    "bytes": 2963
+  },
+  {
+    "source_path": "01_直接发给Codex.md",
+    "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\01_document.md",
+    "expected_sha256": "B6321A3115D0E2A385A28354434C25F3D2DF73F117FC550754A216ABF8C112F3",
+    "actual_sha256": "B6321A3115D0E2A385A28354434C25F3D2DF73F117FC550754A216ABF8C112F3",
+    "matches": true,
+    "bytes": 4066
+  },
+  {
+    "source_path": "04_验收与交付.md",
+    "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\02_document.md",
+    "expected_sha256": "FAD3F85062111FE30BB9370622B128FD1E392F93F6C4E6985287F7281AF45F25",
+    "actual_sha256": "FAD3F85062111FE30BB9370622B128FD1E392F93F6C4E6985287F7281AF45F25",
+    "matches": true,
+    "bytes": 2755
+  },
+  {
+    "source_path": "Code/CameraOccluderFadeComponent.cpp",
+    "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Code\\CameraOccluderFadeComponent.cpp",
+    "expected_sha256": "16CB70FE517F35155E69B771A38FC560268CFE67CF2812153CD64FD534C06C70",
+    "actual_sha256": "16CB70FE517F35155E69B771A38FC560268CFE67CF2812153CD64FD534C06C70",
+    "matches": true,
+    "bytes": 7147
+  },
+  {
+    "source_path": "Code/CameraOccluderFadeComponent.h",
+    "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Code\\CameraOccluderFadeComponent.h",
+    "expected_sha256": "F194080F76D15E10DD958C4C861C58C338E084783EEBFC3BD62F31B8BA14F8F0",
+    "actual_sha256": "F194080F76D15E10DD958C4C861C58C338E084783EEBFC3BD62F31B8BA14F8F0",
+    "matches": true,
+    "bytes": 2766
+  },
+  {
+    "source_path": "Data/depth_overlay.json",
+    "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Data\\depth_overlay.json",
+    "expected_sha256": "D01950C78BAE2501025B195E26F787965AC02E4BF0FA3FAA04B02ACDE5237C21",
+    "actual_sha256": "D01950C78BAE2501025B195E26F787965AC02E4BF0FA3FAA04B02ACDE5237C21",
+    "matches": true,
+    "bytes": 10979
+  },
+  {
+    "source_path": "Data/module_requirements.json",
+    "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Data\\module_requirements.json",
+    "expected_sha256": "1846C69F111F9EF0F06A5C421189737DBACBA42AA5D0492EA74FF0DE9107511C",
+    "actual_sha256": "1846C69F111F9EF0F06A5C421189737DBACBA42AA5D0492EA74FF0DE9107511C",
+    "matches": true,
+    "bytes": 20515
+  },
+  {
+    "source_path": "Design/相机遮挡接入.md",
+    "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Design\\08_document.md",
+    "expected_sha256": "07EB866A05D5DED6FD885517120E48F26CDEC583B2B025BA356BAFE754B3B263",
+    "actual_sha256": "07EB866A05D5DED6FD885517120E48F26CDEC583B2B025BA356BAFE754B3B263",
+    "matches": true,
+    "bytes": 5620
+  },
+  {
+    "source_path": "Design/纵深设计.md",
+    "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Design\\09_document.md",
+    "expected_sha256": "5B39B1401ECD3CAE83834FF23FFDD7C9E135FDE62168B6619D34DEE52B0B1943",
+    "actual_sha256": "5B39B1401ECD3CAE83834FF23FFDD7C9E135FDE62168B6619D34DEE52B0B1943",
+    "matches": true,
+    "bytes": 8356
+  },
+  {
+    "source_path": "Originals/原地图.json",
+    "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Originals\\10_document.json",
+    "expected_sha256": "D79B1BD9165E846604EDE8FDAB70A581D0A1CFE87CB90ED8CE23EF7170809FD4",
+    "actual_sha256": "D79B1BD9165E846604EDE8FDAB70A581D0A1CFE87CB90ED8CE23EF7170809FD4",
+    "matches": true,
+    "bytes": 16287
+  },
+  {
+    "source_path": "Originals/原概念.png",
+    "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Originals\\11_document.png",
+    "expected_sha256": "FFAB03A93B6D78CB2B42FE861CAD24201AE5E03E9CE849394E07CD633F22E049",
+    "actual_sha256": "FFAB03A93B6D78CB2B42FE861CAD24201AE5E03E9CE849394E07CD633F22E049",
+    "matches": true,
+    "bytes": 667478
+  }
+]

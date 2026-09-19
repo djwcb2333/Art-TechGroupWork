@@ -1,0 +1,173 @@
+{
+  "error": null,
+  "samples": [
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\01_BaseEntrance.png",
+      "player_xyz_m": [
+        221.7,
+        249.5,
+        7.356477034154977
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [
+        {
+          "actor": "DepthEnvironmentActor_139",
+          "fade": 0.19999998807907104,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        }
+      ],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\02_BaseInterior.png",
+      "player_xyz_m": [
+        221.7,
+        243.3,
+        7.502650018230202
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [
+        {
+          "actor": "DepthEnvironmentActor_139",
+          "fade": 0.19999998807907104,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        }
+      ],
+      "interaction_focus": "TargetPoint_50"
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\03_Workbench.png",
+      "player_xyz_m": [
+        221.7,
+        269.0,
+        7.392203613515452
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": "TargetPoint_51"
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\04_Storage.png",
+      "player_xyz_m": [
+        196.7,
+        260.2,
+        7.3486678600570405
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [
+        {
+          "actor": "DepthEnvironmentActor_140",
+          "fade": 0.19999998807907104,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        }
+      ],
+      "interaction_focus": "TargetPoint_52"
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\05_SupplyCart.png",
+      "player_xyz_m": [
+        228.5,
+        266.3,
+        7.39551522513883
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\06_Ruins.png",
+      "player_xyz_m": [
+        333.3,
+        169.0,
+        -3.122366751575133
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [
+        {
+          "actor": "DepthEnvironmentActor_150",
+          "fade": 0.19999998807907104,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        }
+      ],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\07_BridgeDeck.png",
+      "player_xyz_m": [
+        393.3,
+        170.0,
+        -2.6295885626626974
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\08_BridgeUnder.png",
+      "player_xyz_m": [
+        393.3,
+        170.0,
+        -8.909588562662698
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+[
+  {
+    "target": "FV__StorageRack",
+    "xy": [
+      195.3,
+      256.8
+    ],
+    "start_z": 10,
+    "hit_z": 8.381112575531006
+  },
+  {
+    "target": "FV__StorageRack",
+    "xy": [
+      196.25,
+      256.8
+    ],
+    "start_z": 10,
+    "hit_z": 8.381466388702393
+  },
+  {
+    "target": "FV__StorageRack",
+    "xy": [
+      197.25,
+      256.8
+    ],
+    "start_z": 10,
+    "hit_z": 8.378820776939392
+  },
+  {
+    "target": "FV__StorageRack",
+    "xy": [
+      198.1,
+      256.8
+    ],
+    "start_z": 10,
+    "hit_z": 8.377375602722168
+  },
+  {
+    "target": "FV__StorageRack",
+    "xy": [
+      195.7,
+      256.7
+    ],
+    "start_z": 8,
+    "hit_z": 7.232239663600922
+  },
+  {
+    "target": "FV__StorageRack",
+    "xy": [
+      196.65,
+      256.7
+    ],
+    "start_z": 8,
+    "hit_z": 7.230285286903381
+  },
+  {
+    "target": "FV__StorageRack",
+    "xy": [
+      197.55,
+      256.7
+    ],
+    "start_z": 8,
+    "hit_z": 7.2292256355285645
+  },
+  {
+    "target": "FV__SupplyCart",
+    "xy": [
+      228.5,
+      262.5
+    ],
+    "start_z": 10,
+    "hit_z": 7.020546913146973
+  },
+  {
+    "target": "FV__HutSideTable",
+    "xy": [
+      224.7,
+      241.5
+    ],
+    "start_z": 9,
+    "hit_z": 7.374961316585541
+  }
+]

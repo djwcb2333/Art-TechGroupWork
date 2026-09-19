@@ -1,0 +1,592 @@
+{
+  "timestamp": "2026-09-13T23:52:23.288656",
+  "world": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth",
+  "actor_count": 1171,
+  "placement_records": 1110,
+  "missing_actors": [],
+  "mesh_mismatch": [],
+  "material_problems": [],
+  "environment_problems": [],
+  "foliage": [
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_0",
+      "count": 1267,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_qianceng.MI_LowGrass_qianceng"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_1",
+      "count": 989,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_qianceng.MI_LowGrass_qianceng"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_10",
+      "count": 26,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_fajiao.MI_LowGrass_fajiao"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_11",
+      "count": 485,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_jiaomu.MI_LowGrass_jiaomu"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_12",
+      "count": 426,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_jiaomu.MI_LowGrass_jiaomu"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_13",
+      "count": 120,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_jiaomu.MI_LowGrass_jiaomu"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_14",
+      "count": 19,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_jiaomu.MI_LowGrass_jiaomu"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_15",
+      "count": 716,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_meijun.MI_LowGrass_meijun"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_16",
+      "count": 571,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_meijun.MI_LowGrass_meijun"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_17",
+      "count": 149,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_meijun.MI_LowGrass_meijun"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_18",
+      "count": 14,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_meijun.MI_LowGrass_meijun"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_2",
+      "count": 301,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_qianceng.MI_LowGrass_qianceng"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_3",
+      "count": 43,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_qianceng.MI_LowGrass_qianceng"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_4",
+      "count": 167,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_jidi.MI_LowGrass_jidi"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_5",
+      "count": 146,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_jidi.MI_LowGrass_jidi"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_6",
+      "count": 37,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_jidi.MI_LowGrass_jidi"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_7",
+      "count": 560,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_fajiao.MI_LowGrass_fajiao"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_8",
+      "count": 452,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_fajiao.MI_LowGrass_fajiao"
+    },
+    {
+      "component": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.InstancedFoliageActor_0.FoliageInstancedStaticMeshComponent_9",
+      "count": 112,
+      "collision": "<CollisionEnabled.NO_COLLISION: 0>",
+      "affects_navigation": false,
+      "material": "/Game/Maps/DoughWorldDepth/Foliage/Materials/MI_LowGrass_fajiao.MI_LowGrass_fajiao"
+    }
+  ],
+  "roof_settings": [
+    {
+      "label": "DeepCeiling_0_0",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepHangingLobe_0_0",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_0_1",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_0_2",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_0_3",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_0_4",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_0_5",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepHangingLobe_0_5",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_0_6",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_0_7",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_1_0",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_1_1",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_1_2",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_1_3",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_1_4",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepHangingLobe_1_4",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_1_5",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_1_6",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_1_7",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_2_0",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_2_1",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_2_2",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_2_3",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepHangingLobe_2_3",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_2_4",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_2_5",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_2_6",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_2_7",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_3_0",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_3_1",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_3_2",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepHangingLobe_3_2",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_3_3",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_3_4",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_3_5",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_3_6",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_3_7",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepHangingLobe_3_7",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_4_0",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_4_1",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepHangingLobe_4_1",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_4_2",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_4_3",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_4_4",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_4_5",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_4_6",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepHangingLobe_4_6",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_4_7",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_5_0",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepHangingLobe_5_0",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_5_1",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_5_2",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_5_3",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_5_4",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_5_5",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepHangingLobe_5_5",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_5_6",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_5_7",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_6_0",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_6_1",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_6_2",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_6_3",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_6_4",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepHangingLobe_6_4",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_6_5",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_6_6",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_6_7",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_7_0",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_7_1",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_7_2",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_7_3",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepHangingLobe_7_3",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_7_4",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_7_5",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_7_6",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_7_7",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_8_0",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_8_1",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_8_2",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepHangingLobe_8_2",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_8_3",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_8_4",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_8_5",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_8_6",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepCeiling_8_7",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    },
+    {
+      "label": "DeepHangingLobe_8_7",
+      "padding_cm": 650.0,
+      "visibility": 0.10000000149011612
+    }
+  ],
+  "foliage_total": 6600,
+  "focus_anchors": [
+    "SOURCE__buildings__base_hut",
+    "SOURCE__buildings__workbench",
+    "SOURCE__buildings__storage_repair",
+    "SOURCE__buildings__core_altar",
+    "SOURCE__resources__flour_demo",
+    "SOURCE__resources__corrupt_spore_core",
+    "SOURCE__resources__special_yeast_strain",
+    "SOURCE__resources__active_spore"
+  ],
+  "noninteractive_ruin_excluded": true,
+  "navigation_building": false,
+  "saved_current_level": true,
+  "passed": true
+}

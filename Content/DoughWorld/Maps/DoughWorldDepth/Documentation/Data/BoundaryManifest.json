@@ -1,0 +1,2172 @@
+[
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_146",
+    "region": "fajiao",
+    "a": [
+      101.525,
+      132.0
+    ],
+    "b": [
+      106.35,
+      132.0
+    ],
+    "base": 2.254026866480001,
+    "top": 12.901800191520001
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_149",
+    "region": "fajiao",
+    "a": [
+      106.35,
+      132.0
+    ],
+    "b": [
+      111.175,
+      132.0
+    ],
+    "base": 5.005347118976022,
+    "top": 12.587421959888001
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_151",
+    "region": "fajiao",
+    "a": [
+      111.175,
+      132.0
+    ],
+    "b": [
+      116.0,
+      132.0
+    ],
+    "base": 4.29915863124802,
+    "top": 12.216024878624
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_153",
+    "region": "fajiao",
+    "a": [
+      116.0,
+      132.0
+    ],
+    "b": [
+      120.0,
+      134.16666666666666
+    ],
+    "base": 2.982973120876152,
+    "top": 12.08219738381858
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_156",
+    "region": "fajiao",
+    "a": [
+      120.0,
+      134.16666666666666
+    ],
+    "b": [
+      124.0,
+      136.33333333333334
+    ],
+    "base": 2.6352219172243148,
+    "top": 11.923088298251905
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_158",
+    "region": "fajiao",
+    "a": [
+      124.0,
+      136.33333333333334
+    ],
+    "b": [
+      128.0,
+      138.5
+    ],
+    "base": 2.6230590908653806,
+    "top": 11.955874490522087
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_160",
+    "region": "fajiao",
+    "a": [
+      128.0,
+      138.5
+    ],
+    "b": [
+      132.0,
+      140.66666666666666
+    ],
+    "base": 2.588260078682544,
+    "top": 12.05110549103109
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_163",
+    "region": "fajiao",
+    "a": [
+      132.0,
+      140.66666666666666
+    ],
+    "b": [
+      136.0,
+      142.83333333333334
+    ],
+    "base": 2.55523091095285,
+    "top": 12.214234337265358
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_165",
+    "region": "fajiao",
+    "a": [
+      136.0,
+      142.83333333333334
+    ],
+    "b": [
+      140.0,
+      145.0
+    ],
+    "base": 2.5717002051513047,
+    "top": 12.110624176386732
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_167",
+    "region": "fajiao",
+    "a": [
+      140.0,
+      145.0
+    ],
+    "b": [
+      142.75,
+      149.0
+    ],
+    "base": 2.6769285868885673,
+    "top": 12.106400547554422
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_170",
+    "region": "fajiao",
+    "a": [
+      142.75,
+      149.0
+    ],
+    "b": [
+      145.5,
+      153.0
+    ],
+    "base": 2.636121377503893,
+    "top": 12.124422661832828
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_172",
+    "region": "fajiao",
+    "a": [
+      145.5,
+      153.0
+    ],
+    "b": [
+      148.25,
+      157.0
+    ],
+    "base": 2.6729738106142102,
+    "top": 12.134078342614599
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_174",
+    "region": "fajiao",
+    "a": [
+      148.25,
+      157.0
+    ],
+    "b": [
+      151.0,
+      161.0
+    ],
+    "base": 2.767889224041963,
+    "top": 12.134610472802729
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_177",
+    "region": "fajiao",
+    "a": [
+      151.0,
+      161.0
+    ],
+    "b": [
+      149.0,
+      165.5
+    ],
+    "base": 2.659894362211153,
+    "top": 12.137834604363722
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_179",
+    "region": "fajiao",
+    "a": [
+      149.0,
+      165.5
+    ],
+    "b": [
+      147.0,
+      170.0
+    ],
+    "base": 2.616792230235384,
+    "top": 12.093168116249627
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_181",
+    "region": "fajiao",
+    "a": [
+      147.0,
+      170.0
+    ],
+    "b": [
+      145.0,
+      174.5
+    ],
+    "base": 2.54112351272142,
+    "top": 13.440171685572365
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_184",
+    "region": "fajiao",
+    "a": [
+      145.0,
+      174.5
+    ],
+    "b": [
+      143.0,
+      179.0
+    ],
+    "base": 2.490311866310579,
+    "top": 15.677891959705038
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_186",
+    "region": "fajiao",
+    "a": [
+      143.0,
+      179.0
+    ],
+    "b": [
+      140.5,
+      183.0
+    ],
+    "base": 2.835705489829288,
+    "top": 15.710752254247346
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_188",
+    "region": "fajiao",
+    "a": [
+      140.5,
+      183.0
+    ],
+    "b": [
+      138.0,
+      187.0
+    ],
+    "base": 3.2221574908058352,
+    "top": 12.474591265186461
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_191",
+    "region": "fajiao",
+    "a": [
+      138.0,
+      187.0
+    ],
+    "b": [
+      135.5,
+      191.0
+    ],
+    "base": 1.0703287470697949,
+    "top": 10.25201397864341
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_193",
+    "region": "fajiao",
+    "a": [
+      135.5,
+      191.0
+    ],
+    "b": [
+      133.0,
+      195.0
+    ],
+    "base": -1.5850238688560447,
+    "top": 10.247648377071824
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_195",
+    "region": "fajiao",
+    "a": [
+      133.0,
+      195.0
+    ],
+    "b": [
+      133.4,
+      199.0
+    ],
+    "base": -1.6047043818565965,
+    "top": 11.196474414351428
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_198",
+    "region": "fajiao",
+    "a": [
+      133.4,
+      199.0
+    ],
+    "b": [
+      133.8,
+      203.0
+    ],
+    "base": -1.610041086336003,
+    "top": 11.283376413597512
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_200",
+    "region": "fajiao",
+    "a": [
+      133.8,
+      203.0
+    ],
+    "b": [
+      134.2,
+      207.0
+    ],
+    "base": -1.6171970718308706,
+    "top": 11.948774386462624
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_202",
+    "region": "fajiao",
+    "a": [
+      134.2,
+      207.0
+    ],
+    "b": [
+      134.6,
+      211.0
+    ],
+    "base": -1.688899522604362,
+    "top": 11.989309613903217
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_205",
+    "region": "fajiao",
+    "a": [
+      134.6,
+      211.0
+    ],
+    "b": [
+      135.0,
+      215.0
+    ],
+    "base": -1.7442377073031552,
+    "top": 12.028232516382413
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_207",
+    "region": "fajiao",
+    "a": [
+      135.0,
+      215.0
+    ],
+    "b": [
+      136.66,
+      218.66
+    ],
+    "base": -1.7572771353097698,
+    "top": 12.085143602741175
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_209",
+    "region": "fajiao",
+    "a": [
+      136.66,
+      218.66
+    ],
+    "b": [
+      138.32,
+      222.32
+    ],
+    "base": -1.7323112465043913,
+    "top": 12.122435725741664
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_212",
+    "region": "fajiao",
+    "a": [
+      138.32,
+      222.32
+    ],
+    "b": [
+      139.98000000000002,
+      225.98000000000002
+    ],
+    "base": -1.7612720945043914,
+    "top": 9.247796345092539
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_214",
+    "region": "fajiao",
+    "a": [
+      139.98000000000002,
+      225.98000000000002
+    ],
+    "b": [
+      141.64000000000001,
+      229.64000000000001
+    ],
+    "base": -1.8186635591915519,
+    "top": 5.509538373962373
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_216",
+    "region": "fajiao",
+    "a": [
+      140.97500000000002,
+      236.72500000000002
+    ],
+    "b": [
+      138.65,
+      240.15
+    ],
+    "base": -1.7482377509000009,
+    "top": 6.0768860213209965
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_219",
+    "region": "fajiao",
+    "a": [
+      138.65,
+      240.15
+    ],
+    "b": [
+      136.325,
+      243.575
+    ],
+    "base": -1.1274117759737727,
+    "top": 9.460904971301137
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_221",
+    "region": "fajiao",
+    "a": [
+      136.325,
+      243.575
+    ],
+    "b": [
+      134.0,
+      247.0
+    ],
+    "base": 2.2906565818899214,
+    "top": 11.421492018844415
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_223",
+    "region": "fajiao",
+    "a": [
+      134.0,
+      247.0
+    ],
+    "b": [
+      129.83333333333334,
+      249.16666666666666
+    ],
+    "base": 2.471367368667136,
+    "top": 11.626799301440029
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_226",
+    "region": "fajiao",
+    "a": [
+      129.83333333333334,
+      249.16666666666666
+    ],
+    "b": [
+      125.66666666666667,
+      251.33333333333334
+    ],
+    "base": 2.6005981182636946,
+    "top": 12.328411687562792
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_228",
+    "region": "fajiao",
+    "a": [
+      125.66666666666667,
+      251.33333333333334
+    ],
+    "b": [
+      121.5,
+      253.5
+    ],
+    "base": 2.7250232235092184,
+    "top": 12.404259375206994
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_230",
+    "region": "fajiao",
+    "a": [
+      121.5,
+      253.5
+    ],
+    "b": [
+      117.33333333333334,
+      255.66666666666666
+    ],
+    "base": 2.6680772387911746,
+    "top": 12.434394348617985
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_233",
+    "region": "fajiao",
+    "a": [
+      117.33333333333334,
+      255.66666666666666
+    ],
+    "b": [
+      113.16666666666666,
+      257.8333333333333
+    ],
+    "base": 2.5740140822992874,
+    "top": 12.461158753061683
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_235",
+    "region": "fajiao",
+    "a": [
+      113.16666666666666,
+      257.8333333333333
+    ],
+    "b": [
+      109.0,
+      260.0
+    ],
+    "base": 2.5802065558411655,
+    "top": 12.48438908410708
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_237",
+    "region": "fajiao",
+    "a": [
+      109.0,
+      260.0
+    ],
+    "b": [
+      104.85714285714286,
+      258.42857142857144
+    ],
+    "base": 2.892713443191001,
+    "top": 12.48481584365699
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_240",
+    "region": "fajiao",
+    "a": [
+      104.85714285714286,
+      258.42857142857144
+    ],
+    "b": [
+      100.71428571428572,
+      256.85714285714283
+    ],
+    "base": 2.641191114440675,
+    "top": 12.493772961878905
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_242",
+    "region": "fajiao",
+    "a": [
+      100.71428571428572,
+      256.85714285714283
+    ],
+    "b": [
+      96.57142857142857,
+      255.28571428571428
+    ],
+    "base": 2.8375562375698165,
+    "top": 12.493797590321202
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_244",
+    "region": "fajiao",
+    "a": [
+      96.57142857142857,
+      255.28571428571428
+    ],
+    "b": [
+      92.42857142857143,
+      253.71428571428572
+    ],
+    "base": 2.709927633559758,
+    "top": 12.48506524679837
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_247",
+    "region": "fajiao",
+    "a": [
+      92.42857142857143,
+      253.71428571428572
+    ],
+    "b": [
+      88.28571428571428,
+      252.14285714285714
+    ],
+    "base": 2.7697535983538657,
+    "top": 12.467365805119044
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_249",
+    "region": "fajiao",
+    "a": [
+      88.28571428571428,
+      252.14285714285714
+    ],
+    "b": [
+      84.14285714285714,
+      250.57142857142858
+    ],
+    "base": 2.8662917670738812,
+    "top": 12.440903919666052
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_251",
+    "region": "fajiao",
+    "a": [
+      84.14285714285714,
+      250.57142857142858
+    ],
+    "b": [
+      80.0,
+      249.0
+    ],
+    "base": 2.7063840853215826,
+    "top": 12.406016323264854
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_254",
+    "region": "fajiao",
+    "a": [
+      80.0,
+      249.0
+    ],
+    "b": [
+      76.71428571428571,
+      246.14285714285714
+    ],
+    "base": 2.6930693433729367,
+    "top": 12.376415518871987
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_256",
+    "region": "fajiao",
+    "a": [
+      76.71428571428571,
+      246.14285714285714
+    ],
+    "b": [
+      73.42857142857143,
+      243.28571428571428
+    ],
+    "base": 2.6826522559630783,
+    "top": 12.310005666784306
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_258",
+    "region": "fajiao",
+    "a": [
+      73.42857142857143,
+      243.28571428571428
+    ],
+    "b": [
+      70.14285714285714,
+      240.42857142857142
+    ],
+    "base": 2.720592141204027,
+    "top": 12.233771604538202
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_261",
+    "region": "fajiao",
+    "a": [
+      70.14285714285714,
+      240.42857142857142
+    ],
+    "b": [
+      66.85714285714286,
+      237.57142857142858
+    ],
+    "base": 2.651630792005932,
+    "top": 12.149181663284452
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_263",
+    "region": "fajiao",
+    "a": [
+      66.85714285714286,
+      237.57142857142858
+    ],
+    "b": [
+      63.57142857142857,
+      234.71428571428572
+    ],
+    "base": 2.625820965401422,
+    "top": 12.057906931477604
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_265",
+    "region": "fajiao",
+    "a": [
+      63.57142857142857,
+      234.71428571428572
+    ],
+    "b": [
+      60.28571428571429,
+      231.85714285714286
+    ],
+    "base": 2.692494950176215,
+    "top": 11.961729646690356
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_268",
+    "region": "fajiao",
+    "a": [
+      60.28571428571429,
+      231.85714285714286
+    ],
+    "b": [
+      57.0,
+      229.0
+    ],
+    "base": 2.5356184418913372,
+    "top": 11.862775618269131
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_270",
+    "region": "fajiao",
+    "a": [
+      57.0,
+      229.0
+    ],
+    "b": [
+      55.142857142857146,
+      225.0
+    ],
+    "base": 2.530560572550904,
+    "top": 11.808268346373419
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_272",
+    "region": "fajiao",
+    "a": [
+      55.142857142857146,
+      225.0
+    ],
+    "b": [
+      53.285714285714285,
+      221.0
+    ],
+    "base": 2.4949586177234657,
+    "top": 11.697296766290474
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_275",
+    "region": "fajiao",
+    "a": [
+      53.285714285714285,
+      221.0
+    ],
+    "b": [
+      51.42857142857143,
+      217.0
+    ],
+    "base": 2.3756157060670207,
+    "top": 11.591933365507899
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_277",
+    "region": "fajiao",
+    "a": [
+      51.42857142857143,
+      217.0
+    ],
+    "b": [
+      49.57142857142857,
+      213.0
+    ],
+    "base": 2.266987367455595,
+    "top": 11.495983970987687
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_279",
+    "region": "fajiao",
+    "a": [
+      49.57142857142857,
+      213.0
+    ],
+    "b": [
+      47.714285714285715,
+      209.0
+    ],
+    "base": 2.2019553699384415,
+    "top": 11.413700410574853
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_282",
+    "region": "fajiao",
+    "a": [
+      47.714285714285715,
+      209.0
+    ],
+    "b": [
+      45.85714285714286,
+      205.0
+    ],
+    "base": 2.208593224230394,
+    "top": 11.35004764695525
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_284",
+    "region": "fajiao",
+    "a": [
+      45.85714285714286,
+      205.0
+    ],
+    "b": [
+      44.0,
+      201.0
+    ],
+    "base": 2.3071585255218157,
+    "top": 11.31104307289275
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_286",
+    "region": "fajiao",
+    "a": [
+      44.0,
+      201.0
+    ],
+    "b": [
+      45.0,
+      196.8
+    ],
+    "base": 2.531650675958664,
+    "top": 11.304635814915628
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_289",
+    "region": "fajiao",
+    "a": [
+      45.0,
+      196.8
+    ],
+    "b": [
+      46.0,
+      192.6
+    ],
+    "base": 2.492027532905361,
+    "top": 11.270679194247592
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_291",
+    "region": "fajiao",
+    "a": [
+      46.0,
+      192.6
+    ],
+    "b": [
+      47.0,
+      188.4
+    ],
+    "base": 2.4538030046037305,
+    "top": 11.251236920297595
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_293",
+    "region": "fajiao",
+    "a": [
+      47.0,
+      188.4
+    ],
+    "b": [
+      48.0,
+      184.2
+    ],
+    "base": 2.4258846923762487,
+    "top": 11.24580451047651
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_296",
+    "region": "fajiao",
+    "a": [
+      48.0,
+      184.2
+    ],
+    "b": [
+      49.0,
+      180.0
+    ],
+    "base": 2.417885277943684,
+    "top": 11.253516245790067
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_298",
+    "region": "fajiao",
+    "a": [
+      49.0,
+      180.0
+    ],
+    "b": [
+      52.0,
+      176.83333333333334
+    ],
+    "base": 2.1722944319547723,
+    "top": 11.257639662130487
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_300",
+    "region": "fajiao",
+    "a": [
+      52.0,
+      176.83333333333334
+    ],
+    "b": [
+      55.0,
+      173.66666666666666
+    ],
+    "base": 2.1466136669697224,
+    "top": 11.273880288963593
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_303",
+    "region": "fajiao",
+    "a": [
+      55.0,
+      173.66666666666666
+    ],
+    "b": [
+      58.0,
+      170.5
+    ],
+    "base": 2.157673673871602,
+    "top": 11.302289964615765
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_305",
+    "region": "fajiao",
+    "a": [
+      58.0,
+      170.5
+    ],
+    "b": [
+      61.0,
+      167.33333333333334
+    ],
+    "base": 2.076043173625144,
+    "top": 11.338353044876198
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_307",
+    "region": "fajiao",
+    "a": [
+      61.0,
+      167.33333333333334
+    ],
+    "b": [
+      64.0,
+      164.16666666666666
+    ],
+    "base": 2.052927683014392,
+    "top": 11.378946724758109
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_310",
+    "region": "fajiao",
+    "a": [
+      64.0,
+      164.16666666666666
+    ],
+    "b": [
+      67.0,
+      161.0
+    ],
+    "base": 2.0780635898961375,
+    "top": 11.42194270882047
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_312",
+    "region": "fajiao",
+    "a": [
+      67.0,
+      161.0
+    ],
+    "b": [
+      70.4,
+      157.4
+    ],
+    "base": 2.3390387002893807,
+    "top": 11.469256336417228
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_314",
+    "region": "fajiao",
+    "a": [
+      70.4,
+      157.4
+    ],
+    "b": [
+      73.8,
+      153.8
+    ],
+    "base": 3.1195144467459865,
+    "top": 11.666890902833007
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_317",
+    "region": "fajiao",
+    "a": [
+      73.8,
+      153.8
+    ],
+    "b": [
+      77.2,
+      150.2
+    ],
+    "base": 4.02847159096831,
+    "top": 12.034837303015824
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_319",
+    "region": "fajiao",
+    "a": [
+      77.2,
+      150.2
+    ],
+    "b": [
+      80.6,
+      146.6
+    ],
+    "base": 5.138864455159196,
+    "top": 12.385361064963407
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_321",
+    "region": "fajiao",
+    "a": [
+      80.6,
+      146.6
+    ],
+    "b": [
+      84.0,
+      143.0
+    ],
+    "base": 1.889315375134672,
+    "top": 12.95528806970881
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_324",
+    "region": "fajiao",
+    "a": [
+      84.0,
+      143.0
+    ],
+    "b": [
+      87.175,
+      140.25
+    ],
+    "base": 4.407893098806673,
+    "top": 12.939636881797739
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_326",
+    "region": "fajiao",
+    "a": [
+      87.175,
+      140.25
+    ],
+    "b": [
+      90.35,
+      137.5
+    ],
+    "base": 2.7652696543119824,
+    "top": 13.147352706019815
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_328",
+    "region": "fajiao",
+    "a": [
+      90.35,
+      137.5
+    ],
+    "b": [
+      93.525,
+      134.75
+    ],
+    "base": 5.746063820640002,
+    "top": 12.895177281532384
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_331",
+    "region": "jiaomu",
+    "a": [
+      92.76,
+      133.4
+    ],
+    "b": [
+      88.82000000000001,
+      134.8
+    ],
+    "base": 5.7032518299592185,
+    "top": 13.287902151184632
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_334",
+    "region": "jiaomu",
+    "a": [
+      88.82000000000001,
+      134.8
+    ],
+    "b": [
+      84.88,
+      136.2
+    ],
+    "base": 3.2546658664960013,
+    "top": 14.364927965338591
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_336",
+    "region": "jiaomu",
+    "a": [
+      84.88,
+      136.2
+    ],
+    "b": [
+      80.94,
+      137.6
+    ],
+    "base": 3.8963680900795605,
+    "top": 14.409789212697543
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_338",
+    "region": "jiaomu",
+    "a": [
+      80.94,
+      137.6
+    ],
+    "b": [
+      77.0,
+      139.0
+    ],
+    "base": 1.6657400044592774,
+    "top": 14.443938940619303
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_341",
+    "region": "jiaomu",
+    "a": [
+      77.0,
+      139.0
+    ],
+    "b": [
+      72.85714285714286,
+      136.71428571428572
+    ],
+    "base": 5.034681444083661,
+    "top": 14.444064797035793
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_343",
+    "region": "jiaomu",
+    "a": [
+      72.85714285714286,
+      136.71428571428572
+    ],
+    "b": [
+      68.71428571428572,
+      134.42857142857142
+    ],
+    "base": 4.895602827132038,
+    "top": 14.490871287199694
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_345",
+    "region": "jiaomu",
+    "a": [
+      68.71428571428572,
+      134.42857142857142
+    ],
+    "b": [
+      64.57142857142857,
+      132.14285714285714
+    ],
+    "base": 4.59977056674207,
+    "top": 14.52464098426813
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_348",
+    "region": "jiaomu",
+    "a": [
+      64.57142857142857,
+      132.14285714285714
+    ],
+    "b": [
+      60.42857142857143,
+      129.85714285714286
+    ],
+    "base": 4.363591175579085,
+    "top": 14.548334170585214
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_350",
+    "region": "jiaomu",
+    "a": [
+      60.42857142857143,
+      129.85714285714286
+    ],
+    "b": [
+      56.285714285714285,
+      127.57142857142857
+    ],
+    "base": 4.485104358786125,
+    "top": 14.572772741045252
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_352",
+    "region": "jiaomu",
+    "a": [
+      56.285714285714285,
+      127.57142857142857
+    ],
+    "b": [
+      52.142857142857146,
+      125.28571428571429
+    ],
+    "base": 4.704382502021912,
+    "top": 14.62337602869425
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_355",
+    "region": "jiaomu",
+    "a": [
+      52.142857142857146,
+      125.28571428571429
+    ],
+    "b": [
+      48.0,
+      123.0
+    ],
+    "base": 4.841552658368888,
+    "top": 14.746223791847184
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_357",
+    "region": "jiaomu",
+    "a": [
+      48.0,
+      123.0
+    ],
+    "b": [
+      43.833333333333336,
+      120.83333333333333
+    ],
+    "base": 5.234292107452477,
+    "top": 15.010859112670195
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_359",
+    "region": "jiaomu",
+    "a": [
+      43.833333333333336,
+      120.83333333333333
+    ],
+    "b": [
+      39.66666666666667,
+      118.66666666666667
+    ],
+    "base": 5.8737006358688015,
+    "top": 15.445196172339074
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_362",
+    "region": "jiaomu",
+    "a": [
+      39.66666666666667,
+      118.66666666666667
+    ],
+    "b": [
+      35.5,
+      116.5
+    ],
+    "base": 6.6325334778153575,
+    "top": 16.02455372289786
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_364",
+    "region": "jiaomu",
+    "a": [
+      35.5,
+      116.5
+    ],
+    "b": [
+      31.333333333333336,
+      114.33333333333333
+    ],
+    "base": 7.027008244239111,
+    "top": 16.61740903256168
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_366",
+    "region": "jiaomu",
+    "a": [
+      31.333333333333336,
+      114.33333333333333
+    ],
+    "b": [
+      27.166666666666664,
+      112.16666666666667
+    ],
+    "base": 7.040657381077768,
+    "top": 17.016106115271903
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_369",
+    "region": "jiaomu",
+    "a": [
+      27.166666666666664,
+      112.16666666666667
+    ],
+    "b": [
+      23.0,
+      110.0
+    ],
+    "base": 6.65260040092147,
+    "top": 17.045112673011975
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_371",
+    "region": "jiaomu",
+    "a": [
+      23.0,
+      110.0
+    ],
+    "b": [
+      20.666666666666668,
+      106.16666666666667
+    ],
+    "base": 5.781328100606911,
+    "top": 16.963630850104522
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_373",
+    "region": "jiaomu",
+    "a": [
+      20.666666666666668,
+      106.16666666666667
+    ],
+    "b": [
+      18.333333333333336,
+      102.33333333333333
+    ],
+    "base": 5.372567512377021,
+    "top": 16.698617784654495
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_376",
+    "region": "jiaomu",
+    "a": [
+      18.333333333333336,
+      102.33333333333333
+    ],
+    "b": [
+      16.0,
+      98.5
+    ],
+    "base": 5.118031152100294,
+    "top": 16.329034120822612
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_378",
+    "region": "jiaomu",
+    "a": [
+      16.0,
+      98.5
+    ],
+    "b": [
+      13.666666666666668,
+      94.66666666666667
+    ],
+    "base": 4.570478293114748,
+    "top": 15.904260261024486
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_380",
+    "region": "jiaomu",
+    "a": [
+      13.666666666666668,
+      94.66666666666667
+    ],
+    "b": [
+      11.333333333333332,
+      90.83333333333333
+    ],
+    "base": 4.354945606853298,
+    "top": 15.466966268301308
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_383",
+    "region": "jiaomu",
+    "a": [
+      11.333333333333332,
+      90.83333333333333
+    ],
+    "b": [
+      9.0,
+      87.0
+    ],
+    "base": 4.175313943029819,
+    "top": 15.05507383683959
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_385",
+    "region": "jiaomu",
+    "a": [
+      9.0,
+      87.0
+    ],
+    "b": [
+      9.8,
+      82.2
+    ],
+    "base": 3.934912859646305,
+    "top": 15.03568802723137
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_387",
+    "region": "jiaomu",
+    "a": [
+      9.8,
+      82.2
+    ],
+    "b": [
+      10.6,
+      77.4
+    ],
+    "base": 4.116235600913087,
+    "top": 15.162173940060377
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_390",
+    "region": "jiaomu",
+    "a": [
+      10.6,
+      77.4
+    ],
+    "b": [
+      11.4,
+      72.6
+    ],
+    "base": 4.3325800564559955,
+    "top": 15.305339357530062
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_392",
+    "region": "jiaomu",
+    "a": [
+      11.4,
+      72.6
+    ],
+    "b": [
+      12.2,
+      67.8
+    ],
+    "base": 4.38394398967211,
+    "top": 15.465061890397621
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_394",
+    "region": "jiaomu",
+    "a": [
+      12.2,
+      67.8
+    ],
+    "b": [
+      13.0,
+      63.0
+    ],
+    "base": 4.337530804619554,
+    "top": 15.639167486729033
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_397",
+    "region": "jiaomu",
+    "a": [
+      13.0,
+      63.0
+    ],
+    "b": [
+      14.333333333333334,
+      59.0
+    ],
+    "base": 4.7679862941825775,
+    "top": 15.824493512353982
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_399",
+    "region": "jiaomu",
+    "a": [
+      14.333333333333334,
+      59.0
+    ],
+    "b": [
+      15.666666666666666,
+      55.0
+    ],
+    "base": 4.813703172187604,
+    "top": 16.090162647943743
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_401",
+    "region": "jiaomu",
+    "a": [
+      15.666666666666666,
+      55.0
+    ],
+    "b": [
+      17.0,
+      51.0
+    ],
+    "base": 4.975074603610245,
+    "top": 16.34260838663313
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_404",
+    "region": "jiaomu",
+    "a": [
+      17.0,
+      51.0
+    ],
+    "b": [
+      18.333333333333332,
+      47.0
+    ],
+    "base": 5.48752274597706,
+    "top": 16.56960331216855
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_406",
+    "region": "jiaomu",
+    "a": [
+      18.333333333333332,
+      47.0
+    ],
+    "b": [
+      19.666666666666668,
+      43.0
+    ],
+    "base": 5.5982738656388165,
+    "top": 16.759560968725367
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_408",
+    "region": "jiaomu",
+    "a": [
+      19.666666666666668,
+      43.0
+    ],
+    "b": [
+      21.0,
+      39.0
+    ],
+    "base": 5.854985901597967,
+    "top": 16.89461390800377
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_411",
+    "region": "jiaomu",
+    "a": [
+      21.0,
+      39.0
+    ],
+    "b": [
+      24.6,
+      36.6
+    ],
+    "base": 6.807893709708349,
+    "top": 16.92230962770801
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_413",
+    "region": "jiaomu",
+    "a": [
+      24.6,
+      36.6
+    ],
+    "b": [
+      28.2,
+      34.2
+    ],
+    "base": 7.0664385943626264,
+    "top": 16.90440947879494
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_415",
+    "region": "jiaomu",
+    "a": [
+      28.2,
+      34.2
+    ],
+    "b": [
+      31.799999999999997,
+      31.8
+    ],
+    "base": 7.25126328780552,
+    "top": 16.57416287370873
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_418",
+    "region": "jiaomu",
+    "a": [
+      31.799999999999997,
+      31.8
+    ],
+    "b": [
+      35.4,
+      29.4
+    ],
+    "base": 6.871748256068148,
+    "top": 16.035228763047158
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_420",
+    "region": "jiaomu",
+    "a": [
+      35.4,
+      29.4
+    ],
+    "b": [
+      39.0,
+      27.0
+    ],
+    "base": 6.4169228922349895,
+    "top": 15.443605740357928
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_422",
+    "region": "jiaomu",
+    "a": [
+      39.0,
+      27.0
+    ],
+    "b": [
+      43.42857142857143,
+      27.285714285714285
+    ],
+    "base": 5.294607711085766,
+    "top": 15.304684777891886
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_425",
+    "region": "jiaomu",
+    "a": [
+      43.42857142857143,
+      27.285714285714285
+    ],
+    "b": [
+      47.857142857142854,
+      27.571428571428573
+    ],
+    "base": 4.702893366452767,
+    "top": 14.749441917742626
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_427",
+    "region": "jiaomu",
+    "a": [
+      47.857142857142854,
+      27.571428571428573
+    ],
+    "b": [
+      52.285714285714285,
+      27.857142857142858
+    ],
+    "base": 4.595415026520147,
+    "top": 14.386775774426503
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_429",
+    "region": "jiaomu",
+    "a": [
+      52.285714285714285,
+      27.857142857142858
+    ],
+    "b": [
+      56.71428571428571,
+      28.142857142857142
+    ],
+    "base": 4.4744110128847545,
+    "top": 14.193035611006396
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_432",
+    "region": "jiaomu",
+    "a": [
+      56.71428571428571,
+      28.142857142857142
+    ],
+    "b": [
+      61.14285714285714,
+      28.428571428571427
+    ],
+    "base": 4.2205322056604295,
+    "top": 14.106587562428277
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_434",
+    "region": "jiaomu",
+    "a": [
+      61.14285714285714,
+      28.428571428571427
+    ],
+    "b": [
+      65.57142857142857,
+      28.714285714285715
+    ],
+    "base": 4.2262093248514025,
+    "top": 14.075606600730572
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_436",
+    "region": "jiaomu",
+    "a": [
+      65.57142857142857,
+      28.714285714285715
+    ],
+    "b": [
+      70.0,
+      29.0
+    ],
+    "base": 4.438188860849951,
+    "top": 14.067132122128715
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_439",
+    "region": "jiaomu",
+    "a": [
+      70.0,
+      29.0
+    ],
+    "b": [
+      74.28571428571429,
+      30.714285714285715
+    ],
+    "base": 4.200893893421174,
+    "top": 14.067562669528165
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_441",
+    "region": "jiaomu",
+    "a": [
+      74.28571428571429,
+      30.714285714285715
+    ],
+    "b": [
+      78.57142857142857,
+      32.42857142857143
+    ],
+    "base": 4.35928620196139,
+    "top": 14.074546188828444
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_443",
+    "region": "jiaomu",
+    "a": [
+      78.57142857142857,
+      32.42857142857143
+    ],
+    "b": [
+      82.85714285714286,
+      34.14285714285714
+    ],
+    "base": 4.253691427486039,
+    "top": 14.085084913471906
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_446",
+    "region": "jiaomu",
+    "a": [
+      82.85714285714286,
+      34.14285714285714
+    ],
+    "b": [
+      87.14285714285714,
+      35.857142857142854
+    ],
+    "base": 4.128213226079623,
+    "top": 14.097561226588677
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_448",
+    "region": "jiaomu",
+    "a": [
+      87.14285714285714,
+      35.857142857142854
+    ],
+    "b": [
+      91.42857142857143,
+      37.57142857142857
+    ],
+    "base": 4.218058895644469,
+    "top": 14.11065160450571
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_450",
+    "region": "jiaomu",
+    "a": [
+      91.42857142857143,
+      37.57142857142857
+    ],
+    "b": [
+      95.71428571428571,
+      39.285714285714285
+    ],
+    "base": 4.344103963279745,
+    "top": 14.122939394291702
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_453",
+    "region": "jiaomu",
+    "a": [
+      95.71428571428571,
+      39.285714285714285
+    ],
+    "b": [
+      100.0,
+      41.0
+    ],
+    "base": 4.152884036320234,
+    "top": 14.133024713960099
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_455",
+    "region": "jiaomu",
+    "a": [
+      100.0,
+      41.0
+    ],
+    "b": [
+      103.16666666666667,
+      44.333333333333336
+    ],
+    "base": 4.195691477391253,
+    "top": 14.140806557211835
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_457",
+    "region": "jiaomu",
+    "a": [
+      103.16666666666667,
+      44.333333333333336
+    ],
+    "b": [
+      106.33333333333333,
+      47.666666666666664
+    ],
+    "base": 4.180358646855434,
+    "top": 14.160272536950814
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_460",
+    "region": "jiaomu",
+    "a": [
+      106.33333333333333,
+      47.666666666666664
+    ],
+    "b": [
+      109.5,
+      51.0
+    ],
+    "base": 4.1492012887482606,
+    "top": 14.174515781544311
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_462",
+    "region": "jiaomu",
+    "a": [
+      109.5,
+      51.0
+    ],
+    "b": [
+      112.66666666666667,
+      54.33333333333333
+    ],
+    "base": 4.1243987872513515,
+    "top": 14.181548283495435
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_464",
+    "region": "jiaomu",
+    "a": [
+      112.66666666666667,
+      54.33333333333333
+    ],
+    "b": [
+      115.83333333333333,
+      57.66666666666667
+    ],
+    "base": 4.265555684656469,
+    "top": 14.179668971475682
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_467",
+    "region": "jiaomu",
+    "a": [
+      115.83333333333333,
+      57.66666666666667
+    ],
+    "b": [
+      119.0,
+      61.0
+    ],
+    "base": 4.203410236157404,
+    "top": 14.167451577457419
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_469",
+    "region": "jiaomu",
+    "a": [
+      119.0,
+      61.0
+    ],
+    "b": [
+      119.66666666666667,
+      65.33333333333333
+    ],
+    "base": 4.028186756111953,
+    "top": 14.165301357255425
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_471",
+    "region": "jiaomu",
+    "a": [
+      119.66666666666667,
+      65.33333333333333
+    ],
+    "b": [
+      120.33333333333333,
+      69.66666666666667
+    ],
+    "base": 4.26238715003219,
+    "top": 14.167434550918081
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_474",
+    "region": "jiaomu",
+    "a": [
+      120.33333333333333,
+      69.66666666666667
+    ],
+    "b": [
+      121.0,
+      74.0
+    ],
+    "base": 4.044486971447508,
+    "top": 14.162901080505762
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_476",
+    "region": "jiaomu",
+    "a": [
+      121.0,
+      74.0
+    ],
+    "b": [
+      121.66666666666667,
+      78.33333333333333
+    ],
+    "base": 3.9841900176012945,
+    "top": 14.151703648836369
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_478",
+    "region": "jiaomu",
+    "a": [
+      121.66666666666667,
+      78.33333333333333
+    ],
+    "b": [
+      122.33333333333333,
+      82.66666666666667
+    ],
+    "base": 4.218465589970828,
+    "top": 14.133977847333941
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_481",
+    "region": "jiaomu",
+    "a": [
+      122.33333333333333,
+      82.66666666666667
+    ],
+    "b": [
+      123.0,
+      87.0
+    ],
+    "base": 3.996767255206188,
+    "top": 14.10982610810131
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_483",
+    "region": "jiaomu",
+    "a": [
+      123.0,
+      87.0
+    ],
+    "b": [
+      121.33333333333333,
+      91.16666666666667
+    ],
+    "base": 4.091199516912802,
+    "top": 14.106620591915812
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_485",
+    "region": "jiaomu",
+    "a": [
+      121.33333333333333,
+      91.16666666666667
+    ],
+    "b": [
+      119.66666666666667,
+      95.33333333333333
+    ],
+    "base": 4.043182976064234,
+    "top": 14.115924438013339
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_488",
+    "region": "jiaomu",
+    "a": [
+      119.66666666666667,
+      95.33333333333333
+    ],
+    "b": [
+      118.0,
+      99.5
+    ],
+    "base": 3.941980705022046,
+    "top": 14.123651226288192
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_490",
+    "region": "jiaomu",
+    "a": [
+      118.0,
+      99.5
+    ],
+    "b": [
+      116.33333333333333,
+      103.66666666666666
+    ],
+    "base": 4.083722767731251,
+    "top": 14.129855516564675
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_492",
+    "region": "jiaomu",
+    "a": [
+      116.33333333333333,
+      103.66666666666666
+    ],
+    "b": [
+      114.66666666666667,
+      107.83333333333334
+    ],
+    "base": 4.064396618733091,
+    "top": 14.132959753528734
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_495",
+    "region": "jiaomu",
+    "a": [
+      114.66666666666667,
+      107.83333333333334
+    ],
+    "b": [
+      113.0,
+      112.0
+    ],
+    "base": 3.995375739444138,
+    "top": 14.071045642849043
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_497",
+    "region": "jiaomu",
+    "a": [
+      113.0,
+      112.0
+    ],
+    "b": [
+      110.28333333333333,
+      115.33333333333333
+    ],
+    "base": 4.30234926960957,
+    "top": 14.016383664812045
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_499",
+    "region": "jiaomu",
+    "a": [
+      110.28333333333333,
+      115.33333333333333
+    ],
+    "b": [
+      107.56666666666666,
+      118.66666666666667
+    ],
+    "base": 4.601034334448529,
+    "top": 13.93658197012037
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_502",
+    "region": "jiaomu",
+    "a": [
+      107.56666666666666,
+      118.66666666666667
+    ],
+    "b": [
+      104.85,
+      122.0
+    ],
+    "base": 4.8736967460374965,
+    "top": 13.81158263423561
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_504",
+    "region": "jiaomu",
+    "a": [
+      104.85,
+      122.0
+    ],
+    "b": [
+      102.13333333333334,
+      125.33333333333333
+    ],
+    "base": 4.343181549919132,
+    "top": 13.362690340683328
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_506",
+    "region": "jiaomu",
+    "a": [
+      102.13333333333334,
+      125.33333333333333
+    ],
+    "b": [
+      99.41666666666667,
+      128.66666666666666
+    ],
+    "base": 3.126613335995998,
+    "top": 13.177420744560587
+  }
+]

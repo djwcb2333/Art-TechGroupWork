@@ -1,0 +1,5290 @@
+{
+  "schema_version": "1.0",
+  "status": "planning_only_not_placement_proof",
+  "source_json": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Originals\\10_document.json",
+  "source_png": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Originals\\11_document.png",
+  "units": "meters; all component dimensions are proposed target bounding boxes, not measured mesh bounds",
+  "coordinate_policy": {
+    "source_anchor_xy_unchanged": true,
+    "offsets_are_new_decor_local_offsets_only": true,
+    "offset_axes": "source map X/Y; Z upwards; world transform must be applied once by builder",
+    "component_offset_z": "component center relative to locally sampled ground unless recipe explicitly describes floor/ceiling; all dimensions adjustable after camera/traversal check",
+    "existing_anchor_roots": "always zero XY offset; proposed placement offsets only apply to newly added geometry groups",
+    "missing_deep_entry_source": "new additive candidate destination tied to regions/shendu; not a source node relocation",
+    "terrain_boundary": "resolve irregular PNG contour with source metric anchors; no ellipse platform or pixel-to-meter overwrite",
+    "validation_anchors": [
+      "buildings/base_hut",
+      "mechanisms/mech_wall_1",
+      "holes/hole_abyss"
+    ]
+  },
+  "sizing_policy": "All sizes here are adjustable implementation proposals, not additional confirmed user requirements. Re-measure actual pawn, camera and building footprint; lower local height before moving any source anchor.",
+  "source_integrity": [
+    {
+      "source_path": "00_开始这里.md",
+      "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\00_document.md",
+      "expected_sha256": "D0E79F924677C4DD3F0E7DECF0B29832FECD918A0CEFBCEB37B64A2C74CBF434",
+      "actual_sha256": "D0E79F924677C4DD3F0E7DECF0B29832FECD918A0CEFBCEB37B64A2C74CBF434",
+      "matches": true,
+      "bytes": 2963
+    },
+    {
+      "source_path": "01_直接发给Codex.md",
+      "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\01_document.md",
+      "expected_sha256": "B6321A3115D0E2A385A28354434C25F3D2DF73F117FC550754A216ABF8C112F3",
+      "actual_sha256": "B6321A3115D0E2A385A28354434C25F3D2DF73F117FC550754A216ABF8C112F3",
+      "matches": true,
+      "bytes": 4066
+    },
+    {
+      "source_path": "04_验收与交付.md",
+      "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\02_document.md",
+      "expected_sha256": "FAD3F85062111FE30BB9370622B128FD1E392F93F6C4E6985287F7281AF45F25",
+      "actual_sha256": "FAD3F85062111FE30BB9370622B128FD1E392F93F6C4E6985287F7281AF45F25",
+      "matches": true,
+      "bytes": 2755
+    },
+    {
+      "source_path": "Code/CameraOccluderFadeComponent.cpp",
+      "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Code\\CameraOccluderFadeComponent.cpp",
+      "expected_sha256": "16CB70FE517F35155E69B771A38FC560268CFE67CF2812153CD64FD534C06C70",
+      "actual_sha256": "16CB70FE517F35155E69B771A38FC560268CFE67CF2812153CD64FD534C06C70",
+      "matches": true,
+      "bytes": 7147
+    },
+    {
+      "source_path": "Code/CameraOccluderFadeComponent.h",
+      "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Code\\CameraOccluderFadeComponent.h",
+      "expected_sha256": "F194080F76D15E10DD958C4C861C58C338E084783EEBFC3BD62F31B8BA14F8F0",
+      "actual_sha256": "F194080F76D15E10DD958C4C861C58C338E084783EEBFC3BD62F31B8BA14F8F0",
+      "matches": true,
+      "bytes": 2766
+    },
+    {
+      "source_path": "Data/depth_overlay.json",
+      "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Data\\depth_overlay.json",
+      "expected_sha256": "D01950C78BAE2501025B195E26F787965AC02E4BF0FA3FAA04B02ACDE5237C21",
+      "actual_sha256": "D01950C78BAE2501025B195E26F787965AC02E4BF0FA3FAA04B02ACDE5237C21",
+      "matches": true,
+      "bytes": 10979
+    },
+    {
+      "source_path": "Data/module_requirements.json",
+      "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Data\\module_requirements.json",
+      "expected_sha256": "1846C69F111F9EF0F06A5C421189737DBACBA42AA5D0492EA74FF0DE9107511C",
+      "actual_sha256": "1846C69F111F9EF0F06A5C421189737DBACBA42AA5D0492EA74FF0DE9107511C",
+      "matches": true,
+      "bytes": 20515
+    },
+    {
+      "source_path": "Design/相机遮挡接入.md",
+      "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Design\\08_document.md",
+      "expected_sha256": "07EB866A05D5DED6FD885517120E48F26CDEC583B2B025BA356BAFE754B3B263",
+      "actual_sha256": "07EB866A05D5DED6FD885517120E48F26CDEC583B2B025BA356BAFE754B3B263",
+      "matches": true,
+      "bytes": 5620
+    },
+    {
+      "source_path": "Design/纵深设计.md",
+      "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Design\\09_document.md",
+      "expected_sha256": "5B39B1401ECD3CAE83834FF23FFDD7C9E135FDE62168B6619D34DEE52B0B1943",
+      "actual_sha256": "5B39B1401ECD3CAE83834FF23FFDD7C9E135FDE62168B6619D34DEE52B0B1943",
+      "matches": true,
+      "bytes": 8356
+    },
+    {
+      "source_path": "Originals/原地图.json",
+      "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Originals\\10_document.json",
+      "expected_sha256": "D79B1BD9165E846604EDE8FDAB70A581D0A1CFE87CB90ED8CE23EF7170809FD4",
+      "actual_sha256": "D79B1BD9165E846604EDE8FDAB70A581D0A1CFE87CB90ED8CE23EF7170809FD4",
+      "matches": true,
+      "bytes": 16287
+    },
+    {
+      "source_path": "Originals/原概念.png",
+      "extracted_path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Handoff\\Originals\\11_document.png",
+      "expected_sha256": "FFAB03A93B6D78CB2B42FE861CAD24201AE5E03E9CE849394E07CD633F22E049",
+      "actual_sha256": "FFAB03A93B6D78CB2B42FE861CAD24201AE5E03E9CE849394E07CD633F22E049",
+      "matches": true,
+      "bytes": 667478
+    }
+  ],
+  "assets": {
+    "cliff": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_CliffA01",
+      "object_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_CliffA01.SM_RockDesert_CliffA01",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "cliff_half": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_CliffHalf01",
+      "object_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_CliffHalf01.SM_RockDesert_CliffHalf01",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "platform": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_Platform01",
+      "object_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_Platform01.SM_RockDesert_Platform01",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "shelf": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_Shelf01",
+      "object_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_Shelf01.SM_RockDesert_Shelf01",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "layered": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_Layered01",
+      "object_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_Layered01.SM_RockDesert_Layered01",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "rock": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_Rock01",
+      "object_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_Rock01.SM_RockDesert_Rock01",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "clump": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_Clump01",
+      "object_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_Clump01.SM_RockDesert_Clump01",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "hoodoo": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_Hoodoo01",
+      "object_path": "/Game/Maps/SoStylized/Environment/Rocks/Desert/SM_RockDesert_Hoodoo01.SM_RockDesert_Hoodoo01",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "grass": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Foliage/SM_Grass1",
+      "object_path": "/Game/Maps/SoStylized/Environment/Foliage/SM_Grass1.SM_Grass1",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "weed": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Foliage/SM_DesertWeed01",
+      "object_path": "/Game/Maps/SoStylized/Environment/Foliage/SM_DesertWeed01.SM_DesertWeed01",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "bush": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Foliage/SM_DesertBush01",
+      "object_path": "/Game/Maps/SoStylized/Environment/Foliage/SM_DesertBush01.SM_DesertBush01",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "roots": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Foliage/SM_DesertTwigRoots01",
+      "object_path": "/Game/Maps/SoStylized/Environment/Foliage/SM_DesertTwigRoots01.SM_DesertTwigRoots01",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "cactus_bud": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Foliage/SM_CactusBulb01",
+      "object_path": "/Game/Maps/SoStylized/Environment/Foliage/SM_CactusBulb01.SM_CactusBulb01",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "desert_flower": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Foliage/SM_FlowerDesertBulb01",
+      "object_path": "/Game/Maps/SoStylized/Environment/Foliage/SM_FlowerDesertBulb01.SM_FlowerDesertBulb01",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "waterfall": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Water/Waterfalls/SM_Waterfall1",
+      "object_path": "/Game/Maps/SoStylized/Environment/Water/Waterfalls/SM_Waterfall1.SM_Waterfall1",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "waterfall_split": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Water/Waterfalls/SM_WaterfallSplit1",
+      "object_path": "/Game/Maps/SoStylized/Environment/Water/Waterfalls/SM_WaterfallSplit1.SM_WaterfallSplit1",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "water_plane": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Water/Meshes/SM_WaterPlane",
+      "object_path": "/Game/Maps/SoStylized/Environment/Water/Meshes/SM_WaterPlane.SM_WaterPlane",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    },
+    "water_river": {
+      "package_path": "/Game/Maps/SoStylized/Environment/Water/Meshes/SM_WaterRiver01",
+      "object_path": "/Game/Maps/SoStylized/Environment/Water/Meshes/SM_WaterRiver01.SM_WaterRiver01",
+      "verified_in": "SoStylizedRepair/Staging/repair-result.json saved list",
+      "runtime_bounds_material_collision": "must verify in current editor"
+    }
+  },
+  "unmatched_asset_categories": [
+    "recognizable yeast mushroom caps/stems/colonies",
+    "dough architecture and independent roofs",
+    "bridge deck and supports",
+    "storage bins/workbench",
+    "core altar and monster bodies"
+  ],
+  "asset_policy": "No fake SoStylized package paths. Missing silhouettes use generated meshes or multi-part engine geometry, saved under Content/Maps in candidate-only folders. Shared pack materials remain unchanged.",
+  "material_policy": {
+    "rvt_required": false,
+    "candidate_only_copies": true,
+    "region_colors": "palette from source as guidance; no same-height flat color discs",
+    "fade_parameter": "CameraFade",
+    "fade_min_visibility": [
+      0.2,
+      0.35
+    ],
+    "tag_scope": "StaticMeshComponent not Actor",
+    "cannot_fade": [
+      "Landscape",
+      "danger rims",
+      "mandatory gates",
+      "base of cliffs",
+      "collision boundaries"
+    ],
+    "not_supported_by_supplied_code": [
+      "ISM/HISM per-instance fade",
+      "arbitrary interaction target detection"
+    ]
+  },
+  "existing_gameplay_policy": "Preserve character inputs and camera. Source descriptions are design semantics, not proof of working gameplay. Keep storage_repair future status; missing combat, transformations, inventory/building systems remain marked proxies.",
+  "module_count": 44,
+  "counts_by_region": {
+    "jidi": 6,
+    "qianceng": 7,
+    "fajiao": 8,
+    "meijun": 9,
+    "jiaomu": 7,
+    "shendu": 7
+  },
+  "modules": [
+    {
+      "requirement_id": "jidi_01",
+      "region": "jidi",
+      "category_cn": "密实地表与台缘",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "continuous_landscape_activity_surface",
+        "segmented_dense_dough_cut_wall",
+        "wall_top_cap"
+      ],
+      "placements": [
+        {
+          "key": "base_terrace",
+          "source_anchor_refs": [
+            "regions/jidi"
+          ],
+          "source_anchors": [
+            {
+              "ref": "regions/jidi",
+              "xy_m": [
+                253.3,
+                253.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "mixed_terrain_pack_geometry",
+          "components": [
+            {
+              "kind": "continuous_landscape_activity_surface",
+              "dimensions_m": [
+                65,
+                58,
+                1
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "note": "Blend to approach terrain; not a separate circular platform."
+            },
+            {
+              "kind": "segmented_dense_dough_cut_wall",
+              "dimensions_m": [
+                8,
+                2,
+                3
+              ],
+              "offset_m": [
+                0,
+                0,
+                -1.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "cliff_half"
+            },
+            {
+              "kind": "wall_top_cap",
+              "dimensions_m": [
+                8,
+                2.4,
+                0.45
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.1
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "shelf"
+            }
+          ],
+          "notes": "Wall/cap segments follow locally exposed external terrace edges, never across approach corridors."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera.",
+      "geometry_constraints": {
+        "activity_z_m": [
+          6,
+          8
+        ],
+        "build_slope_max_deg": 2,
+        "approach_slope_target_deg": 12,
+        "reduce_height_before_moving_xy": true
+      }
+    },
+    {
+      "requirement_id": "jidi_02",
+      "region": "jidi",
+      "category_cn": "原主棚体量与独立屋顶",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": true,
+      "component_kinds": [
+        "floor",
+        "left_wall",
+        "right_wall",
+        "rear_wall",
+        "front_wall_left",
+        "front_wall_right",
+        "door_header",
+        "independent_bread_roof",
+        "door_threshold"
+      ],
+      "placements": [
+        {
+          "key": "base_hut",
+          "source_anchor_refs": [
+            "buildings/base_hut"
+          ],
+          "source_anchors": [
+            {
+              "ref": "buildings/base_hut",
+              "xy_m": [
+                221.7,
+                243.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "floor",
+              "dimensions_m": [
+                9,
+                7,
+                0.25
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.125
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "left_wall",
+              "dimensions_m": [
+                0.35,
+                7,
+                3
+              ],
+              "offset_m": [
+                -4.3,
+                0,
+                1.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "right_wall",
+              "dimensions_m": [
+                0.35,
+                7,
+                3
+              ],
+              "offset_m": [
+                4.3,
+                0,
+                1.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "rear_wall",
+              "dimensions_m": [
+                8.6,
+                0.35,
+                3
+              ],
+              "offset_m": [
+                0,
+                -3.3,
+                1.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "front_wall_left",
+              "dimensions_m": [
+                2.9,
+                0.35,
+                3
+              ],
+              "offset_m": [
+                -2.8,
+                3.3,
+                1.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "front_wall_right",
+              "dimensions_m": [
+                2.9,
+                0.35,
+                3
+              ],
+              "offset_m": [
+                2.8,
+                3.3,
+                1.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "door_header",
+              "dimensions_m": [
+                2.5,
+                0.35,
+                0.5
+              ],
+              "offset_m": [
+                0,
+                3.3,
+                2.8
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "independent_bread_roof",
+              "dimensions_m": [
+                10,
+                8,
+                1.8
+              ],
+              "offset_m": [
+                0,
+                0,
+                3.7
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true,
+              "note": "Split into left/right slope or shaped bread dome; no ground collision change during fading."
+            },
+            {
+              "kind": "door_threshold",
+              "dimensions_m": [
+                2.5,
+                2,
+                0.12
+              ],
+              "offset_m": [
+                0,
+                4,
+                0.06
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            }
+          ],
+          "notes": "Illustrative dimensions only; orient doorway to existing route after camera check. Root remains at original hut XY."
+        }
+      ],
+      "acceptance_rule": "Hut has recognizable walls, open entry and a separately fading roof; doorway and original interactable anchor remain readable."
+    },
+    {
+      "requirement_id": "jidi_03",
+      "region": "jidi",
+      "category_cn": "原工作台",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "tabletop",
+        "table_legs",
+        "lower_shelf",
+        "tool_and_bowl_group"
+      ],
+      "placements": [
+        {
+          "key": "workbench",
+          "source_anchor_refs": [
+            "buildings/workbench"
+          ],
+          "source_anchors": [
+            {
+              "ref": "buildings/workbench",
+              "xy_m": [
+                221.7,
+                266.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "tabletop",
+              "dimensions_m": [
+                2.8,
+                1.35,
+                0.18
+              ],
+              "offset_m": [
+                0,
+                0,
+                1.05
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "table_legs",
+              "dimensions_m": [
+                0.16,
+                0.16,
+                0.95
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.475
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "note": "Four legs at tabletop corners."
+            },
+            {
+              "kind": "lower_shelf",
+              "dimensions_m": [
+                2.3,
+                1.1,
+                0.1
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.35
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "tool_and_bowl_group",
+              "dimensions_m": [
+                1.6,
+                0.8,
+                0.4
+              ],
+              "offset_m": [
+                0,
+                0,
+                1.35
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Small tray, mixing bowl, rolling-pin forms; no new interaction logic."
+            }
+          ],
+          "notes": ""
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "jidi_04",
+      "region": "jidi",
+      "category_cn": "原储物修复设施体量_原状态保留",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": true,
+      "component_kinds": [
+        "storage_shelf_frame",
+        "storage_bin_group",
+        "repair_bench",
+        "lean_to_canopy",
+        "canopy_posts"
+      ],
+      "placements": [
+        {
+          "key": "storage_repair",
+          "source_anchor_refs": [
+            "buildings/storage_repair"
+          ],
+          "source_anchors": [
+            {
+              "ref": "buildings/storage_repair",
+              "xy_m": [
+                196.7,
+                256.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "storage_shelf_frame",
+              "dimensions_m": [
+                3.6,
+                1.2,
+                2.3
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "storage_bin_group",
+              "dimensions_m": [
+                0.8,
+                0.7,
+                0.8
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.4
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "note": "Three bins, separately modeled lid, rim and body."
+            },
+            {
+              "kind": "repair_bench",
+              "dimensions_m": [
+                2.4,
+                1.1,
+                1.15
+              ],
+              "offset_m": [
+                2.5,
+                0,
+                0.575
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "lean_to_canopy",
+              "dimensions_m": [
+                6.7,
+                3.2,
+                0.65
+              ],
+              "offset_m": [
+                1.1,
+                0,
+                2.65
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            },
+            {
+              "kind": "canopy_posts",
+              "dimensions_m": [
+                0.18,
+                0.18,
+                2.4
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "note": "At canopy corners, keep entry free."
+            }
+          ],
+          "notes": "Preserve source status 后续版本; volume proxy does not make repair/storage gameplay implemented."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "jidi_05",
+      "region": "jidi",
+      "category_cn": "低矮植被组团",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "short_grass_cluster",
+        "small_desert_bush",
+        "edge_flower_patch"
+      ],
+      "placements": [
+        {
+          "key": "base_low_foliage",
+          "source_anchor_refs": [
+            "regions/jidi"
+          ],
+          "source_anchors": [
+            {
+              "ref": "regions/jidi",
+              "xy_m": [
+                253.3,
+                253.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            -27,
+            -18,
+            0
+          ],
+          "real_or_placeholder": "pack_assets",
+          "components": [
+            {
+              "kind": "short_grass_cluster",
+              "dimensions_m": [
+                2.5,
+                2.5,
+                0.35
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "grass"
+            },
+            {
+              "kind": "small_desert_bush",
+              "dimensions_m": [
+                1.2,
+                1.2,
+                0.7
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "bush"
+            },
+            {
+              "kind": "edge_flower_patch",
+              "dimensions_m": [
+                1.2,
+                1.2,
+                0.35
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "desert_flower"
+            }
+          ],
+          "notes": "Sparse groups on reserve edges. Exclude actual facility footprints, door routes and combat anchors."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "jidi_06",
+      "region": "jidi",
+      "category_cn": "设施入口与建造净空",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "facility_approach_surface",
+        "footprint_test_proxy"
+      ],
+      "placements": [
+        {
+          "key": "facility_entry_clearance",
+          "source_anchor_refs": [
+            "buildings/base_hut",
+            "buildings/workbench",
+            "buildings/storage_repair"
+          ],
+          "source_anchors": [
+            {
+              "ref": "buildings/base_hut",
+              "xy_m": [
+                221.7,
+                243.3
+              ]
+            },
+            {
+              "ref": "buildings/workbench",
+              "xy_m": [
+                221.7,
+                266.7
+              ]
+            },
+            {
+              "ref": "buildings/storage_repair",
+              "xy_m": [
+                196.7,
+                256.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "facility_approach_surface",
+              "dimensions_m": [
+                3.5,
+                6,
+                0.1
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "note": "Per facility, outside actual door/apron. May be same Landscape surface, record its component reference."
+            },
+            {
+              "kind": "footprint_test_proxy",
+              "dimensions_m": [
+                9,
+                7,
+                3
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "QueryOnly",
+              "needs_fade": false,
+              "note": "Editor/test-only clearly labeled proxy; dimensions derive from actual hut, no mandatory fixed reserve rectangle."
+            }
+          ],
+          "notes": "Measure actual occupied bounds first; preserve original path width; no new gameplay construction system."
+        }
+      ],
+      "acceptance_rule": "Actual footprint placement proxy and three round trips show unblocked entrances; do not count an empty label as delivered clearance."
+    },
+    {
+      "requirement_id": "qianceng_01",
+      "region": "qianceng",
+      "category_cn": "面团地表与厚度切面",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "continuous_landscape_activity_surface",
+        "dough_cut_wall",
+        "cut_wall_cap",
+        "pore_recess"
+      ],
+      "placements": [
+        {
+          "key": "shallow_dough_profile",
+          "source_anchor_refs": [
+            "regions/qianceng"
+          ],
+          "source_anchors": [
+            {
+              "ref": "regions/qianceng",
+              "xy_m": [
+                253.3,
+                253.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "mixed_terrain_pack_geometry",
+          "components": [
+            {
+              "kind": "continuous_landscape_activity_surface",
+              "dimensions_m": [
+                250,
+                245,
+                3
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "dough_cut_wall",
+              "dimensions_m": [
+                9,
+                2.5,
+                3
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "cliff_half"
+            },
+            {
+              "kind": "cut_wall_cap",
+              "dimensions_m": [
+                9,
+                3,
+                0.55
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "shelf"
+            },
+            {
+              "kind": "pore_recess",
+              "dimensions_m": [
+                1.3,
+                0.5,
+                0.8
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Dark recessed ovals inserted in wall thickness, not free-floating dots."
+            }
+          ],
+          "notes": "Cut edges exposed only in road-external segments; preserve PNG irregular contour."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera.",
+      "geometry_constraints": {
+        "activity_z_m": [
+          0,
+          3
+        ],
+        "cut_depth_m": [
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "requirement_id": "qianceng_02",
+      "region": "qianceng",
+      "category_cn": "面筋须丛",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "gluten_main_tuft",
+        "gluten_companion_tuft",
+        "sparse_edge_tuft"
+      ],
+      "placements": [
+        {
+          "key": "gluten_whiskers",
+          "source_anchor_refs": [
+            "flora/gluten_whiskers_1",
+            "flora/gluten_whiskers_2"
+          ],
+          "source_anchors": [
+            {
+              "ref": "flora/gluten_whiskers_1",
+              "xy_m": [
+                186.7,
+                206.7
+              ]
+            },
+            {
+              "ref": "flora/gluten_whiskers_2",
+              "xy_m": [
+                293.3,
+                316.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "adapted_pack_placeholder",
+          "components": [
+            {
+              "kind": "gluten_main_tuft",
+              "dimensions_m": [
+                2.5,
+                2.5,
+                1.5
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "weed"
+            },
+            {
+              "kind": "gluten_companion_tuft",
+              "dimensions_m": [
+                1.5,
+                1.5,
+                0.7
+              ],
+              "offset_m": [
+                2.2,
+                1,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "grass"
+            },
+            {
+              "kind": "sparse_edge_tuft",
+              "dimensions_m": [
+                0.8,
+                0.8,
+                0.35
+              ],
+              "offset_m": [
+                -2.5,
+                -1,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "grass"
+            }
+          ],
+          "notes": "Keep each original flora anchor; second source is explicitly sparse. Scaled grass is visual proxy for gluten strands."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "qianceng_03",
+      "region": "qianceng",
+      "category_cn": "浅凹窝与大小孔缘",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "shallow_bowl_terrain",
+        "large_pore_rim",
+        "small_pore_rim",
+        "pore_inner_wall",
+        "dark_bottom"
+      ],
+      "placements": [
+        {
+          "key": "shallow_pore_group",
+          "source_anchor_refs": [
+            "holes/hole_small_1"
+          ],
+          "source_anchors": [
+            {
+              "ref": "holes/hole_small_1",
+              "xy_m": [
+                173.3,
+                300.0
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            -9,
+            -5,
+            0
+          ],
+          "real_or_placeholder": "mixed_terrain_pack_geometry",
+          "components": [
+            {
+              "kind": "shallow_bowl_terrain",
+              "dimensions_m": [
+                10,
+                7,
+                1.2
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "large_pore_rim",
+              "dimensions_m": [
+                6,
+                5,
+                0.8
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "rock",
+              "note": "Use ring segments, open center."
+            },
+            {
+              "kind": "small_pore_rim",
+              "dimensions_m": [
+                2.2,
+                1.8,
+                0.35
+              ],
+              "offset_m": [
+                5,
+                -3,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "rock"
+            },
+            {
+              "kind": "pore_inner_wall",
+              "dimensions_m": [
+                5,
+                4,
+                2
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "dark_bottom",
+              "dimensions_m": [
+                4.5,
+                3.5,
+                0.15
+              ],
+              "offset_m": [
+                0,
+                0,
+                -2
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            }
+          ],
+          "notes": "Decorative recess adjacent to source portal; not a second teleport or gameplay node."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "qianceng_04",
+      "region": "qianceng",
+      "category_cn": "呼吸孔与内壁",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "segmented_pore_rim",
+        "inner_wall_tube",
+        "lower_shadow_bowl",
+        "breathing_membrane_proxy"
+      ],
+      "placements": [
+        {
+          "key": "breathing_pore",
+          "source_anchor_refs": [
+            "holes/hole_vent_1"
+          ],
+          "source_anchors": [
+            {
+              "ref": "holes/hole_vent_1",
+              "xy_m": [
+                180.0,
+                156.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "segmented_pore_rim",
+              "dimensions_m": [
+                5,
+                5,
+                0.65
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "rock"
+            },
+            {
+              "kind": "inner_wall_tube",
+              "dimensions_m": [
+                3.6,
+                3.6,
+                3
+              ],
+              "offset_m": [
+                0,
+                0,
+                -1.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "lower_shadow_bowl",
+              "dimensions_m": [
+                3.5,
+                3.5,
+                0.3
+              ],
+              "offset_m": [
+                0,
+                0,
+                -3
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "breathing_membrane_proxy",
+              "dimensions_m": [
+                3.3,
+                3.3,
+                0.35
+              ],
+              "offset_m": [
+                0,
+                0,
+                -0.7
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Distinct folded segments, static mechanism placeholder, no periodic opening claimed."
+            }
+          ],
+          "notes": ""
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "qianceng_05",
+      "region": "qianceng",
+      "category_cn": "水边过渡",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "shallow_water_surface",
+        "wet_shore_transition",
+        "shore_reed_group",
+        "shore_pebble_group"
+      ],
+      "placements": [
+        {
+          "key": "tutorial_water_margin",
+          "source_anchor_refs": [
+            "demo_route/3"
+          ],
+          "source_anchors": [
+            {
+              "ref": "demo_route/3",
+              "xy_m": [
+                190.0,
+                310.0
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "mixed_pack_and_material_adaptation",
+          "components": [
+            {
+              "kind": "shallow_water_surface",
+              "dimensions_m": [
+                10,
+                7,
+                0.08
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.03
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "water_plane"
+            },
+            {
+              "kind": "wet_shore_transition",
+              "dimensions_m": [
+                14,
+                11,
+                0.2
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Terrain material blend or shaped ring; no blanket plane over water."
+            },
+            {
+              "kind": "shore_reed_group",
+              "dimensions_m": [
+                2.5,
+                1,
+                0.7
+              ],
+              "offset_m": [
+                5,
+                2,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "weed"
+            },
+            {
+              "kind": "shore_pebble_group",
+              "dimensions_m": [
+                2,
+                1,
+                0.4
+              ],
+              "offset_m": [
+                -4,
+                2,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "clump"
+            }
+          ],
+          "notes": "Resource anchor XY stays clear and reachable. Actual collection remains project-dependent."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "qianceng_06",
+      "region": "qianceng",
+      "category_cn": "气孔近道入口与内部体量",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": true,
+      "component_kinds": [
+        "arched_portal_rim",
+        "tunnel_floor",
+        "tunnel_inner_walls",
+        "separate_tunnel_roof",
+        "tunnel_deep_shadow"
+      ],
+      "placements": [
+        {
+          "key": "dough_shortcut",
+          "source_anchor_refs": [
+            "holes/hole_small_1",
+            "mechanisms/mech_hole_shortcut"
+          ],
+          "source_anchors": [
+            {
+              "ref": "holes/hole_small_1",
+              "xy_m": [
+                173.3,
+                300.0
+              ]
+            },
+            {
+              "ref": "mechanisms/mech_hole_shortcut",
+              "xy_m": [
+                173.3,
+                300.0
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "arched_portal_rim",
+              "dimensions_m": [
+                4.5,
+                3,
+                3.2
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "tunnel_floor",
+              "dimensions_m": [
+                2.3,
+                8,
+                0.25
+              ],
+              "offset_m": [
+                0,
+                3,
+                -0.15
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "tunnel_inner_walls",
+              "dimensions_m": [
+                0.4,
+                8,
+                2.2
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "note": "Two side walls, repeated depth rings."
+            },
+            {
+              "kind": "separate_tunnel_roof",
+              "dimensions_m": [
+                3.1,
+                8,
+                0.8
+              ],
+              "offset_m": [
+                0,
+                3,
+                2.1
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            },
+            {
+              "kind": "tunnel_deep_shadow",
+              "dimensions_m": [
+                2.2,
+                0.2,
+                2
+              ],
+              "offset_m": [
+                0,
+                7,
+                1
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false
+            }
+          ],
+          "notes": "One physical portal with both source IDs. End placement/connection not specified by source; preserve optional shortcut semantic, no invented exit node."
+        }
+      ],
+      "acceptance_rule": "Rim, interior thickness and floor are real geometry; mechanism remains explicitly unimplemented if no existing form/portal system exists."
+    },
+    {
+      "requirement_id": "qianceng_07",
+      "region": "qianceng",
+      "category_cn": "原教学节点活动地面",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "activity_ground_patch",
+        "route_edge_accents"
+      ],
+      "placements": [
+        {
+          "key": "tutorial_activity_ground",
+          "source_anchor_refs": [
+            "demo_route/1",
+            "demo_route/2",
+            "demo_route/3",
+            "demo_route/4",
+            "demo_route/5",
+            "demo_route/6",
+            "demo_route/7",
+            "demo_route/8",
+            "demo_route/9"
+          ],
+          "source_anchors": [
+            {
+              "ref": "demo_route/1",
+              "xy_m": [
+                233.3,
+                373.3
+              ]
+            },
+            {
+              "ref": "demo_route/2",
+              "xy_m": [
+                210.0,
+                343.3
+              ]
+            },
+            {
+              "ref": "demo_route/3",
+              "xy_m": [
+                190.0,
+                310.0
+              ]
+            },
+            {
+              "ref": "demo_route/4",
+              "xy_m": [
+                196.7,
+                276.7
+              ]
+            },
+            {
+              "ref": "demo_route/5",
+              "xy_m": [
+                216.7,
+                253.3
+              ]
+            },
+            {
+              "ref": "demo_route/6",
+              "xy_m": [
+                243.3,
+                240.0
+              ]
+            },
+            {
+              "ref": "demo_route/7",
+              "xy_m": [
+                270.0,
+                233.3
+              ]
+            },
+            {
+              "ref": "demo_route/8",
+              "xy_m": [
+                260.0,
+                250.0
+              ]
+            },
+            {
+              "ref": "demo_route/9",
+              "xy_m": [
+                266.7,
+                283.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "terrain_with_pack_decoration",
+          "components": [
+            {
+              "kind": "activity_ground_patch",
+              "dimensions_m": [
+                10,
+                10,
+                0.15
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "note": "Flatten/soften within existing terrain around each original node; no visible square pad."
+            },
+            {
+              "kind": "route_edge_accents",
+              "dimensions_m": [
+                2.5,
+                0.8,
+                0.3
+              ],
+              "offset_m": [
+                0,
+                6,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "clump"
+            }
+          ],
+          "notes": "One record per route node and continuous connecting surface; demo 4/6/9 share existing monster anchors. Do not duplicate combat actors."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera.",
+      "geometry_constraints": {
+        "daily_slope_target_deg": 12,
+        "route_width_proposal_m": 5,
+        "order": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      }
+    },
+    {
+      "requirement_id": "fajiao_01",
+      "region": "fajiao",
+      "category_cn": "膨胀面团块组团",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "large_dough_lobe",
+        "secondary_dough_lobe",
+        "fermentation_buds",
+        "lobe_ground_blend"
+      ],
+      "placements": [
+        {
+          "key": "inflated_dough_cluster",
+          "source_anchor_refs": [
+            "regions/fajiao"
+          ],
+          "source_anchors": [
+            {
+              "ref": "regions/fajiao",
+              "xy_m": [
+                126.7,
+                186.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            -17,
+            8,
+            0
+          ],
+          "real_or_placeholder": "adapted_pack_placeholder",
+          "components": [
+            {
+              "kind": "large_dough_lobe",
+              "dimensions_m": [
+                12,
+                9,
+                4
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "clump"
+            },
+            {
+              "kind": "secondary_dough_lobe",
+              "dimensions_m": [
+                6,
+                5,
+                2.6
+              ],
+              "offset_m": [
+                7,
+                -3,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "rock"
+            },
+            {
+              "kind": "fermentation_buds",
+              "dimensions_m": [
+                2,
+                2,
+                1.1
+              ],
+              "offset_m": [
+                -6,
+                -1,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "cactus_bud"
+            },
+            {
+              "kind": "lobe_ground_blend",
+              "dimensions_m": [
+                16,
+                13,
+                0.3
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Ground transition, avoid isolated boulders looking like unrelated desert debris."
+            }
+          ],
+          "notes": "Bread-colored candidate material; road-external mass rather than random equal-size hills."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "fajiao_02",
+      "region": "fajiao",
+      "category_cn": "酵母菇丛",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": true,
+      "component_kinds": [
+        "mushroom_stem",
+        "independent_mushroom_cap",
+        "cap_gill_ring",
+        "young_mushroom_stem",
+        "young_mushroom_cap",
+        "bud_cluster"
+      ],
+      "placements": [
+        {
+          "key": "yeast_mushroom_group",
+          "source_anchor_refs": [
+            "flora/yeast_buds_fajiao"
+          ],
+          "source_anchors": [
+            {
+              "ref": "flora/yeast_buds_fajiao",
+              "xy_m": [
+                110.0,
+                196.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "mushroom_stem",
+              "dimensions_m": [
+                0.9,
+                0.9,
+                3.2
+              ],
+              "offset_m": [
+                0,
+                0,
+                1.6
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "independent_mushroom_cap",
+              "dimensions_m": [
+                4.8,
+                4.3,
+                1.5
+              ],
+              "offset_m": [
+                0,
+                0,
+                3.6
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            },
+            {
+              "kind": "cap_gill_ring",
+              "dimensions_m": [
+                3.8,
+                3.5,
+                0.22
+              ],
+              "offset_m": [
+                0,
+                0,
+                3
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            },
+            {
+              "kind": "young_mushroom_stem",
+              "dimensions_m": [
+                0.3,
+                0.3,
+                1.1
+              ],
+              "offset_m": [
+                2.5,
+                1,
+                0.55
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "young_mushroom_cap",
+              "dimensions_m": [
+                1.6,
+                1.4,
+                0.65
+              ],
+              "offset_m": [
+                2.5,
+                1,
+                1.25
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            },
+            {
+              "kind": "bud_cluster",
+              "dimensions_m": [
+                1.5,
+                1.2,
+                0.6
+              ],
+              "offset_m": [
+                -2.2,
+                -1,
+                0.3
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false
+            }
+          ],
+          "notes": "Create shaped convex caps and narrowing stems; no SoStylized mushroom mesh confirmed. Caps and stems must be separate components."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "fajiao_03",
+      "region": "fajiao",
+      "category_cn": "孔洞切壁",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "cut_wall_segments",
+        "thick_upper_lip",
+        "pore_arched_rims",
+        "recessed_inner_pore_backs"
+      ],
+      "placements": [
+        {
+          "key": "ferment_porous_cut",
+          "source_anchor_refs": [
+            "regions/fajiao"
+          ],
+          "source_anchors": [
+            {
+              "ref": "regions/fajiao",
+              "xy_m": [
+                126.7,
+                186.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            -27,
+            23,
+            0
+          ],
+          "real_or_placeholder": "mixed_pack_composite_placeholder",
+          "components": [
+            {
+              "kind": "cut_wall_segments",
+              "dimensions_m": [
+                10,
+                2.5,
+                5
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "cliff"
+            },
+            {
+              "kind": "thick_upper_lip",
+              "dimensions_m": [
+                10,
+                3,
+                0.75
+              ],
+              "offset_m": [
+                0,
+                0,
+                2.4
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "shelf"
+            },
+            {
+              "kind": "pore_arched_rims",
+              "dimensions_m": [
+                1.8,
+                0.8,
+                1.5
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Several differently scaled openings placed within wall face."
+            },
+            {
+              "kind": "recessed_inner_pore_backs",
+              "dimensions_m": [
+                1.5,
+                0.25,
+                1.25
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Visible inner thickness, not painted black circles only."
+            }
+          ],
+          "notes": "Use road-external cut wall oriented away from active play clearance."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "fajiao_04",
+      "region": "fajiao",
+      "category_cn": "瀑布崖面",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "crest_ground_lip",
+        "stepped_cliff_backing",
+        "cliff_shoulder_rock",
+        "lower_talus"
+      ],
+      "placements": [
+        {
+          "key": "waterfall_cliff",
+          "source_anchor_refs": [
+            "landmarks/butter_waterfall/crest_pos",
+            "landmarks/butter_waterfall/pool_pos"
+          ],
+          "source_anchors": [
+            {
+              "ref": "landmarks/butter_waterfall/crest_pos",
+              "xy_m": [
+                123.3,
+                160.0
+              ]
+            },
+            {
+              "ref": "landmarks/butter_waterfall/pool_pos",
+              "xy_m": [
+                143.3,
+                201.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "pack_geometry",
+          "components": [
+            {
+              "kind": "crest_ground_lip",
+              "dimensions_m": [
+                12,
+                8,
+                2
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "shelf"
+            },
+            {
+              "kind": "stepped_cliff_backing",
+              "dimensions_m": [
+                12,
+                7,
+                15
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "cliff"
+            },
+            {
+              "kind": "cliff_shoulder_rock",
+              "dimensions_m": [
+                7,
+                5,
+                7
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "layered"
+            },
+            {
+              "kind": "lower_talus",
+              "dimensions_m": [
+                9,
+                5,
+                2.5
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "clump"
+            }
+          ],
+          "notes": "Connect exact crest and pool via several drops; scale segments to actual heightmap profile, prevent traversable ramps alongside water."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera.",
+      "geometry_constraints": {
+        "crest_z_m": [
+          14,
+          18
+        ],
+        "pool_z_m": [
+          0,
+          1
+        ],
+        "waterfall_walkable": false
+      }
+    },
+    {
+      "requirement_id": "fajiao_05",
+      "region": "fajiao",
+      "category_cn": "黄油液流体量",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "upper_butter_sheet",
+        "lower_split_flow",
+        "liquid_lip",
+        "impact_foam_lobes"
+      ],
+      "placements": [
+        {
+          "key": "butter_flow",
+          "source_anchor_refs": [
+            "landmarks/butter_waterfall/crest_pos",
+            "landmarks/butter_waterfall/pool_pos"
+          ],
+          "source_anchors": [
+            {
+              "ref": "landmarks/butter_waterfall/crest_pos",
+              "xy_m": [
+                123.3,
+                160.0
+              ]
+            },
+            {
+              "ref": "landmarks/butter_waterfall/pool_pos",
+              "xy_m": [
+                143.3,
+                201.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "adapted_pack_geometry",
+          "components": [
+            {
+              "kind": "upper_butter_sheet",
+              "dimensions_m": [
+                5,
+                3,
+                6
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "waterfall"
+            },
+            {
+              "kind": "lower_split_flow",
+              "dimensions_m": [
+                7,
+                3,
+                9
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "waterfall_split"
+            },
+            {
+              "kind": "liquid_lip",
+              "dimensions_m": [
+                7,
+                4,
+                0.5
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "water_plane"
+            },
+            {
+              "kind": "impact_foam_lobes",
+              "dimensions_m": [
+                6,
+                4,
+                0.6
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Irregular pale butter bulges at actual pool impact."
+            }
+          ],
+          "notes": "Candidate-only butter material; preserve flow geometry and relief, no flat inclined decorative stripe."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "fajiao_06",
+      "region": "fajiao",
+      "category_cn": "落潭与浅溪槽岸线",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "pool_liquid_surface",
+        "pool_bed",
+        "stream_channel",
+        "stream_bank_segments",
+        "bank_sediment"
+      ],
+      "placements": [
+        {
+          "key": "butter_pool_stream",
+          "source_anchor_refs": [
+            "landmarks/butter_waterfall/pool_pos",
+            "landmarks/butter_waterfall/stream_to"
+          ],
+          "source_anchors": [
+            {
+              "ref": "landmarks/butter_waterfall/pool_pos",
+              "xy_m": [
+                143.3,
+                201.7
+              ]
+            },
+            {
+              "ref": "landmarks/butter_waterfall/stream_to",
+              "xy_m": [
+                143.3,
+                233.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "mixed_pack_terrain_geometry",
+          "components": [
+            {
+              "kind": "pool_liquid_surface",
+              "dimensions_m": [
+                15,
+                11,
+                0.12
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "water_plane"
+            },
+            {
+              "kind": "pool_bed",
+              "dimensions_m": [
+                16,
+                12,
+                0.7
+              ],
+              "offset_m": [
+                0,
+                0,
+                -0.35
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "stream_channel",
+              "dimensions_m": [
+                4,
+                31.6,
+                0.5
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "water_river",
+              "note": "Warp along pool-to-gate centerline; bed collision supports shallow traversal."
+            },
+            {
+              "kind": "stream_bank_segments",
+              "dimensions_m": [
+                3,
+                5,
+                1
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "rock"
+            },
+            {
+              "kind": "bank_sediment",
+              "dimensions_m": [
+                3,
+                2,
+                0.5
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "clump"
+            }
+          ],
+          "notes": "Pool and stream remain shallow walkable ordinary ground. Gate-side bank geometry cannot provide a bypass."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "fajiao_07",
+      "region": "fajiao",
+      "category_cn": "冲撞破壁",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "breakwall_segmented_body",
+        "left_embedded_jamb",
+        "right_embedded_jamb",
+        "doorway_clear_approach"
+      ],
+      "placements": [
+        {
+          "key": "mandatory_breakwall",
+          "source_anchor_refs": [
+            "mechanisms/mech_wall_1"
+          ],
+          "source_anchors": [
+            {
+              "ref": "mechanisms/mech_wall_1",
+              "xy_m": [
+                143.3,
+                233.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "breakwall_segmented_body",
+              "dimensions_m": [
+                5,
+                1.2,
+                3.3
+              ],
+              "offset_m": [
+                0,
+                0,
+                1.65
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "note": "Five cracked bread slabs, not one cube; no CameraFade tag."
+            },
+            {
+              "kind": "left_embedded_jamb",
+              "dimensions_m": [
+                1.5,
+                2,
+                4
+              ],
+              "offset_m": [
+                -3,
+                0,
+                2
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "rock"
+            },
+            {
+              "kind": "right_embedded_jamb",
+              "dimensions_m": [
+                1.5,
+                2,
+                4
+              ],
+              "offset_m": [
+                3,
+                0,
+                2
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "rock"
+            },
+            {
+              "kind": "doorway_clear_approach",
+              "dimensions_m": [
+                6,
+                8,
+                0.1
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            }
+          ],
+          "notes": "Root at original XY; orientation follows actual crossing. Proxy gate remains blocking unless existing confirmed mechanics open it."
+        }
+      ],
+      "acceptance_rule": "Only shallow-ferment crossing; no slope, jump or stream-side bypass. No fade on wall, gate or collision boundary."
+    },
+    {
+      "requirement_id": "fajiao_08",
+      "region": "fajiao",
+      "category_cn": "破壁两侧连续深沟",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "continuous_dry_fissure_cutwall",
+        "fissure_bottom",
+        "opposing_fissure_rim",
+        "jump_proof_boundary_volume"
+      ],
+      "placements": [
+        {
+          "key": "mandatory_wall_flanks",
+          "source_anchor_refs": [
+            "mechanisms/mech_wall_1"
+          ],
+          "source_anchors": [
+            {
+              "ref": "mechanisms/mech_wall_1",
+              "xy_m": [
+                143.3,
+                233.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "pack_terrain_collision_composition",
+          "components": [
+            {
+              "kind": "continuous_dry_fissure_cutwall",
+              "dimensions_m": [
+                12,
+                3,
+                9
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "cliff",
+              "note": "Repeated along both full shared boundary branches up to terrain/world blockers, not two short scenic rocks."
+            },
+            {
+              "kind": "fissure_bottom",
+              "dimensions_m": [
+                12,
+                5,
+                0.3
+              ],
+              "offset_m": [
+                0,
+                0,
+                -9
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "opposing_fissure_rim",
+              "dimensions_m": [
+                12,
+                3,
+                2
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "layered"
+            },
+            {
+              "kind": "jump_proof_boundary_volume",
+              "dimensions_m": [
+                12,
+                3,
+                8
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "note": "Only where geometry defines impassable boundary; retain throughout visual fade."
+            }
+          ],
+          "notes": "Segment transforms derive from the resolved irregular boundary; these dimensions are per segment, not an invented alternate boundary."
+        }
+      ],
+      "acceptance_rule": "Verify continuity along entire boundary and endpoints with walk/jump/roll, not only immediately beside the gate."
+    },
+    {
+      "requirement_id": "jiaomu_01",
+      "region": "jiaomu",
+      "category_cn": "高地台缘",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "continuous_highland_surface",
+        "local_highland_cut",
+        "terrace_cap"
+      ],
+      "placements": [
+        {
+          "key": "yeast_terrace_edges",
+          "source_anchor_refs": [
+            "regions/jiaomu"
+          ],
+          "source_anchors": [
+            {
+              "ref": "regions/jiaomu",
+              "xy_m": [
+                70.0,
+                83.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "pack_terrain_geometry",
+          "components": [
+            {
+              "kind": "continuous_highland_surface",
+              "dimensions_m": [
+                120,
+                112,
+                4
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "local_highland_cut",
+              "dimensions_m": [
+                10,
+                3,
+                4
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "cliff_half"
+            },
+            {
+              "kind": "terrace_cap",
+              "dimensions_m": [
+                10,
+                4,
+                0.6
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "shelf"
+            }
+          ],
+          "notes": "Local 2–5 m ledges off activity routes; continuous 7–11 m principal terrain."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera.",
+      "geometry_constraints": {
+        "activity_z_m": [
+          7,
+          11
+        ],
+        "local_ledge_m": [
+          2,
+          5
+        ]
+      }
+    },
+    {
+      "requirement_id": "jiaomu_02",
+      "region": "jiaomu",
+      "category_cn": "大型酵母菌落",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": true,
+      "component_kinds": [
+        "colony_main_stem",
+        "colony_main_cap",
+        "colony_second_stem",
+        "colony_second_cap",
+        "colony_young_stems",
+        "colony_young_caps",
+        "root_buttress_cluster"
+      ],
+      "placements": [
+        {
+          "key": "large_yeast_colony",
+          "source_anchor_refs": [
+            "regions/jiaomu"
+          ],
+          "source_anchors": [
+            {
+              "ref": "regions/jiaomu",
+              "xy_m": [
+                70.0,
+                83.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            -18,
+            -16,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "colony_main_stem",
+              "dimensions_m": [
+                2,
+                2,
+                7
+              ],
+              "offset_m": [
+                0,
+                0,
+                3.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "colony_main_cap",
+              "dimensions_m": [
+                11,
+                10,
+                3
+              ],
+              "offset_m": [
+                0,
+                0,
+                7.8
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            },
+            {
+              "kind": "colony_second_stem",
+              "dimensions_m": [
+                1.3,
+                1.3,
+                4.8
+              ],
+              "offset_m": [
+                8,
+                2,
+                2.4
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "colony_second_cap",
+              "dimensions_m": [
+                7,
+                6.5,
+                2.2
+              ],
+              "offset_m": [
+                8,
+                2,
+                5.3
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            },
+            {
+              "kind": "colony_young_stems",
+              "dimensions_m": [
+                0.4,
+                0.4,
+                1.5
+              ],
+              "offset_m": [
+                -5,
+                -3,
+                0.75
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "colony_young_caps",
+              "dimensions_m": [
+                2.3,
+                2,
+                0.8
+              ],
+              "offset_m": [
+                -5,
+                -3,
+                1.8
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            },
+            {
+              "kind": "root_buttress_cluster",
+              "dimensions_m": [
+                5,
+                4,
+                1
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "roots"
+            }
+          ],
+          "notes": "One dominant body plus companions and sparse edge; mushroom silhouette, not palm/cactus substituted as fungus. Source art pin guides style but is not spawn point."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "jiaomu_03",
+      "region": "jiaomu",
+      "category_cn": "独立菌盖与菌柄",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": true,
+      "component_kinds": [
+        "independent_stem",
+        "independent_convex_cap",
+        "independent_gill_ring",
+        "root_flare"
+      ],
+      "placements": [
+        {
+          "key": "independent_fungal_parts",
+          "source_anchor_refs": [
+            "regions/jiaomu"
+          ],
+          "source_anchors": [
+            {
+              "ref": "regions/jiaomu",
+              "xy_m": [
+                70.0,
+                83.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            -18,
+            -16,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "independent_stem",
+              "dimensions_m": [
+                1.4,
+                1.4,
+                5.5
+              ],
+              "offset_m": [
+                0,
+                0,
+                2.75
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "independent_convex_cap",
+              "dimensions_m": [
+                8,
+                7,
+                2.3
+              ],
+              "offset_m": [
+                0,
+                0,
+                6
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            },
+            {
+              "kind": "independent_gill_ring",
+              "dimensions_m": [
+                6.5,
+                5.7,
+                0.28
+              ],
+              "offset_m": [
+                0,
+                0,
+                5.25
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            },
+            {
+              "kind": "root_flare",
+              "dimensions_m": [
+                3,
+                2.8,
+                0.8
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.4
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            }
+          ],
+          "notes": "May refer to actual components of jiaomu_02 colony rather than duplicate same colony; requires component-level manifest and fade tags."
+        }
+      ],
+      "acceptance_rule": "Cap and gills fade independently of stem, no ISM/HISM; same-mesh sibling elsewhere does not fade."
+    },
+    {
+      "requirement_id": "jiaomu_04",
+      "region": "jiaomu",
+      "category_cn": "幼菇菌芽",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": true,
+      "component_kinds": [
+        "young_stem",
+        "young_cap",
+        "spherical_buds",
+        "tiny_edge_buds"
+      ],
+      "placements": [
+        {
+          "key": "yeast_young_buds",
+          "source_anchor_refs": [
+            "resources/special_yeast_strain"
+          ],
+          "source_anchors": [
+            {
+              "ref": "resources/special_yeast_strain",
+              "xy_m": [
+                100.0,
+                106.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            -6,
+            -5,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "young_stem",
+              "dimensions_m": [
+                0.3,
+                0.3,
+                1
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.5
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false
+            },
+            {
+              "kind": "young_cap",
+              "dimensions_m": [
+                1.5,
+                1.3,
+                0.7
+              ],
+              "offset_m": [
+                0,
+                0,
+                1.2
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            },
+            {
+              "kind": "spherical_buds",
+              "dimensions_m": [
+                0.7,
+                0.7,
+                0.6
+              ],
+              "offset_m": [
+                1.3,
+                -0.5,
+                0.3
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false
+            },
+            {
+              "kind": "tiny_edge_buds",
+              "dimensions_m": [
+                0.35,
+                0.35,
+                0.35
+              ],
+              "offset_m": [
+                -1,
+                -1,
+                0.175
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false
+            }
+          ],
+          "notes": "Decorative brood around original resource background; no extra resource actor."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "jiaomu_05",
+      "region": "jiaomu",
+      "category_cn": "原菌株资源背景",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": true,
+      "component_kinds": [
+        "low_resource_plinth",
+        "background_small_fungi",
+        "sparse_foreground_grass"
+      ],
+      "placements": [
+        {
+          "key": "strain_resource_background",
+          "source_anchor_refs": [
+            "resources/special_yeast_strain"
+          ],
+          "source_anchors": [
+            {
+              "ref": "resources/special_yeast_strain",
+              "xy_m": [
+                100.0,
+                106.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "mixed_pack_composite_placeholder",
+          "components": [
+            {
+              "kind": "low_resource_plinth",
+              "dimensions_m": [
+                3.5,
+                3,
+                0.45
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.225
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "shelf"
+            },
+            {
+              "kind": "background_small_fungi",
+              "dimensions_m": [
+                3,
+                2.5,
+                2
+              ],
+              "offset_m": [
+                -3,
+                -3,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            },
+            {
+              "kind": "sparse_foreground_grass",
+              "dimensions_m": [
+                2,
+                1.5,
+                0.3
+              ],
+              "offset_m": [
+                3,
+                2,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "grass"
+            }
+          ],
+          "notes": "Do not move or merge resource. At least 2 m approach space around the original resource proxy."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "jiaomu_06",
+      "region": "jiaomu",
+      "category_cn": "哨戒缝",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "left_gap_jamb",
+        "right_gap_jamb",
+        "gap_floor",
+        "sentry_body_proxy",
+        "sentry_cap_proxy",
+        "sentry_second_body_proxy"
+      ],
+      "placements": [
+        {
+          "key": "mandatory_sentry_gap",
+          "source_anchor_refs": [
+            "mechanisms/mech_gap_sentry"
+          ],
+          "source_anchors": [
+            {
+              "ref": "mechanisms/mech_gap_sentry",
+              "xy_m": [
+                96.7,
+                132.0
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "left_gap_jamb",
+              "dimensions_m": [
+                2.5,
+                5,
+                5
+              ],
+              "offset_m": [
+                -2,
+                0,
+                2.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "layered"
+            },
+            {
+              "kind": "right_gap_jamb",
+              "dimensions_m": [
+                2.5,
+                5,
+                5
+              ],
+              "offset_m": [
+                2,
+                0,
+                2.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "layered"
+            },
+            {
+              "kind": "gap_floor",
+              "dimensions_m": [
+                1.5,
+                7,
+                0.15
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.075
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "sentry_body_proxy",
+              "dimensions_m": [
+                0.9,
+                0.9,
+                1.8
+              ],
+              "offset_m": [
+                -3.5,
+                2,
+                0.9
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "sentry_cap_proxy",
+              "dimensions_m": [
+                1.2,
+                1.1,
+                0.6
+              ],
+              "offset_m": [
+                -3.5,
+                2,
+                1.9
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false
+            },
+            {
+              "kind": "sentry_second_body_proxy",
+              "dimensions_m": [
+                0.9,
+                0.9,
+                1.8
+              ],
+              "offset_m": [
+                3.5,
+                -2,
+                0.9
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            }
+          ],
+          "notes": "New sentry volumes illustrate explicitly specified existing sentry semantics, not new enemy spawns. Gap width must accommodate actual placeholder capsule; form restrictions remain unimplemented if absent."
+        }
+      ],
+      "acceptance_rule": "One ferment-yeast crossing, nearby posts do not become jump steps and original XY is unchanged."
+    },
+    {
+      "requirement_id": "jiaomu_07",
+      "region": "jiaomu",
+      "category_cn": "菌丝屏障与陡坡封边",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": true,
+      "component_kinds": [
+        "continuous_steep_boundary_cut",
+        "mycelium_barrier_branches",
+        "nonfade_boundary_collision",
+        "background_fungal_mass"
+      ],
+      "placements": [
+        {
+          "key": "sentry_boundary_thickness",
+          "source_anchor_refs": [
+            "mechanisms/mech_gap_sentry"
+          ],
+          "source_anchors": [
+            {
+              "ref": "mechanisms/mech_gap_sentry",
+              "xy_m": [
+                96.7,
+                132.0
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "mixed_pack_composite_placeholder",
+          "components": [
+            {
+              "kind": "continuous_steep_boundary_cut",
+              "dimensions_m": [
+                12,
+                4,
+                8
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "cliff"
+            },
+            {
+              "kind": "mycelium_barrier_branches",
+              "dimensions_m": [
+                12,
+                2,
+                4
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "roots"
+            },
+            {
+              "kind": "nonfade_boundary_collision",
+              "dimensions_m": [
+                12,
+                3,
+                8
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "background_fungal_mass",
+              "dimensions_m": [
+                7,
+                6,
+                6
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true,
+              "note": "Only decorative cap part fades; trunk, boundary wall and hazardous edge remain visible."
+            }
+          ],
+          "notes": "Repeat to close both complete shared boundary branches, retaining only source gap."
+        }
+      ],
+      "acceptance_rule": "Do not leave gaps at far edge, intersected cliffs or terrain shoulders; cap is not a traversable bridge."
+    },
+    {
+      "requirement_id": "meijun_01",
+      "region": "meijun",
+      "category_cn": "腐败地表与孔壁",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "continuous_corrupt_activity_surface",
+        "porous_cutwall",
+        "honeycomb_arch_rims",
+        "recessed_pore_interiors"
+      ],
+      "placements": [
+        {
+          "key": "corrupt_ground_and_pores",
+          "source_anchor_refs": [
+            "regions/meijun"
+          ],
+          "source_anchors": [
+            {
+              "ref": "regions/meijun",
+              "xy_m": [
+                380.0,
+                186.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "mixed_terrain_pack_composite",
+          "components": [
+            {
+              "kind": "continuous_corrupt_activity_surface",
+              "dimensions_m": [
+                130,
+                120,
+                3
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "porous_cutwall",
+              "dimensions_m": [
+                10,
+                3,
+                6
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "cliff"
+            },
+            {
+              "kind": "honeycomb_arch_rims",
+              "dimensions_m": [
+                2,
+                1,
+                2
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Repeated convex rims in wall face, varied size/depth."
+            },
+            {
+              "kind": "recessed_pore_interiors",
+              "dimensions_m": [
+                1.6,
+                0.8,
+                1.6
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false
+            }
+          ],
+          "notes": "Dusky dough tint with actual recess depth; keep route continuous."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera.",
+      "geometry_constraints": {
+        "activity_z_m": [
+          -6,
+          -3
+        ],
+        "extra_pore_depth_m": [
+          3,
+          8
+        ]
+      }
+    },
+    {
+      "requirement_id": "meijun_02",
+      "region": "meijun",
+      "category_cn": "坍塌孔群内壁",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "fractured_pore_rim",
+        "collapse_inner_wall",
+        "collapse_dark_bed",
+        "collapsed_fragment",
+        "satellite_small_pore"
+      ],
+      "placements": [
+        {
+          "key": "collapse_hole_group",
+          "source_anchor_refs": [
+            "holes/hole_collapse_1"
+          ],
+          "source_anchors": [
+            {
+              "ref": "holes/hole_collapse_1",
+              "xy_m": [
+                350.0,
+                213.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "mixed_pack_composite_placeholder",
+          "components": [
+            {
+              "kind": "fractured_pore_rim",
+              "dimensions_m": [
+                12,
+                10,
+                1
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "rock"
+            },
+            {
+              "kind": "collapse_inner_wall",
+              "dimensions_m": [
+                9,
+                7,
+                6
+              ],
+              "offset_m": [
+                0,
+                0,
+                -3
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "collapse_dark_bed",
+              "dimensions_m": [
+                7,
+                5,
+                0.3
+              ],
+              "offset_m": [
+                0,
+                0,
+                -6
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "collapsed_fragment",
+              "dimensions_m": [
+                3,
+                2,
+                1
+              ],
+              "offset_m": [
+                2,
+                1,
+                -4
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "clump"
+            },
+            {
+              "kind": "satellite_small_pore",
+              "dimensions_m": [
+                4,
+                3,
+                3
+              ],
+              "offset_m": [
+                -7,
+                4,
+                -1.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            }
+          ],
+          "notes": "Trap hole appearance distinct from abyss active portal. No implicit teleport triggered by mere collision."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "meijun_03",
+      "region": "meijun",
+      "category_cn": "废弃聚落墙屋顶残段",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": true,
+      "component_kinds": [
+        "ruin_floor_remnant",
+        "broken_wall_low",
+        "broken_wall_high",
+        "roof_remnant",
+        "doorframe_survivor",
+        "rubble_group"
+      ],
+      "placements": [
+        {
+          "key": "ruined_settlement",
+          "source_anchor_refs": [
+            "buildings/ruined_settlement"
+          ],
+          "source_anchors": [
+            {
+              "ref": "buildings/ruined_settlement",
+              "xy_m": [
+                333.3,
+                166.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "ruin_floor_remnant",
+              "dimensions_m": [
+                12,
+                10,
+                0.35
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.175
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "broken_wall_low",
+              "dimensions_m": [
+                5,
+                0.7,
+                1.2
+              ],
+              "offset_m": [
+                -3,
+                -4,
+                0.6
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "broken_wall_high",
+              "dimensions_m": [
+                0.7,
+                6,
+                3.4
+              ],
+              "offset_m": [
+                -5,
+                0,
+                1.7
+              ],
+              "collision": "BlockAll",
+              "needs_fade": true,
+              "note": "Split low base from upper foreground wall; fade upper portion only."
+            },
+            {
+              "kind": "roof_remnant",
+              "dimensions_m": [
+                5,
+                4,
+                0.65
+              ],
+              "offset_m": [
+                -3,
+                0,
+                3.4
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            },
+            {
+              "kind": "doorframe_survivor",
+              "dimensions_m": [
+                3,
+                1,
+                3
+              ],
+              "offset_m": [
+                0,
+                4,
+                1.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "rubble_group",
+              "dimensions_m": [
+                4,
+                3,
+                1
+              ],
+              "offset_m": [
+                5,
+                -3,
+                0.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "clump"
+            }
+          ],
+          "notes": "Ruins remain noninteractable per source, resting activity ground stays clear."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "meijun_04",
+      "region": "meijun",
+      "category_cn": "菌丝网",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "main_mycelium_branch",
+        "secondary_branch",
+        "fine_network_fibers"
+      ],
+      "placements": [
+        {
+          "key": "corrupt_mycelium",
+          "source_anchor_refs": [
+            "flora/mycelium_meijun_1",
+            "flora/mycelium_meijun_2"
+          ],
+          "source_anchors": [
+            {
+              "ref": "flora/mycelium_meijun_1",
+              "xy_m": [
+                393.3,
+                186.7
+              ]
+            },
+            {
+              "ref": "flora/mycelium_meijun_2",
+              "xy_m": [
+                360.0,
+                210.0
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "adapted_pack_placeholder",
+          "components": [
+            {
+              "kind": "main_mycelium_branch",
+              "dimensions_m": [
+                6,
+                4,
+                0.8
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "roots"
+            },
+            {
+              "kind": "secondary_branch",
+              "dimensions_m": [
+                3,
+                3,
+                0.4
+              ],
+              "offset_m": [
+                3,
+                2,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "roots"
+            },
+            {
+              "kind": "fine_network_fibers",
+              "dimensions_m": [
+                6,
+                5,
+                0.15
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Several thin bent tapered cylinders or generated splines, no gameplay collision."
+            }
+          ],
+          "notes": "Preserve both flora roots, lay branches along actual ground and walls rather than floating."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "meijun_05",
+      "region": "meijun",
+      "category_cn": "压力板与干化块",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "pressure_plate_base",
+        "pressure_plate_top",
+        "dry_dough_block",
+        "block_crack_bands",
+        "bridge_control_link_proxy"
+      ],
+      "placements": [
+        {
+          "key": "plate_and_dry_block",
+          "source_anchor_refs": [
+            "mechanisms/mech_plate_1"
+          ],
+          "source_anchors": [
+            {
+              "ref": "mechanisms/mech_plate_1",
+              "xy_m": [
+                393.3,
+                180.0
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "pressure_plate_base",
+              "dimensions_m": [
+                2.6,
+                2.6,
+                0.25
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.125
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "pressure_plate_top",
+              "dimensions_m": [
+                2.2,
+                2.2,
+                0.1
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.3
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "dry_dough_block",
+              "dimensions_m": [
+                1.8,
+                1.8,
+                1.8
+              ],
+              "offset_m": [
+                -3,
+                0,
+                0.9
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "block_crack_bands",
+              "dimensions_m": [
+                1.85,
+                1.85,
+                0.08
+              ],
+              "offset_m": [
+                -3,
+                0,
+                0.9
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Segmented crust seams, purely visual."
+            },
+            {
+              "kind": "bridge_control_link_proxy",
+              "dimensions_m": [
+                0.15,
+                4,
+                0.15
+              ],
+              "offset_m": [
+                0,
+                -2,
+                0.2
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Visual cable/root link only; no pressure/strength system claimed."
+            }
+          ],
+          "notes": ""
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "meijun_06",
+      "region": "meijun",
+      "category_cn": "桥面支撑与两端接岸",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "segmented_bridge_deck",
+        "bridge_longitudinal_beams",
+        "bridge_piers",
+        "near_bank_transition",
+        "far_bank_transition",
+        "under_bridge_hole_walls"
+      ],
+      "placements": [
+        {
+          "key": "optional_pressure_bridge",
+          "source_anchor_refs": [
+            "mechanisms/mech_plate_1"
+          ],
+          "source_anchors": [
+            {
+              "ref": "mechanisms/mech_plate_1",
+              "xy_m": [
+                393.3,
+                180.0
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "segmented_bridge_deck",
+              "dimensions_m": [
+                4,
+                14,
+                0.35
+              ],
+              "offset_m": [
+                0,
+                -10,
+                0.175
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "bridge_longitudinal_beams",
+              "dimensions_m": [
+                0.35,
+                14,
+                0.6
+              ],
+              "offset_m": [
+                0,
+                -10,
+                -0.35
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "note": "Two beams at deck edges."
+            },
+            {
+              "kind": "bridge_piers",
+              "dimensions_m": [
+                0.7,
+                0.7,
+                5
+              ],
+              "offset_m": [
+                0,
+                -10,
+                -2.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "note": "At both banks/actual supported locations; no floating leg ends."
+            },
+            {
+              "kind": "near_bank_transition",
+              "dimensions_m": [
+                5,
+                3,
+                0.25
+              ],
+              "offset_m": [
+                0,
+                -2.5,
+                0.125
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "far_bank_transition",
+              "dimensions_m": [
+                5,
+                3,
+                0.25
+              ],
+              "offset_m": [
+                0,
+                -17.5,
+                0.125
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "under_bridge_hole_walls",
+              "dimensions_m": [
+                9,
+                10,
+                5
+              ],
+              "offset_m": [
+                0,
+                -10,
+                -2.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            }
+          ],
+          "notes": "Proposed offset/orientation only; conform to source shortcut toward abyss/resource and actual terrain. Bridge requires real clear void underneath, not a road painted on Landscape."
+        }
+      ],
+      "acceptance_rule": "Both banks meet deck without lips/gaps; below-deck depth visible; bridge can be opened only by existing mechanics or clearly marked test proxy; alternative remains walkable."
+    },
+    {
+      "requirement_id": "meijun_07",
+      "region": "meijun",
+      "category_cn": "深渊孔口内壁",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "distinct_large_abyss_rim",
+        "abyss_inner_wall_segments",
+        "deep_shadow_volume",
+        "edge_safety_collision"
+      ],
+      "placements": [
+        {
+          "key": "abyss_geometry",
+          "source_anchor_refs": [
+            "holes/hole_abyss"
+          ],
+          "source_anchors": [
+            {
+              "ref": "holes/hole_abyss",
+              "xy_m": [
+                410.0,
+                140.0
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "mixed_pack_composite_placeholder",
+          "components": [
+            {
+              "kind": "distinct_large_abyss_rim",
+              "dimensions_m": [
+                16,
+                14,
+                1.1
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "layered"
+            },
+            {
+              "kind": "abyss_inner_wall_segments",
+              "dimensions_m": [
+                12,
+                10,
+                10
+              ],
+              "offset_m": [
+                0,
+                0,
+                -5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "deep_shadow_volume",
+              "dimensions_m": [
+                10,
+                8,
+                2
+              ],
+              "offset_m": [
+                0,
+                0,
+                -10
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false
+            },
+            {
+              "kind": "edge_safety_collision",
+              "dimensions_m": [
+                12,
+                10,
+                1.5
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "note": "Perimeter segments preserve visible open hole while preventing accidental entry; deliberate interaction is a separate system."
+            }
+          ],
+          "notes": "All danger rims permanently visible; deep portal must not be a ground-level walk-through into shendu."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "meijun_08",
+      "region": "meijun",
+      "category_cn": "入口交互净空",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "safe_standing_apron",
+        "permanent_rim_marker_pair",
+        "interaction_target_proxy"
+      ],
+      "placements": [
+        {
+          "key": "abyss_interaction_apron",
+          "source_anchor_refs": [
+            "holes/hole_abyss"
+          ],
+          "source_anchors": [
+            {
+              "ref": "holes/hole_abyss",
+              "xy_m": [
+                410.0,
+                140.0
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "safe_standing_apron",
+              "dimensions_m": [
+                7,
+                6,
+                0.2
+              ],
+              "offset_m": [
+                0,
+                9,
+                0.1
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "permanent_rim_marker_pair",
+              "dimensions_m": [
+                0.5,
+                0.5,
+                1
+              ],
+              "offset_m": [
+                3,
+                6,
+                0.5
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false
+            },
+            {
+              "kind": "interaction_target_proxy",
+              "dimensions_m": [
+                0.5,
+                0.5,
+                1
+              ],
+              "offset_m": [
+                0,
+                7,
+                0.5
+              ],
+              "collision": "QueryOnly",
+              "needs_fade": false,
+              "note": "Existing prompt text only: 跳下去，前往世界深层; explicit confirmation, not automatic trigger."
+            }
+          ],
+          "notes": "Apron offset is additional decoration/ground only; source portal root remains unchanged. No new key or return exit."
+        }
+      ],
+      "acceptance_rule": "Standing/apron and edge remain readable in fixed camera; confirmation required for transition if implemented, otherwise clear proxy status."
+    },
+    {
+      "requirement_id": "meijun_09",
+      "region": "meijun",
+      "category_cn": "原可选绕行地面",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "continuous_detour_ground",
+        "detour_shoulder_accents"
+      ],
+      "placements": [
+        {
+          "key": "original_optional_detour",
+          "source_anchor_refs": [
+            "mechanisms/mech_plate_1",
+            "holes/hole_abyss",
+            "resources/corrupt_spore_core"
+          ],
+          "source_anchors": [
+            {
+              "ref": "mechanisms/mech_plate_1",
+              "xy_m": [
+                393.3,
+                180.0
+              ]
+            },
+            {
+              "ref": "holes/hole_abyss",
+              "xy_m": [
+                410.0,
+                140.0
+              ]
+            },
+            {
+              "ref": "resources/corrupt_spore_core",
+              "xy_m": [
+                416.7,
+                196.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "terrain_with_pack_decoration",
+          "components": [
+            {
+              "kind": "continuous_detour_ground",
+              "dimensions_m": [
+                5,
+                1,
+                0.15
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "note": "Width proposal 5 m; length/centerline derived from existing or original region connectivity, not from arbitrary new route points."
+            },
+            {
+              "kind": "detour_shoulder_accents",
+              "dimensions_m": [
+                2,
+                1,
+                0.4
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "clump"
+            }
+          ],
+          "notes": "No new gameplay node or alternative across mandatory borders. Preserve access without pressure bridge."
+        }
+      ],
+      "acceptance_rule": "With bridge route unavailable, actual capsule can still reach abyss apron and corrupt resource via region ground."
+    },
+    {
+      "requirement_id": "shendu_01",
+      "region": "shendu",
+      "category_cn": "入口落点地面",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "underground_entry_ground",
+        "entry_back_wall",
+        "landing_edge_boulders"
+      ],
+      "placements": [
+        {
+          "key": "deep_entry_landing",
+          "source_anchor_refs": [
+            "regions/shendu"
+          ],
+          "source_anchors": [
+            {
+              "ref": "regions/shendu",
+              "xy_m": [
+                436.7,
+                83.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            -25,
+            26,
+            0
+          ],
+          "real_or_placeholder": "pack_composite_underground_geometry",
+          "components": [
+            {
+              "kind": "underground_entry_ground",
+              "dimensions_m": [
+                10,
+                9,
+                0.5
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "entry_back_wall",
+              "dimensions_m": [
+                12,
+                2,
+                9
+              ],
+              "offset_m": [
+                0,
+                -5,
+                4.5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "cliff"
+            },
+            {
+              "kind": "landing_edge_boulders",
+              "dimensions_m": [
+                3,
+                2,
+                1.2
+              ],
+              "offset_m": [
+                6,
+                2,
+                0.6
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "clump"
+            }
+          ],
+          "notes": "No entry XYZ is specified in original. Additive proposed local landing at region anchor + (-25,+26) m; keep source altar/monster XY unchanged and record chosen destination explicitly."
+        }
+      ],
+      "acceptance_rule": "Independent underground space with usable landing; not a surface-accessible top-right outdoor basin."
+    },
+    {
+      "requirement_id": "shendu_02",
+      "region": "shendu",
+      "category_cn": "祭坛与Boss活动地面",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "continuous_boss_activity_floor",
+        "altar_base",
+        "altar_second_tier",
+        "altar_central_bowl",
+        "altar_recess_grooves"
+      ],
+      "placements": [
+        {
+          "key": "core_altar_and_arena",
+          "source_anchor_refs": [
+            "buildings/core_altar"
+          ],
+          "source_anchors": [
+            {
+              "ref": "buildings/core_altar",
+              "xy_m": [
+                436.7,
+                83.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "continuous_boss_activity_floor",
+              "dimensions_m": [
+                42,
+                36,
+                0.6
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "note": "No random rubble or sharp lips in primary activity plane."
+            },
+            {
+              "kind": "altar_base",
+              "dimensions_m": [
+                8,
+                7,
+                0.6
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.3
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "altar_second_tier",
+              "dimensions_m": [
+                5.5,
+                4.5,
+                0.45
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.75
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "altar_central_bowl",
+              "dimensions_m": [
+                3,
+                2.8,
+                0.55
+              ],
+              "offset_m": [
+                0,
+                0,
+                1.2
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "altar_recess_grooves",
+              "dimensions_m": [
+                6,
+                5,
+                0.05
+              ],
+              "offset_m": [
+                0,
+                0,
+                0.92
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Emissive trim/engraved channels; no Boss trigger implementation assumed."
+            }
+          ],
+          "notes": "Altar and Boss share source XY intentionally; lift boss visual over altar, do not shift either source root."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "shendu_03",
+      "region": "shendu",
+      "category_cn": "菌核与守卫体量",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "asymmetric_core_body",
+        "core_spike_lobes",
+        "glowing_core_nodules",
+        "root_tendril_ring",
+        "guard_body",
+        "guard_head",
+        "guard_shoulder_shell",
+        "guard_legs"
+      ],
+      "placements": [
+        {
+          "key": "corrupt_core",
+          "source_anchor_refs": [
+            "monsters/boss_core"
+          ],
+          "source_anchors": [
+            {
+              "ref": "monsters/boss_core",
+              "xy_m": [
+                436.7,
+                83.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "asymmetric_core_body",
+              "dimensions_m": [
+                4.5,
+                4,
+                4
+              ],
+              "offset_m": [
+                0,
+                0,
+                3
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "core_spike_lobes",
+              "dimensions_m": [
+                1.2,
+                1.2,
+                2.2
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Several asymmetrical protrusions around central body."
+            },
+            {
+              "kind": "glowing_core_nodules",
+              "dimensions_m": [
+                0.45,
+                0.45,
+                0.45
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Visible placed nodules, restrained emissive."
+            },
+            {
+              "kind": "root_tendril_ring",
+              "dimensions_m": [
+                6,
+                5,
+                0.7
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "roots"
+            }
+          ],
+          "notes": "Boss volume proxy only, no AI, attacks, rewards or trigger invented."
+        },
+        {
+          "key": "deep_guards",
+          "source_anchor_refs": [
+            "monsters/mold_guard_shendu_1",
+            "monsters/mold_guard_shendu_2"
+          ],
+          "source_anchors": [
+            {
+              "ref": "monsters/mold_guard_shendu_1",
+              "xy_m": [
+                403.3,
+                60.0
+              ]
+            },
+            {
+              "ref": "monsters/mold_guard_shendu_2",
+              "xy_m": [
+                466.7,
+                60.0
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "composite_placeholder",
+          "components": [
+            {
+              "kind": "guard_body",
+              "dimensions_m": [
+                1.4,
+                1.2,
+                2.3
+              ],
+              "offset_m": [
+                0,
+                0,
+                1.15
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "guard_head",
+              "dimensions_m": [
+                0.8,
+                0.8,
+                0.8
+              ],
+              "offset_m": [
+                0,
+                0,
+                2.6
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false
+            },
+            {
+              "kind": "guard_shoulder_shell",
+              "dimensions_m": [
+                1.8,
+                0.65,
+                0.7
+              ],
+              "offset_m": [
+                0,
+                0,
+                1.9
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false
+            },
+            {
+              "kind": "guard_legs",
+              "dimensions_m": [
+                0.4,
+                0.5,
+                0.9
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Two separate leg forms; no live enemy claim."
+            }
+          ],
+          "notes": ""
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "shendu_04",
+      "region": "shendu",
+      "category_cn": "洞壁壁龛",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": true,
+      "component_kinds": [
+        "cave_wall_segment",
+        "cave_wall_foot",
+        "niche_left_right_jambs",
+        "niche_lintel",
+        "niche_recess_back"
+      ],
+      "placements": [
+        {
+          "key": "deep_cave_walls",
+          "source_anchor_refs": [
+            "regions/shendu"
+          ],
+          "source_anchors": [
+            {
+              "ref": "regions/shendu",
+              "xy_m": [
+                436.7,
+                83.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            -48,
+            0
+          ],
+          "real_or_placeholder": "mixed_pack_composite_placeholder",
+          "components": [
+            {
+              "kind": "cave_wall_segment",
+              "dimensions_m": [
+                12,
+                4,
+                12
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": true,
+              "candidate_mesh_key": "cliff",
+              "note": "Split foreground upper slices if occluding; basal collision wall remains nonfade."
+            },
+            {
+              "kind": "cave_wall_foot",
+              "dimensions_m": [
+                12,
+                5,
+                2
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "layered"
+            },
+            {
+              "kind": "niche_left_right_jambs",
+              "dimensions_m": [
+                2,
+                2,
+                5
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "niche_lintel",
+              "dimensions_m": [
+                6,
+                2,
+                1.5
+              ],
+              "offset_m": [
+                0,
+                0,
+                5
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "niche_recess_back",
+              "dimensions_m": [
+                4,
+                1,
+                4
+              ],
+              "offset_m": [
+                0,
+                -2,
+                2
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "rock"
+            }
+          ],
+          "notes": "Background cave walls 8–16 m. Distribute outside arena and guard source points; screen-near upper walls separately fading."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "shendu_05",
+      "region": "shendu",
+      "category_cn": "洞顶分片",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": true,
+      "component_kinds": [
+        "separate_cave_roof_piece",
+        "hanging_ceiling_lobe",
+        "ceiling_inner_rim"
+      ],
+      "placements": [
+        {
+          "key": "deep_ceiling_pieces",
+          "source_anchor_refs": [
+            "regions/shendu"
+          ],
+          "source_anchors": [
+            {
+              "ref": "regions/shendu",
+              "xy_m": [
+                436.7,
+                83.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            -35,
+            0
+          ],
+          "real_or_placeholder": "pack_geometry_with_candidate_fade_material",
+          "components": [
+            {
+              "kind": "separate_cave_roof_piece",
+              "dimensions_m": [
+                14,
+                12,
+                2.5
+              ],
+              "offset_m": [
+                0,
+                0,
+                13
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true,
+              "candidate_mesh_key": "shelf"
+            },
+            {
+              "kind": "hanging_ceiling_lobe",
+              "dimensions_m": [
+                3,
+                2.5,
+                4
+              ],
+              "offset_m": [
+                4,
+                2,
+                10
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true,
+              "candidate_mesh_key": "rock"
+            },
+            {
+              "kind": "ceiling_inner_rim",
+              "dimensions_m": [
+                14,
+                2,
+                2
+              ],
+              "offset_m": [
+                0,
+                6,
+                12
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            }
+          ],
+          "notes": "Independent pieces at game-camera perimeter; do not create one huge shared ISM ceiling that hides or fades the entire cave."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    },
+    {
+      "requirement_id": "shendu_06",
+      "region": "shendu",
+      "category_cn": "外围凹槽",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": false,
+      "component_kinds": [
+        "outer_trench_inner_wall",
+        "outer_trench_bottom",
+        "outer_trench_far_lip"
+      ],
+      "placements": [
+        {
+          "key": "deep_outer_groove",
+          "source_anchor_refs": [
+            "regions/shendu"
+          ],
+          "source_anchors": [
+            {
+              "ref": "regions/shendu",
+              "xy_m": [
+                436.7,
+                83.3
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            46,
+            0
+          ],
+          "real_or_placeholder": "pack_composite_geometry",
+          "components": [
+            {
+              "kind": "outer_trench_inner_wall",
+              "dimensions_m": [
+                12,
+                2,
+                3
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "cliff_half"
+            },
+            {
+              "kind": "outer_trench_bottom",
+              "dimensions_m": [
+                12,
+                5,
+                0.3
+              ],
+              "offset_m": [
+                0,
+                0,
+                -3
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false
+            },
+            {
+              "kind": "outer_trench_far_lip",
+              "dimensions_m": [
+                12,
+                2,
+                1.5
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "BlockAll",
+              "needs_fade": false,
+              "candidate_mesh_key": "layered"
+            }
+          ],
+          "notes": "Segmented perimeter recess outside continuous altar/guard/activity region. Danger lip never fades."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera.",
+      "geometry_constraints": {
+        "local_depth_m": [
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "requirement_id": "shendu_07",
+      "region": "shendu",
+      "category_cn": "菌丝与发光菌",
+      "required": true,
+      "state": "planned_not_placed",
+      "needs_fade": true,
+      "component_kinds": [
+        "main_fungal_network",
+        "glowing_stem",
+        "glowing_cap",
+        "small_glow_buds",
+        "fine_fibers"
+      ],
+      "placements": [
+        {
+          "key": "deep_mycelium_and_glow",
+          "source_anchor_refs": [
+            "flora/mycelium_shendu"
+          ],
+          "source_anchors": [
+            {
+              "ref": "flora/mycelium_shendu",
+              "xy_m": [
+                443.3,
+                66.7
+              ]
+            }
+          ],
+          "suggested_offset_m": [
+            0,
+            0,
+            0
+          ],
+          "real_or_placeholder": "mixed_pack_composite_placeholder",
+          "components": [
+            {
+              "kind": "main_fungal_network",
+              "dimensions_m": [
+                7,
+                5,
+                0.8
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "candidate_mesh_key": "roots"
+            },
+            {
+              "kind": "glowing_stem",
+              "dimensions_m": [
+                0.35,
+                0.35,
+                1.6
+              ],
+              "offset_m": [
+                3,
+                2,
+                0.8
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false
+            },
+            {
+              "kind": "glowing_cap",
+              "dimensions_m": [
+                1.8,
+                1.6,
+                0.7
+              ],
+              "offset_m": [
+                3,
+                2,
+                1.85
+              ],
+              "collision": "NoCollision",
+              "needs_fade": true
+            },
+            {
+              "kind": "small_glow_buds",
+              "dimensions_m": [
+                0.45,
+                0.45,
+                0.5
+              ],
+              "offset_m": [
+                -2,
+                1,
+                0.25
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false
+            },
+            {
+              "kind": "fine_fibers",
+              "dimensions_m": [
+                6,
+                4,
+                0.15
+              ],
+              "offset_m": [
+                0,
+                0,
+                0
+              ],
+              "collision": "NoCollision",
+              "needs_fade": false,
+              "note": "Ground hugging branching fibers; no collision."
+            }
+          ],
+          "notes": "Glow provides accent without blooming out enemy/resource outline."
+        }
+      ],
+      "acceptance_rule": "Record each placed component and verify in the preserved fixed game camera."
+    }
+  ],
+  "placement_manifest_fields": [
+    "requirement_id",
+    "source_anchor_ref",
+    "actor_path",
+    "ground_z_m",
+    "mesh",
+    "material",
+    "dimensions_m",
+    "collision",
+    "fade_component",
+    "real_or_placeholder",
+    "screenshot",
+    "test_status",
+    "component_path",
+    "component_kind",
+    "source_xy_m",
+    "actual_xy_m",
+    "xy_error_m",
+    "needs_fade",
+    "module_instance_key",
+    "validation_evidence"
+  ]
+}

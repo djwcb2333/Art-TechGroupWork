@@ -1,0 +1,2525 @@
+{
+  "complete": true,
+  "captured_at": "2026-09-16T15:19:38.642293",
+  "objects": [
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Data/DA_DoughWorldGameplay",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Data/DA_DoughWorldGameplay.DA_DoughWorldGameplay",
+      "owners": [
+        "UDWGameplayConfig"
+      ],
+      "properties": [
+        {
+          "name": "MaxHealth",
+          "owner": "UDWGameplayConfig",
+          "value": 100.0
+        },
+        {
+          "name": "BaseMoveSpeed",
+          "owner": "UDWGameplayConfig",
+          "value": 600.0
+        },
+        {
+          "name": "SprintSpeedMultiplier",
+          "owner": "UDWGameplayConfig",
+          "value": 1.2999999523162842
+        },
+        {
+          "name": "SprintHealthCostPercentPerSecond",
+          "owner": "UDWGameplayConfig",
+          "value": 2.0
+        },
+        {
+          "name": "SprintAlcoholInterval",
+          "owner": "UDWGameplayConfig",
+          "value": 3.0
+        },
+        {
+          "name": "SprintAlcoholAmount",
+          "owner": "UDWGameplayConfig",
+          "value": 1
+        },
+        {
+          "name": "MaxTransformation",
+          "owner": "UDWGameplayConfig",
+          "value": 100.0
+        },
+        {
+          "name": "YeastGainPercentPerItem",
+          "owner": "UDWGameplayConfig",
+          "value": 1.0
+        },
+        {
+          "name": "AttackGainPercent",
+          "owner": "UDWGameplayConfig",
+          "value": 2.0
+        },
+        {
+          "name": "TransformationDecayInterval",
+          "owner": "UDWGameplayConfig",
+          "value": 5.0
+        },
+        {
+          "name": "TransformationDecayPercent",
+          "owner": "UDWGameplayConfig",
+          "value": 3.0
+        },
+        {
+          "name": "MaxInventorySlots",
+          "owner": "UDWGameplayConfig",
+          "value": 24
+        },
+        {
+          "name": "MaxStackSize",
+          "owner": "UDWGameplayConfig",
+          "value": 40
+        },
+        {
+          "name": "Items",
+          "owner": "UDWGameplayConfig",
+          "value": [
+            "<Struct 'DWItemDefinition' (0x000001D28553CB40) {item_id: \"Flour\", display_name: NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Flour_DisplayName\", \"面粉\"), english_display_name: NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Flour_EnglishDisplayName\", \"Flour\"), icon_color: {r: 0.920000, g: 0.840000, b: 0.630000, a: 1.000000}, icon: None, usable: False, heal_amount: 0.000000, transformation_gain_percent: 0.000000}>",
+            "<Struct 'DWItemDefinition' (0x000001D285538280) {item_id: \"Water\", display_name: NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Water_DisplayName\", \"水\"), english_display_name: NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Water_EnglishDisplayName\", \"Water\"), icon_color: {r: 0.200000, g: 0.650000, b: 1.000000, a: 1.000000}, icon: None, usable: False, heal_amount: 0.000000, transformation_gain_percent: 0.000000}>",
+            "<Struct 'DWItemDefinition' (0x000001D285530CC0) {item_id: \"Dough\", display_name: NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Dough_DisplayName\", \"面团\"), english_display_name: NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Dough_EnglishDisplayName\", \"Dough\"), icon_color: {r: 0.850000, g: 0.570000, b: 0.290000, a: 1.000000}, icon: None, usable: True, heal_amount: 10.000000, transformation_gain_percent: 0.000000}>",
+            "<Struct 'DWItemDefinition' (0x000001D28553A1A0) {item_id: \"Yeast\", display_name: NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Yeast_DisplayName\", \"酵母\"), english_display_name: NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Yeast_EnglishDisplayName\", \"Yeast\"), icon_color: {r: 0.570000, g: 0.860000, b: 0.300000, a: 1.000000}, icon: None, usable: False, heal_amount: 0.000000, transformation_gain_percent: 0.000000}>",
+            "<Struct 'DWItemDefinition' (0x000001D28553C000) {item_id: \"Alcohol\", display_name: NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Alcohol_DisplayName\", \"酒精\"), english_display_name: NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Alcohol_EnglishDisplayName\", \"Alcohol\"), icon_color: {r: 0.630000, g: 0.380000, b: 0.950000, a: 1.000000}, icon: None, usable: False, heal_amount: 0.000000, transformation_gain_percent: 0.000000}>"
+          ]
+        },
+        {
+          "name": "Recipes",
+          "owner": "UDWGameplayConfig",
+          "value": [
+            "<Struct 'DWRecipeDefinition' (0x000001D28553C600) {recipe_id: \"CraftDough\", display_name: NSLOCTEXT(\"DT_DWRecipes [D3665698F7BE190E477F655B6544DB9D]\", \"CraftDough_DisplayName\", \"面团\"), english_display_name: NSLOCTEXT(\"DT_DWRecipes [D3665698F7BE190E477F655B6544DB9D]\", \"CraftDough_EnglishDisplayName\", \"Dough\"), inputs: ((ItemId=\"Flour\",Quantity=2),(ItemId=\"Water\",Quantity=2)), outputs: ((ItemId=\"Dough\")), requires_yeast: True}>",
+            "<Struct 'DWRecipeDefinition' (0x000001D28553E6A0) {recipe_id: \"CraftAlcohol\", display_name: NSLOCTEXT(\"DT_DWRecipes [D3665698F7BE190E477F655B6544DB9D]\", \"CraftAlcohol_DisplayName\", \"酒精\"), english_display_name: NSLOCTEXT(\"DT_DWRecipes [D3665698F7BE190E477F655B6544DB9D]\", \"CraftAlcohol_EnglishDisplayName\", \"Alcohol\"), inputs: ((ItemId=\"Dough\",Quantity=3),(ItemId=\"Yeast\",Quantity=2)), outputs: ((ItemId=\"Alcohol\")), requires_yeast: True}>"
+          ]
+        },
+        {
+          "name": "ItemTable",
+          "owner": "UDWGameplayConfig",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Data/DT_DWItems.DT_DWItems"
+        },
+        {
+          "name": "RecipeTable",
+          "owner": "UDWGameplayConfig",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Data/DT_DWRecipes.DT_DWRecipes"
+        },
+        {
+          "name": "GameplayMap",
+          "owner": "UDWGameplayConfig",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Levels/L_DoughWorld_GameplayPrototype"
+        },
+        {
+          "name": "MainMenuMap",
+          "owner": "UDWGameplayConfig",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase"
+        },
+        {
+          "name": "UIClickSound",
+          "owner": "UDWGameplayConfig",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Audio/Interaction/SFX_Interact_KeyboardKey_2000s.SFX_Interact_KeyboardKey_2000s"
+        },
+        {
+          "name": "UISelectionSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "UIFailedSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "InventoryOpenSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "InventoryCloseSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "CraftingOpenSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "CraftingCloseSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "MenuOpenSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "MenuCloseSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "TitleOpenSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "TitleCloseSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "SaveSlotsOpenSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "SaveSlotsCloseSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "PauseOpenSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "PauseCloseSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "SettingsOpenSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "SettingsCloseSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "DefeatOpenSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "DefeatCloseSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "ItemUseSuccessSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "ItemUseFailedSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "CraftSuccessSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "CraftFailedSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "GatherStartSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "GatherLoopSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "GatherSuccessSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "GatherStopSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "GatherFailedSound",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "GameplayBGM",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "MenuBGM",
+          "owner": "UDWGameplayConfig",
+          "value": null
+        },
+        {
+          "name": "MusicVolume",
+          "owner": "UDWGameplayConfig",
+          "value": 0.699999988079071
+        },
+        {
+          "name": "UIClickVolume",
+          "owner": "UDWGameplayConfig",
+          "value": 0.800000011920929
+        },
+        {
+          "name": "UIClickPitch",
+          "owner": "UDWGameplayConfig",
+          "value": 1.0
+        },
+        {
+          "name": "UIEventVolume",
+          "owner": "UDWGameplayConfig",
+          "value": 0.800000011920929
+        },
+        {
+          "name": "UIEventPitch",
+          "owner": "UDWGameplayConfig",
+          "value": 1.0
+        },
+        {
+          "name": "GatherSoundVolume",
+          "owner": "UDWGameplayConfig",
+          "value": 0.800000011920929
+        },
+        {
+          "name": "GatherSoundPitch",
+          "owner": "UDWGameplayConfig",
+          "value": 1.0
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/UI/Interaction/DA_DWInteractionPromptStyle",
+      "object": "/Game/DoughWorld/Maps/Gameplay/UI/Interaction/DA_DWInteractionPromptStyle.DA_DWInteractionPromptStyle",
+      "owners": [
+        "UDWInteractionPromptStyle"
+      ],
+      "properties": [
+        {
+          "name": "TitleFont",
+          "owner": "UDWInteractionPromptStyle",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/Interaction/Fonts/F_DWHandDrawn.F_DWHandDrawn"
+        },
+        {
+          "name": "KeyFont",
+          "owner": "UDWInteractionPromptStyle",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/Interaction/Fonts/F_DWHandDrawn.F_DWHandDrawn"
+        },
+        {
+          "name": "TitleFontSize",
+          "owner": "UDWInteractionPromptStyle",
+          "value": 32
+        },
+        {
+          "name": "ActionFontSize",
+          "owner": "UDWInteractionPromptStyle",
+          "value": 20
+        },
+        {
+          "name": "KeyFontSize",
+          "owner": "UDWInteractionPromptStyle",
+          "value": 23
+        },
+        {
+          "name": "OutlineSize",
+          "owner": "UDWInteractionPromptStyle",
+          "value": 2
+        },
+        {
+          "name": "TextColor",
+          "owner": "UDWInteractionPromptStyle",
+          "value": "<Struct 'LinearColor' (0x000001D2C9EF9DD0) {r: 1.000000, g: 0.940000, b: 0.770000, a: 1.000000}>"
+        },
+        {
+          "name": "OutlineColor",
+          "owner": "UDWInteractionPromptStyle",
+          "value": "<Struct 'LinearColor' (0x000001D2C9EF9DE0) {r: 0.070000, g: 0.035000, b: 0.018000, a: 1.000000}>"
+        },
+        {
+          "name": "KeycapColor",
+          "owner": "UDWInteractionPromptStyle",
+          "value": "<Struct 'LinearColor' (0x000001D2C9EF9DF0) {r: 0.920000, g: 0.830000, b: 0.640000, a: 1.000000}>"
+        },
+        {
+          "name": "ProgressColor",
+          "owner": "UDWInteractionPromptStyle",
+          "value": "<Struct 'LinearColor' (0x000001D2C9EF9E00) {r: 0.620000, g: 0.830000, b: 0.420000, a: 1.000000}>"
+        },
+        {
+          "name": "AppearDuration",
+          "owner": "UDWInteractionPromptStyle",
+          "value": 0.41999998688697815
+        },
+        {
+          "name": "DisappearDuration",
+          "owner": "UDWInteractionPromptStyle",
+          "value": 0.1599999964237213
+        },
+        {
+          "name": "FloatDistance",
+          "owner": "UDWInteractionPromptStyle",
+          "value": 24.0
+        },
+        {
+          "name": "InitialScale",
+          "owner": "UDWInteractionPromptStyle",
+          "value": 0.550000011920929
+        },
+        {
+          "name": "OvershootAmount",
+          "owner": "UDWInteractionPromptStyle",
+          "value": 0.1599999964237213
+        },
+        {
+          "name": "WobbleDegrees",
+          "owner": "UDWInteractionPromptStyle",
+          "value": 4.0
+        },
+        {
+          "name": "bUseNativeMotion",
+          "owner": "UDWInteractionPromptStyle",
+          "value": true
+        },
+        {
+          "name": "AppearSound",
+          "owner": "UDWInteractionPromptStyle",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Audio/Interaction/SFX_Interact_KeyboardKey_2000s.SFX_Interact_KeyboardKey_2000s"
+        },
+        {
+          "name": "SoundVolume",
+          "owner": "UDWInteractionPromptStyle",
+          "value": 0.6499999761581421
+        },
+        {
+          "name": "SoundPitch",
+          "owner": "UDWInteractionPromptStyle",
+          "value": 1.0
+        },
+        {
+          "name": "SoundCooldown",
+          "owner": "UDWInteractionPromptStyle",
+          "value": 0.6499999761581421
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/BP_DWTopDownCharacter",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/BP_DWTopDownCharacter.Default__BP_DWTopDownCharacter_C",
+      "owners": [
+        "ADWPlayerCharacter",
+        "ATopDownActionCharacter"
+      ],
+      "properties": [
+        {
+          "name": "SwordSocket",
+          "owner": "ADWPlayerCharacter",
+          "value": "bone_005_R"
+        },
+        {
+          "name": "GameplayConfig",
+          "owner": "ADWPlayerCharacter",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Data/DA_DoughWorldGameplay.DA_DoughWorldGameplay"
+        },
+        {
+          "name": "IdleAnimation",
+          "owner": "ADWPlayerCharacter",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Characters/Hero/Animations/Pose_MT_idle.Pose_MT_idle"
+        },
+        {
+          "name": "WalkAnimation",
+          "owner": "ADWPlayerCharacter",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Characters/Hero/Animations/Anim_MT_Walk.Anim_MT_Walk"
+        },
+        {
+          "name": "AttackAnimation",
+          "owner": "ADWPlayerCharacter",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Characters/Hero/Animations/Anim_MT_attack.Anim_MT_attack"
+        },
+        {
+          "name": "TransformAnimation",
+          "owner": "ADWPlayerCharacter",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Characters/Hero/Animations/Anim_MT_Transform.Anim_MT_Transform"
+        },
+        {
+          "name": "DeathAnimation",
+          "owner": "ADWPlayerCharacter",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Characters/Hero/Animations/Anim_MT_Death.Anim_MT_Death"
+        },
+        {
+          "name": "DashAnimation",
+          "owner": "ADWPlayerCharacter",
+          "value": null
+        },
+        {
+          "name": "AttackAnimationSeconds",
+          "owner": "ADWPlayerCharacter",
+          "value": 0.6499999761581421
+        },
+        {
+          "name": "TransformAnimationSeconds",
+          "owner": "ADWPlayerCharacter",
+          "value": 1.6333333253860474
+        },
+        {
+          "name": "AlcoholProjectileClass",
+          "owner": "ADWPlayerCharacter",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Combat/BP_DWAlcoholProjectile.BP_DWAlcoholProjectile_C"
+        },
+        {
+          "name": "AlcoholCostPerThrow",
+          "owner": "ADWPlayerCharacter",
+          "value": 1
+        },
+        {
+          "name": "ThrowCooldown",
+          "owner": "ADWPlayerCharacter",
+          "value": 0.6499999761581421
+        },
+        {
+          "name": "MaxThrowRange",
+          "owner": "ADWPlayerCharacter",
+          "value": 1600.0
+        },
+        {
+          "name": "ThrowOriginOffset",
+          "owner": "ADWPlayerCharacter",
+          "value": "<Struct 'Vector' (0x000001D2858C8D88) {x: 55.000000, y: 0.000000, z: 65.000000}>"
+        },
+        {
+          "name": "CameraDragSensitivity",
+          "owner": "ADWPlayerCharacter",
+          "value": 0.2199999988079071
+        },
+        {
+          "name": "CameraDistance",
+          "owner": "ADWPlayerCharacter",
+          "value": 1800.0
+        },
+        {
+          "name": "MinCameraPitch",
+          "owner": "ADWPlayerCharacter",
+          "value": -80.0
+        },
+        {
+          "name": "MaxCameraPitch",
+          "owner": "ADWPlayerCharacter",
+          "value": -25.0
+        },
+        {
+          "name": "TransformSound",
+          "owner": "ADWPlayerCharacter",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Audio/SFX_Awoooooo.SFX_Awoooooo"
+        },
+        {
+          "name": "TransformCameraShake",
+          "owner": "ADWPlayerCharacter",
+          "value": null
+        },
+        {
+          "name": "TransformShakeSeconds",
+          "owner": "ADWPlayerCharacter",
+          "value": 0.3499999940395355
+        },
+        {
+          "name": "TransformShakeMagnitude",
+          "owner": "ADWPlayerCharacter",
+          "value": 8.0
+        },
+        {
+          "name": "TransformShakeFrequency",
+          "owner": "ADWPlayerCharacter",
+          "value": 35.0
+        },
+        {
+          "name": "YeastTint",
+          "owner": "ADWPlayerCharacter",
+          "value": "<Struct 'LinearColor' (0x000001D2858C8DCC) {r: 1.000000, g: 0.360000, b: 0.065000, a: 1.000000}>"
+        },
+        {
+          "name": "DoughTint",
+          "owner": "ADWPlayerCharacter",
+          "value": "<Struct 'LinearColor' (0x000001D2858C8DDC) {r: 1.000000, g: 1.000000, b: 1.000000, a: 1.000000}>"
+        },
+        {
+          "name": "YeastFormScaleMultiplier",
+          "owner": "ADWPlayerCharacter",
+          "value": 1.3644599914550781
+        },
+        {
+          "name": "bMatchFormEnterBlendToAnimation",
+          "owner": "ADWPlayerCharacter",
+          "value": true
+        },
+        {
+          "name": "FormEnterBlendSeconds",
+          "owner": "ADWPlayerCharacter",
+          "value": 1.6333333253860474
+        },
+        {
+          "name": "FormExitBlendSeconds",
+          "owner": "ADWPlayerCharacter",
+          "value": 0.44999998807907104
+        },
+        {
+          "name": "FormBlendExponent",
+          "owner": "ADWPlayerCharacter",
+          "value": 2.0
+        },
+        {
+          "name": "bCompensateTransformRootScale",
+          "owner": "ADWPlayerCharacter",
+          "value": true
+        },
+        {
+          "name": "FormScaleRootBone",
+          "owner": "ADWPlayerCharacter",
+          "value": "root"
+        },
+        {
+          "name": "DashNiagara",
+          "owner": "ADWPlayerCharacter",
+          "value": null
+        },
+        {
+          "name": "DashTrailClass",
+          "owner": "ADWPlayerCharacter",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Combat/BP_DWDashTrail.BP_DWDashTrail_C"
+        },
+        {
+          "name": "DashTrailInterval",
+          "owner": "ADWPlayerCharacter",
+          "value": 0.054999999701976776
+        },
+        {
+          "name": "InteractionScanInterval",
+          "owner": "ADWPlayerCharacter",
+          "value": 0.11999999731779099
+        },
+        {
+          "name": "bBindDefaultActionKeys",
+          "owner": "ATopDownActionCharacter",
+          "value": false
+        },
+        {
+          "name": "bUseSomersaultVisual",
+          "owner": "ATopDownActionCharacter",
+          "value": false
+        },
+        {
+          "name": "JumpLaunchSpeed",
+          "owner": "ATopDownActionCharacter",
+          "value": 600.0
+        },
+        {
+          "name": "RollDistance",
+          "owner": "ATopDownActionCharacter",
+          "value": 400.0
+        },
+        {
+          "name": "RollDuration",
+          "owner": "ATopDownActionCharacter",
+          "value": 0.44999998807907104
+        },
+        {
+          "name": "RollCooldown",
+          "owner": "ATopDownActionCharacter",
+          "value": 0.3499999940395355
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/BP_DWTopDownCharacter::Inventory",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/BP_DWTopDownCharacter.Default__BP_DWTopDownCharacter_C:DoughWorldInventory",
+      "owners": [
+        "UDWInventoryComponent"
+      ],
+      "properties": []
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/BP_DWPlayerController",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/BP_DWPlayerController.Default__BP_DWPlayerController_C",
+      "owners": [
+        "ADWPlayerController"
+      ],
+      "properties": [
+        {
+          "name": "KeyMoveForward",
+          "owner": "ADWPlayerController",
+          "value": "<Struct 'Key' (0x000001D28561E150) {}>"
+        },
+        {
+          "name": "KeyMoveBackward",
+          "owner": "ADWPlayerController",
+          "value": "<Struct 'Key' (0x000001D28561E170) {}>"
+        },
+        {
+          "name": "KeyMoveLeft",
+          "owner": "ADWPlayerController",
+          "value": "<Struct 'Key' (0x000001D28561E190) {}>"
+        },
+        {
+          "name": "KeyMoveRight",
+          "owner": "ADWPlayerController",
+          "value": "<Struct 'Key' (0x000001D28561E1B0) {}>"
+        },
+        {
+          "name": "KeyDash",
+          "owner": "ADWPlayerController",
+          "value": "<Struct 'Key' (0x000001D28561E1D0) {}>"
+        },
+        {
+          "name": "KeySprint",
+          "owner": "ADWPlayerController",
+          "value": "<Struct 'Key' (0x000001D28561E1F0) {}>"
+        },
+        {
+          "name": "KeySprintAlternate",
+          "owner": "ADWPlayerController",
+          "value": "<Struct 'Key' (0x000001D28561E210) {}>"
+        },
+        {
+          "name": "KeyHarvest",
+          "owner": "ADWPlayerController",
+          "value": "<Struct 'Key' (0x000001D28561E230) {}>"
+        },
+        {
+          "name": "KeyTransform",
+          "owner": "ADWPlayerController",
+          "value": "<Struct 'Key' (0x000001D28561E250) {}>"
+        },
+        {
+          "name": "KeyThrow",
+          "owner": "ADWPlayerController",
+          "value": "<Struct 'Key' (0x000001D28561E270) {}>"
+        },
+        {
+          "name": "KeyCameraDrag",
+          "owner": "ADWPlayerController",
+          "value": "<Struct 'Key' (0x000001D28561E290) {}>"
+        },
+        {
+          "name": "KeyInventory",
+          "owner": "ADWPlayerController",
+          "value": "<Struct 'Key' (0x000001D28561E2B0) {}>"
+        },
+        {
+          "name": "KeyCrafting",
+          "owner": "ADWPlayerController",
+          "value": "<Struct 'Key' (0x000001D28561E2D0) {}>"
+        },
+        {
+          "name": "KeyPauseMenu",
+          "owner": "ADWPlayerController",
+          "value": "<Struct 'Key' (0x000001D28561E2F0) {}>"
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/BP_DWGameplayHUD",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/BP_DWGameplayHUD.Default__BP_DWGameplayHUD_C",
+      "owners": [
+        "ADWGameplayHUD"
+      ],
+      "properties": [
+        {
+          "name": "GameTitle",
+          "owner": "ADWGameplayHUD",
+          "value": "面团世界"
+        },
+        {
+          "name": "GameSubtitle",
+          "owner": "ADWGameplayHUD",
+          "value": "DOUGH WORLD"
+        },
+        {
+          "name": "bShowTitleOnStart",
+          "owner": "ADWGameplayHUD",
+          "value": false
+        },
+        {
+          "name": "bUseLegacyInteractionPrompt",
+          "owner": "ADWGameplayHUD",
+          "value": false
+        },
+        {
+          "name": "WidgetClass",
+          "owner": "ADWGameplayHUD",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWGameplay.WBP_DWGameplay_C"
+        },
+        {
+          "name": "HealthFrameTexture",
+          "owner": "ADWGameplayHUD",
+          "value": null
+        },
+        {
+          "name": "TransformationFrameTexture",
+          "owner": "ADWGameplayHUD",
+          "value": null
+        },
+        {
+          "name": "InventoryPanelTexture",
+          "owner": "ADWGameplayHUD",
+          "value": null
+        },
+        {
+          "name": "CraftingPanelTexture",
+          "owner": "ADWGameplayHUD",
+          "value": null
+        },
+        {
+          "name": "TitleBackgroundTexture",
+          "owner": "ADWGameplayHUD",
+          "value": null
+        },
+        {
+          "name": "GameUIFont",
+          "owner": "ADWGameplayHUD",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/Interaction/Fonts/F_DWHandDrawn.F_DWHandDrawn"
+        },
+        {
+          "name": "UIAccentColor",
+          "owner": "ADWGameplayHUD",
+          "value": "<Struct 'LinearColor' (0x000001D2C66A91B8) {r: 0.880000, g: 0.640000, b: 0.280000, a: 1.000000}>"
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/BP_DWTopDownGameMode",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/BP_DWTopDownGameMode.Default__BP_DWTopDownGameMode_C",
+      "owners": [
+        "ADWGameplayGameMode"
+      ],
+      "properties": []
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Combat/BP_DWEnemy",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Combat/BP_DWEnemy.Default__BP_DWEnemy_C",
+      "owners": [
+        "ADWEnemyCharacter"
+      ],
+      "properties": [
+        {
+          "name": "PersistentId",
+          "owner": "ADWEnemyCharacter",
+          "value": "None"
+        },
+        {
+          "name": "MaxHealth",
+          "owner": "ADWEnemyCharacter",
+          "value": 100.0
+        },
+        {
+          "name": "DetectionRadius",
+          "owner": "ADWEnemyCharacter",
+          "value": 1000.0
+        },
+        {
+          "name": "LoseTargetRadius",
+          "owner": "ADWEnemyCharacter",
+          "value": 1500.0
+        },
+        {
+          "name": "PatrolRadius",
+          "owner": "ADWEnemyCharacter",
+          "value": 450.0
+        },
+        {
+          "name": "PatrolWaitTime",
+          "owner": "ADWEnemyCharacter",
+          "value": 1.5
+        },
+        {
+          "name": "MoveSpeed",
+          "owner": "ADWEnemyCharacter",
+          "value": 250.0
+        },
+        {
+          "name": "bRequireLineOfSight",
+          "owner": "ADWEnemyCharacter",
+          "value": true
+        },
+        {
+          "name": "AttackRange",
+          "owner": "ADWEnemyCharacter",
+          "value": 150.0
+        },
+        {
+          "name": "AttackDamage",
+          "owner": "ADWEnemyCharacter",
+          "value": 8.0
+        },
+        {
+          "name": "AttackInterval",
+          "owner": "ADWEnemyCharacter",
+          "value": 1.2000000476837158
+        },
+        {
+          "name": "DeathDestroyDelay",
+          "owner": "ADWEnemyCharacter",
+          "value": 1.5
+        },
+        {
+          "name": "AttackSound",
+          "owner": "ADWEnemyCharacter",
+          "value": null
+        },
+        {
+          "name": "DeathSound",
+          "owner": "ADWEnemyCharacter",
+          "value": null
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Combat/BP_DWEnemyNest",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Combat/BP_DWEnemyNest.Default__BP_DWEnemyNest_C",
+      "owners": [
+        "ADWEnemyNest"
+      ],
+      "properties": [
+        {
+          "name": "PersistentId",
+          "owner": "ADWEnemyNest",
+          "value": "None"
+        },
+        {
+          "name": "MaxHealth",
+          "owner": "ADWEnemyNest",
+          "value": 500.0
+        },
+        {
+          "name": "AggroRadius",
+          "owner": "ADWEnemyNest",
+          "value": 1200.0
+        },
+        {
+          "name": "SpawnInterval",
+          "owner": "ADWEnemyNest",
+          "value": 10.0
+        },
+        {
+          "name": "SpawnRadius",
+          "owner": "ADWEnemyNest",
+          "value": 220.0
+        },
+        {
+          "name": "MaxAliveEnemies",
+          "owner": "ADWEnemyNest",
+          "value": 0
+        },
+        {
+          "name": "EnemyClass",
+          "owner": "ADWEnemyNest",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Combat/BP_DWEnemy.BP_DWEnemy_C"
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Combat/BP_DWAlcoholProjectile",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Combat/BP_DWAlcoholProjectile.Default__BP_DWAlcoholProjectile_C",
+      "owners": [
+        "ADWAlcoholProjectile"
+      ],
+      "properties": [
+        {
+          "name": "AreaClass",
+          "owner": "ADWAlcoholProjectile",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Combat/BP_DWAlcoholArea.BP_DWAlcoholArea_C"
+        },
+        {
+          "name": "FlightTime",
+          "owner": "ADWAlcoholProjectile",
+          "value": 0.6499999761581421
+        },
+        {
+          "name": "MaxFlightLifetime",
+          "owner": "ADWAlcoholProjectile",
+          "value": 6.0
+        },
+        {
+          "name": "MaxThrowDistance",
+          "owner": "ADWAlcoholProjectile",
+          "value": 1600.0
+        },
+        {
+          "name": "TrailVFX",
+          "owner": "ADWAlcoholProjectile",
+          "value": null
+        },
+        {
+          "name": "ImpactVFX",
+          "owner": "ADWAlcoholProjectile",
+          "value": null
+        },
+        {
+          "name": "ImpactSound",
+          "owner": "ADWAlcoholProjectile",
+          "value": null
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Combat/BP_DWAlcoholArea",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Combat/BP_DWAlcoholArea.Default__BP_DWAlcoholArea_C",
+      "owners": [
+        "ADWAlcoholArea"
+      ],
+      "properties": [
+        {
+          "name": "Duration",
+          "owner": "ADWAlcoholArea",
+          "value": 5.0
+        },
+        {
+          "name": "DamageInterval",
+          "owner": "ADWAlcoholArea",
+          "value": 0.30000001192092896
+        },
+        {
+          "name": "DamagePerTick",
+          "owner": "ADWAlcoholArea",
+          "value": 10.0
+        },
+        {
+          "name": "Radius",
+          "owner": "ADWAlcoholArea",
+          "value": 220.0
+        },
+        {
+          "name": "SlowPercent",
+          "owner": "ADWAlcoholArea",
+          "value": 30.0
+        },
+        {
+          "name": "bGrantTransformationOnEveryDamageTick",
+          "owner": "ADWAlcoholArea",
+          "value": true
+        },
+        {
+          "name": "VerticalTolerance",
+          "owner": "ADWAlcoholArea",
+          "value": 180.0
+        },
+        {
+          "name": "AreaVFX",
+          "owner": "ADWAlcoholArea",
+          "value": null
+        },
+        {
+          "name": "AreaSound",
+          "owner": "ADWAlcoholArea",
+          "value": null
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Combat/BP_DWDashTrail",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Combat/BP_DWDashTrail.Default__BP_DWDashTrail_C",
+      "owners": [
+        "ADWDashTrailActor"
+      ],
+      "properties": [
+        {
+          "name": "Lifetime",
+          "owner": "ADWDashTrailActor",
+          "value": 0.2800000011920929
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/UI/WBP_DWFrontend",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Frontend/UI/WBP_DWFrontend.Default__WBP_DWFrontend_C",
+      "owners": [
+        "UDWFrontendWidget",
+        "UDWGameplayWidget"
+      ],
+      "properties": [
+        {
+          "name": "bPlayIntroOnConstruct",
+          "owner": "UDWFrontendWidget",
+          "value": true
+        },
+        {
+          "name": "bReplayIntroWhenReturningToMenu",
+          "owner": "UDWFrontendWidget",
+          "value": true
+        },
+        {
+          "name": "BlackHoldSeconds",
+          "owner": "UDWFrontendWidget",
+          "value": 0.44999998807907104
+        },
+        {
+          "name": "LogoInSeconds",
+          "owner": "UDWFrontendWidget",
+          "value": 0.550000011920929
+        },
+        {
+          "name": "LogoHoldSeconds",
+          "owner": "UDWFrontendWidget",
+          "value": 1.25
+        },
+        {
+          "name": "LogoOutSeconds",
+          "owner": "UDWFrontendWidget",
+          "value": 0.4000000059604645
+        },
+        {
+          "name": "RevealSeconds",
+          "owner": "UDWFrontendWidget",
+          "value": 0.6499999761581421
+        },
+        {
+          "name": "MenuEnterSeconds",
+          "owner": "UDWFrontendWidget",
+          "value": 0.6499999761581421
+        },
+        {
+          "name": "bAllowSkip",
+          "owner": "UDWFrontendWidget",
+          "value": true
+        },
+        {
+          "name": "LogoTexture",
+          "owner": "UDWFrontendWidget",
+          "value": null
+        },
+        {
+          "name": "bShowLogoTextWithTexture",
+          "owner": "UDWFrontendWidget",
+          "value": false
+        },
+        {
+          "name": "MenuBlurStrength",
+          "owner": "UDWFrontendWidget",
+          "value": 5.0
+        },
+        {
+          "name": "LogoSound",
+          "owner": "UDWFrontendWidget",
+          "value": null
+        },
+        {
+          "name": "MenuRevealSound",
+          "owner": "UDWFrontendWidget",
+          "value": null
+        },
+        {
+          "name": "SoundVolume",
+          "owner": "UDWFrontendWidget",
+          "value": 1.0
+        },
+        {
+          "name": "InventorySlotClass",
+          "owner": "UDWGameplayWidget",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWInventorySlot.WBP_DWInventorySlot_C"
+        },
+        {
+          "name": "RecipeEntryClass",
+          "owner": "UDWGameplayWidget",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWRecipeEntry.WBP_DWRecipeEntry_C"
+        },
+        {
+          "name": "SaveSlotClass",
+          "owner": "UDWGameplayWidget",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWSaveSlot.WBP_DWSaveSlot_C"
+        },
+        {
+          "name": "InventoryColumns",
+          "owner": "UDWGameplayWidget",
+          "value": 6
+        },
+        {
+          "name": "bBindDefaultButtonActions",
+          "owner": "UDWGameplayWidget",
+          "value": true
+        },
+        {
+          "name": "bAnimatePageTransitions",
+          "owner": "UDWGameplayWidget",
+          "value": true
+        },
+        {
+          "name": "PageEnterSeconds",
+          "owner": "UDWGameplayWidget",
+          "value": 0.3199999928474426
+        },
+        {
+          "name": "PageEnterStartScale",
+          "owner": "UDWGameplayWidget",
+          "value": 0.9399999976158142
+        },
+        {
+          "name": "PageEnterOffsetY",
+          "owner": "UDWGameplayWidget",
+          "value": 18.0
+        },
+        {
+          "name": "PageEnterOvershoot",
+          "owner": "UDWGameplayWidget",
+          "value": 1.0199999809265137
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Blueprints/BP_DWFrontendHUD",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Frontend/Blueprints/BP_DWFrontendHUD.Default__BP_DWFrontendHUD_C",
+      "owners": [
+        "ADWFrontendHUD",
+        "ADWGameplayHUD"
+      ],
+      "properties": [
+        {
+          "name": "FrontendWidgetClassPath",
+          "owner": "ADWFrontendHUD",
+          "value": "<Struct 'SoftClassPath' (0x000001D27861A600) {}>"
+        },
+        {
+          "name": "MenuCameraTag",
+          "owner": "ADWFrontendHUD",
+          "value": "DWMenuCamera"
+        },
+        {
+          "name": "MenuCameraOverride",
+          "owner": "ADWFrontendHUD",
+          "value": null
+        },
+        {
+          "name": "bKeepMenuCameraActive",
+          "owner": "ADWFrontendHUD",
+          "value": true
+        },
+        {
+          "name": "bEnableCameraSway",
+          "owner": "ADWFrontendHUD",
+          "value": true
+        },
+        {
+          "name": "SwayLocationAmplitudeCm",
+          "owner": "ADWFrontendHUD",
+          "value": "<Struct 'Vector' (0x000001D27861A648) {x: 0.000000, y: 1.500000, z: 1.000000}>"
+        },
+        {
+          "name": "SwayRotationAmplitudeDegrees",
+          "owner": "ADWFrontendHUD",
+          "value": "<Struct 'Rotator' (0x000001D27861A660) {pitch: 0.150000, yaw: 0.150000, roll: 0.030000}>"
+        },
+        {
+          "name": "SwayFrequencyHz",
+          "owner": "ADWFrontendHUD",
+          "value": "<Struct 'Vector' (0x000001D27861A678) {x: 0.100000, y: 0.080000, z: 0.120000}>"
+        },
+        {
+          "name": "bEnableTransitionNudge",
+          "owner": "ADWFrontendHUD",
+          "value": true
+        },
+        {
+          "name": "TransitionLocationAmplitudeCm",
+          "owner": "ADWFrontendHUD",
+          "value": "<Struct 'Vector' (0x000001D27861A698) {x: 0.000000, y: 1.800000, z: 0.800000}>"
+        },
+        {
+          "name": "TransitionRotationAmplitudeDegrees",
+          "owner": "ADWFrontendHUD",
+          "value": "<Struct 'Rotator' (0x000001D27861A6B0) {pitch: 0.120000, yaw: -0.180000, roll: 0.030000}>"
+        },
+        {
+          "name": "TransitionFrequencyHz",
+          "owner": "ADWFrontendHUD",
+          "value": 3.5
+        },
+        {
+          "name": "TransitionDecayPerSecond",
+          "owner": "ADWFrontendHUD",
+          "value": 8.0
+        },
+        {
+          "name": "TransitionDurationSeconds",
+          "owner": "ADWFrontendHUD",
+          "value": 0.6499999761581421
+        },
+        {
+          "name": "GameTitle",
+          "owner": "ADWGameplayHUD",
+          "value": "面团世界"
+        },
+        {
+          "name": "GameSubtitle",
+          "owner": "ADWGameplayHUD",
+          "value": "DOUGH WORLD"
+        },
+        {
+          "name": "bShowTitleOnStart",
+          "owner": "ADWGameplayHUD",
+          "value": true
+        },
+        {
+          "name": "bUseLegacyInteractionPrompt",
+          "owner": "ADWGameplayHUD",
+          "value": false
+        },
+        {
+          "name": "WidgetClass",
+          "owner": "ADWGameplayHUD",
+          "value": "/Game/DoughWorld/Maps/Gameplay/Frontend/UI/WBP_DWFrontend.WBP_DWFrontend_C"
+        },
+        {
+          "name": "HealthFrameTexture",
+          "owner": "ADWGameplayHUD",
+          "value": null
+        },
+        {
+          "name": "TransformationFrameTexture",
+          "owner": "ADWGameplayHUD",
+          "value": null
+        },
+        {
+          "name": "InventoryPanelTexture",
+          "owner": "ADWGameplayHUD",
+          "value": null
+        },
+        {
+          "name": "CraftingPanelTexture",
+          "owner": "ADWGameplayHUD",
+          "value": null
+        },
+        {
+          "name": "TitleBackgroundTexture",
+          "owner": "ADWGameplayHUD",
+          "value": null
+        },
+        {
+          "name": "GameUIFont",
+          "owner": "ADWGameplayHUD",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/Interaction/Fonts/F_DWHandDrawn.F_DWHandDrawn"
+        },
+        {
+          "name": "UIAccentColor",
+          "owner": "ADWGameplayHUD",
+          "value": "<Struct 'LinearColor' (0x000001D27861A5B8) {r: 0.880000, g: 0.640000, b: 0.280000, a: 1.000000}>"
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Blueprints/BP_DWFrontendGameMode",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Frontend/Blueprints/BP_DWFrontendGameMode.Default__BP_DWFrontendGameMode_C",
+      "owners": [
+        "ADWGameplayGameMode"
+      ],
+      "properties": []
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Water",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Water.Default__BP_DWResource_Water_C",
+      "owners": [
+        "ADWResourceNode"
+      ],
+      "properties": [
+        {
+          "name": "PersistentId",
+          "owner": "ADWResourceNode",
+          "value": "None"
+        },
+        {
+          "name": "ItemId",
+          "owner": "ADWResourceNode",
+          "value": "Water"
+        },
+        {
+          "name": "HarvestInterval",
+          "owner": "ADWResourceNode",
+          "value": 1.0
+        },
+        {
+          "name": "HarvestAmount",
+          "owner": "ADWResourceNode",
+          "value": 1
+        },
+        {
+          "name": "bInfinite",
+          "owner": "ADWResourceNode",
+          "value": true
+        },
+        {
+          "name": "RemainingAmount",
+          "owner": "ADWResourceNode",
+          "value": 3
+        },
+        {
+          "name": "InteractionRadius",
+          "owner": "ADWResourceNode",
+          "value": 220.0
+        },
+        {
+          "name": "bHideWhenDepleted",
+          "owner": "ADWResourceNode",
+          "value": true
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Water::InteractionPrompt",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Water.Default__BP_DWResource_Water_C:InteractionPrompt",
+      "owners": [
+        "UDWInteractionPromptComponent"
+      ],
+      "properties": [
+        {
+          "name": "bPromptEnabled",
+          "owner": "UDWInteractionPromptComponent",
+          "value": true
+        },
+        {
+          "name": "WorldOffset",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "<Struct 'Vector' (0x000001D23347F870) {x: 0.000000, y: 0.000000, z: 145.000000}>"
+        },
+        {
+          "name": "GenericPromptTitle",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "可交互物体"
+        },
+        {
+          "name": "GenericPromptAction",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "交互"
+        },
+        {
+          "name": "GenericEnglishPromptTitle",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "Interact"
+        },
+        {
+          "name": "GenericEnglishAction",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "Hold to interact"
+        },
+        {
+          "name": "GenericPromptKey",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "F"
+        },
+        {
+          "name": "GenericDetectionRadius",
+          "owner": "UDWInteractionPromptComponent",
+          "value": 220.0
+        },
+        {
+          "name": "HeightTolerance",
+          "owner": "UDWInteractionPromptComponent",
+          "value": 300.0
+        },
+        {
+          "name": "Style",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/Interaction/DA_DWInteractionPromptStyle.DA_DWInteractionPromptStyle"
+        },
+        {
+          "name": "bPlayAppearSound",
+          "owner": "UDWInteractionPromptComponent",
+          "value": true
+        },
+        {
+          "name": "bOverrideSoundCooldown",
+          "owner": "UDWInteractionPromptComponent",
+          "value": false
+        },
+        {
+          "name": "SoundCooldownOverride",
+          "owner": "UDWInteractionPromptComponent",
+          "value": 0.6499999761581421
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Yeast",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Yeast.Default__BP_DWResource_Yeast_C",
+      "owners": [
+        "ADWResourceNode"
+      ],
+      "properties": [
+        {
+          "name": "PersistentId",
+          "owner": "ADWResourceNode",
+          "value": "None"
+        },
+        {
+          "name": "ItemId",
+          "owner": "ADWResourceNode",
+          "value": "Yeast"
+        },
+        {
+          "name": "HarvestInterval",
+          "owner": "ADWResourceNode",
+          "value": 3.0
+        },
+        {
+          "name": "HarvestAmount",
+          "owner": "ADWResourceNode",
+          "value": 5
+        },
+        {
+          "name": "bInfinite",
+          "owner": "ADWResourceNode",
+          "value": true
+        },
+        {
+          "name": "RemainingAmount",
+          "owner": "ADWResourceNode",
+          "value": 3
+        },
+        {
+          "name": "InteractionRadius",
+          "owner": "ADWResourceNode",
+          "value": 220.0
+        },
+        {
+          "name": "bHideWhenDepleted",
+          "owner": "ADWResourceNode",
+          "value": true
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Yeast::InteractionPrompt",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Yeast.Default__BP_DWResource_Yeast_C:InteractionPrompt",
+      "owners": [
+        "UDWInteractionPromptComponent"
+      ],
+      "properties": [
+        {
+          "name": "bPromptEnabled",
+          "owner": "UDWInteractionPromptComponent",
+          "value": true
+        },
+        {
+          "name": "WorldOffset",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "<Struct 'Vector' (0x000001D280096270) {x: 0.000000, y: 0.000000, z: 145.000000}>"
+        },
+        {
+          "name": "GenericPromptTitle",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "可交互物体"
+        },
+        {
+          "name": "GenericPromptAction",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "交互"
+        },
+        {
+          "name": "GenericEnglishPromptTitle",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "Interact"
+        },
+        {
+          "name": "GenericEnglishAction",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "Hold to interact"
+        },
+        {
+          "name": "GenericPromptKey",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "F"
+        },
+        {
+          "name": "GenericDetectionRadius",
+          "owner": "UDWInteractionPromptComponent",
+          "value": 220.0
+        },
+        {
+          "name": "HeightTolerance",
+          "owner": "UDWInteractionPromptComponent",
+          "value": 300.0
+        },
+        {
+          "name": "Style",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/Interaction/DA_DWInteractionPromptStyle.DA_DWInteractionPromptStyle"
+        },
+        {
+          "name": "bPlayAppearSound",
+          "owner": "UDWInteractionPromptComponent",
+          "value": true
+        },
+        {
+          "name": "bOverrideSoundCooldown",
+          "owner": "UDWInteractionPromptComponent",
+          "value": false
+        },
+        {
+          "name": "SoundCooldownOverride",
+          "owner": "UDWInteractionPromptComponent",
+          "value": 0.6499999761581421
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Flour",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Flour.Default__BP_DWResource_Flour_C",
+      "owners": [
+        "ADWResourceNode"
+      ],
+      "properties": [
+        {
+          "name": "PersistentId",
+          "owner": "ADWResourceNode",
+          "value": "None"
+        },
+        {
+          "name": "ItemId",
+          "owner": "ADWResourceNode",
+          "value": "Flour"
+        },
+        {
+          "name": "HarvestInterval",
+          "owner": "ADWResourceNode",
+          "value": 3.0
+        },
+        {
+          "name": "HarvestAmount",
+          "owner": "ADWResourceNode",
+          "value": 2
+        },
+        {
+          "name": "bInfinite",
+          "owner": "ADWResourceNode",
+          "value": false
+        },
+        {
+          "name": "RemainingAmount",
+          "owner": "ADWResourceNode",
+          "value": 20
+        },
+        {
+          "name": "InteractionRadius",
+          "owner": "ADWResourceNode",
+          "value": 220.0
+        },
+        {
+          "name": "bHideWhenDepleted",
+          "owner": "ADWResourceNode",
+          "value": true
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Flour::InteractionPrompt",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Flour.Default__BP_DWResource_Flour_C:InteractionPrompt",
+      "owners": [
+        "UDWInteractionPromptComponent"
+      ],
+      "properties": [
+        {
+          "name": "bPromptEnabled",
+          "owner": "UDWInteractionPromptComponent",
+          "value": true
+        },
+        {
+          "name": "WorldOffset",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "<Struct 'Vector' (0x000001D238A69E70) {x: 0.000000, y: 0.000000, z: 145.000000}>"
+        },
+        {
+          "name": "GenericPromptTitle",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "可交互物体"
+        },
+        {
+          "name": "GenericPromptAction",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "交互"
+        },
+        {
+          "name": "GenericEnglishPromptTitle",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "Interact"
+        },
+        {
+          "name": "GenericEnglishAction",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "Hold to interact"
+        },
+        {
+          "name": "GenericPromptKey",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "F"
+        },
+        {
+          "name": "GenericDetectionRadius",
+          "owner": "UDWInteractionPromptComponent",
+          "value": 220.0
+        },
+        {
+          "name": "HeightTolerance",
+          "owner": "UDWInteractionPromptComponent",
+          "value": 300.0
+        },
+        {
+          "name": "Style",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/Interaction/DA_DWInteractionPromptStyle.DA_DWInteractionPromptStyle"
+        },
+        {
+          "name": "bPlayAppearSound",
+          "owner": "UDWInteractionPromptComponent",
+          "value": true
+        },
+        {
+          "name": "bOverrideSoundCooldown",
+          "owner": "UDWInteractionPromptComponent",
+          "value": false
+        },
+        {
+          "name": "SoundCooldownOverride",
+          "owner": "UDWInteractionPromptComponent",
+          "value": 0.6499999761581421
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Dough",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Dough.Default__BP_DWResource_Dough_C",
+      "owners": [
+        "ADWResourceNode"
+      ],
+      "properties": [
+        {
+          "name": "PersistentId",
+          "owner": "ADWResourceNode",
+          "value": "None"
+        },
+        {
+          "name": "ItemId",
+          "owner": "ADWResourceNode",
+          "value": "Dough"
+        },
+        {
+          "name": "HarvestInterval",
+          "owner": "ADWResourceNode",
+          "value": 3.0
+        },
+        {
+          "name": "HarvestAmount",
+          "owner": "ADWResourceNode",
+          "value": 3
+        },
+        {
+          "name": "bInfinite",
+          "owner": "ADWResourceNode",
+          "value": false
+        },
+        {
+          "name": "RemainingAmount",
+          "owner": "ADWResourceNode",
+          "value": 3
+        },
+        {
+          "name": "InteractionRadius",
+          "owner": "ADWResourceNode",
+          "value": 220.0
+        },
+        {
+          "name": "bHideWhenDepleted",
+          "owner": "ADWResourceNode",
+          "value": true
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Dough::InteractionPrompt",
+      "object": "/Game/DoughWorld/Maps/Gameplay/Blueprints/Resources/BP_DWResource_Dough.Default__BP_DWResource_Dough_C:InteractionPrompt",
+      "owners": [
+        "UDWInteractionPromptComponent"
+      ],
+      "properties": [
+        {
+          "name": "bPromptEnabled",
+          "owner": "UDWInteractionPromptComponent",
+          "value": true
+        },
+        {
+          "name": "WorldOffset",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "<Struct 'Vector' (0x000001D286FAD070) {x: 0.000000, y: 0.000000, z: 145.000000}>"
+        },
+        {
+          "name": "GenericPromptTitle",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "可交互物体"
+        },
+        {
+          "name": "GenericPromptAction",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "交互"
+        },
+        {
+          "name": "GenericEnglishPromptTitle",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "Interact"
+        },
+        {
+          "name": "GenericEnglishAction",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "Hold to interact"
+        },
+        {
+          "name": "GenericPromptKey",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "F"
+        },
+        {
+          "name": "GenericDetectionRadius",
+          "owner": "UDWInteractionPromptComponent",
+          "value": 220.0
+        },
+        {
+          "name": "HeightTolerance",
+          "owner": "UDWInteractionPromptComponent",
+          "value": 300.0
+        },
+        {
+          "name": "Style",
+          "owner": "UDWInteractionPromptComponent",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/Interaction/DA_DWInteractionPromptStyle.DA_DWInteractionPromptStyle"
+        },
+        {
+          "name": "bPlayAppearSound",
+          "owner": "UDWInteractionPromptComponent",
+          "value": true
+        },
+        {
+          "name": "bOverrideSoundCooldown",
+          "owner": "UDWInteractionPromptComponent",
+          "value": false
+        },
+        {
+          "name": "SoundCooldownOverride",
+          "owner": "UDWInteractionPromptComponent",
+          "value": 0.6499999761581421
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWGameplay",
+      "object": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWGameplay.Default__WBP_DWGameplay_C",
+      "owners": [
+        "UDWGameplayWidget"
+      ],
+      "properties": [
+        {
+          "name": "InventorySlotClass",
+          "owner": "UDWGameplayWidget",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWInventorySlot.WBP_DWInventorySlot_C"
+        },
+        {
+          "name": "RecipeEntryClass",
+          "owner": "UDWGameplayWidget",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWRecipeEntry.WBP_DWRecipeEntry_C"
+        },
+        {
+          "name": "SaveSlotClass",
+          "owner": "UDWGameplayWidget",
+          "value": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWSaveSlot.WBP_DWSaveSlot_C"
+        },
+        {
+          "name": "InventoryColumns",
+          "owner": "UDWGameplayWidget",
+          "value": 6
+        },
+        {
+          "name": "bBindDefaultButtonActions",
+          "owner": "UDWGameplayWidget",
+          "value": true
+        },
+        {
+          "name": "bAnimatePageTransitions",
+          "owner": "UDWGameplayWidget",
+          "value": true
+        },
+        {
+          "name": "PageEnterSeconds",
+          "owner": "UDWGameplayWidget",
+          "value": 0.3199999928474426
+        },
+        {
+          "name": "PageEnterStartScale",
+          "owner": "UDWGameplayWidget",
+          "value": 0.9399999976158142
+        },
+        {
+          "name": "PageEnterOffsetY",
+          "owner": "UDWGameplayWidget",
+          "value": 18.0
+        },
+        {
+          "name": "PageEnterOvershoot",
+          "owner": "UDWGameplayWidget",
+          "value": 1.0199999809265137
+        }
+      ]
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWInventorySlot",
+      "object": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWInventorySlot.Default__WBP_DWInventorySlot_C",
+      "owners": [
+        "UDWInventorySlotWidget"
+      ],
+      "properties": []
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWRecipeEntry",
+      "object": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWRecipeEntry.Default__WBP_DWRecipeEntry_C",
+      "owners": [
+        "UDWRecipeEntryWidget"
+      ],
+      "properties": []
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWSaveSlot",
+      "object": "/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWSaveSlot.Default__WBP_DWSaveSlot_C",
+      "owners": [
+        "UDWSaveSlotWidget"
+      ],
+      "properties": []
+    },
+    {
+      "path": "/Game/DoughWorld/Maps/Gameplay/UI/Interaction/WBP_DWInteractionPrompt",
+      "object": "/Game/DoughWorld/Maps/Gameplay/UI/Interaction/WBP_DWInteractionPrompt.Default__WBP_DWInteractionPrompt_C",
+      "owners": [
+        "UDWInteractionPromptWidget"
+      ],
+      "properties": []
+    },
+    {
+      "path": "/Script/GDATtest.DWUIBounceComponent (native defaults)",
+      "object": "/Script/GDATtest.Default__DWUIBounceComponent",
+      "owners": [
+        "UDWUIBounceComponent"
+      ],
+      "properties": [
+        {
+          "name": "FrequencyHz",
+          "owner": "UDWUIBounceComponent",
+          "value": 5.0
+        },
+        {
+          "name": "DampingRatio",
+          "owner": "UDWUIBounceComponent",
+          "value": 0.550000011920929
+        },
+        {
+          "name": "Pivot",
+          "owner": "UDWUIBounceComponent",
+          "value": "<Struct 'Vector2D' (0x000001D2119A07E8) {x: 0.500000, y: 0.500000}>"
+        },
+        {
+          "name": "SettleScaleTolerance",
+          "owner": "UDWUIBounceComponent",
+          "value": 0.0010000000474974513
+        },
+        {
+          "name": "SettlePixelTolerance",
+          "owner": "UDWUIBounceComponent",
+          "value": 0.05000000074505806
+        },
+        {
+          "name": "SettleAngleTolerance",
+          "owner": "UDWUIBounceComponent",
+          "value": 0.05000000074505806
+        },
+        {
+          "name": "bAutoBindButtons",
+          "owner": "UDWUIBounceComponent",
+          "value": true
+        },
+        {
+          "name": "bAnimateNonButtonHover",
+          "owner": "UDWUIBounceComponent",
+          "value": true
+        },
+        {
+          "name": "HoverScale",
+          "owner": "UDWUIBounceComponent",
+          "value": 1.059999942779541
+        },
+        {
+          "name": "PressedScale",
+          "owner": "UDWUIBounceComponent",
+          "value": 0.9399999976158142
+        },
+        {
+          "name": "HoverAngle",
+          "owner": "UDWUIBounceComponent",
+          "value": -1.5
+        },
+        {
+          "name": "PressedAngle",
+          "owner": "UDWUIBounceComponent",
+          "value": 1.5
+        },
+        {
+          "name": "HoverOffset",
+          "owner": "UDWUIBounceComponent",
+          "value": "<Struct 'Vector2D' (0x000001D2119A0818) {x: 0.000000, y: -2.000000}>"
+        },
+        {
+          "name": "PressedOffset",
+          "owner": "UDWUIBounceComponent",
+          "value": "<Struct 'Vector2D' (0x000001D2119A0828) {x: 0.000000, y: 1.000000}>"
+        },
+        {
+          "name": "bPlayOnConstruct",
+          "owner": "UDWUIBounceComponent",
+          "value": true
+        },
+        {
+          "name": "EntryScale",
+          "owner": "UDWUIBounceComponent",
+          "value": 0.8199999928474426
+        },
+        {
+          "name": "EntryOffset",
+          "owner": "UDWUIBounceComponent",
+          "value": "<Struct 'Vector2D' (0x000001D2119A0840) {x: 0.000000, y: 30.000000}>"
+        },
+        {
+          "name": "EntryAngle",
+          "owner": "UDWUIBounceComponent",
+          "value": -3.0
+        },
+        {
+          "name": "PulseScaleOffset",
+          "owner": "UDWUIBounceComponent",
+          "value": 0.07999999821186066
+        },
+        {
+          "name": "PulseOffset",
+          "owner": "UDWUIBounceComponent",
+          "value": "<Struct 'Vector2D' (0x000001D2119A0858) {x: 0.000000, y: -8.000000}>"
+        },
+        {
+          "name": "PulseAngle",
+          "owner": "UDWUIBounceComponent",
+          "value": 3.0
+        },
+        {
+          "name": "HoverSound",
+          "owner": "UDWUIBounceComponent",
+          "value": null
+        },
+        {
+          "name": "PressedSound",
+          "owner": "UDWUIBounceComponent",
+          "value": null
+        },
+        {
+          "name": "SoundVolume",
+          "owner": "UDWUIBounceComponent",
+          "value": 0.3499999940395355
+        }
+      ]
+    },
+    {
+      "path": "/Script/GDATtest.DWGameInstance",
+      "object": "/Script/GDATtest.Default__DWGameInstance",
+      "owners": [
+        "UDWGameInstance"
+      ],
+      "properties": [
+        {
+          "name": "SoftConfigPath",
+          "owner": "UDWGameInstance",
+          "value": "<Struct 'SoftObjectPath' (0x000001D211914A98) {}>"
+        }
+      ]
+    },
+    {
+      "path": "/Script/GDATtest.CameraOccluderFadeComponent (native defaults)",
+      "object": "/Script/GDATtest.Default__CameraOccluderFadeComponent",
+      "owners": [
+        "UCameraOccluderFadeComponent"
+      ],
+      "properties": [
+        {
+          "name": "ComponentTag",
+          "owner": "UCameraOccluderFadeComponent",
+          "value": "CameraFade"
+        },
+        {
+          "name": "ParameterName",
+          "owner": "UCameraOccluderFadeComponent",
+          "value": "CameraFade"
+        },
+        {
+          "name": "LocalPlayerIndex",
+          "owner": "UCameraOccluderFadeComponent",
+          "value": 0
+        },
+        {
+          "name": "bProtectPlayer",
+          "owner": "UCameraOccluderFadeComponent",
+          "value": true
+        },
+        {
+          "name": "OccludedVisibility",
+          "owner": "UCameraOccluderFadeComponent",
+          "value": 0.20000000298023224
+        },
+        {
+          "name": "ScanInterval",
+          "owner": "UCameraOccluderFadeComponent",
+          "value": 0.07999999821186066
+        },
+        {
+          "name": "ClearHoldSeconds",
+          "owner": "UCameraOccluderFadeComponent",
+          "value": 0.20000000298023224
+        },
+        {
+          "name": "FadeOutSeconds",
+          "owner": "UCameraOccluderFadeComponent",
+          "value": 0.18000000715255737
+        },
+        {
+          "name": "FadeInSeconds",
+          "owner": "UCameraOccluderFadeComponent",
+          "value": 0.30000001192092896
+        },
+        {
+          "name": "BoundsPaddingCm",
+          "owner": "UCameraOccluderFadeComponent",
+          "value": 10.0
+        },
+        {
+          "name": "TargetEndInsetCm",
+          "owner": "UCameraOccluderFadeComponent",
+          "value": 8.0
+        },
+        {
+          "name": "AdditionalTargetMaxDistanceCm",
+          "owner": "UCameraOccluderFadeComponent",
+          "value": 650.0
+        },
+        {
+          "name": "AdditionalTargets",
+          "owner": "UCameraOccluderFadeComponent",
+          "value": []
+        }
+      ]
+    }
+  ],
+  "tables": {
+    "DT_DWItems": [
+      {
+        "Name": "Flour",
+        "ItemId": "Flour",
+        "DisplayName": "NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Flour_DisplayName\", \"面粉\")",
+        "EnglishDisplayName": "NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Flour_EnglishDisplayName\", \"Flour\")",
+        "IconColor": {
+          "R": 0.92,
+          "G": 0.84,
+          "B": 0.63,
+          "A": 1
+        },
+        "Icon": "None",
+        "bUsable": false,
+        "HealAmount": 0,
+        "TransformationGainPercent": 0
+      },
+      {
+        "Name": "Water",
+        "ItemId": "Water",
+        "DisplayName": "NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Water_DisplayName\", \"水\")",
+        "EnglishDisplayName": "NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Water_EnglishDisplayName\", \"Water\")",
+        "IconColor": {
+          "R": 0.2,
+          "G": 0.65,
+          "B": 1,
+          "A": 1
+        },
+        "Icon": "None",
+        "bUsable": false,
+        "HealAmount": 0,
+        "TransformationGainPercent": 0
+      },
+      {
+        "Name": "Dough",
+        "ItemId": "Dough",
+        "DisplayName": "NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Dough_DisplayName\", \"面团\")",
+        "EnglishDisplayName": "NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Dough_EnglishDisplayName\", \"Dough\")",
+        "IconColor": {
+          "R": 0.85,
+          "G": 0.57,
+          "B": 0.29,
+          "A": 1
+        },
+        "Icon": "None",
+        "bUsable": true,
+        "HealAmount": 10,
+        "TransformationGainPercent": 0
+      },
+      {
+        "Name": "Yeast",
+        "ItemId": "Yeast",
+        "DisplayName": "NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Yeast_DisplayName\", \"酵母\")",
+        "EnglishDisplayName": "NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Yeast_EnglishDisplayName\", \"Yeast\")",
+        "IconColor": {
+          "R": 0.57,
+          "G": 0.86,
+          "B": 0.3,
+          "A": 1
+        },
+        "Icon": "None",
+        "bUsable": false,
+        "HealAmount": 0,
+        "TransformationGainPercent": 0
+      },
+      {
+        "Name": "Alcohol",
+        "ItemId": "Alcohol",
+        "DisplayName": "NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Alcohol_DisplayName\", \"酒精\")",
+        "EnglishDisplayName": "NSLOCTEXT(\"DT_DWItems [711BA5068DCF895A9C47B62706A802B3]\", \"Alcohol_EnglishDisplayName\", \"Alcohol\")",
+        "IconColor": {
+          "R": 0.63,
+          "G": 0.38,
+          "B": 0.95,
+          "A": 1
+        },
+        "Icon": "None",
+        "bUsable": false,
+        "HealAmount": 0,
+        "TransformationGainPercent": 0
+      }
+    ],
+    "DT_DWRecipes": [
+      {
+        "Name": "CraftDough",
+        "RecipeId": "CraftDough",
+        "DisplayName": "NSLOCTEXT(\"DT_DWRecipes [D3665698F7BE190E477F655B6544DB9D]\", \"CraftDough_DisplayName\", \"面团\")",
+        "EnglishDisplayName": "NSLOCTEXT(\"DT_DWRecipes [D3665698F7BE190E477F655B6544DB9D]\", \"CraftDough_EnglishDisplayName\", \"Dough\")",
+        "Inputs": [
+          {
+            "ItemId": "Flour",
+            "Quantity": 2
+          },
+          {
+            "ItemId": "Water",
+            "Quantity": 2
+          }
+        ],
+        "Outputs": [
+          {
+            "ItemId": "Dough",
+            "Quantity": 1
+          }
+        ],
+        "bRequiresYeast": true
+      },
+      {
+        "Name": "CraftAlcohol",
+        "RecipeId": "CraftAlcohol",
+        "DisplayName": "NSLOCTEXT(\"DT_DWRecipes [D3665698F7BE190E477F655B6544DB9D]\", \"CraftAlcohol_DisplayName\", \"酒精\")",
+        "EnglishDisplayName": "NSLOCTEXT(\"DT_DWRecipes [D3665698F7BE190E477F655B6544DB9D]\", \"CraftAlcohol_EnglishDisplayName\", \"Alcohol\")",
+        "Inputs": [
+          {
+            "ItemId": "Dough",
+            "Quantity": 3
+          },
+          {
+            "ItemId": "Yeast",
+            "Quantity": 2
+          }
+        ],
+        "Outputs": [
+          {
+            "ItemId": "Alcohol",
+            "Quantity": 1
+          }
+        ],
+        "bRequiresYeast": true
+      }
+    ]
+  },
+  "level_actors": [
+    {
+      "label": "Menu_Ground",
+      "class": "/Script/Engine.StaticMeshActor",
+      "location": "<Struct 'Vector' (0x000001CF5122D730) {x: 0.000000, y: 0.000000, z: -10.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.StaticMeshActor_0"
+    },
+    {
+      "label": "Menu_Path",
+      "class": "/Script/Engine.StaticMeshActor",
+      "location": "<Struct 'Vector' (0x000001CF5122D780) {x: 300.000000, y: -600.000000, z: -22.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.StaticMeshActor_1"
+    },
+    {
+      "label": "Menu_DoughHill_00",
+      "class": "/Script/Engine.StaticMeshActor",
+      "location": "<Struct 'Vector' (0x000001CF5122D820) {x: -2200.000000, y: 2500.000000, z: -350.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.StaticMeshActor_2"
+    },
+    {
+      "label": "Menu_DoughHill_01",
+      "class": "/Script/Engine.StaticMeshActor",
+      "location": "<Struct 'Vector' (0x000001CF5122D8C0) {x: 2400.000000, y: 3100.000000, z: -420.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.StaticMeshActor_3"
+    },
+    {
+      "label": "Menu_DoughHill_02",
+      "class": "/Script/Engine.StaticMeshActor",
+      "location": "<Struct 'Vector' (0x000001CF5122D960) {x: 4800.000000, y: 2400.000000, z: -450.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.StaticMeshActor_4"
+    },
+    {
+      "label": "Menu_DoughHill_03",
+      "class": "/Script/Engine.StaticMeshActor",
+      "location": "<Struct 'Vector' (0x000001CF5122DA00) {x: -4400.000000, y: 4000.000000, z: -200.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.StaticMeshActor_5"
+    },
+    {
+      "label": "Menu_BP_BLD_house_4",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/buildings/BP_BLD_house_4.BP_BLD_house_4_C",
+      "location": "<Struct 'Vector' (0x000001CF5122DA50) {x: 950.000000, y: 1100.000000, z: 0.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_BLD_house_4_C_0"
+    },
+    {
+      "label": "Menu_BP_BLD_house_2",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/buildings/BP_BLD_house_2.BP_BLD_house_2_C",
+      "location": "<Struct 'Vector' (0x000001CF5122DAA0) {x: -700.000000, y: 1900.000000, z: 0.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_BLD_house_2_C_0"
+    },
+    {
+      "label": "Menu_BP_BLD_house_7",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/buildings/BP_BLD_house_7.BP_BLD_house_7_C",
+      "location": "<Struct 'Vector' (0x000001CF5122DAF0) {x: 2350.000000, y: 2300.000000, z: 0.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_BLD_house_7_C_0"
+    },
+    {
+      "label": "Menu_Tree_00",
+      "class": "/Script/Engine.StaticMeshActor",
+      "location": "<Struct 'Vector' (0x000001CF5122DB40) {x: -1500.000000, y: 700.000000, z: 0.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.StaticMeshActor_6"
+    },
+    {
+      "label": "Menu_Tree_01",
+      "class": "/Script/Engine.StaticMeshActor",
+      "location": "<Struct 'Vector' (0x000001CF5122DB90) {x: 2100.000000, y: 300.000000, z: 0.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.StaticMeshActor_7"
+    },
+    {
+      "label": "Menu_Tree_02",
+      "class": "/Script/Engine.StaticMeshActor",
+      "location": "<Struct 'Vector' (0x000001CF5122DBE0) {x: -2100.000000, y: 2400.000000, z: 0.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.StaticMeshActor_8"
+    },
+    {
+      "label": "Menu_Tree_03",
+      "class": "/Script/Engine.StaticMeshActor",
+      "location": "<Struct 'Vector' (0x000001CF5122DC30) {x: 3200.000000, y: 1600.000000, z: 0.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.StaticMeshActor_9"
+    },
+    {
+      "label": "Menu_Tree_04",
+      "class": "/Script/Engine.StaticMeshActor",
+      "location": "<Struct 'Vector' (0x000001CF5122DC80) {x: 800.000000, y: 2700.000000, z: 0.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.StaticMeshActor_10"
+    },
+    {
+      "label": "Menu_Tree_05",
+      "class": "/Script/Engine.StaticMeshActor",
+      "location": "<Struct 'Vector' (0x000001CF5122DCD0) {x: -2400.000000, y: -900.000000, z: 0.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.StaticMeshActor_11"
+    },
+    {
+      "label": "Menu_KeyLight",
+      "class": "/Script/Engine.DirectionalLight",
+      "location": "<Struct 'Vector' (0x000001CF5122DD20) {x: -1000.000000, y: -2000.000000, z: 1800.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.DirectionalLight_0"
+    },
+    {
+      "label": "Menu_SoftFill",
+      "class": "/Script/Engine.DirectionalLight",
+      "location": "<Struct 'Vector' (0x000001CF5122DD70) {x: 0.000000, y: 0.000000, z: 1400.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.DirectionalLight_1"
+    },
+    {
+      "label": "Menu_SkyLight",
+      "class": "/Script/Engine.SkyLight",
+      "location": "<Struct 'Vector' (0x000001CF5122DDC0) {x: 0.000000, y: 0.000000, z: 1500.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.SkyLight_0"
+    },
+    {
+      "label": "Menu_SkyAtmosphere",
+      "class": "/Script/Engine.SkyAtmosphere",
+      "location": "<Struct 'Vector' (0x000001CF5122DE60) {x: 0.000000, y: 0.000000, z: 0.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.SkyAtmosphere_0"
+    },
+    {
+      "label": "Menu_DistantHaze",
+      "class": "/Script/Engine.ExponentialHeightFog",
+      "location": "<Struct 'Vector' (0x000001CF5122DEB0) {x: 0.000000, y: 0.000000, z: -300.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.ExponentialHeightFog_0"
+    },
+    {
+      "label": "Menu_Exposure",
+      "class": "/Script/Engine.PostProcessVolume",
+      "location": "<Struct 'Vector' (0x000001CF5122DEB0) {x: 0.000000, y: 0.000000, z: 0.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.PostProcessVolume_0"
+    },
+    {
+      "label": "DWMenuCamera",
+      "class": "/Script/Engine.CameraActor",
+      "location": "<Struct 'Vector' (0x000001CF5122DF00) {x: -1800.000000, y: -2300.000000, z: 1400.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.CameraActor_0"
+    },
+    {
+      "label": "BP_FX_RectLight0",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122DF50) {x: 1337.331093, y: 712.023391, z: 443.469122}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight_GEN_VARIABLE_BP_FX_RectLight_C_CAT_0"
+    },
+    {
+      "label": "BP_FX_RectLight0",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122DFA0) {x: 1447.649584, y: 875.671843, z: 443.421881}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight1_GEN_VARIABLE_BP_FX_RectLight_C_CAT_0"
+    },
+    {
+      "label": "BP_FX_RectLight0",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122DFF0) {x: 758.610931, y: 1228.482438, z: 153.611664}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight2_GEN_VARIABLE_BP_FX_RectLight_C_CAT_0"
+    },
+    {
+      "label": "BP_FX_RectLight0",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E040) {x: 625.568084, y: 1046.198906, z: 149.233667}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight3_GEN_VARIABLE_BP_FX_RectLight_C_CAT_0"
+    },
+    {
+      "label": "BP_FX_RectLight2",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E090) {x: -539.389026, y: 1856.964220, z: 137.619628}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight_GEN_VARIABLE_BP_FX_RectLight_C_CAT_2"
+    },
+    {
+      "label": "BP_FX_RectLight2",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E0E0) {x: -872.645205, y: 1948.488506, z: 143.727809}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight1_GEN_VARIABLE_BP_FX_RectLight_C_CAT_2"
+    },
+    {
+      "label": "BP_FX_RectLight2",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E130) {x: -753.226724, y: 1695.473464, z: 383.316755}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight2_GEN_VARIABLE_BP_FX_RectLight_C_CAT_2"
+    },
+    {
+      "label": "BP_FX_RectLight0",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E180) {x: -878.039841, y: 1955.542758, z: 371.084143}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight4_GEN_VARIABLE_BP_FX_RectLight_C_CAT_0"
+    },
+    {
+      "label": "BP_FX_RectLight0",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E1D0) {x: -646.089398, y: 2101.196874, z: 100.762966}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight5_GEN_VARIABLE_BP_FX_RectLight_C_CAT_0"
+    },
+    {
+      "label": "BP_FX_RectLight0",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E220) {x: -646.493594, y: 2099.688614, z: 387.118347}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight6_GEN_VARIABLE_BP_FX_RectLight_C_CAT_0"
+    },
+    {
+      "label": "BP_FX_RectLight0",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E270) {x: -536.238600, y: 1909.756539, z: 0.000000}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight7_GEN_VARIABLE_BP_FX_RectLight_C_CAT_0"
+    },
+    {
+      "label": "BP_FX_RectLight4",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E2C0) {x: 2957.281990, y: 2458.472846, z: 108.846912}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight_GEN_VARIABLE_BP_FX_RectLight_C_CAT_4"
+    },
+    {
+      "label": "BP_FX_RectLight4",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E310) {x: 2902.640527, y: 2396.312531, z: 419.474310}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight1_GEN_VARIABLE_BP_FX_RectLight_C_CAT_4"
+    },
+    {
+      "label": "BP_FX_RectLight4",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E360) {x: 2568.393265, y: 1923.482018, z: 306.317261}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight2_GEN_VARIABLE_BP_FX_RectLight_C_CAT_4"
+    },
+    {
+      "label": "BP_FX_RectLight2",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E3B0) {x: 1965.371426, y: 2087.608958, z: 310.218947}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight3_GEN_VARIABLE_BP_FX_RectLight_C_CAT_2"
+    },
+    {
+      "label": "BP_FX_RectLight2",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E400) {x: 2177.389569, y: 2613.986908, z: 105.969122}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight4_GEN_VARIABLE_BP_FX_RectLight_C_CAT_2"
+    },
+    {
+      "label": "BP_FX_RectLight2",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E450) {x: 2135.665261, y: 2671.235048, z: 372.413818}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight5_GEN_VARIABLE_BP_FX_RectLight_C_CAT_2"
+    },
+    {
+      "label": "BP_FX_RectLight2",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E4A0) {x: 2789.401918, y: 2743.314284, z: 106.132644}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight6_GEN_VARIABLE_BP_FX_RectLight_C_CAT_2"
+    },
+    {
+      "label": "BP_FX_RectLight2",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E4F0) {x: 2673.183890, y: 2679.003008, z: 102.571996}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight7_GEN_VARIABLE_BP_FX_RectLight_C_CAT_2"
+    },
+    {
+      "label": "BP_FX_RectLight0",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E540) {x: 2733.476532, y: 2733.643213, z: 420.543732}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight8_GEN_VARIABLE_BP_FX_RectLight_C_CAT_0"
+    },
+    {
+      "label": "BP_FX_RectLight0",
+      "class": "/Game/DoughWorld/Fantastic_Village_Pack/blueprints/FX/BP_FX_RectLight.BP_FX_RectLight_C",
+      "location": "<Struct 'Vector' (0x000001CF5122E590) {x: 2959.467796, y: 2651.876305, z: 104.632296}>",
+      "path": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase:PersistentLevel.BP_FX_RectLight9_GEN_VARIABLE_BP_FX_RectLight_C_CAT_0"
+    }
+  ],
+  "errors": [],
+  "game_mode_references": {
+    "DefaultPawnClass": "/Game/DoughWorld/Maps/Gameplay/Blueprints/BP_DWTopDownCharacter.BP_DWTopDownCharacter_C",
+    "PlayerControllerClass": "/Game/DoughWorld/Maps/Gameplay/Blueprints/BP_DWPlayerController.BP_DWPlayerController_C",
+    "HUDClass": "/Game/DoughWorld/Maps/Gameplay/Blueprints/BP_DWGameplayHUD.BP_DWGameplayHUD_C"
+  },
+  "editor_world": "/Game/DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.L_DWMainMenu_Showcase",
+  "world_game_mode_override": "/Game/DoughWorld/Maps/Gameplay/Frontend/Blueprints/BP_DWFrontendGameMode.BP_DWFrontendGameMode_C"
+}

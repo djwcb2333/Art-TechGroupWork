@@ -1,0 +1,630 @@
+{
+  "timestamp_utc": "2026-09-13T15:58:13.132190+00:00",
+  "archive_kind": "VillagePass_copy_only",
+  "project_root": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth",
+  "unreal_operated": false,
+  "auto_reimport_configuration_modified": false,
+  "existing_authoring_dependencies": [
+    {
+      "path": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\scene_common.py",
+      "sha256": "54c40a7de056cfc0f2a269451867e0831fea1a18135740f01c263b60b16b6a26"
+    },
+    {
+      "path": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\TerrainDesign\\terrain_data.json",
+      "sha256": "4fb6affff4415cfa4452ef1d3b223384707e0776542e96d371a210e550b4a751"
+    },
+    {
+      "path": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\TerrainDesign\\depth_supplement.json",
+      "sha256": "9977a16ae59bf9e30cf9dd4849d8ada3dd755290806b527ba1eaf95784181053"
+    },
+    {
+      "path": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\Planning\\ModulePlan.json",
+      "sha256": "db2a573547ef4729dccdc6079d26d03018f68fd0b54595d8591cee1c7173be85"
+    },
+    {
+      "path": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\Handoff\\Originals\\10_document.json",
+      "sha256": "d79b1bd9165e846604ede8fdab70a581d0a1cfe87cb90ed8ce23ef7170809fd4"
+    },
+    {
+      "path": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\CameraCode\\validate_camera_fade_pie.py",
+      "sha256": "87f5e2d8bbacfefcbc3eca91c2e1434aafd204227d5e849e80fb2c2265fb0209"
+    }
+  ],
+  "files": [
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\AssetPlan.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\AssetPlan.json",
+      "group": "village_documentation",
+      "source_sha256": "9d7e1cb67bfda066349b240848f79e2e46ded1fd8acfa777fdb313bdd677dc7d",
+      "target_sha256_before": null,
+      "bytes": 68149,
+      "action": "copy",
+      "target_sha256_after": "9d7e1cb67bfda066349b240848f79e2e46ded1fd8acfa777fdb313bdd677dc7d",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\AssetPlan.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\AssetPlan.json",
+      "group": "village_authoring",
+      "source_sha256": "9d7e1cb67bfda066349b240848f79e2e46ded1fd8acfa777fdb313bdd677dc7d",
+      "target_sha256_before": null,
+      "bytes": 68149,
+      "action": "copy",
+      "target_sha256_after": "9d7e1cb67bfda066349b240848f79e2e46ded1fd8acfa777fdb313bdd677dc7d",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\AssetPlan.md",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\AssetPlan.md",
+      "group": "village_documentation",
+      "source_sha256": "edfbfe6dd2dbb3a1ba5abf052d1492b9508d026db7ffe18067c2793dd059dd1f",
+      "target_sha256_before": null,
+      "bytes": 6075,
+      "action": "copy",
+      "target_sha256_after": "edfbfe6dd2dbb3a1ba5abf052d1492b9508d026db7ffe18067c2793dd059dd1f",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\AssetRecommendations_Previous_20260910.md",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\AssetRecommendations_Previous_20260910.md",
+      "group": "village_documentation",
+      "source_sha256": "581c7f566a31fbbb83d0b30ff336459020494b75e79fd17564934645a534433d",
+      "target_sha256_before": null,
+      "bytes": 6199,
+      "action": "copy",
+      "target_sha256_after": "581c7f566a31fbbb83d0b30ff336459020494b75e79fd17564934645a534433d",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\audit_village.py",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\audit_village.py",
+      "group": "village_authoring",
+      "source_sha256": "b6d9ec1600164be71c931b6aaf6d7f41cc58d8ea278d42f3d2ac863239e9d950",
+      "target_sha256_before": null,
+      "bytes": 2913,
+      "action": "copy",
+      "target_sha256_after": "b6d9ec1600164be71c931b6aaf6d7f41cc58d8ea278d42f3d2ac863239e9d950",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\build_village.py",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\build_village.py",
+      "group": "village_authoring",
+      "source_sha256": "39794c4f4645203e8d45c892234b0afe8a8d0171c7ba7689ed10e19f9b068499",
+      "target_sha256_before": null,
+      "bytes": 10372,
+      "action": "copy",
+      "target_sha256_after": "39794c4f4645203e8d45c892234b0afe8a8d0171c7ba7689ed10e19f9b068499",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\BuildReport.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\BuildReport.json",
+      "group": "village_documentation",
+      "source_sha256": "c22172fbdca4f4b75d12313bb4fde154dcd31a27a22534f1be4fd6a31fc686d0",
+      "target_sha256_before": null,
+      "bytes": 82491,
+      "action": "copy",
+      "target_sha256_after": "c22172fbdca4f4b75d12313bb4fde154dcd31a27a22534f1be4fd6a31fc686d0",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\BuildReport.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\BuildReport.json",
+      "group": "village_authoring",
+      "source_sha256": "c22172fbdca4f4b75d12313bb4fde154dcd31a27a22534f1be4fd6a31fc686d0",
+      "target_sha256_before": null,
+      "bytes": 82491,
+      "action": "copy",
+      "target_sha256_after": "c22172fbdca4f4b75d12313bb4fde154dcd31a27a22534f1be4fd6a31fc686d0",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\CameraFadeRuntime.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\CameraFadeRuntime.json",
+      "group": "village_documentation",
+      "source_sha256": "bc1e5726e034600a7682feda02a2f6dea45e835263c9edef4115522d63a5718b",
+      "target_sha256_before": null,
+      "bytes": 3850,
+      "action": "copy",
+      "target_sha256_after": "bc1e5726e034600a7682feda02a2f6dea45e835263c9edef4115522d63a5718b",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\CameraFadeRuntime.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\CameraFadeRuntime.json",
+      "group": "village_authoring",
+      "source_sha256": "bc1e5726e034600a7682feda02a2f6dea45e835263c9edef4115522d63a5718b",
+      "target_sha256_before": null,
+      "bytes": 3850,
+      "action": "copy",
+      "target_sha256_after": "bc1e5726e034600a7682feda02a2f6dea45e835263c9edef4115522d63a5718b",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\01_BaseEntrance.png",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\Captures\\01_BaseEntrance.png",
+      "group": "village_documentation",
+      "source_sha256": "17c0eb1ad7019d627acabf4f5fa8a0fb3e67b21ace3dd41b017529cdc1a69c95",
+      "target_sha256_before": null,
+      "bytes": 1446536,
+      "action": "copy",
+      "target_sha256_after": "17c0eb1ad7019d627acabf4f5fa8a0fb3e67b21ace3dd41b017529cdc1a69c95",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\02_BaseInterior.png",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\Captures\\02_BaseInterior.png",
+      "group": "village_documentation",
+      "source_sha256": "33766600d18b71272348ac89eb43e7327159529398eff055599f0f76997126a1",
+      "target_sha256_before": null,
+      "bytes": 1412240,
+      "action": "copy",
+      "target_sha256_after": "33766600d18b71272348ac89eb43e7327159529398eff055599f0f76997126a1",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\03_Workbench.png",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\Captures\\03_Workbench.png",
+      "group": "village_documentation",
+      "source_sha256": "0ebf0109c173a4fc35fe6658a2c692387ef24a3cf3c38f30afee25f061fad6e9",
+      "target_sha256_before": null,
+      "bytes": 1302783,
+      "action": "copy",
+      "target_sha256_after": "0ebf0109c173a4fc35fe6658a2c692387ef24a3cf3c38f30afee25f061fad6e9",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\04_Storage.png",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\Captures\\04_Storage.png",
+      "group": "village_documentation",
+      "source_sha256": "3f86c0371a58b44ddff9fe87eeb741469ee552a8556202cc574aa00f75aa292c",
+      "target_sha256_before": null,
+      "bytes": 1309527,
+      "action": "copy",
+      "target_sha256_after": "3f86c0371a58b44ddff9fe87eeb741469ee552a8556202cc574aa00f75aa292c",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\05_SupplyCart.png",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\Captures\\05_SupplyCart.png",
+      "group": "village_documentation",
+      "source_sha256": "70f0faa8c46523e5a855d1117f0102ad211eff67883734f920285396b5d26be5",
+      "target_sha256_before": null,
+      "bytes": 1283736,
+      "action": "copy",
+      "target_sha256_after": "70f0faa8c46523e5a855d1117f0102ad211eff67883734f920285396b5d26be5",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\06_Ruins.png",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\Captures\\06_Ruins.png",
+      "group": "village_documentation",
+      "source_sha256": "96d9bb0b1eb4ad37ef2af60e475674cf1d680e82194437956da1e769d4158e28",
+      "target_sha256_before": null,
+      "bytes": 1401883,
+      "action": "copy",
+      "target_sha256_after": "96d9bb0b1eb4ad37ef2af60e475674cf1d680e82194437956da1e769d4158e28",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\07_BridgeDeck.png",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\Captures\\07_BridgeDeck.png",
+      "group": "village_documentation",
+      "source_sha256": "381a103d49f8d76207a8ce1e1b088a4a1062f0a8738121cd0a24d50261673ab0",
+      "target_sha256_before": null,
+      "bytes": 1333885,
+      "action": "copy",
+      "target_sha256_after": "381a103d49f8d76207a8ce1e1b088a4a1062f0a8738121cd0a24d50261673ab0",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Captures\\08_BridgeUnder.png",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\Captures\\08_BridgeUnder.png",
+      "group": "village_documentation",
+      "source_sha256": "68d2b683a12e588d0d76395dac2f17a4f8ada0c66bfa7a8b2a11733cf5d62ad9",
+      "target_sha256_before": null,
+      "bytes": 1256972,
+      "action": "copy",
+      "target_sha256_after": "68d2b683a12e588d0d76395dac2f17a4f8ada0c66bfa7a8b2a11733cf5d62ad9",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\EditorVerification.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\EditorVerification.json",
+      "group": "village_documentation",
+      "source_sha256": "20ebcffdc792a3049e5ccd8728d324d85caaf938841a5a0c4047620fce993ff7",
+      "target_sha256_before": null,
+      "bytes": 42819,
+      "action": "copy",
+      "target_sha256_after": "20ebcffdc792a3049e5ccd8728d324d85caaf938841a5a0c4047620fce993ff7",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\EditorVerification.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\EditorVerification.json",
+      "group": "village_authoring",
+      "source_sha256": "20ebcffdc792a3049e5ccd8728d324d85caaf938841a5a0c4047620fce993ff7",
+      "target_sha256_before": null,
+      "bytes": 42819,
+      "action": "copy",
+      "target_sha256_after": "20ebcffdc792a3049e5ccd8728d324d85caaf938841a5a0c4047620fce993ff7",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\EnvironmentAssetList.md",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\EnvironmentAssetList.md",
+      "group": "village_documentation",
+      "source_sha256": "2248cd2b7ba123f4327ce4fd481069aca1d3de8dbc6d37253734b3782abe547f",
+      "target_sha256_before": null,
+      "bytes": 7894,
+      "action": "copy",
+      "target_sha256_after": "2248cd2b7ba123f4327ce4fd481069aca1d3de8dbc6d37253734b3782abe547f",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\final_persistence.py",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\final_persistence.py",
+      "group": "village_authoring",
+      "source_sha256": "52603d30691546b1818413ee9d82650123cfd84cc7e3e2717d540873c100a6d4",
+      "target_sha256_before": null,
+      "bytes": 3427,
+      "action": "copy",
+      "target_sha256_after": "52603d30691546b1818413ee9d82650123cfd84cc7e3e2717d540873c100a6d4",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\FinalPersistence.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\FinalPersistence.json",
+      "group": "village_documentation",
+      "source_sha256": "8e2c37d5f1bbce24a3b08fd3ae6c5f2aab81ab9f59ab01b30ed808929eddbcb7",
+      "target_sha256_before": null,
+      "bytes": 18881,
+      "action": "copy",
+      "target_sha256_after": "8e2c37d5f1bbce24a3b08fd3ae6c5f2aab81ab9f59ab01b30ed808929eddbcb7",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\FinalPersistence.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\FinalPersistence.json",
+      "group": "village_authoring",
+      "source_sha256": "8e2c37d5f1bbce24a3b08fd3ae6c5f2aab81ab9f59ab01b30ed808929eddbcb7",
+      "target_sha256_before": null,
+      "bytes": 18881,
+      "action": "copy",
+      "target_sha256_after": "8e2c37d5f1bbce24a3b08fd3ae6c5f2aab81ab9f59ab01b30ed808929eddbcb7",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\ImportAudit.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\ImportAudit.json",
+      "group": "village_documentation",
+      "source_sha256": "20dc4d5017944e701b7f03c308f169eb0c3d0617be348791e335f551db477ea6",
+      "target_sha256_before": null,
+      "bytes": 456155,
+      "action": "copy",
+      "target_sha256_after": "20dc4d5017944e701b7f03c308f169eb0c3d0617be348791e335f551db477ea6",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\ImportAudit.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\ImportAudit.json",
+      "group": "village_authoring",
+      "source_sha256": "20dc4d5017944e701b7f03c308f169eb0c3d0617be348791e335f551db477ea6",
+      "target_sha256_before": null,
+      "bytes": 456155,
+      "action": "copy",
+      "target_sha256_after": "20dc4d5017944e701b7f03c308f169eb0c3d0617be348791e335f551db477ea6",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Integration.md",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\Integration.md",
+      "group": "village_documentation",
+      "source_sha256": "41615cdfbd57eb806ed9706774c85ffdfb7bfede47daff53eaa2a3f46e4c56a4",
+      "target_sha256_before": null,
+      "bytes": 8252,
+      "action": "copy",
+      "target_sha256_after": "41615cdfbd57eb806ed9706774c85ffdfb7bfede47daff53eaa2a3f46e4c56a4",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\PlacementManifest_BeforeVillage.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\PlacementManifest_BeforeVillage.json",
+      "group": "village_documentation",
+      "source_sha256": "59c747a2ff5bbef19f1910feabd1472f57c18116e8c9c5283449991e5eb640d9",
+      "target_sha256_before": null,
+      "bytes": 1150572,
+      "action": "copy",
+      "target_sha256_after": "59c747a2ff5bbef19f1910feabd1472f57c18116e8c9c5283449991e5eb640d9",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\PlacementManifest_BeforeVillage.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\PlacementManifest_BeforeVillage.json",
+      "group": "village_authoring",
+      "source_sha256": "59c747a2ff5bbef19f1910feabd1472f57c18116e8c9c5283449991e5eb640d9",
+      "target_sha256_before": null,
+      "bytes": 1150572,
+      "action": "copy",
+      "target_sha256_after": "59c747a2ff5bbef19f1910feabd1472f57c18116e8c9c5283449991e5eb640d9",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\probe_supports.py",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\probe_supports.py",
+      "group": "village_authoring",
+      "source_sha256": "bce48bd7685abe781d213e03973e8613ce7a867a589ec2c9c4f7a4594e1a604f",
+      "target_sha256_before": null,
+      "bytes": 1008,
+      "action": "copy",
+      "target_sha256_after": "bce48bd7685abe781d213e03973e8613ce7a867a589ec2c9c4f7a4594e1a604f",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\README.md",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\README.md",
+      "group": "village_documentation",
+      "source_sha256": "9105eb52eb81aa8decb5b2807864ee332794be7f7584f6e69687d081baeffcf1",
+      "target_sha256_before": null,
+      "bytes": 5316,
+      "action": "copy",
+      "target_sha256_after": "9105eb52eb81aa8decb5b2807864ee332794be7f7584f6e69687d081baeffcf1",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\refine_supports.py",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\refine_supports.py",
+      "group": "village_authoring",
+      "source_sha256": "e8f74e57081169478e1fe3fc3784c5ad376c7e496f30ea6c18235cea7829823a",
+      "target_sha256_before": null,
+      "bytes": 3421,
+      "action": "copy",
+      "target_sha256_after": "e8f74e57081169478e1fe3fc3784c5ad376c7e496f30ea6c18235cea7829823a",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\run_fade_validation.py",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\run_fade_validation.py",
+      "group": "village_authoring",
+      "source_sha256": "6572f67238ca68c2048622aed510c4b498d017e53f2db2ec3c430f0132be43b6",
+      "target_sha256_before": null,
+      "bytes": 1310,
+      "action": "copy",
+      "target_sha256_after": "6572f67238ca68c2048622aed510c4b498d017e53f2db2ec3c430f0132be43b6",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Runtime.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\Runtime.json",
+      "group": "village_documentation",
+      "source_sha256": "0ad32813e88e7b8d08c950af87a5e40758065fd462911c0c04e0957e3dfc4c91",
+      "target_sha256_before": null,
+      "bytes": 5238,
+      "action": "copy",
+      "target_sha256_after": "0ad32813e88e7b8d08c950af87a5e40758065fd462911c0c04e0957e3dfc4c91",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\Runtime.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\Runtime.json",
+      "group": "village_authoring",
+      "source_sha256": "0ad32813e88e7b8d08c950af87a5e40758065fd462911c0c04e0957e3dfc4c91",
+      "target_sha256_before": null,
+      "bytes": 5238,
+      "action": "copy",
+      "target_sha256_after": "0ad32813e88e7b8d08c950af87a5e40758065fd462911c0c04e0957e3dfc4c91",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\SupportProbes.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\SupportProbes.json",
+      "group": "village_documentation",
+      "source_sha256": "c785a6c8a940b870672d8b71e011e5029b2f69fa7e6f96ec16d71d24e2337e7d",
+      "target_sha256_before": null,
+      "bytes": 1309,
+      "action": "copy",
+      "target_sha256_after": "c785a6c8a940b870672d8b71e011e5029b2f69fa7e6f96ec16d71d24e2337e7d",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\SupportProbes.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\SupportProbes.json",
+      "group": "village_authoring",
+      "source_sha256": "c785a6c8a940b870672d8b71e011e5029b2f69fa7e6f96ec16d71d24e2337e7d",
+      "target_sha256_before": null,
+      "bytes": 1309,
+      "action": "copy",
+      "target_sha256_after": "c785a6c8a940b870672d8b71e011e5029b2f69fa7e6f96ec16d71d24e2337e7d",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\verify_editor.py",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\verify_editor.py",
+      "group": "village_authoring",
+      "source_sha256": "1b3280142fe22a80147ef21ecd2f9de877f59c08700ba2d978ef6ccacd6caf53",
+      "target_sha256_before": null,
+      "bytes": 3957,
+      "action": "copy",
+      "target_sha256_after": "1b3280142fe22a80147ef21ecd2f9de877f59c08700ba2d978ef6ccacd6caf53",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\verify_village.py",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\verify_village.py",
+      "group": "village_authoring",
+      "source_sha256": "3d8f2b81df2b388106d5bfb6df49df224959dd95a067f953e9c0fcd0a7a9eeb9",
+      "target_sha256_before": null,
+      "bytes": 2741,
+      "action": "copy",
+      "target_sha256_after": "3d8f2b81df2b388106d5bfb6df49df224959dd95a067f953e9c0fcd0a7a9eeb9",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\village_runtime.py",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\village_runtime.py",
+      "group": "village_authoring",
+      "source_sha256": "a0e0201613060e26361fc48fcf653c4e4a00fe8c2de7754e67f7d6b99bb076fb",
+      "target_sha256_before": null,
+      "bytes": 3169,
+      "action": "copy",
+      "target_sha256_after": "a0e0201613060e26361fc48fcf653c4e4a00fe8c2de7754e67f7d6b99bb076fb",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\VillageVerification.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\VillageVerification.json",
+      "group": "village_documentation",
+      "source_sha256": "eb2f9e0449935415b055bb8123a21b25bbeae520bb8d871cfd26911a8d296380",
+      "target_sha256_before": null,
+      "bytes": 13079,
+      "action": "copy",
+      "target_sha256_after": "eb2f9e0449935415b055bb8123a21b25bbeae520bb8d871cfd26911a8d296380",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\VillageVerification.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\VillageVerification.json",
+      "group": "village_authoring",
+      "source_sha256": "eb2f9e0449935415b055bb8123a21b25bbeae520bb8d871cfd26911a8d296380",
+      "target_sha256_before": null,
+      "bytes": 13079,
+      "action": "copy",
+      "target_sha256_after": "eb2f9e0449935415b055bb8123a21b25bbeae520bb8d871cfd26911a8d296380",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\walk_runtime.py",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\walk_runtime.py",
+      "group": "village_authoring",
+      "source_sha256": "433e5bc753910ee92e96ab8855edca36e2019d63765cf952d9089faec01513b1",
+      "target_sha256_before": null,
+      "bytes": 2761,
+      "action": "copy",
+      "target_sha256_after": "433e5bc753910ee92e96ab8855edca36e2019d63765cf952d9089faec01513b1",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\WalkRuntime.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\VillagePass\\WalkRuntime.json",
+      "group": "village_documentation",
+      "source_sha256": "c3632903652553ad164f33fd7eb0d041580f12d49157a11c359c88ba90f3fdbe",
+      "target_sha256_before": null,
+      "bytes": 19764,
+      "action": "copy",
+      "target_sha256_after": "c3632903652553ad164f33fd7eb0d041580f12d49157a11c359c88ba90f3fdbe",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\VillagePass\\WalkRuntime.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\VillagePass\\WalkRuntime.json",
+      "group": "village_authoring",
+      "source_sha256": "c3632903652553ad164f33fd7eb0d041580f12d49157a11c359c88ba90f3fdbe",
+      "target_sha256_before": null,
+      "bytes": 19764,
+      "action": "copy",
+      "target_sha256_after": "c3632903652553ad164f33fd7eb0d041580f12d49157a11c359c88ba90f3fdbe",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\SceneReport.md",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\SceneReport.md",
+      "group": "root_documentation_update",
+      "source_sha256": "e21c4e934d6bbdc8bdb3c8aa8f040f8a7a8ffa6434bcb55497d2804565523542",
+      "target_sha256_before": "1397322ab292aaf23bbae3660045940f654234925b39c21e4a10071541687c74",
+      "bytes": 6750,
+      "action": "copy",
+      "target_sha256_after": "e21c4e934d6bbdc8bdb3c8aa8f040f8a7a8ffa6434bcb55497d2804565523542",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\EnvironmentAssetList.md",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\EnvironmentAssetList.md",
+      "group": "root_documentation_update",
+      "source_sha256": "e8c90a2bc57653a82572fb44503992081d5b6f908ab85266f8d4fe3889e50c6b",
+      "target_sha256_before": "0c84a0206d874547c213e9dc8f7418674cb9028ae41f8db72fc195d173798bc8",
+      "bytes": 12195,
+      "action": "copy",
+      "target_sha256_after": "e8c90a2bc57653a82572fb44503992081d5b6f908ab85266f8d4fe3889e50c6b",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Integration.md",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\Integration.md",
+      "group": "root_documentation_update",
+      "source_sha256": "9dcfbd5bc751101a32ca1f2397ff34080b289b10f16ad62b7ed1eeeba74872e3",
+      "target_sha256_before": "c8d7f0a429c5bf8d3c96ce99aee51cefdf4fbf5b2f2d350b54aba89f77713130",
+      "bytes": 14809,
+      "action": "copy",
+      "target_sha256_after": "9dcfbd5bc751101a32ca1f2397ff34080b289b10f16ad62b7ed1eeeba74872e3",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\TestResults.md",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\TestResults.md",
+      "group": "root_documentation_update",
+      "source_sha256": "09206309b50f540f805a5af71addae5a9d1acab6e0a3b202d60b4f935eee37b3",
+      "target_sha256_before": "1c3323c57402542099c0f6c90eb5836e373ebd91dfbe57f2d67dfa8e7295bd0e",
+      "bytes": 8667,
+      "action": "copy",
+      "target_sha256_after": "09206309b50f540f805a5af71addae5a9d1acab6e0a3b202d60b4f935eee37b3",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\完成说明.md",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\完成说明.md",
+      "group": "root_documentation_update",
+      "source_sha256": "b076f9876f7ba2b7adafe3e8d845ff819578ca1401861bc9446dd8f5ed0ca71b",
+      "target_sha256_before": "3c4adfeed76c863ce633fcef8c1ee6bf67c0f31788d5be29551821dd37a962a1",
+      "bytes": 2922,
+      "action": "copy",
+      "target_sha256_after": "b076f9876f7ba2b7adafe3e8d845ff819578ca1401861bc9446dd8f5ed0ca71b",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\AssetRecommendations.md",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\AssetRecommendations.md",
+      "group": "root_documentation_update",
+      "source_sha256": "ef8631d926216cd32e98659524063df9fc65ab851243bf9b0f09ca58adb5e696",
+      "target_sha256_before": "581c7f566a31fbbb83d0b30ff336459020494b75e79fd17564934645a534433d",
+      "bytes": 2442,
+      "action": "copy",
+      "target_sha256_after": "ef8631d926216cd32e98659524063df9fc65ab851243bf9b0f09ca58adb5e696",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\PlacementManifest.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Source\\AuthoringProject\\PlacementManifest.json",
+      "group": "latest_placement_manifest",
+      "source_sha256": "5990ec9137bf2748fc63158af59ed5dcccc2e4a8ac6c8e606b222c4500caa36c",
+      "target_sha256_before": "59c747a2ff5bbef19f1910feabd1472f57c18116e8c9c5283449991e5eb640d9",
+      "bytes": 1214597,
+      "action": "copy",
+      "target_sha256_after": "5990ec9137bf2748fc63158af59ed5dcccc2e4a8ac6c8e606b222c4500caa36c",
+      "verified": true
+    },
+    {
+      "source": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\PlacementManifest.json",
+      "target": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\Data\\PlacementManifest.json",
+      "group": "latest_placement_manifest",
+      "source_sha256": "5990ec9137bf2748fc63158af59ed5dcccc2e4a8ac6c8e606b222c4500caa36c",
+      "target_sha256_before": "59c747a2ff5bbef19f1910feabd1472f57c18116e8c9c5283449991e5eb640d9",
+      "bytes": 1214597,
+      "action": "copy",
+      "target_sha256_after": "5990ec9137bf2748fc63158af59ed5dcccc2e4a8ac6c8e606b222c4500caa36c",
+      "verified": true
+    }
+  ],
+  "excluded": [
+    "L_DoughWorld_Depth_BeforeVillage.umap"
+  ],
+  "errors": [],
+  "status": "copied_and_hash_verified",
+  "counts": {
+    "planned_copies": 53,
+    "new_or_changed": 53,
+    "identical_skipped": 0,
+    "verified": 53,
+    "errors": 0
+  }
+}

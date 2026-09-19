@@ -1,0 +1,119 @@
+{
+  "timestamp": "2026-09-14T00:17:05.495281",
+  "files": [
+    {
+      "file": "00_WorldOverview_V1.png",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\00_WorldOverview_V1.png",
+      "sha256": "b042b65542fe485a3a105ced931b6c68d094e3b278e03439cdba1ac042eaf6ed",
+      "bytes": 2137136
+    },
+    {
+      "file": "01_Base_Concept.png",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\01_Base_Concept.png",
+      "sha256": "2c879d96d4faf30b1e359902733224d5fcdb5e43c15352c3cc9741f2c3df1205",
+      "bytes": 2143039
+    },
+    {
+      "file": "02_Shallow_Concept.png",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\02_Shallow_Concept.png",
+      "sha256": "a96594014ac462786299841ae2cc91dc6c2abfcb726fac4d1ec315c0de2e4672",
+      "bytes": 2086132
+    },
+    {
+      "file": "03_Fermentation_Concept.png",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\03_Fermentation_Concept.png",
+      "sha256": "3dcdb9c9ec1ce30fc67c8bc7e029295a91c1a941b94e1040898fce2b5680e136",
+      "bytes": 2044685
+    },
+    {
+      "file": "04_Yeast_Concept.png",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\04_Yeast_Concept.png",
+      "sha256": "a2ba2a791d699c94f81932cb580f5a622524fc29a19e65d36f350c07f795feca",
+      "bytes": 2014314
+    },
+    {
+      "file": "05_Mold_Concept.png",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\05_Mold_Concept.png",
+      "sha256": "ab0195fd2f2ad47178cfe3160e401a2b8059ccdeb271cc0d68316deecd26e375",
+      "bytes": 2255946
+    },
+    {
+      "file": "06_DeepCore_Concept.png",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\06_DeepCore_Concept.png",
+      "sha256": "33680edcba7e9d7ef04d220a82087e852ca4ab30a999deb8f4c87ea927104df8",
+      "bytes": 1961688
+    },
+    {
+      "file": "README.md",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\README.md",
+      "sha256": "a038f38f7b0cd0f075dd80817227bfc05bea55d24f7daa57777a169969a1c794",
+      "bytes": 4124
+    },
+    {
+      "file": "index.html",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\index.html",
+      "sha256": "cb860aaccd4ce38b704a86ad36eb538ed753b50ce7ffe6fb94877bdf82b09191",
+      "bytes": 4564
+    },
+    {
+      "file": "UI_Agent交接提示词.md",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\UI_Agent交接提示词.md",
+      "sha256": "be7749e983264570997e4acae97cd71017793aa7fc5943346d999b33817d3b88",
+      "bytes": 6648
+    },
+    {
+      "file": "SceneBriefs.md",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\SceneBriefs.md",
+      "sha256": "a8c8bb8490826fe279c74919a719d518e9fa68ea2acc5540fcbea214b1d0252d",
+      "bytes": 24082
+    },
+    {
+      "file": "SceneBriefs.json",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\SceneBriefs.json",
+      "sha256": "1899c689a5cc8f44f8aa0f04f70eef6646f90a1d10d5894494e315fb5bd4c07d",
+      "bytes": 47374
+    },
+    {
+      "file": "ConceptToBuild.md",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\ConceptToBuild.md",
+      "sha256": "d399fa1408ddc779a02fbe7369d6bd8ac239b2c2b3376e8d1d8a0b9c9a1798e3",
+      "bytes": 13069
+    },
+    {
+      "file": "Prompts.json",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\Prompts.json",
+      "sha256": "e8d293a0f41f9b3692e79788288d2deedc6681d836d3a712be767af21001c9dd",
+      "bytes": 20665
+    },
+    {
+      "file": "RevisionPrompts.json",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\RevisionPrompts.json",
+      "sha256": "c7395e0be99737739e590410aea2495b7d31da6004c47e103390d2e6065b67df",
+      "bytes": 2717
+    },
+    {
+      "file": "ImageManifest.json",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\ImageManifest.json",
+      "sha256": "f6a292b722d211fa495235cbdb65d5058c8561630a83225c4be0da8e83acbdfb",
+      "bytes": 976
+    },
+    {
+      "file": "References\\01_DoughWorld_Look.png",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\References\\01_DoughWorld_Look.png",
+      "sha256": "f91ab8f4c81658139ad00822f4d8ddd750b12efbd2c418c33d1aa3c8dc1f1c85",
+      "bytes": 1271050
+    },
+    {
+      "file": "References\\02_Painterly_Scene.png",
+      "destination": "E:\\Unreal Project\\GDATtest\\Content\\Maps\\DoughWorldDepth\\Documentation\\ArtDirectionV1\\References\\02_Painterly_Scene.png",
+      "sha256": "b9fa671d0473ef408ce0c7caa1d4ca98f3ce440b451e42c460bcdbc2dd89b258",
+      "bytes": 1260000
+    }
+  ],
+  "archive": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\DoughWorld_ArtDirection_V1.zip",
+  "archive_sha256": "dd07819b105469611ae0e122e2fdfe1ab2f3789f7590b45acd9e001f84ce4268",
+  "archive_bytes": 17136385,
+  "all_hashes_match": true,
+  "draft_images_excluded": true,
+  "ue_scene_changed": false
+}

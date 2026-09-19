@@ -1,0 +1,148 @@
+{
+  "phase": "verify",
+  "finished": true,
+  "start": 1980.484,
+  "checks": [
+    {
+      "name": "real_capsule_stops_at_blocking_wall",
+      "passed": true,
+      "distance_cm": 156.97918050452722,
+      "stop_position_cm": [
+        -1843.0208194954728,
+        10000.0,
+        175.79941307916613
+      ],
+      "expected_stop_x_cm": -1842.0,
+      "stop_error_cm": 1.0208194954727787,
+      "lateral_displacement_cm": 0.0,
+      "maximum_sampled_capsule_front_x_cm": -1801.0208194954728
+    },
+    {
+      "name": "collision_roll_finishes_and_restores_character",
+      "passed": true,
+      "is_rolling": false,
+      "grounded": true,
+      "move_input_restored": true,
+      "orient_to_movement_restored": true,
+      "mesh_pose_max_error": 0.0,
+      "pause_anims_restored": true
+    },
+    {
+      "name": "fixed_camera_baseline_unchanged",
+      "passed": true
+    }
+  ],
+  "samples": [
+    {
+      "seconds": 0.32799999999997453,
+      "position_cm": [
+        -1843.0208194954728,
+        10000.0,
+        175.79941307916613
+      ],
+      "rolling": false,
+      "grounded": true
+    }
+  ],
+  "stable_samples": 3,
+  "timestamp_utc": "2026-09-10T14:46:12.886776+00:00",
+  "pawn_path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_0",
+  "stage_start": 1982.875,
+  "last_ground_position": [
+    -2000.0,
+    10000.0,
+    192.1526591241756
+  ],
+  "wall_path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_0",
+  "wall_center_cm": [
+    -1750.0,
+    10000.0,
+    396.1526591241756
+  ],
+  "wall_dimensions_cm": [
+    100.0,
+    800.0,
+    600.0
+  ],
+  "capsule_radius_cm": 42.0,
+  "requested_distance_cm": 400.0,
+  "wall_near_face_x_cm": -1800.0,
+  "start_position_cm": [
+    -2000.0,
+    10000.0,
+    192.1526591241756
+  ],
+  "expected_stop_x_cm": -1842.0,
+  "pose_before": {
+    "location": [
+      0.0,
+      0.0,
+      -95.0
+    ],
+    "rotation": {
+      "pitch": 0.0,
+      "yaw": -90.0,
+      "roll": 0.0
+    },
+    "pause_anims": false
+  },
+  "orient_to_movement_before": true,
+  "camera_before": {
+    "rotation": {
+      "pitch": -49.99999999999989,
+      "yaw": 44.99999999999991,
+      "roll": 4.9480647005852166e-15
+    },
+    "arm": 2800.0,
+    "fov": 55.0,
+    "projection_mode": "<CameraProjectionMode.PERSPECTIVE: 0>",
+    "ortho_width": 512.0,
+    "absolute_rotation": true,
+    "do_collision_test": false,
+    "socket_offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "target_offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "matches_baseline": true
+  },
+  "roll_started": true,
+  "camera_after": {
+    "rotation": {
+      "pitch": -49.99999999999989,
+      "yaw": 44.99999999999991,
+      "roll": 4.9480647005852166e-15
+    },
+    "arm": 2800.0,
+    "fov": 55.0,
+    "projection_mode": "<CameraProjectionMode.PERSPECTIVE: 0>",
+    "ortho_width": 512.0,
+    "absolute_rotation": true,
+    "do_collision_test": false,
+    "socket_offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "target_offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "matches_baseline": true
+  },
+  "transient_wall_destroy_result": null,
+  "error": null,
+  "cleanup_errors": [],
+  "elapsed_seconds": 3.3910000000000764,
+  "passed": true,
+  "scope": "Existing StartForwardRoll on the actual PIE pawn against a transient BlockAll cube; no hardware-key injection.",
+  "source_or_map_assets_modified": false,
+  "measured_movement_teleport_or_compensation": false,
+  "camera_world_location_not_compared": "The fixed camera follows the moving pawn; settings and orientation are compared."
+}

@@ -1,0 +1,48 @@
+{
+  "status": "V1 visual direction pending feedback",
+  "tool": "built-in image_gen",
+  "images": [
+    {
+      "file": "00_WorldOverview_V1.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2137136
+    },
+    {
+      "file": "01_Base_Concept.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2143039
+    },
+    {
+      "file": "02_Shallow_Concept.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2086132
+    },
+    {
+      "file": "03_Fermentation_Concept.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2044685
+    },
+    {
+      "file": "04_Yeast_Concept.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2014314
+    },
+    {
+      "file": "05_Mold_Concept.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 2255946
+    },
+    {
+      "file": "06_DeepCore_Concept.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1961688
+    }
+  ]
+}

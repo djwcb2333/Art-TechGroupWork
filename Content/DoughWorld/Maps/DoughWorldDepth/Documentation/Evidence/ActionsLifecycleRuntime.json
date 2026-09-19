@@ -1,0 +1,405 @@
+{
+  "phase": "verify_new_pawn",
+  "finished": true,
+  "start": 1911.812,
+  "checks": [
+    {
+      "name": "existing_space_jump_peak_and_landing",
+      "passed": true,
+      "peak_height_cm": 118.33334139237411,
+      "seconds": 1.0150000000001,
+      "landed": true
+    },
+    {
+      "name": "existing_shift_roll_open_ground",
+      "passed": true,
+      "started": true,
+      "distance_cm": 400.08889605528725,
+      "requested_cm": 400.0,
+      "seconds": 0.6720000000000255,
+      "grounded": true,
+      "finished": true,
+      "move_input_restored": true,
+      "mesh_pose_max_error": 1.4210854715202004e-14,
+      "tested_compiled_actions_without_test_time_cpp_changes": true
+    },
+    {
+      "name": "old_player_destroyed_and_no_longer_controlled",
+      "passed": true,
+      "old_removed_from_live_pawns": true,
+      "observed_controlled_pawn": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_1",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+        "valid": true
+      }
+    },
+    {
+      "name": "old_target_fades_restore_after_old_player_removed",
+      "passed": true,
+      "previously_fading_slots": 1,
+      "residual_slots": {}
+    },
+    {
+      "name": "real_game_mode_restart_creates_new_pawn",
+      "passed": true,
+      "spawned_during_explicit_restart_call": true,
+      "controlled_pawn": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_2",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+        "valid": true
+      },
+      "explicit_restart_calls": 1
+    },
+    {
+      "name": "new_pawn_camera_baseline_grounded",
+      "passed": true,
+      "grounded": true,
+      "position_cm": [
+        -2829.999486997145,
+        -670.0010702500531,
+        750.2650026250758
+      ]
+    },
+    {
+      "name": "restarted_player_controls_and_action_interfaces_present",
+      "passed": true,
+      "move_input_enabled": true,
+      "scope": "Action methods already executed before restart; this check verifies the new configured pawn interface and input state."
+    },
+    {
+      "name": "existing_environment_fades_follow_restarted_player",
+      "passed": true,
+      "active_slots": 1,
+      "managed_slots": 146
+    }
+  ],
+  "jump_samples": [
+    {
+      "seconds": 0.3430000000000746,
+      "position_cm": [
+        -2000.0,
+        10000.0,
+        310.4860005165497
+      ],
+      "falling": true,
+      "grounded": false
+    },
+    {
+      "seconds": 0.6720000000000255,
+      "position_cm": [
+        -2000.0,
+        10000.0,
+        265.48594066032416
+      ],
+      "falling": true,
+      "grounded": false
+    },
+    {
+      "seconds": 1.0150000000001,
+      "position_cm": [
+        -2000.0,
+        10000.0,
+        192.15266758084306
+      ],
+      "falling": false,
+      "grounded": true
+    }
+  ],
+  "roll_samples": [
+    {
+      "seconds": 0.3430000000000746,
+      "position_cm": [
+        -1703.703629537863,
+        10000.0,
+        169.07925538036957
+      ],
+      "rolling": true,
+      "grounded": true
+    },
+    {
+      "seconds": 0.6720000000000255,
+      "position_cm": [
+        -1599.9111039447127,
+        10000.0,
+        169.21375039458616
+      ],
+      "rolling": false,
+      "grounded": true
+    }
+  ],
+  "lifecycle_trace": [
+    {
+      "event": "initial_player",
+      "seconds": 0.06300000000010186,
+      "controller": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownController_C_0",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownController.BP_TopDownController_C",
+        "valid": true
+      },
+      "controlled_pawn": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_0",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+        "valid": true
+      }
+    },
+    {
+      "event": "before_unpossess_old_player",
+      "seconds": 5.063000000000102,
+      "controller": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownController_C_0",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownController.BP_TopDownController_C",
+        "valid": true
+      },
+      "controlled_pawn": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_0",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+        "valid": true
+      }
+    },
+    {
+      "event": "immediately_after_unpossess_old_player",
+      "seconds": 5.063000000000102,
+      "controller": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownController_C_0",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownController.BP_TopDownController_C",
+        "valid": true
+      },
+      "controlled_pawn": {
+        "path": null,
+        "class": null,
+        "valid": false
+      }
+    },
+    {
+      "event": "immediately_after_destroy_old_player",
+      "seconds": 5.063000000000102,
+      "controller": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownController_C_0",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownController.BP_TopDownController_C",
+        "valid": true
+      },
+      "controlled_pawn": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_1",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+        "valid": true
+      }
+    },
+    {
+      "event": "after_old_player_removal_interval",
+      "seconds": 6.063000000000102,
+      "controller": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownController_C_0",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownController.BP_TopDownController_C",
+        "valid": true
+      },
+      "controlled_pawn": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_1",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+        "valid": true
+      }
+    },
+    {
+      "event": "immediately_before_explicit_restart",
+      "seconds": 6.063000000000102,
+      "controller": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownController_C_0",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownController.BP_TopDownController_C",
+        "valid": true
+      },
+      "controlled_pawn": {
+        "path": null,
+        "class": null,
+        "valid": false
+      }
+    },
+    {
+      "event": "immediately_after_explicit_restart",
+      "seconds": 6.078000000000202,
+      "controller": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownController_C_0",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownController.BP_TopDownController_C",
+        "valid": true
+      },
+      "controlled_pawn": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_2",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+        "valid": true
+      }
+    },
+    {
+      "event": "restarted_player_settled",
+      "seconds": 6.406000000000176,
+      "controller": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownController_C_0",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownController.BP_TopDownController_C",
+        "valid": true
+      },
+      "controlled_pawn": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_2",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+        "valid": true
+      }
+    },
+    {
+      "event": "finish_before_recovery",
+      "seconds": 7.734000000000151,
+      "controller": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownController_C_0",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownController.BP_TopDownController_C",
+        "valid": true
+      },
+      "controlled_pawn": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_2",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+        "valid": true
+      }
+    },
+    {
+      "event": "finish_after_recovery",
+      "seconds": 7.734000000000151,
+      "controller": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownController_C_0",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownController.BP_TopDownController_C",
+        "valid": true
+      },
+      "controlled_pawn": {
+        "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_2",
+        "class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+        "valid": true
+      }
+    }
+  ],
+  "test_budget_seconds": 25.0,
+  "budget_reason": "Observed editor runs near 3 FPS; allow possession callbacks and restarted camera to settle.",
+  "old_pawn_path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_0",
+  "old_pawn_class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+  "controller_path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownController_C_0",
+  "initial_move_input_ignored": false,
+  "stage_start": 1918.218,
+  "camera_before": {
+    "rotation": {
+      "pitch": -49.99999999999989,
+      "yaw": 44.99999999999991,
+      "roll": 4.9480647005852166e-15
+    },
+    "arm": 2800.0,
+    "fov": 55.0,
+    "projection_mode": "<CameraProjectionMode.PERSPECTIVE: 0>",
+    "ortho_width": 512.0,
+    "absolute_rotation": true,
+    "do_collision_test": false,
+    "matches_baseline": true
+  },
+  "jump_start_cm": [
+    -2000.0,
+    10000.0,
+    192.1526591241756
+  ],
+  "jump_peak_cm": 310.4860005165497,
+  "jump_airborne_seen": true,
+  "roll_start_cm": [
+    -2000.0,
+    10000.0,
+    192.1526591241756
+  ],
+  "roll_requested_cm": 400.0,
+  "mesh_before_roll": {
+    "location": [
+      0.0,
+      0.0,
+      -95.0
+    ],
+    "rotation": [
+      0.0,
+      -90.0,
+      0.0
+    ]
+  },
+  "roll_started": true,
+  "fading_before_destroy": {
+    "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_139.EnvironmentMesh:0": {
+      "fade": 0.19999998807907104,
+      "baseline": 1.0,
+      "occluded": true,
+      "owns": true,
+      "mid": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_139.CameraFadeComponent.MID_MI_Crust_0"
+    }
+  },
+  "fade_slot_count": 146,
+  "pawn_immediately_after_unpossess": {
+    "path": null,
+    "class": null,
+    "valid": false
+  },
+  "old_pawn_after_destroy_call": {
+    "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_0",
+    "class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+    "valid": false
+  },
+  "old_pawn_after_interval": {
+    "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_0",
+    "class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+    "valid": false
+  },
+  "live_pawn_paths_after_removal": [
+    "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_1"
+  ],
+  "fade_without_pawn": {
+    "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_139.EnvironmentMesh:0": {
+      "fade": 1.0,
+      "baseline": 1.0,
+      "occluded": false,
+      "owns": true,
+      "mid": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_139.CameraFadeComponent.MID_MI_Crust_0"
+    }
+  },
+  "interim_pawn_before_explicit_restart": {
+    "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_1",
+    "class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+    "valid": true
+  },
+  "pawn_paths_before_restart": [
+    "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_1"
+  ],
+  "explicit_restart_calls": 1,
+  "pawn_immediately_after_restart": {
+    "path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_2",
+    "class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+    "valid": true
+  },
+  "pawn_paths_after_restart": [
+    "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_1",
+    "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_2"
+  ],
+  "new_pawn_path": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.BP_TopDownCharacter_C_2",
+  "new_pawn_class": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+  "fading_after_restart": {
+    "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_139.EnvironmentMesh:0": {
+      "fade": 0.19999998807907104,
+      "baseline": 1.0,
+      "occluded": true,
+      "owns": true,
+      "mid": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_139.CameraFadeComponent.MID_MI_Crust_0"
+    }
+  },
+  "camera_after_restart": {
+    "rotation": {
+      "pitch": -49.99999999999989,
+      "yaw": 44.99999999999991,
+      "roll": 4.9480647005852166e-15
+    },
+    "arm": 2800.0,
+    "fov": 55.0,
+    "projection_mode": "<CameraProjectionMode.PERSPECTIVE: 0>",
+    "ortho_width": 512.0,
+    "absolute_rotation": true,
+    "do_collision_test": false,
+    "matches_baseline": true
+  },
+  "error": null,
+  "recovery": [],
+  "elapsed_seconds": 7.734000000000151,
+  "passed": true,
+  "scope": "existing C++ action methods and actual UnPossess/DestroyActor/GameMode.RestartPlayer lifecycle; no hardware-key injection",
+  "source_or_map_assets_modified": false
+}

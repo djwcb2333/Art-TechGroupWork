@@ -1,0 +1,366 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "Unused QA save slot available",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Create or reload QA slot",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dedicated gameplay character",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Flat world has no Landscape",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Hero stands upright",
+      "passed": true,
+      "detail": "<Struct 'Rotator' (0x0000027931CF2998) {pitch: -0.000000, yaw: -90.000000, roll: -0.000000}>"
+    },
+    {
+      "name": "Hero atlas material supports skeletal meshes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Sword attached to right hand",
+      "passed": true,
+      "detail": "bone_005_R"
+    },
+    {
+      "name": "Jump disabled",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "WASD engine input moves character",
+      "passed": true,
+      "detail": 434.38448336412665
+    },
+    {
+      "name": "Walking does not drain health",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Left click does not move character",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Sprint has partial alcohol progress",
+      "passed": true,
+      "detail": 1.3333336114883423
+    },
+    {
+      "name": "Sprint drains health",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Stopping retains sprint progress",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Interrupted sprint produces alcohol",
+      "passed": true,
+      "detail": {
+        "Alcohol": 1
+      }
+    },
+    {
+      "name": "Space dash remains on ground",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Space dash travels configured distance",
+      "passed": true,
+      "detail": 400.08888256920386
+    },
+    {
+      "name": "Dash stops at blocking wall",
+      "passed": true,
+      "detail": [
+        -1331.9856662729285,
+        3.453328436065757e-14,
+        92.15000129320833
+      ]
+    },
+    {
+      "name": "Right drag rotates camera",
+      "passed": true,
+      "detail": {
+        "axis_accepted": false,
+        "before": 45.0,
+        "after": 54.41017150878908
+      }
+    },
+    {
+      "name": "Hold F collects water into inventory",
+      "passed": true,
+      "detail": {
+        "Alcohol": 1,
+        "Water": 1
+      }
+    },
+    {
+      "name": "Hold F collects five yeast",
+      "passed": true,
+      "detail": {
+        "Alcohol": 1,
+        "Water": 1,
+        "Yeast": 5
+      }
+    },
+    {
+      "name": "Harvested yeast fills transformation",
+      "passed": true,
+      "detail": 100.0
+    },
+    {
+      "name": "E enters yeast form",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "B opens inventory",
+      "passed": true,
+      "detail": "<DWMenuPage.INVENTORY: 3>"
+    },
+    {
+      "name": "Tab opens crafting",
+      "passed": true,
+      "detail": "<DWMenuPage.CRAFTING: 4>"
+    },
+    {
+      "name": "Yeast crafts dough",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Recipe consumes exact inputs",
+      "passed": true,
+      "detail": {
+        "Dough": 1
+      }
+    },
+    {
+      "name": "Yeast crafts alcohol",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Alcohol recipe output exact",
+      "passed": true,
+      "detail": {
+        "Alcohol": 1
+      }
+    },
+    {
+      "name": "Use dough heals ten",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Tab returns to gameplay",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Throw bottle launches",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Bottle consumes one alcohol",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Bottle creates active damage area",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Poison repeatedly damages enemy",
+      "passed": true,
+      "detail": 80.0
+    },
+    {
+      "name": "Poison slows enemy 30 percent",
+      "passed": true,
+      "detail": 175.0
+    },
+    {
+      "name": "Repeated poison hits grant transformation",
+      "passed": true,
+      "detail": 24.0
+    },
+    {
+      "name": "Poison area expires",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Persistent enemy death retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Nest spawns after ten seconds in range",
+      "passed": true,
+      "detail": [
+        2,
+        3
+      ]
+    },
+    {
+      "name": "Enemy patrol moves",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Enemy detects and attacks",
+      "passed": true,
+      "detail": [
+        80.0,
+        56.0,
+        "<DWEnemyState.ATTACK: 2>"
+      ]
+    },
+    {
+      "name": "Save game writes QA slot",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Load QA save accepted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Load restores inventory",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "Load restores health",
+      "passed": true,
+      "detail": 77.0
+    },
+    {
+      "name": "Load preserves partial sprint time",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Load retains depleted resource",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Load retains damaged nest",
+      "passed": true,
+      "detail": 450.0
+    },
+    {
+      "name": "Load retains enemy death",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Player death animation plays",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Death animation advances",
+      "passed": true,
+      "detail": {
+        "min_time": 0.33333340287208557,
+        "max_time": 1.6333333253860474
+      }
+    },
+    {
+      "name": "Defeat menu shown without pausing animation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dead player cannot overwrite save",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Runtime animation selected: Pose_MT_idle",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Runtime animation selected: Anim_MT_Walk",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Runtime animation selected: Anim_MT_attack",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Runtime animation selected: Anim_MT_Transform",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Return to title clears active slot",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "QA slot ownership before cleanup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Delete QA slot",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "errors": [],
+  "samples": {},
+  "animations": {
+    "Pose_MT_idle": {
+      "min_time": 0.0,
+      "max_time": 0.033333320170640945
+    },
+    "Anim_MT_Walk": {
+      "min_time": 0.0,
+      "max_time": 1.559999942779541
+    },
+    "Anim_MT_Transform": {
+      "min_time": 0.0,
+      "max_time": 1.4000028371810913
+    },
+    "Anim_MT_attack": {
+      "min_time": 0.0,
+      "max_time": 0.09927190840244293
+    },
+    "Anim_MT_Death": {
+      "min_time": 0.33333340287208557,
+      "max_time": 1.6333333253860474
+    }
+  },
+  "passed": true
+}

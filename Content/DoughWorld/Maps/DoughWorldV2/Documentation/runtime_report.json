@@ -1,0 +1,22 @@
+{
+  "pawn": "/Game/TopDown/Blueprints/BP_TopDownCharacter.BP_TopDownCharacter_C",
+  "start": [
+    -1669.9999999999989,
+    12330.000000000002,
+    -58.53525526503425
+  ],
+  "start_grounded": true,
+  "max_z": 230.88444130113828,
+  "jump_invoked": true,
+  "samples": [],
+  "end": [
+    -3961.8719797343083,
+    9387.773740366216,
+    230.88444130113828
+  ],
+  "end_grounded": true,
+  "distance_to_resource_cm": 69.22103007962188,
+  "elapsed_game_seconds": 12.125,
+  "height_change_during_jump_and_walk_cm": 289.41969656617255,
+  "note": "Peak includes subsequent uphill walking; isolated jump result is in action_report.json."
+}

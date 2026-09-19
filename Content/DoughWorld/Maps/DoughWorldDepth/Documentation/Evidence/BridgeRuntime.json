@@ -1,0 +1,41 @@
+{
+  "error": null,
+  "samples": [
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\11_BridgeDeck.png",
+      "player_xyz_m": [
+        393.3,
+        170.0,
+        -2.6295885626626974
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\12_BridgeUnder.png",
+      "player_xyz_m": [
+        393.3,
+        170.0,
+        -8.909588562662698
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    }
+  ]
+}

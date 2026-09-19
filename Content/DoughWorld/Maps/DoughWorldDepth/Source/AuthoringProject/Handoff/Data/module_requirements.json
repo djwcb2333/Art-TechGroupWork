@@ -1,0 +1,459 @@
+{
+  "scope": "all_six_regions",
+  "requirements": [
+    {
+      "id": "jidi_01",
+      "region": "jidi",
+      "category_cn": "密实地表与台缘",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "jidi_02",
+      "region": "jidi",
+      "category_cn": "原主棚体量与独立屋顶",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "jidi_03",
+      "region": "jidi",
+      "category_cn": "原工作台",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "jidi_04",
+      "region": "jidi",
+      "category_cn": "原储物修复设施体量_原状态保留",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "jidi_05",
+      "region": "jidi",
+      "category_cn": "低矮植被组团",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "jidi_06",
+      "region": "jidi",
+      "category_cn": "设施入口与建造净空",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "qianceng_01",
+      "region": "qianceng",
+      "category_cn": "面团地表与厚度切面",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "qianceng_02",
+      "region": "qianceng",
+      "category_cn": "面筋须丛",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "qianceng_03",
+      "region": "qianceng",
+      "category_cn": "浅凹窝与大小孔缘",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "qianceng_04",
+      "region": "qianceng",
+      "category_cn": "呼吸孔与内壁",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "qianceng_05",
+      "region": "qianceng",
+      "category_cn": "水边过渡",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "qianceng_06",
+      "region": "qianceng",
+      "category_cn": "气孔近道入口与内部体量",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "qianceng_07",
+      "region": "qianceng",
+      "category_cn": "原教学节点活动地面",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "fajiao_01",
+      "region": "fajiao",
+      "category_cn": "膨胀面团块组团",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "fajiao_02",
+      "region": "fajiao",
+      "category_cn": "酵母菇丛",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "fajiao_03",
+      "region": "fajiao",
+      "category_cn": "孔洞切壁",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "fajiao_04",
+      "region": "fajiao",
+      "category_cn": "瀑布崖面",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "fajiao_05",
+      "region": "fajiao",
+      "category_cn": "黄油液流体量",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "fajiao_06",
+      "region": "fajiao",
+      "category_cn": "落潭与浅溪槽岸线",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "fajiao_07",
+      "region": "fajiao",
+      "category_cn": "冲撞破壁",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "fajiao_08",
+      "region": "fajiao",
+      "category_cn": "破壁两侧连续深沟",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "jiaomu_01",
+      "region": "jiaomu",
+      "category_cn": "高地台缘",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "jiaomu_02",
+      "region": "jiaomu",
+      "category_cn": "大型酵母菌落",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "jiaomu_03",
+      "region": "jiaomu",
+      "category_cn": "独立菌盖与菌柄",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "jiaomu_04",
+      "region": "jiaomu",
+      "category_cn": "幼菇菌芽",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "jiaomu_05",
+      "region": "jiaomu",
+      "category_cn": "原菌株资源背景",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "jiaomu_06",
+      "region": "jiaomu",
+      "category_cn": "哨戒缝",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "jiaomu_07",
+      "region": "jiaomu",
+      "category_cn": "菌丝屏障与陡坡封边",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "meijun_01",
+      "region": "meijun",
+      "category_cn": "腐败地表与孔壁",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "meijun_02",
+      "region": "meijun",
+      "category_cn": "坍塌孔群内壁",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "meijun_03",
+      "region": "meijun",
+      "category_cn": "废弃聚落墙屋顶残段",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "meijun_04",
+      "region": "meijun",
+      "category_cn": "菌丝网",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "meijun_05",
+      "region": "meijun",
+      "category_cn": "压力板与干化块",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "meijun_06",
+      "region": "meijun",
+      "category_cn": "桥面支撑与两端接岸",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "meijun_07",
+      "region": "meijun",
+      "category_cn": "深渊孔口内壁",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "meijun_08",
+      "region": "meijun",
+      "category_cn": "入口交互净空",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "meijun_09",
+      "region": "meijun",
+      "category_cn": "原可选绕行地面",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "shendu_01",
+      "region": "shendu",
+      "category_cn": "入口落点地面",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "shendu_02",
+      "region": "shendu",
+      "category_cn": "祭坛与Boss活动地面",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "shendu_03",
+      "region": "shendu",
+      "category_cn": "菌核与守卫体量",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "shendu_04",
+      "region": "shendu",
+      "category_cn": "洞壁壁龛",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "shendu_05",
+      "region": "shendu",
+      "category_cn": "洞顶分片",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "shendu_06",
+      "region": "shendu",
+      "category_cn": "外围凹槽",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    },
+    {
+      "id": "shendu_07",
+      "region": "shendu",
+      "category_cn": "菌丝与发光菌",
+      "required": true,
+      "missing_asset_policy": "correct-volume composite placeholder; preserve original gameplay status",
+      "acceptance": "actual placed object references plus fixed-camera evidence",
+      "quantity_policy": "composition and functional completeness, not arbitrary count",
+      "state": "requirement_not_placed"
+    }
+  ],
+  "placement_fields": [
+    "requirement_id",
+    "source_anchor_ref",
+    "actor_path",
+    "ground_z_m",
+    "mesh",
+    "material",
+    "dimensions_m",
+    "collision",
+    "fade_component",
+    "real_or_placeholder",
+    "screenshot",
+    "test_status"
+  ]
+}

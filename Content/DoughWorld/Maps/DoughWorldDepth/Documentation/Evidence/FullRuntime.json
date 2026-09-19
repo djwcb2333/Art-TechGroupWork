@@ -1,0 +1,400 @@
+{
+  "error": null,
+  "samples": [
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\01_Base.png",
+      "player_xyz_m": [
+        221.7,
+        249.5,
+        7.356476555178058
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [
+        {
+          "actor": "DepthEnvironmentActor_139",
+          "fade": 0.19999998807907104,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        }
+      ],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\02_Shallow.png",
+      "player_xyz_m": [
+        191.0,
+        306.0,
+        3.5769018617302852
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\03_Fermentation.png",
+      "player_xyz_m": [
+        110.0,
+        196.7,
+        7.906040000000001
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [
+        {
+          "actor": "DepthEnvironmentActor_141",
+          "fade": 0.19999998807907104,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        }
+      ],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\04_Yeast.png",
+      "player_xyz_m": [
+        58.0,
+        65.0,
+        10.08306131362915
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [
+        {
+          "actor": "DepthEnvironmentActor_143",
+          "fade": 0.19999998807907104,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        }
+      ],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\05_Mold.png",
+      "player_xyz_m": [
+        333.0,
+        171.0,
+        -3.1528999441146848
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\06_Deep.png",
+      "player_xyz_m": [
+        411.7,
+        109.30000000000001,
+        -58.95849997520447
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [
+        {
+          "actor": "DepthEnvironmentActor_51",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_52",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_60",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_62",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_63",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_70",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_71",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_72",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        }
+      ],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\07_WaterfallPool.png",
+      "player_xyz_m": [
+        143.3,
+        204.5,
+        1.3665056020568864
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\08_WaterfallMiddle.png",
+      "player_xyz_m": [
+        137.0,
+        183.0,
+        6.476499961110839
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\09_Breakwall.png",
+      "player_xyz_m": [
+        149.0,
+        233.3,
+        1.3961733475193154
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\10_Sentry.png",
+      "player_xyz_m": [
+        101.0,
+        140.0,
+        8.695388358465186
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\11_BridgeDeck.png",
+      "player_xyz_m": [
+        393.3,
+        170.0,
+        -2.6295885626626974
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\12_BridgeUnder.png",
+      "player_xyz_m": [
+        393.3,
+        170.0,
+        -8.909588562662698
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\13_CollapseHole.png",
+      "player_xyz_m": [
+        350.0,
+        222.0,
+        -2.361587447805904
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\14_Abyss.png",
+      "player_xyz_m": [
+        418.2,
+        146.0,
+        -3.6514503532840963
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\15_DeepAltar.png",
+      "player_xyz_m": [
+        436.7,
+        91.0,
+        -59.01849999904633
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [
+        {
+          "actor": "DepthEnvironmentActor_68",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_70",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_78",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_79",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_80",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_88",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_89",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        },
+        {
+          "actor": "DepthEnvironmentActor_90",
+          "fade": 0.10000002384185791,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        }
+      ],
+      "interaction_focus": null
+    },
+    {
+      "capture": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Captures\\16_BaseInside.png",
+      "player_xyz_m": [
+        221.7,
+        243.3,
+        7.502650018230206
+      ],
+      "grounded": true,
+      "camera_rotation": [
+        -49.99999999999989,
+        44.99999999999991,
+        4.9480647005852166e-15
+      ],
+      "arm_length": 2800.0,
+      "fov": 55.0,
+      "fading_components": [
+        {
+          "actor": "DepthEnvironmentActor_139",
+          "fade": 0.19999998807907104,
+          "collision": "<CollisionEnabled.NO_COLLISION: 0>"
+        }
+      ],
+      "interaction_focus": "TargetPoint_50"
+    }
+  ],
+  "evidence_scope": "16 real PIE positions; bridge entries use the later dedicated BridgeRuntime run after retaining-back height adjustment. These captures were taken in serial test runs, not one continuous walkthrough."
+}

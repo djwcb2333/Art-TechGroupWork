@@ -1,0 +1,37 @@
+{
+  "complete": true,
+  "qa_slot": 0,
+  "qa_created_by": "MCP Click new on confirmed empty slot 1",
+  "poses": [
+    {
+      "asset": "Pose_MT_idle",
+      "sample_time": 0.01,
+      "material": "/Game/DoughWorld/Maps/Gameplay/Levels/UEDPIE_0_L_DoughWorld_GameplayPrototype.L_DoughWorld_GameplayPrototype:PersistentLevel.BP_DWTopDownCharacter_C_0.CharacterMesh0.MID_M_DoughHero_0",
+      "mesh_rotation": "<Struct 'Rotator' (0x0000027642707998) {pitch: -0.000000, yaw: -90.000000, roll: -0.000000}>"
+    },
+    {
+      "asset": "Anim_MT_Walk",
+      "sample_time": 0.4,
+      "material": "/Game/DoughWorld/Maps/Gameplay/Levels/UEDPIE_0_L_DoughWorld_GameplayPrototype.L_DoughWorld_GameplayPrototype:PersistentLevel.BP_DWTopDownCharacter_C_0.CharacterMesh0.MID_M_DoughHero_0",
+      "mesh_rotation": "<Struct 'Rotator' (0x0000027642707998) {pitch: -0.000000, yaw: -90.000000, roll: -0.000000}>"
+    },
+    {
+      "asset": "Anim_MT_attack",
+      "sample_time": 0.6,
+      "material": "/Game/DoughWorld/Maps/Gameplay/Levels/UEDPIE_0_L_DoughWorld_GameplayPrototype.L_DoughWorld_GameplayPrototype:PersistentLevel.BP_DWTopDownCharacter_C_0.CharacterMesh0.MID_M_DoughHero_0",
+      "mesh_rotation": "<Struct 'Rotator' (0x0000027642707998) {pitch: -0.000000, yaw: -90.000000, roll: -0.000000}>"
+    },
+    {
+      "asset": "Anim_MT_Transform",
+      "sample_time": 0.7,
+      "material": "/Game/DoughWorld/Maps/Gameplay/Levels/UEDPIE_0_L_DoughWorld_GameplayPrototype.L_DoughWorld_GameplayPrototype:PersistentLevel.BP_DWTopDownCharacter_C_0.CharacterMesh0.MID_M_DoughHero_0",
+      "mesh_rotation": "<Struct 'Rotator' (0x0000027642707998) {pitch: -0.000000, yaw: -90.000000, roll: -0.000000}>"
+    },
+    {
+      "asset": "Anim_MT_Death",
+      "sample_time": 1.5,
+      "material": "/Game/DoughWorld/Maps/Gameplay/Levels/UEDPIE_0_L_DoughWorld_GameplayPrototype.L_DoughWorld_GameplayPrototype:PersistentLevel.BP_DWTopDownCharacter_C_0.CharacterMesh0.MID_M_DoughHero_0",
+      "mesh_rotation": "<Struct 'Rotator' (0x0000027642707998) {pitch: -0.000000, yaw: -90.000000, roll: -0.000000}>"
+    }
+  ]
+}

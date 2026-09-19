@@ -1,0 +1,1411 @@
+{
+  "run_id": "20260916_002231",
+  "complete": true,
+  "passed": true,
+  "qa_name": "QA_INTERACTION_20260915",
+  "allowed_zero_based_slots": [
+    0,
+    1
+  ],
+  "checks": [
+    {
+      "phase": "wait_for_title",
+      "name": "PIE uses DoughWorld player and GameInstance",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "wait_for_title",
+      "name": "Start only from title, never discard an active user session",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "wait_for_title",
+      "name": "Title HUD is present",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "wait_for_title",
+      "name": "All resource actors have prompt components",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "wait_for_title",
+      "name": "Initial title keeps all resource prompts hidden",
+      "passed": true,
+      "detail": [
+        {
+          "owner": "BP_DWResource_Water_C_0",
+          "desired": false,
+          "visible": false,
+          "opacity": 0.0,
+          "shown": 0,
+          "hidden": 0,
+          "sounds": 0,
+          "location": [
+            350.0,
+            -350.0,
+            175.0
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            145.0
+          ],
+          "scale": 0.550000011920929,
+          "widget_opacity": 0.0,
+          "title": "酵母",
+          "action": "长按采集",
+          "key": "F",
+          "bar_progress": 0.3499999940395355
+        },
+        {
+          "owner": "BP_DWResource_Yeast_C_0",
+          "desired": false,
+          "visible": false,
+          "opacity": 0.0,
+          "shown": 0,
+          "hidden": 0,
+          "sounds": 0,
+          "location": [
+            350.0,
+            350.0,
+            207.5
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            145.0
+          ],
+          "scale": 0.550000011920929,
+          "widget_opacity": 0.0,
+          "title": "酵母",
+          "action": "长按采集",
+          "key": "F",
+          "bar_progress": 0.3499999940395355
+        },
+        {
+          "owner": "BP_DWResource_Flour_C_0",
+          "desired": false,
+          "visible": false,
+          "opacity": 0.0,
+          "shown": 0,
+          "hidden": 0,
+          "sounds": 0,
+          "location": [
+            -350.0,
+            -350.0,
+            185.0
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            145.0
+          ],
+          "scale": 0.550000011920929,
+          "widget_opacity": 0.0,
+          "title": "酵母",
+          "action": "长按采集",
+          "key": "F",
+          "bar_progress": 0.3499999940395355
+        },
+        {
+          "owner": "BP_DWResource_Dough_C_0",
+          "desired": false,
+          "visible": false,
+          "opacity": 0.0,
+          "shown": 0,
+          "hidden": 0,
+          "sounds": 0,
+          "location": [
+            -350.0,
+            350.0,
+            180.0
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            145.0
+          ],
+          "scale": 0.550000011920929,
+          "widget_opacity": 0.0,
+          "title": "酵母",
+          "action": "长按采集",
+          "key": "F",
+          "bar_progress": 0.3499999940395355
+        }
+      ]
+    },
+    {
+      "phase": "wait_for_title",
+      "name": "An empty slot 1 or 2 is available",
+      "passed": true,
+      "detail": [
+        {
+          "slot": 0,
+          "exists": false,
+          "name": ""
+        },
+        {
+          "slot": 1,
+          "exists": false,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "exists": true,
+          "name": "存档 3"
+        }
+      ]
+    },
+    {
+      "phase": "wait_for_title",
+      "name": "Create isolated QA slot",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "new_game_travel",
+      "name": "Only the QA slot is active",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "new_game_travel",
+      "name": "Water and finite Flour fixtures exist",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "far_hidden",
+      "name": "Far player has no focused resource",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "far_hidden",
+      "name": "Far resource prompts are hidden",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "far_hidden",
+      "name": "Water prompt WBP is initialized",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "far_hidden",
+      "name": "Default appear sound is assigned",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "water_entrance",
+      "name": "Water is the current harvest focus",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "water_entrance",
+      "name": "Only the focused resource shows a prompt",
+      "passed": true,
+      "detail": [
+        "BP_DWResource_Water_C_0"
+      ]
+    },
+    {
+      "phase": "water_entrance",
+      "name": "Water prompt settles fully visible",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 1,
+        "hidden": 0,
+        "sounds": 1,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "water_entrance",
+      "name": "Rendered entrance samples include an overshoot above 1",
+      "passed": true,
+      "detail": {
+        "sample_count": 48,
+        "max_scale": 1.1085110902786255,
+        "note": "A hitch that skips every overshoot frame requires a warmed-up rerun."
+      }
+    },
+    {
+      "phase": "water_entrance",
+      "name": "World offset ignores the resource root scale",
+      "passed": true,
+      "detail": {
+        "expected": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "actual": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "actor_scale": [
+          1.5,
+          1.5,
+          0.30000001192092896
+        ]
+      }
+    },
+    {
+      "phase": "water_entrance",
+      "name": "Entry emits one appearance and one sound",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 1,
+        "hidden": 0,
+        "sounds": 1,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "water_idle",
+      "name": "Staying in range does not restart appearance or sound",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 1,
+        "hidden": 0,
+        "sounds": 1,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "water_harvest",
+      "name": "Holding F commits water to the real inventory",
+      "passed": true,
+      "detail": {
+        "before": 0,
+        "gained": 1,
+        "amount_per_cycle": 1
+      }
+    },
+    {
+      "phase": "water_harvest",
+      "name": "Harvest progress was sampled before completion",
+      "passed": true,
+      "detail": [
+        0.022049997001886368,
+        0.11016499996185303,
+        0.12683169543743134,
+        0.14349839091300964,
+        0.16016508638858795,
+        0.17683178186416626,
+        0.19349847733974457,
+        0.21016517281532288,
+        0.22683186829090118,
+        0.2434985637664795,
+        0.260165274143219,
+        0.2768319845199585,
+        0.293498694896698,
+        0.3101654052734375,
+        0.326832115650177,
+        0.3434988260269165,
+        0.360165536403656,
+        0.3768322467803955,
+        0.393498957157135,
+        0.4101656675338745,
+        0.426832377910614,
+        0.4434990882873535,
+        0.460165798664093,
+        0.4768325090408325,
+        0.493499219417572,
+        0.5101659297943115,
+        0.526832640171051,
+        0.5434993505477905,
+        0.56016606092453,
+        0.5768327713012695,
+        0.593499481678009,
+        0.6101661920547485,
+        0.626832902431488,
+        0.6434996128082275,
+        0.660166323184967,
+        0.6768330335617065,
+        0.693499743938446,
+        0.7102041244506836,
+        0.7268708348274231,
+        0.7435375452041626,
+        0.7602042555809021,
+        0.7768709659576416,
+        0.7935376763343811,
+        0.8102043867111206,
+        0.8268710970878601,
+        0.8435378074645996,
+        0.8602045178413391,
+        0.8768712282180786,
+        0.8935379385948181,
+        0.9102046489715576,
+        0.9268713593482971,
+        0.9435380697250366,
+        0.9602047801017761,
+        0.9768714904785156,
+        0.9935382008552551,
+        0.010204911231994629,
+        0.026871614158153534,
+        0.04353831335902214,
+        0.06020501255989075,
+        0.07687170803546906,
+        0.09353840351104736,
+        0.11020510643720627,
+        0.12687180936336517,
+        0.14353850483894348,
+        0.1602052003145218,
+        0.1768718957901001,
+        0.1935386061668396,
+        0.2102053016424179
+      ]
+    },
+    {
+      "phase": "water_harvest",
+      "name": "UMG progress follows the actual harvest clock",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "water_harvest",
+      "name": "Progress changes do not replay appearance/sound",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 1,
+        "hidden": 0,
+        "sounds": 1,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.2102053016424179
+      }
+    },
+    {
+      "phase": "harvest_released",
+      "name": "Releasing F resets only the harvest progress",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "harvest_released",
+      "name": "Safe focus clears immediately, before the next periodic scan",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "exit_range",
+      "name": "Leaving range clears focus and finishes fade-out",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": false,
+        "visible": false,
+        "opacity": 0.0,
+        "shown": 1,
+        "hidden": 1,
+        "sounds": 1,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 0.550000011920929,
+        "widget_opacity": 0.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "exit_range",
+      "name": "Range exit emits one hidden event",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": false,
+        "visible": false,
+        "opacity": 0.0,
+        "shown": 1,
+        "hidden": 1,
+        "sounds": 1,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 0.550000011920929,
+        "widget_opacity": 0.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "reenter_range",
+      "name": "Reentering a zero-opacity prompt works",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 2,
+        "hidden": 1,
+        "sounds": 2,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "reenter_range",
+      "name": "Reentry emits exactly one new sound",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 2,
+        "hidden": 1,
+        "sounds": 2,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "pause_immediate_hide",
+      "name": "Pause menu is active",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "pause_immediate_hide",
+      "name": "Paused ticks keep all prompts at zero opacity",
+      "passed": true,
+      "detail": [
+        {
+          "owner": "BP_DWResource_Water_C_0",
+          "desired": false,
+          "visible": false,
+          "opacity": 0.0,
+          "shown": 2,
+          "hidden": 2,
+          "sounds": 2,
+          "location": [
+            350.0,
+            -350.0,
+            175.0
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            145.0
+          ],
+          "scale": 0.550000011920929,
+          "widget_opacity": 0.0,
+          "title": "水",
+          "action": "长按采集",
+          "key": "F",
+          "bar_progress": 0.0
+        },
+        {
+          "owner": "BP_DWResource_Yeast_C_0",
+          "desired": false,
+          "visible": false,
+          "opacity": 0.0,
+          "shown": 0,
+          "hidden": 0,
+          "sounds": 0,
+          "location": [
+            350.0,
+            350.0,
+            207.5
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            145.0
+          ],
+          "scale": 0.550000011920929,
+          "widget_opacity": 0.0,
+          "title": "酵母",
+          "action": "长按采集",
+          "key": "F",
+          "bar_progress": 0.3499999940395355
+        },
+        {
+          "owner": "BP_DWResource_Flour_C_0",
+          "desired": false,
+          "visible": false,
+          "opacity": 0.0,
+          "shown": 0,
+          "hidden": 0,
+          "sounds": 0,
+          "location": [
+            -350.0,
+            -350.0,
+            185.0
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            145.0
+          ],
+          "scale": 0.550000011920929,
+          "widget_opacity": 0.0,
+          "title": "酵母",
+          "action": "长按采集",
+          "key": "F",
+          "bar_progress": 0.3499999940395355
+        },
+        {
+          "owner": "BP_DWResource_Dough_C_0",
+          "desired": false,
+          "visible": false,
+          "opacity": 0.0,
+          "shown": 0,
+          "hidden": 0,
+          "sounds": 0,
+          "location": [
+            -350.0,
+            350.0,
+            180.0
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            145.0
+          ],
+          "scale": 0.550000011920929,
+          "widget_opacity": 0.0,
+          "title": "酵母",
+          "action": "长按采集",
+          "key": "F",
+          "bar_progress": 0.3499999940395355
+        }
+      ]
+    },
+    {
+      "phase": "pause_immediate_hide",
+      "name": "Pause is hidden from the first sampled engine frame",
+      "passed": true,
+      "detail": [
+        {
+          "wall": 0.016,
+          "opacity": 0.0
+        },
+        {
+          "wall": 0.031,
+          "opacity": 0.0
+        },
+        {
+          "wall": 0.047,
+          "opacity": 0.0
+        },
+        {
+          "wall": 0.062,
+          "opacity": 0.0
+        },
+        {
+          "wall": 0.078,
+          "opacity": 0.0
+        },
+        {
+          "wall": 0.094,
+          "opacity": 0.0
+        },
+        {
+          "wall": 0.109,
+          "opacity": 0.0
+        },
+        {
+          "wall": 0.141,
+          "opacity": 0.0
+        }
+      ]
+    },
+    {
+      "phase": "resume_and_language_baseline",
+      "name": "Resume restores the focused prompt",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 3,
+        "hidden": 2,
+        "sounds": 3,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "language_english",
+      "name": "English updates resource and action labels",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 3,
+        "hidden": 2,
+        "sounds": 3,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "Water",
+        "action": "Hold to gather",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "language_english",
+      "name": "Language changes do not replay events or sound",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 3,
+        "hidden": 2,
+        "sounds": 3,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "Water",
+        "action": "Hold to gather",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "language_english",
+      "name": "Language changes do not interrupt the settled scale",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "language_chinese",
+      "name": "Chinese labels restore",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 3,
+        "hidden": 2,
+        "sounds": 3,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "language_chinese",
+      "name": "Language changes do not replay events or sound",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 3,
+        "hidden": 2,
+        "sounds": 3,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "language_chinese",
+      "name": "Language changes do not interrupt the settled scale",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "disabled_prompt",
+      "name": "Disabling the component hides its presentation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "disabled_prompt",
+      "name": "Prompt disabling does not disable the resource",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "finite_resource_focus",
+      "name": "Finite resource receives focus",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Flour_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 1,
+        "hidden": 0,
+        "sounds": 1,
+        "location": [
+          -350.0,
+          -350.0,
+          185.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "面粉",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "finite_resource_focus",
+      "name": "Safe focus rejects depletion before the next periodic scan",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "depleted_resource",
+      "name": "Depleted resource clears the safe focus getter",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "depleted_resource",
+      "name": "Depleted resource prompt fades away",
+      "passed": true,
+      "detail": {
+        "owner": "BP_DWResource_Flour_C_0",
+        "desired": false,
+        "visible": false,
+        "opacity": 0.0,
+        "shown": 1,
+        "hidden": 1,
+        "sounds": 1,
+        "location": [
+          -350.0,
+          -350.0,
+          185.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 0.550000011920929,
+        "widget_opacity": 0.0,
+        "title": "面粉",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "return_to_title",
+      "name": "Return to title clears the active slot",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "return_to_title",
+      "name": "Title after travel has no stale prompt widgets",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "phases": [
+    {
+      "phase": "wait_for_title",
+      "sample_count": 0,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\00_wait_for_title.json",
+      "detail": null
+    },
+    {
+      "phase": "new_game_travel",
+      "sample_count": 0,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\01_new_game_travel.json",
+      "detail": null
+    },
+    {
+      "phase": "far_hidden",
+      "sample_count": 30,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\02_far_hidden.json",
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": false,
+        "visible": false,
+        "opacity": 0.0,
+        "shown": 0,
+        "hidden": 0,
+        "sounds": 0,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 0.550000011920929,
+        "widget_opacity": 0.0,
+        "title": "酵母",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.3499999940395355
+      }
+    },
+    {
+      "phase": "water_entrance",
+      "sample_count": 48,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\03_water_entrance.json",
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 1,
+        "hidden": 0,
+        "sounds": 1,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "water_idle",
+      "sample_count": 66,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\04_water_idle.json",
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 1,
+        "hidden": 0,
+        "sounds": 1,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "water_harvest",
+      "sample_count": 68,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\05_water_harvest.json",
+      "detail": {
+        "gained": 1
+      }
+    },
+    {
+      "phase": "harvest_released",
+      "sample_count": 9,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\06_harvest_released.json",
+      "detail": null
+    },
+    {
+      "phase": "exit_range",
+      "sample_count": 48,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\07_exit_range.json",
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": false,
+        "visible": false,
+        "opacity": 0.0,
+        "shown": 1,
+        "hidden": 1,
+        "sounds": 1,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 0.550000011920929,
+        "widget_opacity": 0.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "reenter_range",
+      "sample_count": 48,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\08_reenter_range.json",
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 2,
+        "hidden": 1,
+        "sounds": 2,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "pause_immediate_hide",
+      "sample_count": 8,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\09_pause_immediate_hide.json",
+      "detail": null
+    },
+    {
+      "phase": "resume_and_language_baseline",
+      "sample_count": 48,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\10_resume_and_language_baseline.json",
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 3,
+        "hidden": 2,
+        "sounds": 3,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "language_english",
+      "sample_count": 15,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\11_language_english.json",
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 3,
+        "hidden": 2,
+        "sounds": 3,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "Water",
+        "action": "Hold to gather",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "language_chinese",
+      "sample_count": 25,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\12_language_chinese.json",
+      "detail": {
+        "owner": "BP_DWResource_Water_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 3,
+        "hidden": 2,
+        "sounds": 3,
+        "location": [
+          350.0,
+          -350.0,
+          175.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "水",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "disabled_prompt",
+      "sample_count": 9,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\13_disabled_prompt.json",
+      "detail": null
+    },
+    {
+      "phase": "finite_resource_focus",
+      "sample_count": 48,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\14_finite_resource_focus.json",
+      "detail": {
+        "owner": "BP_DWResource_Flour_C_0",
+        "desired": true,
+        "visible": true,
+        "opacity": 1.0,
+        "shown": 1,
+        "hidden": 0,
+        "sounds": 1,
+        "location": [
+          -350.0,
+          -350.0,
+          185.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 1.0,
+        "widget_opacity": 1.0,
+        "title": "面粉",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "depleted_resource",
+      "sample_count": 21,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\15_depleted_resource.json",
+      "detail": {
+        "owner": "BP_DWResource_Flour_C_0",
+        "desired": false,
+        "visible": false,
+        "opacity": 0.0,
+        "shown": 1,
+        "hidden": 1,
+        "sounds": 1,
+        "location": [
+          -350.0,
+          -350.0,
+          185.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          145.0
+        ],
+        "scale": 0.550000011920929,
+        "widget_opacity": 0.0,
+        "title": "面粉",
+        "action": "长按采集",
+        "key": "F",
+        "bar_progress": 0.0
+      }
+    },
+    {
+      "phase": "return_to_title",
+      "sample_count": 0,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\InteractionFeedback_20260915\\InteractionQAStages\\20260916_002231\\16_return_to_title.json",
+      "detail": null
+    }
+  ],
+  "errors": [],
+  "cleanup": [
+    {
+      "action": "Restore editor background throttle",
+      "ok": true
+    },
+    {
+      "action": "Release synthetic F",
+      "ok": true
+    },
+    {
+      "action": "Restore finite resource stock",
+      "ok": true
+    },
+    {
+      "action": "Restore prompt enable flag",
+      "ok": true
+    },
+    {
+      "action": "Restore original language",
+      "ok": true
+    },
+    {
+      "action": "Delete newly-created exact-name QA slot",
+      "ok": true,
+      "slot_zero_based": 0
+    },
+    {
+      "action": "Original save files byte-for-byte unchanged (including slot 3)",
+      "ok": true
+    }
+  ],
+  "limits": [
+    "Audio checks count sound dispatches; audibility is not measured.",
+    "UI clicks, typography appearance and settings layout are not automated."
+  ],
+  "current_phase": "return_to_title",
+  "elapsed_seconds": 25.093,
+  "original_save_sha256": {
+    "0": null,
+    "1": null,
+    "2": "e69795e373c09617b926a2842d5d744815ab10996d428ee9a460cc8f3a0bbcb6"
+  },
+  "qa_slot_zero_based": 0,
+  "spawn_location": [
+    0.0,
+    0.0,
+    92.1499981880188
+  ],
+  "far_location": [
+    0.0,
+    0.0,
+    92.1499981880188
+  ],
+  "final_save_sha256": {
+    "0": null,
+    "1": null,
+    "2": "e69795e373c09617b926a2842d5d744815ab10996d428ee9a460cc8f3a0bbcb6"
+  }
+}

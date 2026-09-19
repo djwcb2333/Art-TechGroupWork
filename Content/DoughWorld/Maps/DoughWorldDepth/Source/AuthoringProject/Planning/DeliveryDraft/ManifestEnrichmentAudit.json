@@ -1,0 +1,13 @@
+{
+  "timestamp_utc": "2026-09-10T12:59:34.297575+00:00",
+  "before_sha256": "b15e7fa281cbc6ccb5d972f003a27f975952ba08008afb62a0ee67208cfdce90",
+  "backup_file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Planning\\DeliveryDraft\\PlacementManifest.BeforeEnrichment.json",
+  "empty_source_refs_associated_this_run": 616,
+  "total_additive_region_associations": 616,
+  "changed_fields": "region, category_cn, source_ref for originally empty records, source_anchor_ref, source_association_kind/note, pending runtime status",
+  "actual_actor_paths_preserved": true,
+  "placement_transforms_preserved": true,
+  "meshes_materials_collision_fade_preserved": true,
+  "source_anchor_actor_records_preserved": true,
+  "not_a_runtime_validation": true
+}

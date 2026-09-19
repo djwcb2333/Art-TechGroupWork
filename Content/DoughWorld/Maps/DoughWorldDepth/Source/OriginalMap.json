@@ -1,0 +1,684 @@
+{
+  "meta": {
+    "title": "《面团》世界地图数据",
+    "scale": "1 unit = 1 meter",
+    "pixel_to_meter": 3.0,
+    "source_svg": "面团世界地图_V2_基地居中版.svg",
+    "source_canvas_px": [
+      1500,
+      1500
+    ],
+    "world_size_m": [
+      500.0,
+      500.0
+    ],
+    "elevation_note": "elevation_value为0-255灰度参考值，用于heightmap.png生成，越大越高",
+    "coordinate_note": "pos/center均为[x,y]米制坐标，对应世界地图V2的世界坐标系（不含标题栏偏移）"
+  },
+  "regions": [
+    {
+      "id": "jidi",
+      "name_cn": "基地稳定区",
+      "name_en": "StableBase",
+      "center": [
+        253.3,
+        253.3
+      ],
+      "radius": [
+        50.0,
+        46.7
+      ],
+      "elevation": "high",
+      "elevation_value": 200,
+      "color": "#E7DFCB",
+      "demo_covered": true,
+      "desc": "安全枢纽，Demo已实现；地表最结实的高地，面筋密实"
+    },
+    {
+      "id": "qianceng",
+      "name_cn": "浅层面团区",
+      "name_en": "ShallowDough",
+      "center": [
+        253.3,
+        253.3
+      ],
+      "radius": [
+        130.0,
+        126.7
+      ],
+      "elevation": "mid",
+      "elevation_value": 140,
+      "color": "#FAEEDA",
+      "demo_covered": true,
+      "desc": "Demo教学环带，环绕基地稳定区，包含九个Demo流程节点"
+    },
+    {
+      "id": "fajiao",
+      "name_cn": "活跃发酵区",
+      "name_en": "ActiveFermentZone",
+      "center": [
+        126.7,
+        186.7
+      ],
+      "radius": [
+        76.7,
+        70.0
+      ],
+      "elevation": "high",
+      "elevation_value": 190,
+      "color": "#FBE7A0",
+      "demo_covered": false,
+      "desc": "酵母优势区，隆起地形，与浅层面团区边界融合"
+    },
+    {
+      "id": "meijun",
+      "name_cn": "霉菌腐败区",
+      "name_en": "MoldDecayZone",
+      "center": [
+        380.0,
+        186.7
+      ],
+      "radius": [
+        76.7,
+        70.0
+      ],
+      "elevation": "low",
+      "elevation_value": 80,
+      "color": "#E6C7C0",
+      "demo_covered": false,
+      "desc": "净化战场，塌陷低地，含深渊之孔入口"
+    },
+    {
+      "id": "jiaomu",
+      "name_cn": "酵母生态区",
+      "name_en": "YeastEcoZone",
+      "center": [
+        70.0,
+        83.3
+      ],
+      "radius": [
+        66.7,
+        63.3
+      ],
+      "elevation": "high",
+      "elevation_value": 195,
+      "color": "#FCE7B8",
+      "demo_covered": false,
+      "desc": "酵母据点，高地，大型酵母菌落聚集"
+    },
+    {
+      "id": "shendu",
+      "name_cn": "世界深层",
+      "name_en": "DeepWorldCore",
+      "center": [
+        436.7,
+        83.3
+      ],
+      "radius": [
+        66.7,
+        63.3
+      ],
+      "elevation": "lowest",
+      "elevation_value": 30,
+      "color": "#E8D9EE",
+      "demo_covered": false,
+      "desc": "终局裂隙，地图最低点，经深渊之孔到达，腐败菌核Boss所在"
+    }
+  ],
+  "buildings": [
+    {
+      "id": "base_hut",
+      "name_cn": "基地主棚",
+      "region": "jidi",
+      "pos": [
+        221.7,
+        243.3
+      ],
+      "interactable": true
+    },
+    {
+      "id": "workbench",
+      "name_cn": "基础工作台",
+      "region": "jidi",
+      "pos": [
+        221.7,
+        266.7
+      ],
+      "interactable": true
+    },
+    {
+      "id": "storage_repair",
+      "name_cn": "储物、修复设施",
+      "region": "jidi",
+      "pos": [
+        196.7,
+        256.7
+      ],
+      "interactable": true,
+      "status": "后续版本"
+    },
+    {
+      "id": "ruined_settlement",
+      "name_cn": "废弃面团聚落",
+      "region": "meijun",
+      "pos": [
+        333.3,
+        166.7
+      ],
+      "interactable": false
+    },
+    {
+      "id": "core_altar",
+      "name_cn": "核心祭坛",
+      "region": "shendu",
+      "pos": [
+        436.7,
+        83.3
+      ],
+      "interactable": true,
+      "note": "Boss战触发点"
+    }
+  ],
+  "monsters": [
+    {
+      "id": "dough_neutral_1",
+      "name_cn": "面团",
+      "type": "中立-逃跑",
+      "region": "qianceng",
+      "pos": [
+        153.3,
+        233.3
+      ]
+    },
+    {
+      "id": "yeast_neutral_fajiao",
+      "name_cn": "酵母",
+      "type": "中立-反击",
+      "region": "fajiao",
+      "pos": [
+        110.0,
+        166.7
+      ]
+    },
+    {
+      "id": "yeast_neutral_jiaomu_1",
+      "name_cn": "酵母",
+      "type": "中立-反击",
+      "region": "jiaomu",
+      "pos": [
+        60.0,
+        66.7
+      ]
+    },
+    {
+      "id": "yeast_neutral_jiaomu_2",
+      "name_cn": "酵母",
+      "type": "中立-反击",
+      "region": "jiaomu",
+      "pos": [
+        83.3,
+        93.3
+      ]
+    },
+    {
+      "id": "spore_mold_1",
+      "name_cn": "喷孢霉菌",
+      "type": "敌对-主动",
+      "region": "meijun",
+      "pos": [
+        350.0,
+        156.7
+      ]
+    },
+    {
+      "id": "thread_ambush_1",
+      "name_cn": "菌丝伏击者",
+      "type": "敌对-伏击",
+      "region": "meijun",
+      "pos": [
+        380.0,
+        196.7
+      ],
+      "note": "藏于坍塌孔边缘"
+    },
+    {
+      "id": "mold_guard_meijun",
+      "name_cn": "腐败护卫",
+      "type": "敌对-驻守",
+      "region": "meijun",
+      "pos": [
+        360.0,
+        220.0
+      ]
+    },
+    {
+      "id": "mold_guard_shendu_1",
+      "name_cn": "腐败护卫",
+      "type": "敌对-驻守",
+      "region": "shendu",
+      "pos": [
+        403.3,
+        60.0
+      ]
+    },
+    {
+      "id": "mold_guard_shendu_2",
+      "name_cn": "腐败护卫",
+      "type": "敌对-驻守",
+      "region": "shendu",
+      "pos": [
+        466.7,
+        60.0
+      ]
+    },
+    {
+      "id": "boss_core",
+      "name_cn": "腐败菌核",
+      "type": "Boss",
+      "region": "shendu",
+      "pos": [
+        436.7,
+        83.3
+      ]
+    },
+    {
+      "id": "small_mold_1",
+      "name_cn": "小霉菌",
+      "type": "敌对-主动",
+      "region": "qianceng",
+      "pos": [
+        196.7,
+        276.7
+      ],
+      "note": "Demo战斗①"
+    },
+    {
+      "id": "small_mold_2",
+      "name_cn": "小霉菌",
+      "type": "敌对-主动",
+      "region": "qianceng",
+      "pos": [
+        243.3,
+        240.0
+      ],
+      "note": "Demo战斗②"
+    },
+    {
+      "id": "small_mold_3",
+      "name_cn": "小霉菌",
+      "type": "敌对-主动",
+      "region": "jidi",
+      "pos": [
+        266.7,
+        283.3
+      ],
+      "note": "Demo基地角落战斗"
+    }
+  ],
+  "resources": [
+    {
+      "id": "flour_demo",
+      "name_cn": "面粉",
+      "region": "qianceng",
+      "pos": [
+        200.0,
+        233.3
+      ]
+    },
+    {
+      "id": "corrupt_spore_core",
+      "name_cn": "腐败孢核",
+      "region": "meijun",
+      "pos": [
+        416.7,
+        196.7
+      ]
+    },
+    {
+      "id": "special_yeast_strain",
+      "name_cn": "特殊酵母菌株",
+      "region": "jiaomu",
+      "pos": [
+        100.0,
+        106.7
+      ]
+    },
+    {
+      "id": "active_spore",
+      "name_cn": "活性菌种",
+      "region": "shendu",
+      "pos": [
+        453.3,
+        106.7
+      ]
+    }
+  ],
+  "flora": [
+    {
+      "id": "gluten_whiskers_1",
+      "name_cn": "面筋须",
+      "type": "植被-高地标志",
+      "region": "qianceng",
+      "pos": [
+        186.7,
+        206.7
+      ]
+    },
+    {
+      "id": "gluten_whiskers_2",
+      "name_cn": "面筋须(稀疏)",
+      "type": "植被-过渡标志",
+      "region": "qianceng",
+      "pos": [
+        293.3,
+        316.7
+      ]
+    },
+    {
+      "id": "yeast_buds_fajiao",
+      "name_cn": "酵母菇",
+      "type": "植被-酵母标志",
+      "region": "fajiao",
+      "pos": [
+        110.0,
+        196.7
+      ]
+    },
+    {
+      "id": "mycelium_meijun_1",
+      "name_cn": "菌丝网",
+      "type": "植被-腐败标志",
+      "region": "meijun",
+      "pos": [
+        393.3,
+        186.7
+      ]
+    },
+    {
+      "id": "mycelium_meijun_2",
+      "name_cn": "菌丝网",
+      "type": "植被-腐败标志",
+      "region": "meijun",
+      "pos": [
+        360.0,
+        210.0
+      ]
+    },
+    {
+      "id": "mycelium_shendu",
+      "name_cn": "菌丝网",
+      "type": "植被-腐败标志",
+      "region": "shendu",
+      "pos": [
+        443.3,
+        66.7
+      ]
+    }
+  ],
+  "holes": [
+    {
+      "id": "hole_small_1",
+      "name_cn": "气孔通道",
+      "type": "小型",
+      "region": "qianceng",
+      "pos": [
+        173.3,
+        300.0
+      ],
+      "interaction": "见mechanisms中的mech_hole_shortcut，仅面团形态可钻入的可选近道"
+    },
+    {
+      "id": "hole_collapse_1",
+      "name_cn": "坍塌孔",
+      "type": "中型",
+      "region": "meijun",
+      "pos": [
+        350.0,
+        213.3
+      ],
+      "interaction": "行走中可能触发的非自愿陷阱，跌入连接地下腐坏巢；菌丝伏击者藏匿于此类孔洞边缘"
+    },
+    {
+      "id": "hole_vent_1",
+      "name_cn": "呼吸孔",
+      "type": "计时机关",
+      "region": "qianceng",
+      "pos": [
+        180.0,
+        156.7
+      ],
+      "interaction": "随面团母体呼吸周期性开合，仅开启窗口可通过；酵母形态冲撞可临时堵塞改道"
+    },
+    {
+      "id": "hole_abyss",
+      "name_cn": "深渊之孔",
+      "type": "大型-区域入口",
+      "region": "meijun",
+      "pos": [
+        410.0,
+        140.0
+      ],
+      "interaction": "见下方hole_abyss_interaction字段，需要明确的玩家交互确认，不是掉落陷阱"
+    }
+  ],
+  "mechanisms": [
+    {
+      "id": "mech_wall_1",
+      "name_cn": "冲撞破壁",
+      "type": "酵母形态限定-强制关卡",
+      "region": "qianceng/fajiao边界",
+      "pos": [
+        143.3,
+        233.3
+      ],
+      "mandatory": true,
+      "flanking_geometry": "两侧为不可通行的干裂深沟（悬崖式地形），整条浅层面团区/活跃发酵区边界只有这一处可穿越",
+      "rule": "仅酵母阵营的冲撞可破坏；玩家在此之前会经历浅层面团区的教学战斗与采集，变身值按设计应已接近或达到100",
+      "note": "原窄缝位置改为此机关，是浅层面团区通往活跃发酵区的唯一入口"
+    },
+    {
+      "id": "mech_gap_sentry",
+      "name_cn": "酵母哨戒缝隙",
+      "type": "面团形态限定-强制关卡",
+      "region": "活跃发酵区/酵母生态区边界",
+      "pos": [
+        96.7,
+        132.0
+      ],
+      "mandatory": true,
+      "flanking_geometry": "两侧为密集菌丝网+陡坡，整条活跃发酵区/酵母生态区边界只有这一处可穿越",
+      "rule": "缝隙本身仅面团阵营体型可通过；缝隙两侧驻扎“酵母哨兵”（中立酵母生物），若玩家以酵母阵营状态靠近会被判定为竞争菌落遭到围攻，逼退出去。玩家需要在变身值较低（未经历过多战斗/采集）时段抵达",
+      "note": "回答了“为什么必须是面团形态”：不是体型卡关，是野生酵母把酵母阵营玩家当同类竞争对象"
+    },
+    {
+      "id": "mech_plate_1",
+      "name_cn": "压力板+干化面团块",
+      "type": "酵母形态限定-资源分支",
+      "region": "霉菌腐败区",
+      "pos": [
+        393.3,
+        180.0
+      ],
+      "mandatory": false,
+      "flanking_geometry": "压力板控制的桥梁横跨一片坍塌孔群，是通往深渊之孔与腐败孢核资源区的近道，不走这条也能绕远路到达",
+      "rule": "酵母阵营的力量才能推动旁边的干化面团块压上压力板，面团阵营推不动；桥开启后双形态都可通行",
+      "note": "定位为可选近道而非强制关卡，奖励主动规划变身节奏的玩家"
+    },
+    {
+      "id": "mech_hole_shortcut",
+      "name_cn": "气孔通道（近道）",
+      "type": "面团形态限定-探索分支",
+      "region": "浅层面团区",
+      "pos": [
+        173.3,
+        300.0
+      ],
+      "mandatory": false,
+      "flanking_geometry": "连接资源补给路径与第二次战斗区域之间，绕开中段部分路程",
+      "rule": "仅面团阵营体型可钻入；建议放在教学前段，玩家此时变身值天然较低",
+      "note": "定位为可选探索奖励，不强制要求玩家专门维持面团形态"
+    }
+  ],
+  "hole_abyss_interaction": {
+    "prompt": "靠近边缘时显示交互提示“跳下去，前往世界深层”",
+    "behavior": "确认后触发下坠过场动画，传送至世界深层入口点；单向传送",
+    "open_question": "是否需要前置条件（例如击败腐败护卫掉落的钥匙类道具）防止过早跳入终局区域，待团队确认",
+    "distinguish_from": "与坍塌孔不同：坍塌孔是行走中可能触发的非自愿陷阱，深渊之孔是明确可见、需要玩家主动交互确认的区域传送点"
+  },
+  "art_reference_pins": [
+    {
+      "id": "ref_glow_mushroom",
+      "pos": [
+        80.0,
+        60.0
+      ],
+      "region": "jiaomu",
+      "note": "团队已贴发光蘑菇意向图，用于酵母生态区大型菌落/伞状建筑风格方向"
+    },
+    {
+      "id": "ref_leaf_texture",
+      "pos": [
+        21.7,
+        86.7
+      ],
+      "region": "jiaomu",
+      "note": "团队已贴叶纹质感图，用途待确认（可能用于酵母菌落表面细节）"
+    },
+    {
+      "id": "ref_cave_altar",
+      "pos": [
+        265.0,
+        33.3
+      ],
+      "region": "shendu",
+      "note": "团队已贴洞穴祭坛概念图，用于核心祭坛/Boss房间氛围方向"
+    },
+    {
+      "id": "ref_pit_crater",
+      "pos": [
+        336.7,
+        125.0
+      ],
+      "region": "meijun",
+      "note": "团队已贴天坑质感图，用于深渊之孔周边地形参考"
+    },
+    {
+      "id": "ref_porous_texture",
+      "pos": [
+        293.3,
+        193.3
+      ],
+      "region": "meijun",
+      "note": "团队已贴蜂窝气孔质感图，用于霉菌腐败区坍塌孔群地表材质"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "butter_waterfall",
+      "name_cn": "黄油瀑布",
+      "type": "地貌地标-高低落差",
+      "region_from": "fajiao",
+      "region_to": "qianceng",
+      "crest_pos": [
+        123.3,
+        160.0
+      ],
+      "crest_elevation_value": 225,
+      "pool_pos": [
+        143.3,
+        201.7
+      ],
+      "pool_elevation_value": 40,
+      "stream_to": [
+        143.3,
+        233.3
+      ],
+      "desc": "活跃发酵区高地边缘向浅层面团区跌落的陡崖，黄油状液体从崖顶倾泻而下，崖底形成一片潭水，再顺一条浅溪流向冲撞破壁机关所在的入口——把地貌落差、机关位置、瀑布景观三者连在了一条线上，而不是孤立的装饰物",
+      "gameplay_note": "瀑布本体不建议做成可通行地形（液体+落差），作为唯一入口冲撞破壁旁边的视觉地标；潭水/浅溪区域可以作为面团/酵母双方形态都能通行的普通地面"
+    }
+  ],
+  "open_questions": [],
+  "demo_route": [
+    {
+      "order": 1,
+      "name_cn": "出生点",
+      "type": "spawn",
+      "pos": [
+        233.3,
+        373.3
+      ]
+    },
+    {
+      "order": 2,
+      "name_cn": "面粉",
+      "type": "resource",
+      "pos": [
+        210.0,
+        343.3
+      ]
+    },
+    {
+      "order": 3,
+      "name_cn": "水源",
+      "type": "resource",
+      "pos": [
+        190.0,
+        310.0
+      ]
+    },
+    {
+      "order": 4,
+      "name_cn": "战斗①",
+      "type": "combat",
+      "pos": [
+        196.7,
+        276.7
+      ]
+    },
+    {
+      "order": 5,
+      "name_cn": "障碍锁",
+      "type": "gate",
+      "pos": [
+        216.7,
+        253.3
+      ]
+    },
+    {
+      "order": 6,
+      "name_cn": "战斗②",
+      "type": "combat",
+      "pos": [
+        243.3,
+        240.0
+      ]
+    },
+    {
+      "order": 7,
+      "name_cn": "补给",
+      "type": "resource",
+      "pos": [
+        270.0,
+        233.3
+      ]
+    },
+    {
+      "order": 8,
+      "name_cn": "基地",
+      "type": "base",
+      "pos": [
+        260.0,
+        250.0
+      ]
+    },
+    {
+      "order": 9,
+      "name_cn": "终点",
+      "type": "combat",
+      "pos": [
+        266.7,
+        283.3
+      ]
+    }
+  ]
+}

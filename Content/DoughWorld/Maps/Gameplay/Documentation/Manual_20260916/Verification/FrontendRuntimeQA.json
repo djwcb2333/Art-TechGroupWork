@@ -1,0 +1,128 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "Menu has no player Pawn",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Tagged menu camera active",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Four editable animations bound",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Three buttons and title have components",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Intro reaches Ready while paused",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Black and logo collapsed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Skip completes without navigating",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zero durations do not strand black screen",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Repeated Pulse starts motion",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pulse has visible nonzero displacement",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pulse settles and unregisters ticker",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Hover settles at 1.06 scale and -1.5 deg",
+      "passed": true,
+      "detail": [
+        1.059999942779541,
+        -1.5,
+        false
+      ]
+    },
+    {
+      "name": "Press settles at .94 scale",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Release returns to hovered target",
+      "passed": true,
+      "detail": [
+        1.059999942779541,
+        -1.5,
+        false
+      ]
+    },
+    {
+      "name": "Leave returns to neutral",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Settings page opens",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Return to title does not replay logo",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Three save slots visible",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Return to title does not replay logo",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Save files untouched",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "phases": [
+    "<DWFrontendIntroPhase.BLACK_HOLD: 0>",
+    "<DWFrontendIntroPhase.LOGO_IN: 1>",
+    "<DWFrontendIntroPhase.LOGO_HOLD: 2>",
+    "<DWFrontendIntroPhase.LOGO_OUT: 3>",
+    "<DWFrontendIntroPhase.REVEAL: 4>",
+    "<DWFrontendIntroPhase.READY: 5>",
+    "<DWFrontendIntroPhase.BLACK_HOLD: 0>",
+    "<DWFrontendIntroPhase.READY: 5>"
+  ],
+  "fixture": "Temporarily disable pointer hit testing on StartButton to isolate direct SetHovered/SetPressed assertions; restore at completion. Physical hover is checked separately.",
+  "save_hashes": {
+    "DoughWorld_Final_Slot_3.sav": "b25f3f159f0da8c156018981dfc929e117f163a824d7cc63eec4c7ba1a3628aa"
+  },
+  "passed": true
+}

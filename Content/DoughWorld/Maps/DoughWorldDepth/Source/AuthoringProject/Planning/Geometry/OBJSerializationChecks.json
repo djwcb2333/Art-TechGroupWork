@@ -1,0 +1,86 @@
+[
+  {
+    "key": "SM_DW_BreadBrick",
+    "obj_reopened": true,
+    "vertex_triangle_count_match": true,
+    "bounds_match": true
+  },
+  {
+    "key": "SM_DW_MushroomCap_Pleated",
+    "obj_reopened": true,
+    "vertex_triangle_count_match": true,
+    "bounds_match": true
+  },
+  {
+    "key": "SM_DW_MushroomStem",
+    "obj_reopened": true,
+    "vertex_triangle_count_match": true,
+    "bounds_match": true
+  },
+  {
+    "key": "SM_DW_Bud",
+    "obj_reopened": true,
+    "vertex_triangle_count_match": true,
+    "bounds_match": true
+  },
+  {
+    "key": "SM_DW_PoreRing",
+    "obj_reopened": true,
+    "vertex_triangle_count_match": true,
+    "bounds_match": true
+  },
+  {
+    "key": "SM_DW_PoreHalfRing",
+    "obj_reopened": true,
+    "vertex_triangle_count_match": true,
+    "bounds_match": true
+  },
+  {
+    "key": "SM_DW_PoreQuarterRing",
+    "obj_reopened": true,
+    "vertex_triangle_count_match": true,
+    "bounds_match": true
+  },
+  {
+    "key": "SM_DW_PoreInnerSleeve",
+    "obj_reopened": true,
+    "vertex_triangle_count_match": true,
+    "bounds_match": true
+  },
+  {
+    "key": "SM_DW_GlutenColumn",
+    "obj_reopened": true,
+    "vertex_triangle_count_match": true,
+    "bounds_match": true
+  },
+  {
+    "key": "SM_DW_RoofTile",
+    "obj_reopened": true,
+    "vertex_triangle_count_match": true,
+    "bounds_match": true
+  },
+  {
+    "key": "SM_DW_ArcRoof",
+    "obj_reopened": true,
+    "vertex_triangle_count_match": true,
+    "bounds_match": true
+  },
+  {
+    "key": "SM_DW_BridgePlank",
+    "obj_reopened": true,
+    "vertex_triangle_count_match": true,
+    "bounds_match": true
+  },
+  {
+    "key": "SM_DW_SupportPost",
+    "obj_reopened": true,
+    "vertex_triangle_count_match": true,
+    "bounds_match": true
+  },
+  {
+    "key": "SM_DW_AltarDish",
+    "obj_reopened": true,
+    "vertex_triangle_count_match": true,
+    "bounds_match": true
+  }
+]

@@ -1,0 +1,567 @@
+{
+  "timestamp": "2026-09-10T22:32:56.463515",
+  "ceiling_settings": [
+    {
+      "label": "DeepCeiling_0_0",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepHangingLobe_0_0",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_0_1",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_0_2",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_0_3",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_0_4",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_0_5",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepHangingLobe_0_5",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_0_6",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_0_7",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_1_0",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_1_1",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_1_2",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_1_3",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_1_4",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepHangingLobe_1_4",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_1_5",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_1_6",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_1_7",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_2_0",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_2_1",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_2_2",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_2_3",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepHangingLobe_2_3",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_2_4",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_2_5",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_2_6",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_2_7",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_3_0",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_3_1",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_3_2",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepHangingLobe_3_2",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_3_3",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_3_4",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_3_5",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_3_6",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_3_7",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepHangingLobe_3_7",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_4_0",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_4_1",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepHangingLobe_4_1",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_4_2",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_4_3",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_4_4",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_4_5",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_4_6",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepHangingLobe_4_6",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_4_7",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_5_0",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepHangingLobe_5_0",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_5_1",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_5_2",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_5_3",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_5_4",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_5_5",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepHangingLobe_5_5",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_5_6",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_5_7",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_6_0",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_6_1",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_6_2",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_6_3",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_6_4",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepHangingLobe_6_4",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_6_5",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_6_6",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_6_7",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_7_0",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_7_1",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_7_2",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_7_3",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepHangingLobe_7_3",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_7_4",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_7_5",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_7_6",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_7_7",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_8_0",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_8_1",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_8_2",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepHangingLobe_8_2",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_8_3",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_8_4",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_8_5",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_8_6",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepCeiling_8_7",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    },
+    {
+      "label": "DeepHangingLobe_8_7",
+      "before_padding_cm": 10.0,
+      "before_visibility": 0.20000000298023224
+    }
+  ],
+  "added": [
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_0",
+      "label": "BridgeContact_Subfloor",
+      "module": "meijun_06",
+      "source_ref": "mechanisms/mech_plate_1",
+      "mesh": "/Engine/BasicShapes/Cube.Cube",
+      "bottom_xyz_m": [
+        393.3,
+        170.0,
+        -10.391088558848
+      ],
+      "dimensions_m": [
+        14,
+        16,
+        0.15
+      ],
+      "yaw": 0,
+      "material": "Mold",
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "region": "meijun",
+      "category_cn": "桥洞接土地层",
+      "source_anchor_ref": "mechanisms/mech_plate_1",
+      "source_association_kind": "original_source_reference",
+      "runtime_acceptance_status": "final_verification_pending"
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_1",
+      "label": "BridgeContact_Side-1",
+      "module": "meijun_06",
+      "source_ref": "mechanisms/mech_plate_1",
+      "mesh": "/Engine/BasicShapes/Cube.Cube",
+      "bottom_xyz_m": [
+        387.3,
+        170.0,
+        -10.241088558848
+      ],
+      "dimensions_m": [
+        2.5,
+        16,
+        6.55
+      ],
+      "yaw": 0,
+      "material": "Mold",
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "region": "meijun",
+      "category_cn": "桥洞接土地层",
+      "source_anchor_ref": "mechanisms/mech_plate_1",
+      "source_association_kind": "original_source_reference",
+      "runtime_acceptance_status": "final_verification_pending"
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_2",
+      "label": "BridgeContact_End-1",
+      "module": "meijun_06",
+      "source_ref": "mechanisms/mech_plate_1",
+      "mesh": "/Engine/BasicShapes/Cube.Cube",
+      "bottom_xyz_m": [
+        393.3,
+        162.7,
+        -10.241088558848
+      ],
+      "dimensions_m": [
+        14,
+        2.5,
+        6.1
+      ],
+      "yaw": 0,
+      "material": "Mold",
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "region": "meijun",
+      "category_cn": "桥洞接土地层",
+      "source_anchor_ref": "mechanisms/mech_plate_1",
+      "source_association_kind": "original_source_reference",
+      "runtime_acceptance_status": "final_verification_pending"
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_3",
+      "label": "BridgeContact_Side1",
+      "module": "meijun_06",
+      "source_ref": "mechanisms/mech_plate_1",
+      "mesh": "/Engine/BasicShapes/Cube.Cube",
+      "bottom_xyz_m": [
+        399.3,
+        170.0,
+        -10.241088558848
+      ],
+      "dimensions_m": [
+        2.5,
+        16,
+        6.55
+      ],
+      "yaw": 0,
+      "material": "Mold",
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "region": "meijun",
+      "category_cn": "桥洞接土地层",
+      "source_anchor_ref": "mechanisms/mech_plate_1",
+      "source_association_kind": "original_source_reference",
+      "runtime_acceptance_status": "final_verification_pending"
+    },
+    {
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.StaticMeshActor_4",
+      "label": "BridgeContact_End1",
+      "module": "meijun_06",
+      "source_ref": "mechanisms/mech_plate_1",
+      "mesh": "/Engine/BasicShapes/Cube.Cube",
+      "bottom_xyz_m": [
+        393.3,
+        177.3,
+        -10.241088558848
+      ],
+      "dimensions_m": [
+        14,
+        2.5,
+        6.1
+      ],
+      "yaw": 0,
+      "material": "Mold",
+      "collision": "<CollisionEnabled.QUERY_AND_PHYSICS: 3>",
+      "fade": false,
+      "region": "meijun",
+      "category_cn": "桥洞接土地层",
+      "source_anchor_ref": "mechanisms/mech_plate_1",
+      "source_association_kind": "original_source_reference",
+      "runtime_acceptance_status": "final_verification_pending"
+    }
+  ]
+}

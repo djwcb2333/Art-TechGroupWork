@@ -1,0 +1,3 @@
+# Version control is now managed from the GDATtest project root.
+# Inherit root .gitattributes, including Git LFS and byte-preserving line endings.
+# The previous text=auto file is preserved in the external setup backup.

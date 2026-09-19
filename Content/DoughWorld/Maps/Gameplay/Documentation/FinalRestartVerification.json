@@ -1,0 +1,25 @@
+{
+  "menu": "<DWMenuPage.TITLE: 1>",
+  "paused": true,
+  "camera_rotation": "<Struct 'Rotator' (0x000001B796041AA0) {pitch: -50.000000, yaw: 45.000000, roll: 0.000000}>",
+  "game_time_start": 0.73333340883255,
+  "save_slots": [
+    {
+      "index": 0,
+      "exists": false,
+      "name": ""
+    },
+    {
+      "index": 1,
+      "exists": false,
+      "name": ""
+    },
+    {
+      "index": 2,
+      "exists": true,
+      "name": "存档 3"
+    }
+  ],
+  "game_time_end": 0.73333340883255,
+  "passed": true
+}

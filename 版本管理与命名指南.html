@@ -1,0 +1,348 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bread of the Wild · 版本管理与命名指南</title><style>
+:root{color-scheme:light;--ink:#243246;--accent:#176858;--line:#d7e2df}*{box-sizing:border-box}body{margin:0;background:#edf3f1;color:var(--ink);font:16px/1.85 "Microsoft YaHei","Segoe UI",sans-serif}header{background:#173d34;color:#fff;padding:22px max(24px,calc((100vw - 1060px)/2));font-size:14px;letter-spacing:.05em}main{max-width:1060px;margin:28px auto 70px;padding:44px 52px;background:white;border-radius:16px;box-shadow:0 8px 36px #183e3410}h1{font-size:32px;line-height:1.4;margin:0 0 24px}h2{font-size:23px;line-height:1.5;margin-top:44px;padding-top:18px;border-top:1px solid var(--line)}p{margin:14px 0}a{color:#146e66;overflow-wrap:anywhere}code{background:#f0f3f6;padding:2px 5px;border-radius:4px;font:14px/1.7 Consolas,monospace;overflow-wrap:anywhere}pre{white-space:pre-wrap}blockquote{margin:20px 0;padding:16px 20px;background:#fff4db;border-left:5px solid #c18a24}blockquote p{margin:0}table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}th{background:#eaf3ef;text-align:left}td,th{padding:12px 14px;border:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}th:first-child{width:31%}li{margin:10px 0}img{display:block;max-width:100%;height:auto;border:1px solid var(--line);border-radius:9px;margin:22px auto}strong{color:#153e35}blockquote strong{color:#715013}@media(max-width:720px){main{margin:0;border-radius:0;padding:26px 19px}h1{font-size:26px}h2{font-size:21px}table{font-size:12px}td,th{padding:8px}}@media print{body{background:white}header{background:white;color:black;padding:0}main{box-shadow:none;max-width:none;padding:10px;margin:0}h2{break-after:avoid}tr,img{break-inside:avoid}a{color:#163e34}blockquote{background:#f3f3f3}}
+</style></head><body><header>BREAD OF THE WILD / DOUGH WORLD · 项目版本命名规则</header><main><h1 id="bread-of-the-wild">Bread of the Wild · 版本管理与命名指南</h1>
+<p><strong>项目规则｜2026-09-19 用户确认｜适用于整个 GDATtest 工程</strong></p>
+<p>本指南规定游戏版本号、开发阶段、Git 分支、提交和标签的命名方式。它是本团队的约定，借用语义化版本的结构；游戏里程碑由团队验收要求决定，不等同于严格 SemVer 的公共 API 兼容性承诺。</p>
+<p><strong>当前状态：仅规则已确定，尚未为当前工程正式定版。</strong> 文中的 <code>v0.3.1</code> 等均为示例，不代表这些版本已经存在。首次本地 Git 重建仍等待用户发送“继续”，并在核对其他任务已完成、写入权释放后执行。本阶段暂不上传，不创建后台任务。</p>
+<h2 id="section">1. 一分钟速查</h2>
+<table>
+<thead>
+<tr>
+<th>对象</th>
+<th>本项目规则</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>正式工程目录</td>
+<td>沿用现有目录，不把版本号加到工程路径上</td>
+<td><code>E:/Unreal Project/GDATtest</code></td>
+</tr>
+<tr>
+<td>工程文件</td>
+<td>沿用现有名称</td>
+<td><code>GDATtest.uproject</code></td>
+</tr>
+<tr>
+<td>游戏版本号</td>
+<td>主版本.次版本.修订版本</td>
+<td><code>0.3.1</code></td>
+</tr>
+<tr>
+<td>预发布版本号</td>
+<td>版本号-阶段.阶段内序号</td>
+<td><code>0.4.0-alpha.2</code></td>
+</tr>
+<tr>
+<td>Git 版本标签</td>
+<td>在版本号前加小写 <code>v</code></td>
+<td><code>v0.4.0-alpha.2</code></td>
+</tr>
+<tr>
+<td>主分支</td>
+<td><code>main</code></td>
+<td><code>main</code></td>
+</tr>
+<tr>
+<td>功能分支</td>
+<td><code>feature/简短英文描述</code></td>
+<td><code>feature/enemy-hitbox</code></td>
+</tr>
+<tr>
+<td>修复分支</td>
+<td><code>fix/简短英文描述</code></td>
+<td><code>fix/menu-input</code></td>
+</tr>
+<tr>
+<td>提交说明</td>
+<td>类型: 具体修改内容</td>
+<td><code>fix: 修复敌人受击重复扣血</code></td>
+</tr>
+</tbody>
+</table>
+<p>不要使用“最终版”“最终最终版”“最新可用版”来代替版本号。日期可以出现在交付说明里，不能独自替代版本号与提交记录。</p>
+<h2 id="section-1">2. 看懂 0.3.2：三个数字分别负责什么</h2>
+<table>
+<thead>
+<tr>
+<th>位置</th>
+<th>名称</th>
+<th>本项目含义</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第一位</td>
+<td>主版本 Major</td>
+<td>大的正式发布阶段</td>
+<td><code>0.x.x</code> 开发中；<code>1.0.0</code> 首个正式交付版本</td>
+</tr>
+<tr>
+<td>第二位</td>
+<td>次版本 Minor</td>
+<td>一批新功能或内容形成了可验收里程碑</td>
+<td><code>0.2.0 → 0.3.0</code></td>
+</tr>
+<tr>
+<td>第三位</td>
+<td>修订版本 Patch</td>
+<td>对已有版本进行问题修复或小幅调整</td>
+<td><code>0.3.0 → 0.3.1</code></td>
+</tr>
+</tbody>
+</table>
+<p>增加次版本时，修订版本归零，如 <code>0.3.8 → 0.4.0</code>。增加主版本时，其余两位归零，如 <code>1.7.4 → 2.0.0</code>。是否进入新的主版本由团队明确决定，不按提交次数自动升级。</p>
+<p>这些数字不是小数：<code>0.9.0</code> 后可以是 <code>0.10.0</code>，<code>0.10.0</code> 比 <code>0.9.0</code> 新。数字前不补零，写 <code>0.3.1</code>，不写 <code>00.03.01</code>。</p>
+<p><strong>版本号不表示完成百分比。</strong> <code>0.8.0</code> 不代表游戏做完了 80%；<code>1.0.0</code> 表示达到事先约定的首个正式交付范围，并不意味着以后永远没有问题。</p>
+<h2 id="prototypealphabetarc">3. Prototype、Alpha、Beta、RC 与正式版</h2>
+<p>阶段名表示版本的成熟程度。团队应先写清该里程碑包含什么，再判断是否符合下一阶段条件。</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>本项目约定</th>
+<th>名称示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prototype 原型</td>
+<td>验证玩法想法，结构和内容仍可能大改</td>
+<td>在交付说明中标注“原型阶段”；不强制另造一种标签格式</td>
+</tr>
+<tr>
+<td>Alpha 开发测试</td>
+<td>核心玩法持续完善，仍会增加或调整功能</td>
+<td><code>0.3.0-alpha.1</code></td>
+</tr>
+<tr>
+<td>Beta 完整范围测试</td>
+<td>本次交付约定的功能与内容基本齐全，重点是测试、平衡和修复</td>
+<td><code>0.3.0-beta.1</code></td>
+</tr>
+<tr>
+<td>RC 候选发布</td>
+<td>Release Candidate；已接近正式发布，等待最后验收</td>
+<td><code>0.3.0-rc.1</code></td>
+</tr>
+<tr>
+<td>正式版</td>
+<td>达到该次版本约定的验收条件，去掉阶段后缀</td>
+<td><code>0.3.0</code></td>
+</tr>
+</tbody>
+</table>
+<p>一个目标里程碑可以这样推进：</p>
+<pre><code class="language-text">0.3.0-alpha.1
+→ 0.3.0-alpha.2
+→ 0.3.0-beta.1
+→ 0.3.0-rc.1
+→ 0.3.0
+</code></pre>
+<p>同一阶段的序号从 1 开始，每次实际交付新的预发布快照就递增。进入新阶段后从 1 开始，如 <code>alpha.4 → beta.1</code>。仍在同一个 Alpha 里程碑内修正问题，可以递增为 <code>alpha.2</code>；已经发布不带后缀的 <code>0.3.0</code> 后修复问题，则使用 <code>0.3.1</code>。</p>
+<p>开发中的整个游戏也可以发布一个稳定的阶段成果 <code>0.3.0</code>。它的“正式”仅针对该次里程碑，不等于整款游戏已完成。Demo 描述演示的内容范围，不能单凭“Demo”判断它属于 Alpha 还是 Beta。</p>
+<h2 id="section-2">4. 什么时候提交，什么时候增加版本号</h2>
+<p><strong>Commit 提交</strong>记录一次清楚的修改。<strong>Tag 标签</strong>给某个确定提交取一个版本名字。多个提交可以共同组成一个对外交接或内部验收版本。</p>
+<p>示例：</p>
+<pre><code class="language-text">feat: 增加敌人受击体积
+fix: 修复同一次攻击重复扣血
+art: 调整受击反馈效果
+docs: 补充受击参数教程
+          ↓ 完成这批工作的验收
+标记版本 v0.4.0-alpha.1
+</code></pre>
+<p>不必每改一个按钮就增加游戏版本号。完成一项清楚的工作可以提交；需要让别人试玩、交接，或需要保留明确里程碑时，再按规则确定版本并创建标签。</p>
+<p>已交付的标签固定指向原提交。发现问题时增加下一版本，不把同一个 <code>v0.3.1</code> 标签移动到另一份代码上，也不悄悄用不同文件覆盖同名交付件。</p>
+<h2 id="section-3">5. 分支怎么命名</h2>
+<table>
+<thead>
+<tr>
+<th>分支</th>
+<th>用途</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>main</code></td>
+<td>团队主线，接收已经完成约定检查的工作</td>
+<td><code>main</code></td>
+</tr>
+<tr>
+<td><code>feature/...</code></td>
+<td>新功能或成组内容开发</td>
+<td><code>feature/dialogue-sequence</code></td>
+</tr>
+<tr>
+<td><code>fix/...</code></td>
+<td>修复已有行为</td>
+<td><code>fix/enemy-hitbox</code></td>
+</tr>
+</tbody>
+</table>
+<p>描述部分使用简短英文、小写字母，单词之间用连字符，避免空格和“new”“test2”这类难以辨认的名称。一个分支尽量对应一项明确任务。</p>
+<p>分支只说明工作方向，不说明版本已经验收。名为 <code>main</code> 的分支也不能替代测试记录。</p>
+<p><strong>同一份运行中的 UE 工程仍然只能有一个写入者。</strong> 建了多个分支，不意味着多个任务可以同时在同一个磁盘工程目录中保存、编译或切换分支。当前项目继续按写入协调表交接；未来团队各自克隆后，仍须协调同一蓝图或地图的修改。</p>
+<h2 id="section-4">6. 提交说明怎么写</h2>
+<p>格式：<code>类型: 具体修改内容</code>。冒号使用英文半角，冒号后留一个空格，内容可以使用中文。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>用途</th>
+<th>好的示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>feat</code></td>
+<td>增加功能</td>
+<td><code>feat: 增加可复用字幕队列</code></td>
+</tr>
+<tr>
+<td><code>fix</code></td>
+<td>修复问题</td>
+<td><code>fix: 修复敌人受击重复扣血</code></td>
+</tr>
+<tr>
+<td><code>art</code></td>
+<td>美术资源与视觉调整</td>
+<td><code>art: 调整村庄地形材质</code></td>
+</tr>
+<tr>
+<td><code>docs</code></td>
+<td>教程和说明</td>
+<td><code>docs: 补充版本命名指南</code></td>
+</tr>
+<tr>
+<td><code>refactor</code></td>
+<td>整理实现，预期行为保持一致</td>
+<td><code>refactor: 整理字幕队列推进逻辑</code></td>
+</tr>
+<tr>
+<td><code>chore</code></td>
+<td>工程维护和版本管理配置</td>
+<td><code>chore: 建立完整工程版本基线</code></td>
+</tr>
+</tbody>
+</table>
+<p>这些是本团队采用的类型，其中 <code>art</code> 是为游戏美术工作约定的类型；不声称它们全部属于某个外部强制标准。</p>
+<p>避免只写“更新”“改了”“修复一些东西”。修改较复杂时，在提交描述中补充为什么修改、验证了什么、还有什么未验证。</p>
+<p>例如：</p>
+<pre><code class="language-text">Summary：fix: 修复敌人受击重复扣血
+
+Description：
+同一次攻击对同一目标只结算一次伤害。
+验证：填写本次实际执行过的检查与结果。
+未验证：如实填写未进行的独立运行或打包验证。
+</code></pre>
+<p>不要把上面的验证示例当成当前项目已经完成的测试。</p>
+<h2 id="section-5">7. 版本记录至少写哪些内容</h2>
+<p>每次标记里程碑时，记录以下信息：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>填写方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>版本号 / 标签</td>
+<td>如 <code>0.4.0-alpha.1</code> / <code>v0.4.0-alpha.1</code></td>
+</tr>
+<tr>
+<td>对应提交</td>
+<td>记录 Git 中实际存在的提交 ID，不编造编号</td>
+</tr>
+<tr>
+<td>日期</td>
+<td>使用 <code>YYYY-MM-DD</code></td>
+</tr>
+<tr>
+<td>本次范围</td>
+<td>新增、修复或调整的具体功能和资源</td>
+</tr>
+<tr>
+<td>环境</td>
+<td>实际 UE 版本，以及需要的 C++ 工具和插件</td>
+</tr>
+<tr>
+<td>验证</td>
+<td>分别列出静态检查、编译、PIE、独立运行、打包结果</td>
+</tr>
+<tr>
+<td>已知问题</td>
+<td>明确会影响试玩或协作的问题</td>
+</tr>
+<tr>
+<td>存档兼容性</td>
+<td>是否检查旧存档；不确定时写“未验证”</td>
+</tr>
+</tbody>
+</table>
+<p>“能提交 Git”“能完整克隆”“C++ 编译成功”“PIE 正常”和“发行版打包成功”是不同结论，必须分别记录。不要只写一个没有范围的“测试通过”。</p>
+<h2 id="section-6">8. 游戏版本与存档格式分开记录</h2>
+<p>游戏版本用于识别某次工程或游戏交付，存档格式版本用于识别数据结构。一次材质调整可以改变游戏交付版本，却不需要改变存档结构。</p>
+<p>只有存档结构需要兼容或迁移处理时，才由功能实现者检查并调整工程已有的存档版本机制。<strong>本文不新增字段、不修改已有版本值、不自动迁移或删除任何存档。</strong> 不能因为改了游戏版本号，就推断旧存档一定兼容。</p>
+<h2 id="github-desktop">9. 在 GitHub Desktop 中对应哪里</h2>
+<table>
+<thead>
+<tr>
+<th>你要做的事</th>
+<th>界面概念</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>确认正在操作哪份仓库</td>
+<td>左上 <code>Current repository</code>，完整工程根目录应为 GDATtest</td>
+</tr>
+<tr>
+<td>确认当前工作分支</td>
+<td>顶部 <code>Current branch</code></td>
+</tr>
+<tr>
+<td>给一次修改命名</td>
+<td><code>Changes</code> 面板下方的 <code>Summary</code>；补充说明填 <code>Description</code></td>
+</tr>
+<tr>
+<td>本地保存修改记录</td>
+<td><code>Commit … to 分支名</code></td>
+</tr>
+<tr>
+<td>查看已保存记录</td>
+<td><code>History</code></td>
+</tr>
+<tr>
+<td>发布或上传</td>
+<td><code>Publish repository</code> / <code>Push origin</code>；本阶段暂不执行</td>
+</tr>
+</tbody>
+</table>
+<p>Git 标签是版本标记；GitHub Release 可以基于标签提供版本说明和交付附件。它们不需要与每次提交一一对应。本地创建标签不要求先上传 GitHub。</p>
+<p>本指南讲命名规则。完整工程首次接入、Git LFS、克隆、C++ 环境和故障处理另见外部交付目录 <code>UE_Whitebox_Delivery/GitVersionControl_20260919/本地版本管理方案与教程.html</code>。建立仓库后，根目录的 <code>README_GDATtest.md</code> 将随工程提供基础使用说明。</p>
+<h2 id="git">10. 这次重建 Git 如何应用本规则</h2>
+<ol>
+<li>用户发送“继续”后，重新读取项目状态和写入协调表，核对之前的工程任务已经结束并释放写入权。</li>
+<li>按已授权范围保存旧 Git 元数据，并清除工程内两处旧仓库的嵌套状态；不搬动或重建 UE 资产。</li>
+<li>从 <code>GDATtest</code> 根目录建立完整工程的本地 Git 与 Git LFS，包含两个 C++ 模块、完整 Content、Config、<code>.uproject</code>、本指南和其他必要文件。</li>
+<li>首次提交使用 <code>chore: 建立 Bread of the Wild 完整工程版本基线</code>。</li>
+<li>首个已验收基线的建议标签为 <code>v0.1.0-alpha.1</code>。只有完成约定的基线验收、写清验证边界后才标记；创建本指南不等于该标签已经存在，也不自动宣称游戏运行验收通过。</li>
+<li>本次先完成本地版本管理和 GitHub Desktop 接入。上传、远程仓库和共享权限留待后续决定。</li>
+</ol>
+<p>这是历史从当前完整工程重新开始的编号，不代表此前的开发成果被删除。工程目录仍为原 <code>GDATtest</code>。</p>
+<h2 id="section-7">11. 发布前自查</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> 版本号格式正确，数字没有前导零，阶段名使用小写。</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> 清楚区分了分支、提交、标签和 GitHub Release。</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> 标签对应明确的真实提交，且没有移动已交付标签。</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> 本次新增、修复、验证和已知问题有记录。</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> 存档兼容性有说明，未经验证的部分没有写成已通过。</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> Source、Content、Config 和 <code>.uproject</code> 属于同一套完整工程版本。</li>
+<li class="task-list-item"><input disabled="disabled" type="checkbox" /> 工程目录与资产路径保持原样，没有通过复制“最终版文件夹”代替版本管理。</li>
+</ul>
+<p>参考：<a href="https://semver.org/lang/zh-CN/">语义化版本 2.0.0</a>、<a href="https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases">GitHub Releases</a>。本指南的游戏里程碑定义与提交类型为本项目约定，用户于 2026-09-19 确认采用。</p>
+</main></body></html>

@@ -1,0 +1,208 @@
+{
+  "terrain": [
+    {
+      "point": "出生点",
+      "expected": -1.5825018900480003,
+      "actual": -1.5770721435546875,
+      "error_m": 0.005429746493312848
+    },
+    {
+      "point": "面粉",
+      "expected": 1.1673443839999997,
+      "actual": 1.1668586730957031,
+      "error_m": 0.0004857109042966101
+    },
+    {
+      "point": "水源",
+      "expected": -0.8846105600000002,
+      "actual": -0.8831501007080078,
+      "error_m": 0.0014604592919923443
+    },
+    {
+      "point": "战斗①",
+      "expected": -0.6889,
+      "actual": -0.6876659393310547,
+      "error_m": 0.0012340606689452693
+    },
+    {
+      "point": "障碍锁",
+      "expected": 21.108603439872,
+      "actual": 21.09386444091797,
+      "error_m": 0.01473899895403008
+    },
+    {
+      "point": "战斗②",
+      "expected": 23.124000000000002,
+      "actual": 23.12495231628418,
+      "error_m": 0.0009523162841773569
+    },
+    {
+      "point": "补给",
+      "expected": 23.14255109759999,
+      "actual": 23.131065368652344,
+      "error_m": 0.011485728947647544
+    },
+    {
+      "point": "基地",
+      "expected": 23.296228,
+      "actual": 23.296852111816406,
+      "error_m": 0.0006241118164069803
+    },
+    {
+      "point": "终点",
+      "expected": 23.1244,
+      "actual": 23.12469482421875,
+      "error_m": 0.00029482421874860165
+    },
+    {
+      "point": "基地稳定区",
+      "expected": 23.352077321472,
+      "actual": 23.34885597229004,
+      "error_m": 0.0032213491819597095
+    },
+    {
+      "point": "浅层面团区",
+      "expected": 23.352077321472,
+      "actual": 23.34885597229004,
+      "error_m": 0.0032213491819597095
+    },
+    {
+      "point": "活跃发酵区",
+      "expected": 20.768101971968015,
+      "actual": 20.74605941772461,
+      "error_m": 0.022042554243405732
+    },
+    {
+      "point": "霉菌腐败区",
+      "expected": -23.5291388608,
+      "actual": -23.531808853149414,
+      "error_m": 0.0026699923494142297
+    },
+    {
+      "point": "酵母生态区",
+      "expected": 22.6166906048,
+      "actual": 22.617130279541016,
+      "error_m": 0.0004396747410169155
+    },
+    {
+      "point": "世界深层",
+      "expected": -43.3183,
+      "actual": -43.32075119018555,
+      "error_m": 0.0024511901855461815
+    },
+    {
+      "point": "WaterfallPool",
+      "expected": 18.622570720000002,
+      "actual": 18.622732162475586,
+      "error_m": 0.00016144247558358416
+    }
+  ],
+  "route_paths": [
+    {
+      "from": 1,
+      "to": 2,
+      "valid": true,
+      "partial": false,
+      "points": 3
+    },
+    {
+      "from": 2,
+      "to": 3,
+      "valid": true,
+      "partial": false,
+      "points": 3
+    },
+    {
+      "from": 3,
+      "to": 4,
+      "valid": true,
+      "partial": false,
+      "points": 3
+    },
+    {
+      "from": 4,
+      "to": 5,
+      "valid": true,
+      "partial": false,
+      "points": 25
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "valid": true,
+      "partial": false,
+      "points": 3
+    },
+    {
+      "from": 6,
+      "to": 7,
+      "valid": true,
+      "partial": false,
+      "points": 2
+    },
+    {
+      "from": 7,
+      "to": 8,
+      "valid": true,
+      "partial": false,
+      "points": 2
+    },
+    {
+      "from": 8,
+      "to": 9,
+      "valid": true,
+      "partial": false,
+      "points": 2
+    }
+  ],
+  "actors": 776,
+  "expected_map": "/Game/Maps/DoughWorldV2/Levels/L_DoughWorldV2_Desert.L_DoughWorldV2_Desert",
+  "source_tags": [
+    "SourceId=active_spore",
+    "SourceId=base_hut",
+    "SourceId=boss_core",
+    "SourceId=butter_waterfall",
+    "SourceId=core_altar",
+    "SourceId=corrupt_spore_core",
+    "SourceId=demo_route_1",
+    "SourceId=demo_route_2",
+    "SourceId=demo_route_3",
+    "SourceId=demo_route_4",
+    "SourceId=demo_route_5",
+    "SourceId=demo_route_6",
+    "SourceId=demo_route_7",
+    "SourceId=demo_route_8",
+    "SourceId=demo_route_9",
+    "SourceId=dough_neutral_1",
+    "SourceId=flour_demo",
+    "SourceId=gluten_whiskers_1",
+    "SourceId=gluten_whiskers_2",
+    "SourceId=hole_abyss",
+    "SourceId=hole_collapse_1",
+    "SourceId=hole_small_1",
+    "SourceId=hole_vent_1",
+    "SourceId=mech_gap_sentry",
+    "SourceId=mech_plate_1",
+    "SourceId=mech_wall_1",
+    "SourceId=mold_guard_meijun",
+    "SourceId=mold_guard_shendu_1",
+    "SourceId=mold_guard_shendu_2",
+    "SourceId=mycelium_meijun_1",
+    "SourceId=mycelium_meijun_2",
+    "SourceId=mycelium_shendu",
+    "SourceId=ruined_settlement",
+    "SourceId=small_mold_1",
+    "SourceId=small_mold_2",
+    "SourceId=small_mold_3",
+    "SourceId=special_yeast_strain",
+    "SourceId=spore_mold_1",
+    "SourceId=storage_repair",
+    "SourceId=thread_ambush_1",
+    "SourceId=workbench",
+    "SourceId=yeast_buds_fajiao",
+    "SourceId=yeast_neutral_fajiao",
+    "SourceId=yeast_neutral_jiaomu_1",
+    "SourceId=yeast_neutral_jiaomu_2"
+  ],
+  "nav_building": false
+}

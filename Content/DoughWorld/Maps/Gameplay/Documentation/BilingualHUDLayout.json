@@ -1,0 +1,6 @@
+{
+  "complete": true,
+  "errors": [],
+  "old_size": "<Struct 'Vector2D' (0x000001C190F9C760) {x: 185.000000, y: 242.000000}>",
+  "new_size": "<Struct 'Vector2D' (0x000001C1908BFCA0) {x: 300.000000, y: 290.000000}>"
+}

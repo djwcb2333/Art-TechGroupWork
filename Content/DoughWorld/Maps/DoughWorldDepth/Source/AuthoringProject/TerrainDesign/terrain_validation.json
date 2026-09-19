@@ -1,0 +1,534 @@
+{
+  "resolution": 505,
+  "height_min_m": -14.059618401522876,
+  "height_max_m": 15.75508300091245,
+  "raw_min": 30968,
+  "raw_max": 34785,
+  "quantisation_error_max_m": 0.003906243179409241,
+  "tutorial_route": [
+    {
+      "from_order": 1,
+      "to_order": 2,
+      "length_m": 37.985,
+      "start_z_m": 1.1525,
+      "end_z_m": 1.6496,
+      "max_longitudinal_slope_deg": 0.7541,
+      "max_surface_slope_deg": 0.7544,
+      "daily_12deg_pass": true,
+      "exploration_18deg_pass": true
+    },
+    {
+      "from_order": 2,
+      "to_order": 3,
+      "length_m": 38.844,
+      "start_z_m": 1.6496,
+      "end_z_m": 2.124,
+      "max_longitudinal_slope_deg": 3.0461,
+      "max_surface_slope_deg": 3.4311,
+      "daily_12deg_pass": true,
+      "exploration_18deg_pass": true
+    },
+    {
+      "from_order": 3,
+      "to_order": 4,
+      "length_m": 33.967,
+      "start_z_m": 2.124,
+      "end_z_m": 6.1837,
+      "max_longitudinal_slope_deg": 10.9686,
+      "max_surface_slope_deg": 10.9419,
+      "daily_12deg_pass": true,
+      "exploration_18deg_pass": true
+    },
+    {
+      "from_order": 4,
+      "to_order": 5,
+      "length_m": 30.782,
+      "start_z_m": 6.1837,
+      "end_z_m": 6.3662,
+      "max_longitudinal_slope_deg": 3.2836,
+      "max_surface_slope_deg": 5.2474,
+      "daily_12deg_pass": true,
+      "exploration_18deg_pass": true
+    },
+    {
+      "from_order": 5,
+      "to_order": 6,
+      "length_m": 29.74,
+      "start_z_m": 6.3662,
+      "end_z_m": 6.3748,
+      "max_longitudinal_slope_deg": 0.2451,
+      "max_surface_slope_deg": 0.2343,
+      "daily_12deg_pass": true,
+      "exploration_18deg_pass": true
+    },
+    {
+      "from_order": 6,
+      "to_order": 7,
+      "length_m": 27.528,
+      "start_z_m": 6.3748,
+      "end_z_m": 6.3883,
+      "max_longitudinal_slope_deg": 2.4838,
+      "max_surface_slope_deg": 2.4197,
+      "daily_12deg_pass": true,
+      "exploration_18deg_pass": true
+    },
+    {
+      "from_order": 7,
+      "to_order": 8,
+      "length_m": 19.465,
+      "start_z_m": 6.3883,
+      "end_z_m": 6.4195,
+      "max_longitudinal_slope_deg": 1.7763,
+      "max_surface_slope_deg": 2.4197,
+      "daily_12deg_pass": true,
+      "exploration_18deg_pass": true
+    },
+    {
+      "from_order": 8,
+      "to_order": 9,
+      "length_m": 33.967,
+      "start_z_m": 6.4195,
+      "end_z_m": 6.4756,
+      "max_longitudinal_slope_deg": 0.1028,
+      "max_surface_slope_deg": 0.0997,
+      "daily_12deg_pass": true,
+      "exploration_18deg_pass": true
+    }
+  ],
+  "facility_clearances": [
+    {
+      "source_id": "base_hut",
+      "xy_m": [
+        221.7,
+        243.3
+      ],
+      "tested_square_m": 14,
+      "z_m": 6.371150000000001,
+      "max_slope_deg": 0.230221340172371,
+      "build_2deg_pass": true
+    },
+    {
+      "source_id": "workbench",
+      "xy_m": [
+        221.7,
+        266.7
+      ],
+      "tested_square_m": 14,
+      "z_m": 6.406250000000001,
+      "max_slope_deg": 0.42887637535674317,
+      "build_2deg_pass": true
+    },
+    {
+      "source_id": "storage_repair",
+      "xy_m": [
+        196.7,
+        256.7
+      ],
+      "tested_square_m": 14,
+      "z_m": 6.36625,
+      "max_slope_deg": 0.2714082049752949,
+      "build_2deg_pass": true
+    }
+  ],
+  "three_noncollinear_anchors": [
+    {
+      "source_xy_m": [
+        233.3,
+        373.3
+      ],
+      "unreal_xy_cm": [
+        -1669.9999999999989,
+        12330.000000000002
+      ],
+      "roundtrip_xy_m": [
+        233.3,
+        373.3
+      ],
+      "max_error_m": 0.0
+    },
+    {
+      "source_xy_m": [
+        123.3,
+        160.0
+      ],
+      "unreal_xy_cm": [
+        -12670.0,
+        -9000.0
+      ],
+      "roundtrip_xy_m": [
+        123.3,
+        160.0
+      ],
+      "max_error_m": 0.0
+    },
+    {
+      "source_xy_m": [
+        410.0,
+        140.0
+      ],
+      "unreal_xy_cm": [
+        16000.0,
+        -11000.0
+      ],
+      "roundtrip_xy_m": [
+        410.0,
+        140.0
+      ],
+      "max_error_m": 0.0
+    }
+  ],
+  "source_xy_mutations": 0,
+  "demo_order_mutations": 0,
+  "unmet_constraints": [],
+  "secondary_path_reports": {
+    "base_to_wall": [
+      {
+        "from_order": 0,
+        "to_order": 1,
+        "length_m": 20.287,
+        "start_z_m": 6.3662,
+        "end_z_m": 6.3662,
+        "max_longitudinal_slope_deg": 0.0,
+        "max_surface_slope_deg": 0.0,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 1,
+        "to_order": 2,
+        "length_m": 21.151,
+        "start_z_m": 6.3662,
+        "end_z_m": 5.6496,
+        "max_longitudinal_slope_deg": 7.0495,
+        "max_surface_slope_deg": 7.2008,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 2,
+        "to_order": 3,
+        "length_m": 21.633,
+        "start_z_m": 5.6496,
+        "end_z_m": 1.7847,
+        "max_longitudinal_slope_deg": 11.009,
+        "max_surface_slope_deg": 11.0065,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 3,
+        "to_order": 4,
+        "length_m": 16.13,
+        "start_z_m": 1.7847,
+        "end_z_m": 0.1511,
+        "max_longitudinal_slope_deg": 9.6199,
+        "max_surface_slope_deg": 9.915,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      }
+    ],
+    "wall_to_ferment": [
+      {
+        "from_order": 0,
+        "to_order": 1,
+        "length_m": 16.388,
+        "start_z_m": 0.1511,
+        "end_z_m": 1.2538,
+        "max_longitudinal_slope_deg": 8.9257,
+        "max_surface_slope_deg": 8.7957,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 1,
+        "to_order": 2,
+        "length_m": 21.932,
+        "start_z_m": 1.2538,
+        "end_z_m": 3.6478,
+        "max_longitudinal_slope_deg": 6.8371,
+        "max_surface_slope_deg": 6.2451,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 2,
+        "to_order": 3,
+        "length_m": 28.178,
+        "start_z_m": 3.6478,
+        "end_z_m": 5.99,
+        "max_longitudinal_slope_deg": 4.9573,
+        "max_surface_slope_deg": 5.481,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 3,
+        "to_order": 4,
+        "length_m": 22.091,
+        "start_z_m": 5.99,
+        "end_z_m": 6.6939,
+        "max_longitudinal_slope_deg": 2.7924,
+        "max_surface_slope_deg": 3.3268,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 4,
+        "to_order": 5,
+        "length_m": 18.636,
+        "start_z_m": 6.6939,
+        "end_z_m": 6.8492,
+        "max_longitudinal_slope_deg": 1.0792,
+        "max_surface_slope_deg": 1.1385,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 5,
+        "to_order": 6,
+        "length_m": 19.424,
+        "start_z_m": 6.8492,
+        "end_z_m": 7.401,
+        "max_longitudinal_slope_deg": 1.9242,
+        "max_surface_slope_deg": 1.8631,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 6,
+        "to_order": 7,
+        "length_m": 17.807,
+        "start_z_m": 7.401,
+        "end_z_m": 7.9968,
+        "max_longitudinal_slope_deg": 1.9298,
+        "max_surface_slope_deg": 1.9298,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      }
+    ],
+    "sentry_to_yeast": [
+      {
+        "from_order": 0,
+        "to_order": 1,
+        "length_m": 14.481,
+        "start_z_m": 7.9968,
+        "end_z_m": 8.3488,
+        "max_longitudinal_slope_deg": 3.1912,
+        "max_surface_slope_deg": 3.1167,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 1,
+        "to_order": 2,
+        "length_m": 13.292,
+        "start_z_m": 8.3488,
+        "end_z_m": 8.5989,
+        "max_longitudinal_slope_deg": 1.3393,
+        "max_surface_slope_deg": 1.2484,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 2,
+        "to_order": 3,
+        "length_m": 21.411,
+        "start_z_m": 8.5989,
+        "end_z_m": 8.9996,
+        "max_longitudinal_slope_deg": 1.3923,
+        "max_surface_slope_deg": 1.5108,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 3,
+        "to_order": 4,
+        "length_m": 35.362,
+        "start_z_m": 8.9996,
+        "end_z_m": 9.0994,
+        "max_longitudinal_slope_deg": 0.2597,
+        "max_surface_slope_deg": 0.6171,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      }
+    ],
+    "base_to_mold": [
+      {
+        "from_order": 0,
+        "to_order": 1,
+        "length_m": 22.726,
+        "start_z_m": 6.3883,
+        "end_z_m": 4.4391,
+        "max_longitudinal_slope_deg": 6.6653,
+        "max_surface_slope_deg": 6.236,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 1,
+        "to_order": 2,
+        "length_m": 23.022,
+        "start_z_m": 4.4391,
+        "end_z_m": 1.398,
+        "max_longitudinal_slope_deg": 7.7879,
+        "max_surface_slope_deg": 7.973,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 2,
+        "to_order": 3,
+        "length_m": 23.087,
+        "start_z_m": 1.398,
+        "end_z_m": -1.9873,
+        "max_longitudinal_slope_deg": 8.379,
+        "max_surface_slope_deg": 8.4859,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 3,
+        "to_order": 4,
+        "length_m": 25.495,
+        "start_z_m": -1.9873,
+        "end_z_m": -4.2417,
+        "max_longitudinal_slope_deg": 7.2151,
+        "max_surface_slope_deg": 6.6304,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      }
+    ],
+    "mold_alternate": [
+      {
+        "from_order": 0,
+        "to_order": 1,
+        "length_m": 18.385,
+        "start_z_m": -4.2417,
+        "end_z_m": -4.2998,
+        "max_longitudinal_slope_deg": 1.9228,
+        "max_surface_slope_deg": 2.5045,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 1,
+        "to_order": 2,
+        "length_m": 27.019,
+        "start_z_m": -4.2998,
+        "end_z_m": -4.45,
+        "max_longitudinal_slope_deg": 0.3374,
+        "max_surface_slope_deg": 0.3257,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 2,
+        "to_order": 3,
+        "length_m": 32.249,
+        "start_z_m": -4.45,
+        "end_z_m": -4.5998,
+        "max_longitudinal_slope_deg": 0.2787,
+        "max_surface_slope_deg": 0.2892,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 3,
+        "to_order": 4,
+        "length_m": 24.739,
+        "start_z_m": -4.5998,
+        "end_z_m": -4.7,
+        "max_longitudinal_slope_deg": 0.2564,
+        "max_surface_slope_deg": 0.2612,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 4,
+        "to_order": 5,
+        "length_m": 25.179,
+        "start_z_m": -4.7,
+        "end_z_m": -4.7987,
+        "max_longitudinal_slope_deg": 0.2291,
+        "max_surface_slope_deg": 0.2303,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 5,
+        "to_order": 6,
+        "length_m": 21.471,
+        "start_z_m": -4.7987,
+        "end_z_m": -4.7474,
+        "max_longitudinal_slope_deg": 0.3789,
+        "max_surface_slope_deg": 0.4868,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 6,
+        "to_order": 7,
+        "length_m": 3.441,
+        "start_z_m": -4.7474,
+        "end_z_m": -4.703,
+        "max_longitudinal_slope_deg": 0.8325,
+        "max_surface_slope_deg": 0.8325,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      }
+    ],
+    "mold_ruins": [
+      {
+        "from_order": 0,
+        "to_order": 1,
+        "length_m": 29.069,
+        "start_z_m": -1.9873,
+        "end_z_m": -3.2979,
+        "max_longitudinal_slope_deg": 8.0061,
+        "max_surface_slope_deg": 9.0881,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 1,
+        "to_order": 2,
+        "length_m": 22.361,
+        "start_z_m": -3.2979,
+        "end_z_m": -3.9965,
+        "max_longitudinal_slope_deg": 2.0056,
+        "max_surface_slope_deg": 2.1661,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 2,
+        "to_order": 3,
+        "length_m": 17.14,
+        "start_z_m": -3.9965,
+        "end_z_m": -4.2998,
+        "max_longitudinal_slope_deg": 1.4167,
+        "max_surface_slope_deg": 1.394,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      },
+      {
+        "from_order": 3,
+        "to_order": 4,
+        "length_m": 19.465,
+        "start_z_m": -4.2998,
+        "end_z_m": -4.4986,
+        "max_longitudinal_slope_deg": 0.6456,
+        "max_surface_slope_deg": 0.7449,
+        "daily_12deg_pass": true,
+        "exploration_18deg_pass": true
+      }
+    ]
+  },
+  "offline_only": true,
+  "file_roundtrip_checks": {
+    "raw_png16_equal": true,
+    "raw_rg_equal": true,
+    "r16_bytes": 510050
+  },
+  "all_secondary_daily_routes_pass": true
+}

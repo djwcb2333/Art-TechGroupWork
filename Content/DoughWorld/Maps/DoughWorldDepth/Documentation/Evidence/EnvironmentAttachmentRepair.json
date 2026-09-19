@@ -1,0 +1,472 @@
+[
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_8",
+    "label": "DeepUpperNS-1_0",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_9",
+    "label": "DeepUpperNS-1_1",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_10",
+    "label": "DeepUpperNS-1_2",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_11",
+    "label": "DeepUpperNS-1_3",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_12",
+    "label": "DeepUpperNS-1_4",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_13",
+    "label": "DeepUpperNS-1_5",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_14",
+    "label": "DeepUpperNS-1_6",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_15",
+    "label": "DeepUpperNS-1_7",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_16",
+    "label": "DeepUpperNS-1_8",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_17",
+    "label": "DeepUpperNS-1_9",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_18",
+    "label": "DeepUpperEW-1_0",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_19",
+    "label": "DeepUpperEW-1_1",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_20",
+    "label": "DeepUpperEW-1_2",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_21",
+    "label": "DeepUpperEW-1_3",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_22",
+    "label": "DeepUpperEW-1_4",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_23",
+    "label": "DeepUpperEW-1_5",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_24",
+    "label": "DeepUpperEW-1_6",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_25",
+    "label": "DeepUpperEW-1_7",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_26",
+    "label": "DeepUpperEW-1_8",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_27",
+    "label": "DeepUpperNS1_0",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_28",
+    "label": "DeepUpperNS1_1",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_29",
+    "label": "DeepUpperNS1_2",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_30",
+    "label": "DeepUpperNS1_3",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_31",
+    "label": "DeepUpperNS1_4",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_32",
+    "label": "DeepUpperNS1_5",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_33",
+    "label": "DeepUpperNS1_6",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_34",
+    "label": "DeepUpperNS1_7",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_35",
+    "label": "DeepUpperNS1_8",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_36",
+    "label": "DeepUpperNS1_9",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_37",
+    "label": "DeepUpperEW1_0",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_38",
+    "label": "DeepUpperEW1_1",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_39",
+    "label": "DeepUpperEW1_2",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_40",
+    "label": "DeepUpperEW1_3",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_41",
+    "label": "DeepUpperEW1_4",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_42",
+    "label": "DeepUpperEW1_5",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_43",
+    "label": "DeepUpperEW1_6",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_44",
+    "label": "DeepUpperEW1_7",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_45",
+    "label": "DeepUpperEW1_8",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_132",
+    "label": "AltarNicheLintel",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_133",
+    "label": "DeepLanding_BackRock",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_134",
+    "label": "DWG__jidi_02__buildings__base_hut__west_upper",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_135",
+    "label": "DWG__jidi_02__buildings__base_hut__east_upper",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_136",
+    "label": "DWG__jidi_02__buildings__base_hut__back_upper",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_137",
+    "label": "DWG__jidi_02__buildings__base_hut__front_left_upper",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_138",
+    "label": "DWG__jidi_02__buildings__base_hut__front_right_upper",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_148",
+    "label": "DWG__meijun_03__buildings__ruined_settlement__west_fragment_upper",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  },
+  {
+    "actor": "/Game/Maps/DoughWorldDepth/Levels/L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.DepthEnvironmentActor_149",
+    "label": "DWG__meijun_03__buildings__ruined_settlement__north_fragment_upper",
+    "was_detached": true,
+    "was_simulating_physics": false,
+    "root_mobility_before": "<ComponentMobility.MOVABLE: 2>",
+    "mesh_mobility_before": "<ComponentMobility.STATIC: 0>",
+    "attached_after": true,
+    "transform_error_cm": 0.0
+  }
+]

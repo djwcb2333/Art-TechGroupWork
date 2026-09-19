@@ -1,0 +1,11 @@
+{
+  "target": "E:\\Unreal Project\\GDATtest\\Saved\\Config\\WindowsEditor\\EditorPerProjectUserSettings.ini",
+  "backup": "E:\\GDAT\\\u7b2c\u4e00\u5b66\u671f\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\DoughWorldV3\\Backups\\EditorPerProjectUserSettings_BeforeSourceExclusions.ini",
+  "excluded": [
+    "Maps/DoughWorldDepth/Source/*",
+    "Maps/DoughWorldDepth/Documentation/*"
+  ],
+  "global_auto_import_preserved": true,
+  "before_sha256": "4d6db43a313291fcd0e3211a358cb007228a2049b0dcc35a52f05178aa366b33",
+  "after_sha256": "2bf58d8165c9c4446ccbe80bf467eb30aff041c9c96d56badcf78bd5176e052d"
+}

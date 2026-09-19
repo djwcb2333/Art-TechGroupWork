@@ -1,0 +1,46 @@
+{
+  "complete": true,
+  "date": "2026-09-16T15:25:01.009363",
+  "project": "E:\\Unreal Project\\GDATtest\\GDATtest.uproject",
+  "editor_build": "Succeeded",
+  "runtime_checks": {
+    "FrontendRuntimeQA": 20,
+    "MotionRuntimeQA": 34,
+    "GamePagesRuntimeQA": 15
+  },
+  "runtime_total": 69,
+  "actual_start_and_load_button_path_verified": true,
+  "custom_editable_fields": 319,
+  "asset_snapshots": 31,
+  "browser_passed": true,
+  "save_hashes_unchanged": {
+    "DoughWorld_Final_Slot_3.sav": "b25f3f159f0da8c156018981dfc929e117f163a824d7cc63eec4c7ba1a3628aa"
+  },
+  "source_sha256": {
+    "DWFrontendAuthoringLibrary.cpp": "3f0cd1d904aaa4802ff0cf61fd61830c236015270d6b0224b31e6a12e32cac53",
+    "DWFrontendAuthoringLibrary.h": "98bf2820af89403c36a5c7522a1440abfa667fdf7a28d3ed0bfefacac87c0b55",
+    "DWFrontendHUD.cpp": "6f83826ce5659c74b8465f7bfc512ced392e5b0a0f49a13bd8e7e44260c56bbc",
+    "DWFrontendHUD.h": "109bbd9b7b0ebda05d0feba30f6e00a68e4f1cd1dc50e21ba0a8542479546ac9",
+    "DWFrontendWidget.cpp": "62302a914a4bf2741c5d2b666d3df53b2e99a4dddfe203df5e859ef749f0581f",
+    "DWFrontendWidget.h": "7002de9ef0adc2af611f66ae4b96fca3b91146851466610b26de8af4589a0309",
+    "DWGameplayWidget.cpp": "dfdd5455cd20515788545ca90415bb1b719fd524d514d41db9215bad025c4055",
+    "DWGameplayWidget.h": "8567b5eaebdeef9530ddb55481fd70f8f3897caf41878dae36a368152ab9c533",
+    "DWUIBounceComponent.cpp": "a67f7beee4bb617c60fdc7e240850be9f6577c636e2f310042185e571f3485e8",
+    "DWUIBounceComponent.h": "22c6dc0b736d34a2f0f0f4299c80590f63dc9df37d5e7da9f1d18f047a082546"
+  },
+  "new_asset_sha256": {
+    "DoughWorld/Maps/Gameplay/Frontend/Blueprints/BP_DWFrontendGameMode.uasset": "b3e13e4e2d0e6a2273ff622489a667c56c515a17efdbd2e54f6d47a0f8f9cc90",
+    "DoughWorld/Maps/Gameplay/Frontend/Blueprints/BP_DWFrontendHUD.uasset": "d5e48b975ec61443286f7b937b35d4b5011b67e659e13d03eafbea35503bc35e",
+    "DoughWorld/Maps/Gameplay/Frontend/Levels/L_DWMainMenu_Showcase.umap": "cf263bf754f13dc68b96b7045b2da124fead723a3742b14c16ca9ba99986a3f3",
+    "DoughWorld/Maps/Gameplay/Frontend/Materials/M_Menu_BiscuitPath.uasset": "99a7e385aa0df07bd791c1bd6e404bbcbe3847166d9f6c888888f68afb840124",
+    "DoughWorld/Maps/Gameplay/Frontend/Materials/M_Menu_DoughGround.uasset": "b41940adf40aaeabf2317396365a7e30abd81ee77c2701cf0e38c00d18263f99",
+    "DoughWorld/Maps/Gameplay/Frontend/Materials/M_Menu_SoftMeadow.uasset": "049db8d7f79400bcd52ce62c324b5709c20499b13e70501f8a6bfde2f887cdaf",
+    "DoughWorld/Maps/Gameplay/Frontend/UI/WBP_DWFrontend.uasset": "74c7818d53a0b4bca7a7ec3be43317b0e956a695fdf775c9c1d29361123a369f"
+  },
+  "independent_exe_packaged": false,
+  "fps_benchmarked": false,
+  "placeholders": [
+    "team logo",
+    "new optional audio slots"
+  ]
+}

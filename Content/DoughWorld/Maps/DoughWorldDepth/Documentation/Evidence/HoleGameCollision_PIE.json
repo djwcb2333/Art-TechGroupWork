@@ -1,0 +1,190 @@
+{
+  "world": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth",
+  "pie": true,
+  "landscapes": [
+    "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.Landscape_0"
+  ],
+  "rays": [
+    {
+      "id": "hole_small_1",
+      "channel": "Camera",
+      "complex": false,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "hole_small_1",
+      "channel": "Camera",
+      "complex": true,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "hole_small_1",
+      "channel": "Visibility in PIE",
+      "complex": true,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "hole_collapse_1",
+      "channel": "Camera",
+      "complex": false,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "hole_collapse_1",
+      "channel": "Camera",
+      "complex": true,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "hole_collapse_1",
+      "channel": "Visibility in PIE",
+      "complex": true,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "hole_vent_1",
+      "channel": "Camera",
+      "complex": false,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "hole_vent_1",
+      "channel": "Camera",
+      "complex": true,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "hole_vent_1",
+      "channel": "Visibility in PIE",
+      "complex": true,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "hole_abyss",
+      "channel": "Camera",
+      "complex": false,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "hole_abyss",
+      "channel": "Camera",
+      "complex": true,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "hole_abyss",
+      "channel": "Visibility in PIE",
+      "complex": true,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "bridge_underpass",
+      "channel": "Camera",
+      "complex": false,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "bridge_underpass",
+      "channel": "Camera",
+      "complex": true,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "bridge_underpass",
+      "channel": "Visibility in PIE",
+      "complex": true,
+      "expected_hole": true,
+      "hit": false,
+      "passed": true
+    },
+    {
+      "id": "solid_corner",
+      "channel": "Camera",
+      "complex": false,
+      "expected_hole": false,
+      "hit": true,
+      "passed": true,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.Landscape_0",
+      "component": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.Landscape_0.LandscapeHeightfieldCollisionComponent_0",
+      "z_m": 5.897390842437744
+    },
+    {
+      "id": "solid_corner",
+      "channel": "Camera",
+      "complex": true,
+      "expected_hole": false,
+      "hit": true,
+      "passed": true,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.Landscape_0",
+      "component": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.Landscape_0.LandscapeHeightfieldCollisionComponent_0",
+      "z_m": 5.897390842437744
+    },
+    {
+      "id": "solid_corner",
+      "channel": "Visibility in PIE",
+      "complex": true,
+      "expected_hole": false,
+      "hit": true,
+      "passed": true
+    },
+    {
+      "id": "solid_south",
+      "channel": "Camera",
+      "complex": false,
+      "expected_hole": false,
+      "hit": true,
+      "passed": true,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.Landscape_0",
+      "component": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.Landscape_0.LandscapeHeightfieldCollisionComponent_51",
+      "z_m": 5.770289897918701
+    },
+    {
+      "id": "solid_south",
+      "channel": "Camera",
+      "complex": true,
+      "expected_hole": false,
+      "hit": true,
+      "passed": true,
+      "actor": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.Landscape_0",
+      "component": "/Game/Maps/DoughWorldDepth/Levels/UEDPIE_0_L_DoughWorld_Depth.L_DoughWorld_Depth:PersistentLevel.Landscape_0.LandscapeHeightfieldCollisionComponent_51",
+      "z_m": 5.770289897918701
+    },
+    {
+      "id": "solid_south",
+      "channel": "Visibility in PIE",
+      "complex": true,
+      "expected_hole": false,
+      "hit": true,
+      "passed": true
+    }
+  ],
+  "all_passed": true
+}

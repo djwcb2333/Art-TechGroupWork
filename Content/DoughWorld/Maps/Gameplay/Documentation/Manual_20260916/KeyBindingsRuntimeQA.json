@@ -1,0 +1,504 @@
+{
+  "complete": true,
+  "passed": true,
+  "qa_name": "QA_KEYS_20260916_010441",
+  "qa_slot_zero_based": 0,
+  "protected_user_slots": [
+    1,
+    2
+  ],
+  "checks": [
+    {
+      "phase": "guard",
+      "name": "Expected project",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "guard",
+      "name": "Expected flat prototype fixture map",
+      "passed": true,
+      "detail": "/Game/DoughWorld/Maps/Gameplay/Levels/UEDPIE_0_L_DoughWorld_GameplayPrototype.L_DoughWorld_GameplayPrototype"
+    },
+    {
+      "phase": "guard",
+      "name": "DW title and no active user slot",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "guard",
+      "name": "Only slot 1 may be used and must be empty",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "guard",
+      "name": "Create exact-name owned temporary slot",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "travel",
+      "name": "Travel entered only owned slot",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "travel",
+      "name": "Default 14 applied keys",
+      "passed": true,
+      "detail": {
+        "MoveForward": "W",
+        "MoveBackward": "S",
+        "MoveLeft": "A",
+        "MoveRight": "D",
+        "Dash": "SpaceBar",
+        "Sprint": "LeftShift",
+        "SprintAlternate": "RightShift",
+        "Harvest": "F",
+        "Transform": "E",
+        "Throw": "LeftMouseButton",
+        "CameraDrag": "RightMouseButton",
+        "Inventory": "B",
+        "Crafting": "Tab",
+        "PauseMenu": "Escape"
+      }
+    },
+    {
+      "phase": "travel",
+      "name": "ApplyInputBindings accepted=True",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "travel",
+      "name": "Apply queues deferred rebuild",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "remap_committed",
+      "name": "New applied keys committed on PlayerTick",
+      "passed": true,
+      "detail": {
+        "MoveForward": "Up",
+        "MoveBackward": "S",
+        "MoveLeft": "A",
+        "MoveRight": "D",
+        "Dash": "Q",
+        "Sprint": "LeftShift",
+        "SprintAlternate": "RightShift",
+        "Harvest": "G",
+        "Transform": "R",
+        "Throw": "LeftMouseButton",
+        "CameraDrag": "RightMouseButton",
+        "Inventory": "I",
+        "Crafting": "Tab",
+        "PauseMenu": "P"
+      }
+    },
+    {
+      "phase": "remap_committed",
+      "name": "Resource is focused",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "remap_committed",
+      "name": "Resource keycap is G",
+      "passed": true,
+      "detail": {
+        "time": 0.9768132008612156,
+        "location": [
+          207.0,
+          -350.0,
+          92.1499981880188
+        ],
+        "speed": 0.0,
+        "sprinting": false,
+        "paused": false,
+        "menu": "<DWMenuPage.NONE: 0>",
+        "pending": false,
+        "revision": 2,
+        "water_count": 0,
+        "harvest_progress": 0.0,
+        "yeast": false,
+        "keycap": "G"
+      }
+    },
+    {
+      "phase": "old_f_disabled",
+      "name": "Old F produces no water",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "new_g_harvests",
+      "name": "G actually harvests into inventory",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "new_g_harvests",
+      "name": "Gather progress advanced",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "new_g_harvests",
+      "name": "ApplyInputBindings accepted=False",
+      "passed": true,
+      "detail": "None"
+    },
+    {
+      "phase": "new_g_harvests",
+      "name": "Rejected conflicting keys preserve applied map",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "new_g_harvests",
+      "name": "ApplyInputBindings accepted=True",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "new_g_harvests",
+      "name": "ApplyInputBindings accepted=True",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "new_g_harvests",
+      "name": "ApplyInputBindings accepted=True",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reapply_ready",
+      "name": "Repeated apply leaves expected map",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "old_b_disabled",
+      "name": "Old B does not open inventory",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "new_i_open",
+      "name": "I opens inventory exactly once",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "inventory_hold_stable",
+      "name": "Held I does not retoggle",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "new_i_close",
+      "name": "Second I closes inventory",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "new_p_pause",
+      "name": "P opens pause and pauses game",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "new_p_resume",
+      "name": "P resumes while paused",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "old_w_disabled",
+      "name": "Old W does not move",
+      "passed": true,
+      "detail": [
+        -1400.0,
+        -1400.0,
+        92.1499981880188
+      ]
+    },
+    {
+      "phase": "new_up_moves",
+      "name": "Up actually moves pawn",
+      "passed": true,
+      "detail": [
+        -1325.753094256653,
+        -1325.7530951600866,
+        92.1499981880188
+      ]
+    },
+    {
+      "phase": "both_sprint_keys",
+      "name": "Both Shift keys produce sprint movement",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "right_sprint_stays",
+      "name": "Release left, right still sustains sprint",
+      "passed": true,
+      "detail": {
+        "time": 7.462782006710768,
+        "location": [
+          -921.0879239673296,
+          -921.0879297947156,
+          92.1499981880188
+        ],
+        "speed": 779.9999999999991,
+        "sprinting": true,
+        "paused": false,
+        "menu": "<DWMenuPage.NONE: 0>",
+        "pending": false,
+        "revision": 3,
+        "water_count": 1,
+        "harvest_progress": 0.0,
+        "yeast": false,
+        "keycap": "G"
+      }
+    },
+    {
+      "phase": "sprint_release",
+      "name": "Both Shift released ends sprint",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "old_space_disabled",
+      "name": "Old Space does not dash",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "new_q_dash",
+      "name": "Q actually produces short dash",
+      "passed": true,
+      "detail": [
+        282.9055045109295,
+        282.9055045109298,
+        92.1499981880188
+      ]
+    },
+    {
+      "phase": "new_q_dash",
+      "name": "Prepare full transformation on test pawn",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "old_e_disabled",
+      "name": "Old E does not transform",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "new_r_transform",
+      "name": "R actually changes form",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "phase": "new_r_transform",
+      "name": "Reset request accepted",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "phase": "reset_defaults",
+      "name": "Reset restores 14 default applied keys",
+      "passed": true,
+      "detail": {
+        "MoveForward": "W",
+        "MoveBackward": "S",
+        "MoveLeft": "A",
+        "MoveRight": "D",
+        "Dash": "SpaceBar",
+        "Sprint": "LeftShift",
+        "SprintAlternate": "RightShift",
+        "Harvest": "F",
+        "Transform": "E",
+        "Throw": "LeftMouseButton",
+        "CameraDrag": "RightMouseButton",
+        "Inventory": "B",
+        "Crafting": "Tab",
+        "PauseMenu": "Escape"
+      }
+    }
+  ],
+  "phases": [
+    {
+      "phase": "guard",
+      "sample_count": 0,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\00_guard.json"
+    },
+    {
+      "phase": "travel",
+      "sample_count": 0,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\01_travel.json"
+    },
+    {
+      "phase": "remap_committed",
+      "sample_count": 27,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\02_remap_committed.json"
+    },
+    {
+      "phase": "old_f_disabled",
+      "sample_count": 55,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\03_old_f_disabled.json"
+    },
+    {
+      "phase": "new_g_harvests",
+      "sample_count": 81,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\04_new_g_harvests.json"
+    },
+    {
+      "phase": "reapply_ready",
+      "sample_count": 17,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\05_reapply_ready.json"
+    },
+    {
+      "phase": "old_b_disabled",
+      "sample_count": 15,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\06_old_b_disabled.json"
+    },
+    {
+      "phase": "new_i_open",
+      "sample_count": 19,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\07_new_i_open.json"
+    },
+    {
+      "phase": "inventory_hold_stable",
+      "sample_count": 36,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\08_inventory_hold_stable.json"
+    },
+    {
+      "phase": "inventory_released",
+      "sample_count": 10,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\09_inventory_released.json"
+    },
+    {
+      "phase": "new_i_close",
+      "sample_count": 15,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\10_new_i_close.json"
+    },
+    {
+      "phase": "new_p_pause",
+      "sample_count": 15,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\11_new_p_pause.json"
+    },
+    {
+      "phase": "new_p_resume",
+      "sample_count": 15,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\12_new_p_resume.json"
+    },
+    {
+      "phase": "old_w_disabled",
+      "sample_count": 27,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\13_old_w_disabled.json"
+    },
+    {
+      "phase": "new_up_moves",
+      "sample_count": 27,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\14_new_up_moves.json"
+    },
+    {
+      "phase": "both_sprint_keys",
+      "sample_count": 24,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\15_both_sprint_keys.json"
+    },
+    {
+      "phase": "right_sprint_stays",
+      "sample_count": 24,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\16_right_sprint_stays.json"
+    },
+    {
+      "phase": "sprint_release",
+      "sample_count": 18,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\17_sprint_release.json"
+    },
+    {
+      "phase": "dash_settle",
+      "sample_count": 18,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\18_dash_settle.json"
+    },
+    {
+      "phase": "old_space_disabled",
+      "sample_count": 24,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\19_old_space_disabled.json"
+    },
+    {
+      "phase": "new_q_dash",
+      "sample_count": 40,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\20_new_q_dash.json"
+    },
+    {
+      "phase": "old_e_disabled",
+      "sample_count": 12,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\21_old_e_disabled.json"
+    },
+    {
+      "phase": "new_r_transform",
+      "sample_count": 15,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\22_new_r_transform.json"
+    },
+    {
+      "phase": "reset_defaults",
+      "sample_count": 18,
+      "file": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\MaintenanceManual_20260916\\KeyBindingsQAStages\\20260916_010441\\23_reset_defaults.json"
+    }
+  ],
+  "errors": [],
+  "cleanup": [
+    {
+      "action": "Release all owned synthetic input",
+      "ok": true
+    },
+    {
+      "action": "Restore background throttle",
+      "ok": true
+    },
+    {
+      "action": "Restore original language",
+      "ok": true
+    },
+    {
+      "action": "Return to title without saving",
+      "ok": true
+    },
+    {
+      "action": "Delete only exact-name owned slot 1",
+      "ok": true
+    },
+    {
+      "action": "All original save files unchanged; user slots 2 and 3 protected",
+      "ok": true
+    }
+  ],
+  "limits": [
+    "Keyboard bridge tests controller input, not physical hardware/Slate text focus.",
+    "Throw and camera drag default mappings are inspected; this run does not claim their remapped behavior was exercised.",
+    "No packaged-build or game-settings rebinding UI claim."
+  ],
+  "current_phase": "cleanup_wait",
+  "elapsed_seconds": 11.422,
+  "original_save_sha256": {
+    "0": null,
+    "1": "825420a7d3d5fb2841743081cdcfaa586b7e80cb9eca40c187527c28ff7168e2",
+    "2": "e69795e373c09617b926a2842d5d744815ab10996d428ee9a460cc8f3a0bbcb6"
+  },
+  "reset_return": "",
+  "final_save_sha256": {
+    "0": null,
+    "1": "825420a7d3d5fb2841743081cdcfaa586b7e80cb9eca40c187527c28ff7168e2",
+    "2": "e69795e373c09617b926a2842d5d744815ab10996d428ee9a460cc8f3a0bbcb6"
+  }
+}
