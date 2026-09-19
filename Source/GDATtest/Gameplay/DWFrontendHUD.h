@@ -28,7 +28,7 @@ public:
 
     /** WidgetClass in a HUD Blueprint takes precedence over this fallback path. */
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Frontend|UI")
-    FSoftClassPath FrontendWidgetClassPath = FSoftClassPath(TEXT("/Game/DoughWorld/Maps/Gameplay/Frontend/UI/WBP_DWFrontend.WBP_DWFrontend_C"));
+    FSoftClassPath FrontendWidgetClassPath = FSoftClassPath(TEXT("/Game/DoughWorld/UI/Frontend/WBP_DWFrontend.WBP_DWFrontend_C"));
 
     /** A placed CameraActor's Actor Tag, object name, or editor label. Tag also works in packaged games. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Frontend|Camera") FName MenuCameraTag = TEXT("DWMenuCamera");

@@ -165,7 +165,7 @@ namespace
 
     UFont* FrontendFont()
     {
-        UFont* Font = LoadObject<UFont>(nullptr, TEXT("/Game/DoughWorld/Maps/Gameplay/UI/Interaction/Fonts/F_DWHandDrawn.F_DWHandDrawn"));
+        UFont* Font = LoadObject<UFont>(nullptr, TEXT("/Game/DoughWorld/UI/Shared/Fonts/F_DWHandDrawn.F_DWHandDrawn"));
         return Font ? Font : LoadObject<UFont>(nullptr, TEXT("/Engine/EngineFonts/Roboto.Roboto"));
     }
 
@@ -419,7 +419,7 @@ bool UDWFrontendAuthoringLibrary::CreateFrontendUIAssets()
         FrontendBuildReport = TEXT("PRESERVED: destination package already exists; no overwrite attempted: ") + Destination;
         return false;
     }
-    UWidgetBlueprint* Source = LoadObject<UWidgetBlueprint>(nullptr, TEXT("/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWGameplay.WBP_DWGameplay"));
+    UWidgetBlueprint* Source = LoadObject<UWidgetBlueprint>(nullptr, TEXT("/Game/DoughWorld/UI/WBP_DWGameplay.WBP_DWGameplay"));
     if (!Source || !Source->WidgetTree || !Source->GeneratedClass || !Source->ParentClass ||
         !UDWFrontendWidget::StaticClass()->IsChildOf(Source->ParentClass))
     {

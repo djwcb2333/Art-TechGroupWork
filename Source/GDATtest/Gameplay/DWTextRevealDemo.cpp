@@ -34,7 +34,7 @@ ADWTextRevealDemoGameMode::ADWTextRevealDemoGameMode(){HUDClass=ADWTextRevealDem
 void ADWTextRevealDemoHUD::BeginPlay()
 {
  Super::BeginPlay();
- auto* Class=LoadClass<UDWTextRevealDemoWidget>(nullptr,TEXT("/Game/DoughWorld/Maps/Gameplay/Dialogue/UI/WBP_DWTextRevealDemo.WBP_DWTextRevealDemo_C"));
+ auto* Class=LoadClass<UDWTextRevealDemoWidget>(nullptr,TEXT("/Game/DoughWorld/Cinematics/UI/WBP_DWTextRevealDemo.WBP_DWTextRevealDemo_C"));
  auto* PC=GetOwningPlayerController();if(!Class||!PC)return;
  DemoWidget=CreateWidget<UDWTextRevealDemoWidget>(PC,Class);if(DemoWidget){DemoWidget->AddToViewport();PC->bShowMouseCursor=true;PC->SetInputMode(FInputModeUIOnly());}
 }
@@ -76,8 +76,8 @@ namespace
 bool UDWTextRevealAuthoringLibrary::CreateDemoAssets()
 {
 #if WITH_EDITOR
- auto* Profile=LoadObject<UDWTextVoiceProfile>(nullptr,TEXT("/Game/DoughWorld/Maps/Gameplay/Dialogue/Data/VoicePresets/DA_TextVoice_Squeaky.DA_TextVoice_Squeaky"));if(!Profile)return false;
- const FString P=TEXT("/Game/DoughWorld/Maps/Gameplay/Dialogue/UI/WBP_DWTextRevealDemo");
+ auto* Profile=LoadObject<UDWTextVoiceProfile>(nullptr,TEXT("/Game/DoughWorld/Cinematics/Dialogue/Data/VoicePresets/DA_TextVoice_Squeaky.DA_TextVoice_Squeaky"));if(!Profile)return false;
+ const FString P=TEXT("/Game/DoughWorld/Cinematics/UI/WBP_DWTextRevealDemo");
  if(LoadObject<UWidgetBlueprint>(nullptr,*(P+TEXT(".WBP_DWTextRevealDemo"))))return true;
  auto* BP=Cast<UWidgetBlueprint>(FKismetEditorUtilities::CreateBlueprint(UDWTextRevealDemoWidget::StaticClass(),CreatePackage(*P),TEXT("WBP_DWTextRevealDemo"),BPTYPE_Normal,UWidgetBlueprint::StaticClass(),UWidgetBlueprintGeneratedClass::StaticClass()));if(!BP)return false;
  UWidgetTree* Tree=BP->WidgetTree;
@@ -114,7 +114,7 @@ bool UDWTextRevealAuthoringLibrary::CreateDemoAssets()
 bool UDWTextRevealAuthoringLibrary::EnsureFrontendRevealComponents()
 {
 #if WITH_EDITOR
- auto* BP=LoadObject<UWidgetBlueprint>(nullptr,TEXT("/Game/DoughWorld/Maps/Gameplay/Frontend/UI/WBP_DWFrontend.WBP_DWFrontend"));
+ auto* BP=LoadObject<UWidgetBlueprint>(nullptr,TEXT("/Game/DoughWorld/UI/Frontend/WBP_DWFrontend.WBP_DWFrontend"));
  if(!BP||!BP->WidgetTree)return false;
  auto* Ext=UWidgetBlueprintExtension::RequestExtension<UUIComponentWidgetBlueprintExtension>(BP);FText Error;
  for(FName Name:{FName(TEXT("LogoText")),FName(TEXT("TitleText"))})

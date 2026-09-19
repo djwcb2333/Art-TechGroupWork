@@ -51,11 +51,11 @@ void UDWInteractionPromptComponent::BeginPlay()
 {
     // These assets are created after the native class is compiled. Never load them on the CDO.
     if (!Style)
-        Style = Cast<UDWInteractionPromptStyle>(FSoftObjectPath(TEXT("/Game/DoughWorld/Maps/Gameplay/UI/Interaction/DA_DWInteractionPromptStyle.DA_DWInteractionPromptStyle")).TryLoad());
+        Style = Cast<UDWInteractionPromptStyle>(FSoftObjectPath(TEXT("/Game/DoughWorld/UI/Interaction/DA_DWInteractionPromptStyle.DA_DWInteractionPromptStyle")).TryLoad());
     if (!Style) Style = NewObject<UDWInteractionPromptStyle>(this);
     if (!GetWidgetClass())
     {
-        const FSoftClassPath DefaultWidget(TEXT("/Game/DoughWorld/Maps/Gameplay/UI/Interaction/WBP_DWInteractionPrompt.WBP_DWInteractionPrompt_C"));
+        const FSoftClassPath DefaultWidget(TEXT("/Game/DoughWorld/UI/Interaction/WBP_DWInteractionPrompt.WBP_DWInteractionPrompt_C"));
         SetWidgetClass(DefaultWidget.TryLoadClass<UDWInteractionPromptWidget>());
     }
     if (GetWidgetClass() && !GetWidgetClass()->IsChildOf(UDWInteractionPromptWidget::StaticClass()))

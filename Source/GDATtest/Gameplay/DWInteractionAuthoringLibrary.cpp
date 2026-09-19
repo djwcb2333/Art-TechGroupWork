@@ -41,7 +41,7 @@ bool UDWInteractionAuthoringLibrary::CreateInteractionWidget(bool bReplaceExisti
 {
 #if WITH_EDITOR
     DWPromptBuildReport.Reset();
-    const FString Path=TEXT("/Game/DoughWorld/Maps/Gameplay/UI/Interaction/WBP_DWInteractionPrompt"),Name=TEXT("WBP_DWInteractionPrompt");
+    const FString Path=TEXT("/Game/DoughWorld/UI/Interaction/WBP_DWInteractionPrompt"),Name=TEXT("WBP_DWInteractionPrompt");
     UWidgetBlueprint* BP=LoadObject<UWidgetBlueprint>(nullptr,*(Path+TEXT(".")+Name));
     if(BP&&!bReplaceExisting){DWPromptBuildReport=TEXT("Preserved existing interaction Designer layout.");return BP->ParentClass==UDWInteractionPromptWidget::StaticClass();}
     if(BP&&BP->ParentClass!=UDWInteractionPromptWidget::StaticClass()){DWPromptBuildReport=TEXT("Incompatible parent; preserved asset.");return false;}
@@ -58,8 +58,8 @@ bool UDWInteractionAuthoringLibrary::CreateInteractionWidget(bool bReplaceExisti
     auto* Visual=Tree->ConstructWidget<USizeBox>(USizeBox::StaticClass(),TEXT("PromptVisual"));Visual->bIsVariable=true;Visual->SetWidthOverride(280);Visual->SetHeightOverride(120);Visual->SetRenderTransformPivot(FVector2D(.5f,1));
     auto* CS=Root->AddChildToCanvas(Visual);CS->SetAnchors(FAnchors(.5f,1.f));CS->SetAlignment(FVector2D(.5f,1.f));CS->SetOffsets(FMargin(0,-18,280,120));
     auto* V=Tree->ConstructWidget<UVerticalBox>(UVerticalBox::StaticClass(),TEXT("PromptLayout"));Visual->SetContent(V);
-    UFont* CJK=LoadObject<UFont>(nullptr,TEXT("/Game/DoughWorld/Maps/Gameplay/UI/Interaction/Fonts/F_InteractionChinese.F_InteractionChinese"));
-    UFont* Latin=LoadObject<UFont>(nullptr,TEXT("/Game/DoughWorld/Maps/Gameplay/UI/Interaction/Fonts/F_InteractionLatin.F_InteractionLatin"));
+    UFont* CJK=LoadObject<UFont>(nullptr,TEXT("/Game/DoughWorld/UI/Shared/Fonts/F_InteractionChinese.F_InteractionChinese"));
+    UFont* Latin=LoadObject<UFont>(nullptr,TEXT("/Game/DoughWorld/UI/Shared/Fonts/F_InteractionLatin.F_InteractionLatin"));
     UFont* Fallback=LoadObject<UFont>(nullptr,TEXT("/Engine/EngineFonts/Roboto.Roboto"));
     auto Text=[&](FName N,const TCHAR* Value,int Size,UFont* Font)
     {
@@ -92,7 +92,7 @@ bool UDWInteractionAuthoringLibrary::CreateHandDrawnCompositeFont(const FString&
 #if WITH_EDITOR
     UFontFace* Chinese=LoadObject<UFontFace>(nullptr,*ChinesePath);UFontFace* Latin=LoadObject<UFontFace>(nullptr,*LatinPath);
     if(!Chinese||!Latin){DWPromptBuildReport=TEXT("Missing imported Chinese or Latin font face.");return false;}
-    const FString Path=TEXT("/Game/DoughWorld/Maps/Gameplay/UI/Interaction/Fonts/F_DWHandDrawn");
+    const FString Path=TEXT("/Game/DoughWorld/UI/Shared/Fonts/F_DWHandDrawn");
     UFont* Font=LoadObject<UFont>(nullptr,*(Path+TEXT(".F_DWHandDrawn")));
     if(!Font){Font=NewObject<UFont>(CreatePackage(*Path),TEXT("F_DWHandDrawn"),RF_Public|RF_Standalone);FAssetRegistryModule::AssetCreated(Font);}
     Font->FontCacheType=EFontCacheType::Runtime;
@@ -111,10 +111,10 @@ bool UDWInteractionAuthoringLibrary::CreateHandDrawnCompositeFont(const FString&
 bool UDWInteractionAuthoringLibrary::AddLanguageSelectorToExistingUI()
 {
 #if WITH_EDITOR
-    auto* BP=LoadObject<UWidgetBlueprint>(nullptr,TEXT("/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWGameplay.WBP_DWGameplay"));
+    auto* BP=LoadObject<UWidgetBlueprint>(nullptr,TEXT("/Game/DoughWorld/UI/WBP_DWGameplay.WBP_DWGameplay"));
     if(!BP||!BP->WidgetTree)return false;
     auto* Body=Cast<UVerticalBox>(BP->WidgetTree->FindWidget(TEXT("SettingsPage_Body")));if(!Body)return false;
-    UFont* Font=LoadObject<UFont>(nullptr,TEXT("/Game/DoughWorld/Maps/Gameplay/UI/Interaction/Fonts/F_DWHandDrawn.F_DWHandDrawn"));if(!Font)return false;
+    UFont* Font=LoadObject<UFont>(nullptr,TEXT("/Game/DoughWorld/UI/Shared/Fonts/F_DWHandDrawn.F_DWHandDrawn"));if(!Font)return false;
     if(!BP->WidgetTree->FindWidget(TEXT("LanguageCombo")))
     {
         BP->Modify();auto* Label=BP->WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(),TEXT("LanguageLabel"));Label->bIsVariable=true;Label->SetText(FText::FromString(TEXT("语言 / Language")));Label->SetFont(FSlateFontInfo(Font,20));Label->SetColorAndOpacity(FSlateColor(FLinearColor(.97f,.92f,.83f,1)));
@@ -126,7 +126,7 @@ bool UDWInteractionAuthoringLibrary::AddLanguageSelectorToExistingUI()
     const TArray<FString> Names={TEXT("WBP_DWGameplay"),TEXT("WBP_DWInventorySlot"),TEXT("WBP_DWRecipeEntry"),TEXT("WBP_DWSaveSlot")};
     for(const FString& N:Names)
     {
-        const FString Path=TEXT("/Game/DoughWorld/Maps/Gameplay/UI/")+N;auto* WidgetBP=LoadObject<UWidgetBlueprint>(nullptr,*(Path+TEXT(".")+N));if(!WidgetBP||!WidgetBP->WidgetTree)continue;
+        const FString Path=TEXT("/Game/DoughWorld/UI/")+N;auto* WidgetBP=LoadObject<UWidgetBlueprint>(nullptr,*(Path+TEXT(".")+N));if(!WidgetBP||!WidgetBP->WidgetTree)continue;
         WidgetBP->WidgetTree->ForEachWidget([&](UWidget* Widget)
         {
             if(auto* Text=Cast<UTextBlock>(Widget)){auto Info=Text->GetFont();Info.FontObject=Font;Info.TypefaceFontName=TEXT("Default");Text->SetFont(Info);if(Text->GetText().ToString()==TEXT("垂直同步"))Text->SetAutoWrapText(false);}

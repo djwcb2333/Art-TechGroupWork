@@ -20,7 +20,7 @@ public:
     static constexpr int32 SaveSlotCount = 3;
     virtual void Init() override;
     UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="DoughWorld|Loading")
-    TSoftObjectPtr<UDWLoadingTransitionSettings> LoadingTransitionSettings= TSoftObjectPtr<UDWLoadingTransitionSettings>(FSoftObjectPath(TEXT("/Game/DoughWorld/Maps/Gameplay/UI/Transitions/DA_DWLoadingTransition.DA_DWLoadingTransition")));
+    TSoftObjectPtr<UDWLoadingTransitionSettings> LoadingTransitionSettings= TSoftObjectPtr<UDWLoadingTransitionSettings>(FSoftObjectPath(TEXT("/Game/DoughWorld/UI/Transitions/DA_DWLoadingTransition.DA_DWLoadingTransition")));
 
     UFUNCTION(BlueprintPure, Category="DoughWorld|Config")
     UDWGameplayConfig* GetConfig();
@@ -59,7 +59,7 @@ public:
     void ApplyPendingSave(ADWPlayerCharacter* Player);
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="DoughWorld|Config")
-    FSoftObjectPath SoftConfigPath = FSoftObjectPath(TEXT("/Game/DoughWorld/Maps/Gameplay/Data/DA_DoughWorldGameplay.DA_DoughWorldGameplay"));
+    FSoftObjectPath SoftConfigPath = FSoftObjectPath(TEXT("/Game/DoughWorld/Core/Data/DA_DoughWorldGameplay.DA_DoughWorldGameplay"));
 
     UPROPERTY(BlueprintReadOnly, Category="DoughWorld|Save")
     FText LastSaveError;

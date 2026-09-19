@@ -96,7 +96,7 @@ namespace
 
     UWidgetBlueprint* MakeBP(const FString& Name,UClass* Parent,bool bReplace,bool& bNeedsBuild)
     {
-        const FString Path=TEXT("/Game/DoughWorld/Maps/Gameplay/UI/")+Name;
+        const FString Path=TEXT("/Game/DoughWorld/UI/")+Name;
         UWidgetBlueprint* BP=LoadObject<UWidgetBlueprint>(nullptr,*(Path+TEXT(".")+Name));
         if(BP)
         {
@@ -256,7 +256,7 @@ bool UDWUIAuthoringLibrary::RepairPrototypeFonts()
     bool bSuccess=true;
     for(const TCHAR* Name:{TEXT("WBP_DWInventorySlot"),TEXT("WBP_DWRecipeEntry"),TEXT("WBP_DWSaveSlot"),TEXT("WBP_DWGameplay")})
     {
-        const FString Path=FString(TEXT("/Game/DoughWorld/Maps/Gameplay/UI/"))+Name+TEXT(".")+Name;
+        const FString Path=FString(TEXT("/Game/DoughWorld/UI/"))+Name+TEXT(".")+Name;
         auto* BP=LoadObject<UWidgetBlueprint>(nullptr,*Path);
         if(!BP||!BP->WidgetTree){DWUILastBuildReport+=TEXT("ERROR missing Widget Blueprint: ")+Path+TEXT("\n");bSuccess=false;continue;}
         int32 Repaired=0;
@@ -299,7 +299,7 @@ bool UDWUIAuthoringLibrary::UpgradeMenuSettingsAssets()
  auto* Keys=D.Make<UVerticalBox>(TEXT("ControlsOptions"));D.V(Keys,D.Text(TEXT("BindingStatus"),TEXT("Click a key to change it."),16));D.V(Keys,D.Button(TEXT("CancelBindingButton"),TEXT("Cancel rebinding")));
  auto* Scroll=D.Make<UScrollBox>(TEXT("KeyRowsScroll"));Scroll->AddChild(D.Make<UVerticalBox>(TEXT("KeyRows")));D.V(Keys,D.Size(TEXT("KeyRowsHeight"),Scroll,0,280));D.V(Keys,D.Button(TEXT("ResetKeysButton"),TEXT("Restore default keys")));Switch->AddChild(Keys);
  PanelBP->WidgetTree->RootWidget=V;OK&=SaveBP(PanelBP);}
- for(const TCHAR* P:{TEXT("/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWGameplay.WBP_DWGameplay"),TEXT("/Game/DoughWorld/Maps/Gameplay/Frontend/UI/WBP_DWFrontend.WBP_DWFrontend")})
+ for(const TCHAR* P:{TEXT("/Game/DoughWorld/UI/WBP_DWGameplay.WBP_DWGameplay"),TEXT("/Game/DoughWorld/UI/Frontend/WBP_DWFrontend.WBP_DWFrontend")})
  {
   auto* BP=LoadObject<UWidgetBlueprint>(nullptr,P);if(!BP||!BP->WidgetTree){OK=false;DWUILastBuildReport+=FString(TEXT("ERROR missing "))+P+TEXT("\n");continue;}BP->Modify();FUIDesigner D(BP);
   if(!BP->WidgetTree->FindWidget(TEXT("ExtendedSettings"))){auto* Body=Cast<UVerticalBox>(BP->WidgetTree->FindWidget(TEXT("SettingsPage_Body")));if(!Body){OK=false;continue;}auto* W=D.Make<UDWSettingsPanel>(TEXT("ExtendedSettings"),PanelBP->GeneratedClass);D.V(Body,W);auto* Slot=Body->GetChildAt(Body->GetChildrenCount()-1);Body->RemoveChild(Slot);Body->InsertChildAt(2,Slot);}
@@ -307,11 +307,11 @@ bool UDWUIAuthoringLibrary::UpgradeMenuSettingsAssets()
   if(!BP->WidgetTree->FindWidget(TEXT("HUDPauseButton")))if(auto* HUD=Cast<UCanvasPanel>(BP->WidgetTree->FindWidget(TEXT("HUDLayer")))){auto* B=D.Button(TEXT("HUDPauseButton"),TEXT("Pause [P]"));auto* CS=D.Canvas(HUD,B,FAnchors(.5f,0),FMargin(0,18,160,46),FVector2D(.5f,0));CS->SetZOrder(20);HUD->SetVisibility(ESlateVisibility::SelfHitTestInvisible);}
   OK&=SaveBP(BP);
  }
- auto* Save=LoadObject<UWidgetBlueprint>(nullptr,TEXT("/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWSaveSlot.WBP_DWSaveSlot"));
+ auto* Save=LoadObject<UWidgetBlueprint>(nullptr,TEXT("/Game/DoughWorld/UI/WBP_DWSaveSlot.WBP_DWSaveSlot"));
  if(Save&&Save->WidgetTree){Save->Modify();FUIDesigner D(Save);
  if(!Save->WidgetTree->FindWidget(TEXT("SaveActionsWrap"))){auto* Card=Cast<UBorder>(Save->WidgetTree->FindWidget(TEXT("SaveSlotCard")));auto* Labels=Save->WidgetTree->FindWidget(TEXT("SaveLabels"));if(Card&&Labels){Labels->RemoveFromParent();auto* V=D.Make<UVerticalBox>(TEXT("SaveSlotBody"));D.V(V,Labels,3);auto* Wrap=D.Make<UWrapBox>(TEXT("SaveActionsWrap"));Wrap->SetInnerSlotPadding(FVector2D(10,8));for(const TCHAR* N:{TEXT("LoadButton"),TEXT("NewButton"),TEXT("DeleteButton"),TEXT("CancelDeleteButton")})if(auto* B=Cast<UButton>(Save->WidgetTree->FindWidget(N))){B->RemoveFromParent();if(auto* T=Cast<UTextBlock>(B->GetContent()))T->SetAutoWrapText(false);auto* Box=D.Make<USizeBox>(FString(N)+TEXT("MinimumWidth"));Box->SetMinDesiredWidth(140);Box->SetContent(B);Wrap->AddChild(Box);}D.V(V,Wrap,6);Card->SetContent(V);}else OK=false;}
  OK&=SaveBP(Save);}else OK=false;
- for(const TCHAR* N:{TEXT("Music"),TEXT("Voice"),TEXT("SFX")}){FString Name=TEXT("SC_DW_")+FString(N),Path=TEXT("/Game/DoughWorld/Maps/Gameplay/Audio/")+Name;if(!LoadObject<USoundClass>(nullptr,*(Path+TEXT(".")+Name))){auto* Package=CreatePackage(*Path);auto* C=NewObject<USoundClass>(Package,FName(*Name),RF_Public|RF_Standalone);C->Properties.Volume=1;FAssetRegistryModule::AssetCreated(C);C->MarkPackageDirty();FString File=FPackageName::LongPackageNameToFilename(Path,FPackageName::GetAssetPackageExtension());IFileManager::Get().MakeDirectory(*FPaths::GetPath(File),true);FSavePackageArgs A;A.TopLevelFlags=RF_Public|RF_Standalone;OK&=UPackage::SavePackage(Package,C,*File,A);}}
+ for(const TCHAR* N:{TEXT("Music"),TEXT("Voice"),TEXT("SFX")}){FString Name=TEXT("SC_DW_")+FString(N),Path=TEXT("/Game/DoughWorld/Audio/Mixing/")+Name;if(!LoadObject<USoundClass>(nullptr,*(Path+TEXT(".")+Name))){auto* Package=CreatePackage(*Path);auto* C=NewObject<USoundClass>(Package,FName(*Name),RF_Public|RF_Standalone);C->Properties.Volume=1;FAssetRegistryModule::AssetCreated(C);C->MarkPackageDirty();FString File=FPackageName::LongPackageNameToFilename(Path,FPackageName::GetAssetPackageExtension());IFileManager::Get().MakeDirectory(*FPaths::GetPath(File),true);FSavePackageArgs A;A.TopLevelFlags=RF_Public|RF_Standalone;OK&=UPackage::SavePackage(Package,C,*File,A);}}
  return OK;
 #else
  return false;

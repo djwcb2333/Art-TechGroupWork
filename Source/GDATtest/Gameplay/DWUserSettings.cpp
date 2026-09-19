@@ -16,7 +16,7 @@ void UDWUserSettings::Initialize(FSubsystemCollectionBase& C)
 USoundClass* UDWUserSettings::GetSoundClass(EDWSoundCategory C)
 {
  const int32 I=FMath::Clamp(int32(C),0,2);
- if(!Classes[I]){const FString N=FString(TEXT("SC_DW_"))+Names[I];Classes[I]=LoadObject<USoundClass>(nullptr,*(TEXT("/Game/DoughWorld/Maps/Gameplay/Audio/")+N+TEXT(".")+N));if(!Classes[I])Classes[I]=NewObject<USoundClass>(this,FName(*N));}
+ if(!Classes[I]){const FString N=FString(TEXT("SC_DW_"))+Names[I];Classes[I]=LoadObject<USoundClass>(nullptr,*(TEXT("/Game/DoughWorld/Audio/Mixing/")+N+TEXT(".")+N));if(!Classes[I])Classes[I]=NewObject<USoundClass>(this,FName(*N));}
  return Classes[I];
 }
 float UDWUserSettings::GetCategoryVolume(EDWSoundCategory C)const{return Volumes[FMath::Clamp(int32(C),0,2)];}

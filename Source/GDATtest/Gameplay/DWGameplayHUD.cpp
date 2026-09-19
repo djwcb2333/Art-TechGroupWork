@@ -23,8 +23,8 @@ ADWGameplayHUD::ADWGameplayHUD()
 void ADWGameplayHUD::BeginPlay()
 {
     Super::BeginPlay();auto* PC=GetOwningPlayerController();if(!PC||!PC->IsLocalController())return;
-    if(!GameUIFont)GameUIFont=LoadObject<UFont>(nullptr,TEXT("/Game/DoughWorld/Maps/Gameplay/UI/Interaction/Fonts/F_DWHandDrawn.F_DWHandDrawn"));
-    if(!WidgetClass)WidgetClass=LoadClass<UDWGameplayWidget>(nullptr,TEXT("/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWGameplay.WBP_DWGameplay_C"));
+    if(!GameUIFont)GameUIFont=LoadObject<UFont>(nullptr,TEXT("/Game/DoughWorld/UI/Shared/Fonts/F_DWHandDrawn.F_DWHandDrawn"));
+    if(!WidgetClass)WidgetClass=LoadClass<UDWGameplayWidget>(nullptr,TEXT("/Game/DoughWorld/UI/WBP_DWGameplay.WBP_DWGameplay_C"));
     if(WidgetClass)
     {
         GameplayWidget=CreateWidget<UDWGameplayWidget>(PC,WidgetClass);

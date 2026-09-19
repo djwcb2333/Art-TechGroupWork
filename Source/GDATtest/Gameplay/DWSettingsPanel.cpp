@@ -25,7 +25,7 @@ void UDWSettingsPanel::NativeConstruct()
 void UDWSettingsPanel::InitializePanel(UDWGameplayWidget* S)
 {
  OwnerScreen=S;if(OwnerScreen)OwnerScreen->ApplyWidgetPresentation(this);
- if(KeyRows){KeyRows->ClearChildren();auto Cl=BindingRowClass;if(!Cl)Cl=LoadClass<UDWKeyBindingRow>(nullptr,TEXT("/Game/DoughWorld/Maps/Gameplay/UI/WBP_DWKeyBindingRow.WBP_DWKeyBindingRow_C"));
+ if(KeyRows){KeyRows->ClearChildren();auto Cl=BindingRowClass;if(!Cl)Cl=LoadClass<UDWKeyBindingRow>(nullptr,TEXT("/Game/DoughWorld/UI/WBP_DWKeyBindingRow.WBP_DWKeyBindingRow_C"));
  if(Cl)for(int32 I=0;I<int32(EDWInputAction::Count);++I){auto* Row=CreateWidget<UDWKeyBindingRow>(GetOwningPlayer(),Cl);KeyRows->AddChild(Row);Row->SetupRow(EDWInputAction(I),S);Row->OnRequested.AddDynamic(this,&UDWSettingsPanel::RequestBinding);}}
  RefreshPanel();
 }

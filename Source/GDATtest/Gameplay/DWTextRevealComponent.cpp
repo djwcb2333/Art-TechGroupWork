@@ -17,7 +17,7 @@
 #include "Serialization/JsonSerializer.h"
 #include "Dom/JsonObject.h"
 
-namespace DWText
+namespace DWTextRevealInternal
 {
  bool IsChinese(uint32 C) { return (C>=0x3400&&C<=0x9fff)||(C>=0xf900&&C<=0xfaff)||(C>=0x20000&&C<=0x323af); }
  uint32 Codepoint(const FString& S)
@@ -59,9 +59,9 @@ UDWTextVoiceProfile::UDWTextVoiceProfile()
 }
 USoundBase* UDWTextVoiceProfile::ResolveCharacterSound(const FString& Character,EDWTextVoiceLanguage Language) const
 {
- if(!DWText::Speakable(Character,bSpeakNumbers))return nullptr;
- const uint32 C=DWText::Codepoint(Character);
- const bool Chinese=Language==EDWTextVoiceLanguage::Chinese||(Language==EDWTextVoiceLanguage::Auto&&DWText::IsChinese(C));
+ if(!DWTextRevealInternal::Speakable(Character,bSpeakNumbers))return nullptr;
+ const uint32 C=DWTextRevealInternal::Codepoint(Character);
+ const bool Chinese=Language==EDWTextVoiceLanguage::Chinese||(Language==EDWTextVoiceLanguage::Auto&&DWTextRevealInternal::IsChinese(C));
  const uint32 Hash=GetTypeHash(Character)^uint32(VoiceSeed)*196613u;
  if(Chinese)
  {
@@ -134,10 +134,10 @@ public:
   const auto& S=E->State;
   FTextBlockStyle NewStyle;NewStyle.SetFont(T->GetFont()).SetColorAndOpacity(T->GetColorAndOpacity()).SetShadowOffset(T->GetShadowOffset()).SetShadowColorAndOpacity(T->GetShadowColorAndOpacity());
   const float Width=T->GetAutoWrapText()&&LastWidth>1?LastWidth:T->GetWrapTextAt();
-  const FMargin Margin=DWText::Property(T,TEXT("Margin"),FMargin());
-  const float Height=DWText::Property(T,TEXT("LineHeightPercentage"),1.f);
-  const auto Justify=DWText::Property(T,TEXT("Justification"),TEnumAsByte<ETextJustify::Type>(ETextJustify::Left));
-  const auto Policy=DWText::Property(T,TEXT("WrappingPolicy"),ETextWrappingPolicy::DefaultWrapping);
+  const FMargin Margin=DWTextRevealInternal::Property(T,TEXT("Margin"),FMargin());
+  const float Height=DWTextRevealInternal::Property(T,TEXT("LineHeightPercentage"),1.f);
+  const auto Justify=DWTextRevealInternal::Property(T,TEXT("Justification"),TEnumAsByte<ETextJustify::Type>(ETextJustify::Left));
+  const auto Policy=DWTextRevealInternal::Property(T,TEXT("WrappingPolicy"),ETextWrappingPolicy::DefaultWrapping);
   if(bForce||S->Source!=CachedSource||!CachedStyle.IsIdenticalTo(NewStyle)||!FMath::IsNearlyEqual(Width,CachedWidth)||!FMath::IsNearlyEqual(LastScale,CachedScale)||Margin!=CachedMargin||Height!=CachedHeight||Justify!=CachedJustify||Policy!=CachedPolicy)
   {
    CachedSource=S->Source;CachedStyle=NewStyle;CachedWidth=Width;CachedScale=LastScale;CachedMargin=Margin;CachedHeight=Height;CachedJustify=Justify;CachedPolicy=Policy;
@@ -251,7 +251,7 @@ bool DWGetGlyphPresentation(const UDWTextRevealComponent* E,int32 Index,float& S
  const double Age=S->Time-S->Glyphs[Index].At;
  if(Age<0)return false;
  if(Age>=FMath::Max(.1f,E->SpringSettleSeconds))return true;
- const double Spring=DWText::Spring(Age,E->FrequencyHz,E->DampingRatio);
+ const double Spring=DWTextRevealInternal::Spring(Age,E->FrequencyHz,E->DampingRatio);
  Scale=FMath::Clamp(float(1+(FMath::Clamp(E->StartScale,.01f,1.f)-1)*Spring),.01f,2.f);
  Offset=E->EntryOffset*Spring;
  Alpha=E->FadeInSeconds>0?FMath::Clamp(float(Age/E->FadeInSeconds),0.f,1.f):1;
@@ -311,8 +311,8 @@ void UDWTextRevealComponent::RebuildSchedule()
  for(auto& G:State->Glyphs)
  {
   At+=FMath::Max(0,G.Line-PreviousLine)*FMath::Max(0.f,LinePause);PreviousLine=G.Line;G.At=At;
-  At+=1./FMath::Max(1.f,DWText::IsChinese(DWText::Codepoint(G.Text))?ChineseCharactersPerSecond:EnglishCharactersPerSecond)*(DWText::White(G.Text)?.4:1.);
-  if(DWText::Sentence(G.Text))At+=FMath::Max(0.f,SentencePause);else if(DWText::Comma(G.Text))At+=FMath::Max(0.f,CommaPause);
+  At+=1./FMath::Max(1.f,DWTextRevealInternal::IsChinese(DWTextRevealInternal::Codepoint(G.Text))?ChineseCharactersPerSecond:EnglishCharactersPerSecond)*(DWTextRevealInternal::White(G.Text)?.4:1.);
+  if(DWTextRevealInternal::Sentence(G.Text))At+=FMath::Max(0.f,SentencePause);else if(DWTextRevealInternal::Comma(G.Text))At+=FMath::Max(0.f,CommaPause);
  }
  State->Duration=State->Glyphs.IsEmpty()?0:FMath::Max(At,State->Glyphs.Last().At+FMath::Max(.1f,SpringSettleSeconds));
 }
@@ -398,8 +398,8 @@ void UDWTextRevealComponent::StopAudio(bool Destroy)
 void UDWTextRevealComponent::PlayBlip(int32 Index)
 {
  auto* P=VoiceProfile.Get();if(!bEnableBlips||!P||!State||!State->Glyphs.IsValidIndex(Index))return;
- const auto& G=State->Glyphs[Index];if(!DWText::Speakable(G.Text,P->bSpeakNumbers))return;
- const uint32 C=DWText::Codepoint(G.Text);const bool Chinese=VoiceLanguage==EDWTextVoiceLanguage::Chinese||(VoiceLanguage==EDWTextVoiceLanguage::Auto&&DWText::IsChinese(C));
+ const auto& G=State->Glyphs[Index];if(!DWTextRevealInternal::Speakable(G.Text,P->bSpeakNumbers))return;
+ const uint32 C=DWTextRevealInternal::Codepoint(G.Text);const bool Chinese=VoiceLanguage==EDWTextVoiceLanguage::Chinese||(VoiceLanguage==EDWTextVoiceLanguage::Auto&&DWTextRevealInternal::IsChinese(C));
  int32& Counter=Chinese?ChineseCounter:EnglishCounter;
  const int32 N=FMath::Max(1,Chinese?P->ChineseEveryNCharacters:P->EnglishEveryNLetters);if(Counter++%N!=0)return;
  const double Now=FPlatformTime::Seconds();if(Now-LastBlip<FMath::Max(.02f,P->MinimumBlipInterval))return;
