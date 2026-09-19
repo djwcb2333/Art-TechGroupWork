@@ -41,3 +41,9 @@
 本地建立 Git 不等于已经上传，也不等于其他电脑编译成功。以外部交付目录中的本次验收记录为准。商城/外部资产的授权不因进入仓库而改变；共享时应核对接收者与资源许可。
 
 参考：[GitHub Desktop 添加本地仓库](https://docs.github.com/en/desktop/adding-and-cloning-repositories/adding-a-repository-from-your-local-computer-to-github-desktop)、[Git LFS 与 Desktop](https://docs.github.com/en/desktop/configuring-and-customizing-github-desktop/about-git-large-file-storage-and-github-desktop)、[克隆仓库](https://docs.github.com/en/desktop/adding-and-cloning-repositories/cloning-and-forking-repositories-from-github-desktop)。
+
+## 2026-09-19 本地 Content 整理验收
+
+本地版本 `v0.1.0-alpha.2`：分类与指定树包清理已完成，村庄素材迁移引用已收尾。操作和分类表见同目录 [Content 整理与维护指南](Content整理与维护指南.html)（[Markdown](Content整理与维护指南.md)）。日常仍打开原路径 GDATtest.uproject。
+
+C++ 编译、3,135 个迁移资源冷启动加载、85 个蓝图编译、15 个 WBP 对照和 26 项独立运行检查通过；原有 9 份存档保留。25 条素材依赖缺失和 GameFeatureData 配置提示为原有问题，未声称已解决。发行打包和其他电脑构建未验证。OrgQA 验证副本已删除，正式 Git 回退历史保留；仍未配置远程或上传。
