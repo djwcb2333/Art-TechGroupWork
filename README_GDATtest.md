@@ -46,4 +46,14 @@
 
 本地版本 `v0.1.0-alpha.2`：分类与指定树包清理已完成，村庄素材迁移引用已收尾。操作和分类表见同目录 [Content 整理与维护指南](Content整理与维护指南.html)（[Markdown](Content整理与维护指南.md)）。日常仍打开原路径 GDATtest.uproject。
 
-C++ 编译、3,135 个迁移资源冷启动加载、85 个蓝图编译、15 个 WBP 对照和 26 项独立运行检查通过；原有 9 份存档保留。25 条素材依赖缺失和 GameFeatureData 配置提示为原有问题，未声称已解决。发行打包和其他电脑构建未验证。OrgQA 验证副本已删除，正式 Git 回退历史保留；仍未配置远程或上传。
+C++ 编译、3,135 个迁移资源冷启动加载、85 个蓝图编译、15 个 WBP 对照和 26 项独立运行检查通过；原有 9 份存档保留。25 条素材依赖缺失和 GameFeatureData 配置提示为原有问题，未声称已解决。发行打包和其他电脑构建未验证。OrgQA 验证副本已删除，正式 Git 回退历史保留；现已通过 GitHub Desktop 上传至私有仓库；远程地址见下方。
+
+## GitHub 私有仓库（2026-09-19 已发布）
+
+仓库：[djwcb2333/GDATtest](https://github.com/djwcb2333/GDATtest)。Clone URL：`https://github.com/djwcb2333/GDATtest.git`。
+
+完整 main 分支及版本历史已上传，`v0.1.0-alpha.1` 和 `v0.1.0-alpha.2` 已在 Desktop 核对无待上传标记。本轮没有邀请队员；队员需要先获得私有仓库访问权限，然后在 GitHub Desktop → File → Clone repository… → URL 克隆到新的空目录。
+
+日常先在 UE 保存，再到 Desktop → Changes 核对并 Commit，最后点 Push origin。Commit 只保存本地记录；推送完成后按钮恢复 Fetch origin。不要重复 Publish repository，也不要为了同步使用 Discard all changes。个人存档不上传。
+
+首次推送包含约 5.7 GB 的 LFS 历史资源，耗时约 24 分钟。上传成功不是异机编译、运行或发行打包验收；接收方仍需按上文配置引擎和 C++ 环境。已发布的版本标签保持不动，后续版本创建新标签。

@@ -1,6 +1,6 @@
 # Bread of the Wild · Content 整理与维护指南
 
-本次在原路径完成本地整理，保留地图路径、界面布局和原存档。未上传 GitHub，暂不进行队员同步。版本命名规则见同目录《版本管理与命名指南》。
+本次在原路径完成本地整理，保留地图路径、界面布局和原存档。现已上传至 GitHub 私有仓库 djwcb2333/GDATtest；尚未邀请队员或进行异机同步验收。版本命名规则见同目录《版本管理与命名指南》。
 
 ## 工程入口和本地版本管理
 
@@ -8,7 +8,7 @@
 
 GitHub Desktop 左上角 **Current repository（当前仓库）** 选择 GDATtest。通过 **Repository → Show in Explorer（在资源管理器中显示）** 确认根目录含 `.uproject`、`Source`、`Content`、`Config`。仓库应覆盖整个工程。
 
-**Changes（更改）** 显示尚未提交的修改。先在 UE 保存，关闭仍可能修改文件的操作，再填写左下角 **Summary（摘要）**，例如 `feat(gameplay): add berry resource node`，点击 **Commit to main** 建立本地记录。本阶段不需要 Publish repository 或 Push origin。
+**Changes（更改）** 显示尚未提交的修改。先在 UE 保存，关闭仍可能修改文件的操作，再填写左下角 **Summary（摘要）**，例如 `feat(gameplay): add berry resource node`，点击 **Commit to main** 建立本地记录。需要上传时点击 Push origin；完成后恢复 Fetch origin。仓库已发布，不必再次 Publish repository。
 
 ## 分类方式
 
