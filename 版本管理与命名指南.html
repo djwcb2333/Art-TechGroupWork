@@ -3,7 +3,7 @@
 </style></head><body><header>BREAD OF THE WILD / DOUGH WORLD · 项目版本命名规则</header><main><h1 id="bread-of-the-wild">Bread of the Wild · 版本管理与命名指南</h1>
 <p><strong>项目规则｜2026-09-19 用户确认｜适用于整个 GDATtest 工程</strong></p>
 <p>本指南规定游戏版本号、开发阶段、Git 分支、提交和标签的命名方式。它是本团队的约定，借用语义化版本的结构；游戏里程碑由团队验收要求决定，不等同于严格 SemVer 的公共 API 兼容性承诺。</p>
-<p><strong>当前状态：仅规则已确定，尚未为当前工程正式定版。</strong> 文中的 <code>v0.3.1</code> 等均为示例，不代表这些版本已经存在。首次本地 Git 重建仍等待用户发送“继续”，并在核对其他任务已完成、写入权释放后执行。本阶段暂不上传，不创建后台任务。</p>
+<p><strong>版本状态以本地 Git 标签和验收记录为准。</strong> 文中的 <code>v0.3.1</code> 等用于解释命名规则，不代表这些版本已经存在。本工程以根级完整仓库管理源码、资产和配置；本阶段仅使用本地版本管理，尚未上传。操作前仍须核对其他任务的交接与工程写入权。</p>
 <h2 id="section">1. 一分钟速查</h2>
 <table>
 <thead>
@@ -326,11 +326,11 @@ Description：
 <p>本指南讲命名规则。完整工程首次接入、Git LFS、克隆、C++ 环境和故障处理另见外部交付目录 <code>UE_Whitebox_Delivery/GitVersionControl_20260919/本地版本管理方案与教程.html</code>。建立仓库后，根目录的 <code>README_GDATtest.md</code> 将随工程提供基础使用说明。</p>
 <h2 id="git">10. 这次重建 Git 如何应用本规则</h2>
 <ol>
-<li>用户发送“继续”后，重新读取项目状态和写入协调表，核对之前的工程任务已经结束并释放写入权。</li>
+<li>版本管理接续前，重新读取项目状态和写入协调表，核对之前的工程任务已经结束并释放写入权；此次用户已经发送“继续”并完成交接核对。</li>
 <li>按已授权范围保存旧 Git 元数据，并清除工程内两处旧仓库的嵌套状态；不搬动或重建 UE 资产。</li>
 <li>从 <code>GDATtest</code> 根目录建立完整工程的本地 Git 与 Git LFS，包含两个 C++ 模块、完整 Content、Config、<code>.uproject</code>、本指南和其他必要文件。</li>
 <li>首次提交使用 <code>chore: 建立 Bread of the Wild 完整工程版本基线</code>。</li>
-<li>首个已验收基线的建议标签为 <code>v0.1.0-alpha.1</code>。只有完成约定的基线验收、写清验证边界后才标记；创建本指南不等于该标签已经存在，也不自动宣称游戏运行验收通过。</li>
+<li>首个本地完整工程基线使用标签 <code>v0.1.0-alpha.1</code>，须在文件保留、完整克隆和 Desktop 接入检查完成后标记。它表示当前工程可追溯的 Alpha 基线，不自动宣称本任务重新验证了游戏编译、运行或打包。标签是否已创建，以 Git 的实际记录为准。</li>
 <li>本次先完成本地版本管理和 GitHub Desktop 接入。上传、远程仓库和共享权限留待后续决定。</li>
 </ol>
 <p>这是历史从当前完整工程重新开始的编号，不代表此前的开发成果被删除。工程目录仍为原 <code>GDATtest</code>。</p>
