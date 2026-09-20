@@ -163,13 +163,52 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering")
     TObjectPtr<USoundBase> GatherSuccessSound = nullptr;
 
+    /** Optional success variation. Each successful harvest randomly plays one populated slot (1-5). Empty slots are ignored. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering", meta=(DisplayName="Gather Success Sound 2"))
+    TObjectPtr<USoundBase> GatherSuccessSound2 = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering", meta=(DisplayName="Gather Success Sound 3"))
+    TObjectPtr<USoundBase> GatherSuccessSound3 = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering", meta=(DisplayName="Gather Success Sound 4"))
+    TObjectPtr<USoundBase> GatherSuccessSound4 = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering", meta=(DisplayName="Gather Success Sound 5"))
+    TObjectPtr<USoundBase> GatherSuccessSound5 = nullptr;
+
     /** Once when an active held harvest ends or loses its target. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering")
     TObjectPtr<USoundBase> GatherStopSound = nullptr;
 
+    /** Optional stop variation. One populated slot (1-5) is randomly chosen per ended gathering session. Empty slots are ignored. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering", meta=(DisplayName="Gather Stop Sound 2"))
+    TObjectPtr<USoundBase> GatherStopSound2 = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering", meta=(DisplayName="Gather Stop Sound 3"))
+    TObjectPtr<USoundBase> GatherStopSound3 = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering", meta=(DisplayName="Gather Stop Sound 4"))
+    TObjectPtr<USoundBase> GatherStopSound4 = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering", meta=(DisplayName="Gather Stop Sound 5"))
+    TObjectPtr<USoundBase> GatherStopSound5 = nullptr;
+
     /** Once for a rejected harvest attempt; the caller prevents repeated error sounds while held. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering")
     TObjectPtr<USoundBase> GatherFailedSound = nullptr;
+
+    /** Optional failure variation. One populated slot (1-5) is randomly chosen per rejected harvest attempt. Empty slots are ignored. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering", meta=(DisplayName="Gather Failed Sound 2"))
+    TObjectPtr<USoundBase> GatherFailedSound2 = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering", meta=(DisplayName="Gather Failed Sound 3"))
+    TObjectPtr<USoundBase> GatherFailedSound3 = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering", meta=(DisplayName="Gather Failed Sound 4"))
+    TObjectPtr<USoundBase> GatherFailedSound4 = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio|Gathering", meta=(DisplayName="Gather Failed Sound 5"))
+    TObjectPtr<USoundBase> GatherFailedSound5 = nullptr;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio")
     TObjectPtr<USoundBase> GameplayBGM = nullptr;

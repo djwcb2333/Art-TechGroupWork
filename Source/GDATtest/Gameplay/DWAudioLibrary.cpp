@@ -73,9 +73,44 @@ USoundBase* UDWAudioLibrary::GetEventSound(const UDWGameplayConfig* Config, EDWA
     case EDWAudioEvent::CraftFailed: return Config->CraftFailedSound;
     case EDWAudioEvent::GatherStart: return Config->GatherStartSound;
     case EDWAudioEvent::GatherLoop: return Config->GatherLoopSound;
-    case EDWAudioEvent::GatherSuccess: return Config->GatherSuccessSound;
-    case EDWAudioEvent::GatherStop: return Config->GatherStopSound;
-    case EDWAudioEvent::GatherFailed: return Config->GatherFailedSound;
+    case EDWAudioEvent::GatherSuccess:
+    {
+        // Compact the five slots before sampling: gaps never create silent picks.
+        // Keep slot 1's serialized name so existing Data Assets remain compatible.
+        USoundBase* Candidates[5];
+        int32 Count = 0;
+        for (USoundBase* Candidate : {Config->GatherSuccessSound.Get(), Config->GatherSuccessSound2.Get(),
+            Config->GatherSuccessSound3.Get(), Config->GatherSuccessSound4.Get(), Config->GatherSuccessSound5.Get()})
+        {
+            if (IsValid(Candidate)) Candidates[Count++] = Candidate;
+        }
+        return Count > 0 ? Candidates[FMath::RandHelper(Count)] : nullptr;
+    }
+    case EDWAudioEvent::GatherStop:
+    {
+        // Match success/failure feedback: each populated slot has an equal chance.
+        USoundBase* Candidates[5];
+        int32 Count = 0;
+        for (USoundBase* Candidate : {Config->GatherStopSound.Get(), Config->GatherStopSound2.Get(),
+            Config->GatherStopSound3.Get(), Config->GatherStopSound4.Get(), Config->GatherStopSound5.Get()})
+        {
+            if (IsValid(Candidate)) Candidates[Count++] = Candidate;
+        }
+        return Count > 0 ? Candidates[FMath::RandHelper(Count)] : nullptr;
+    }
+    case EDWAudioEvent::GatherFailed:
+    {
+        // Match success feedback: each populated slot has an equal chance.
+        // The caller still latches failures to one sound per held attempt.
+        USoundBase* Candidates[5];
+        int32 Count = 0;
+        for (USoundBase* Candidate : {Config->GatherFailedSound.Get(), Config->GatherFailedSound2.Get(),
+            Config->GatherFailedSound3.Get(), Config->GatherFailedSound4.Get(), Config->GatherFailedSound5.Get()})
+        {
+            if (IsValid(Candidate)) Candidates[Count++] = Candidate;
+        }
+        return Count > 0 ? Candidates[FMath::RandHelper(Count)] : nullptr;
+    }
     default: return nullptr;
     }
 }

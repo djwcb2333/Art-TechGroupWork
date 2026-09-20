@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "DWDialogueSequence.h"
 #include "DWGameplayCinematic.generated.h"
+class UCameraShakeBase;
 class UBoxComponent;
 class ACameraActor;
 class UDWWorldEventComponent;
@@ -14,6 +15,8 @@ class UTextBlock;
 class UDWTextVoiceProfile;
 UENUM(BlueprintType)
 enum class EDWCinematicPhase:uint8 { Idle,TravelOut,SceneEvent,Hold,TravelBack,UIReturn };
+UENUM(BlueprintType)
+enum class EDWCinematicShakeStart:uint8 { AtTarget,AtStart,Manual };
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDWCinematicTargetReached);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDWCinematicFinished,bool,bSuccessful);
 
@@ -35,6 +38,14 @@ class GDATTEST_API UDWCinematicComponent:public UActorComponent
  GENERATED_BODY()
 public:
  UDWCinematicComponent();
+ UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Camera Shake") bool bCinematicShakeEnabled=true;
+ UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Camera Shake") TSubclassOf<UCameraShakeBase> CinematicShakeClass;
+ UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Camera Shake",meta=(ClampMin="0",UIMax="2")) float CinematicShakeScale=1.f;
+ UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Camera Shake") EDWCinematicShakeStart ShakeStart=EDWCinematicShakeStart::AtTarget;
+ UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Camera Shake",meta=(ToolTip="Fade out as return travel begins. Always force-stop before the player camera is restored.")) bool bStopShakeWhenReturning=true;
+ UFUNCTION(BlueprintCallable,Category="Cinematic|Camera Shake") void StartCinematicShake();
+ UFUNCTION(BlueprintCallable,Category="Cinematic|Camera Shake") void StopCinematicShake(bool bImmediately=true);
+ UFUNCTION(BlueprintPure,Category="Cinematic|Diagnostics") UCameraShakeBase* GetActiveCinematicShake()const{return ActiveCinematicShake;}
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Targets") TObjectPtr<AActor> TargetCamera;
  /** View-only introductions commit their own saved ID after the camera and UI return. */
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Targets") bool bViewOnly=false;
@@ -68,6 +79,7 @@ protected:
  virtual void BeginPlay()override;
  virtual void EndPlay(const EEndPlayReason::Type R)override;
 private:
+ UPROPERTY(Transient) TObjectPtr<UCameraShakeBase> ActiveCinematicShake;
  UPROPERTY(Transient) TObjectPtr<UDWWorldEventComponent> ViewEvent;
  UPROPERTY(Transient) TObjectPtr<ACameraActor> PlaybackCamera;
  UPROPERTY(Transient) TObjectPtr<UDWCinematicSubtitleWidget> Subtitle;

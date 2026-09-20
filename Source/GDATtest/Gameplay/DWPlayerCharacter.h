@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "TopDownActionCharacter.h"
 #include "DWPlayerCharacter.generated.h"
+class UDWGameplayCameraShakeComponent;
 class UDWGameplayConfig; class UDWInventoryComponent; class UDWSaveGame;
 class ADWResourceNode; class ADWAlcoholProjectile; class UAnimationAsset;
 class USpringArmComponent; class USoundBase; class UCameraShakeBase; class UNiagaraSystem;
@@ -16,6 +17,7 @@ public:
     /** Settle the spring arm before the loading cover is removed, even while paused. */
     UFUNCTION(BlueprintCallable,Category="DoughWorld|Camera") void PrepareCameraForReveal();
     ADWPlayerCharacter();
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Camera") TObjectPtr<UDWGameplayCameraShakeComponent> GameplayCameraShake;
     virtual void Tick(float DeltaSeconds) override;
     virtual float TakeDamage(float Amount,const FDamageEvent& Event,AController* InstigatorController,AActor* Causer) override;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Inventory") TObjectPtr<UDWInventoryComponent> Inventory;

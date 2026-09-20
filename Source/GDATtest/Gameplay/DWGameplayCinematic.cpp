@@ -1,4 +1,6 @@
 #include "DWGameplayCinematic.h"
+#include "DWGameplayCameraShake.h"
+#include "Camera/CameraShakeBase.h"
 #include "DWWorldEvent.h"
 #include "DWUIOffscreenComponent.h"
 #include "DWTextRevealComponent.h"
@@ -25,7 +27,20 @@ void UDWCinematicComponent::BeginPlay()
  Super::BeginPlay();
  if(bViewOnly){ViewEvent=NewObject<UDWWorldEventComponent>(GetOwner(),NAME_None,RF_Transient);ViewEvent->EventId=ViewEventId;ViewEvent->RegisterComponent();}
 }
-void UDWCinematicComponent::SetPhase(EDWCinematicPhase P){Phase=P;PhaseSeconds=0;}
+void UDWCinematicComponent::SetPhase(EDWCinematicPhase P)
+{Phase=P;PhaseSeconds=0;if(P==EDWCinematicPhase::TravelBack&&bStopShakeWhenReturning)StopCinematicShake(false);}
+void UDWCinematicComponent::StartCinematicShake()
+{
+ if(!PC.IsValid()||!PC->PlayerCameraManager||!PlaybackCamera||PC->GetViewTarget()!=PlaybackCamera||!IsPlaying()||Phase==EDWCinematicPhase::UIReturn)return;
+ StopCinematicShake(true);
+ if(bCinematicShakeEnabled&&CinematicShakeClass&&CinematicShakeScale>0.f)
+  ActiveCinematicShake=PC->PlayerCameraManager->StartCameraShake(CinematicShakeClass,CinematicShakeScale,ECameraShakePlaySpace::CameraLocal);
+}
+void UDWCinematicComponent::StopCinematicShake(bool Immediately)
+{
+ if(ActiveCinematicShake&&PC.IsValid()&&PC->PlayerCameraManager)PC->PlayerCameraManager->StopCameraShake(ActiveCinematicShake,Immediately);
+ if(Immediately)ActiveCinematicShake=nullptr;
+}
 bool UDWCinematicComponent::PlayCinematic(APlayerController* C)
 {
  LastError.Empty();
@@ -42,7 +57,8 @@ bool UDWCinematicComponent::PlayCinematic(APlayerController* C)
  if(auto* P=Cast<ADWPlayerCharacter>(C->GetPawn());P&&P->IsDead())return Fail(TEXT("Player is dead"));
  auto* S=GetWorld()->GetSubsystem<UDWWorldEventSubsystem>();if(!S->Acquire(this))return Fail(TEXT("Another cinematic is playing"));
  PC=C;Pawn=C->GetPawn();PreviousViewTarget=C->GetViewTarget();Event=E;
- OriginalPOV=C->PlayerCameraManager->GetCameraCacheView();TargetCamera->CalcCamera(0,TargetPOV);
+ if(auto* G=Pawn->FindComponentByClass<UDWGameplayCameraShakeComponent>())G->StopGameplayShake(true);
+ PreviousViewTarget->CalcCamera(0,OriginalPOV);TargetCamera->CalcCamera(0,TargetPOV);
  int32 Width=0,Height=0;C->GetViewportSize(Width,Height);InitialAspect=OriginalPOV.bConstrainAspectRatio?OriginalPOV.AspectRatio:(Height>0?float(Width)/Height:OriginalPOV.AspectRatio);
  FActorSpawnParameters P;P.ObjectFlags|=RF_Transient;P.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
  PlaybackCamera=GetWorld()->SpawnActor<ACameraActor>(OriginalPOV.Location,OriginalPOV.Rotation,P);
@@ -54,7 +70,7 @@ bool UDWCinematicComponent::PlayCinematic(APlayerController* C)
  if(auto* Hero=Cast<ADWPlayerCharacter>(Pawn.Get()))Hero->ClearHeldActions();
  UI.Reset();for(auto* U:UDWUIOffscreenComponent::FindForPlayer(C)){UI.Add(U);U->HideForCinematic();}
  E->OnCompleted.AddUniqueDynamic(this,&ThisClass::SceneCompleted);
- C->SetViewTarget(PlaybackCamera);SetPhase(EDWCinematicPhase::TravelOut);SetComponentTickEnabled(true);++PlaybackCount;return true;
+ C->SetViewTarget(PlaybackCamera);SetPhase(EDWCinematicPhase::TravelOut);SetComponentTickEnabled(true);++PlaybackCount;if(ShakeStart==EDWCinematicShakeStart::AtStart)StartCinematicShake();return true;
 }
 void UDWCinematicComponent::UpdateCamera(float T,bool Back)
 {
@@ -69,6 +85,7 @@ void UDWCinematicComponent::UpdateCamera(float T,bool Back)
 void UDWCinematicComponent::TickComponent(float Dt,ELevelTick Type,FActorComponentTickFunction* F)
 {
  Super::TickComponent(Dt,Type,F);if(!IsPlaying())return;
+ if(ActiveCinematicShake&&(!ActiveCinematicShake->IsActive()||ActiveCinematicShake->IsFinished()))ActiveCinematicShake=nullptr;
  if(!PC.IsValid()||!Pawn.IsValid()||!PlaybackCamera||!Event.IsValid()||!PreviousViewTarget.IsValid()){LastError=TEXT("A cinematic participant was removed");Cleanup(false);return;}
  if(Dialogue&&!Dialogue->IsPlaying()&&!Dialogue->bCompleted){LastError=Dialogue->LastError;Cleanup(false);return;}
  PhaseSeconds+=Dt;
@@ -88,6 +105,7 @@ void UDWCinematicComponent::TickComponent(float Dt,ELevelTick Type,FActorCompone
     if(!Dialogue->PlayDialogue(Subtitle->GetDialogueTextBlock())){LastError=Dialogue->LastError;Cleanup(false);break;}
    }else if(!Text.IsEmpty()&&SubtitleWidgetClass){Subtitle=CreateWidget<UDWCinematicSubtitleWidget>(PC.Get(),SubtitleWidgetClass);if(Subtitle){Subtitle->AddToViewport(100);Subtitle->ShowCue(Text,VoiceProfile);}}
    if(!Event->RequestEvent()){LastError=TEXT("Scene event could not start");Cleanup(false);break;}
+   if(ShakeStart==EDWCinematicShakeStart::AtTarget)StartCinematicShake();
    OnTargetReached.Broadcast();
    if(bViewOnly&&IsPlaying())SetPhase(EDWCinematicPhase::Hold);
   }break;
@@ -99,7 +117,7 @@ void UDWCinematicComponent::TickComponent(float Dt,ELevelTick Type,FActorCompone
  case EDWCinematicPhase::TravelBack:
   UpdateCamera(PhaseSeconds/FMath::Max(.001f,TravelBackSeconds),true);
   if(PhaseSeconds>=FMath::Max(TravelBackSeconds,AspectTransitionSeconds)){
-   PC->SetViewTarget(PreviousViewTarget.Get());UIReturnDuration=0;
+   StopCinematicShake(true);PC->SetViewTarget(PreviousViewTarget.Get());UIReturnDuration=0;
    for(auto U:UI)if(U.IsValid()){U->ReturnToScreen();UIReturnDuration=FMath::Max(UIReturnDuration,U->ReturnSeconds);}
    SetPhase(EDWCinematicPhase::UIReturn);
   }break;
@@ -111,6 +129,7 @@ void UDWCinematicComponent::SceneCompleted(){if(Phase==EDWCinematicPhase::SceneE
 void UDWCinematicComponent::CancelCinematic(){if(IsPlaying()){LastError=TEXT("Cancelled");Cleanup(false);}}
 void UDWCinematicComponent::Cleanup(bool Success)
 {
+ StopCinematicShake(true);
  if(Event.IsValid()){Event->OnCompleted.RemoveDynamic(this,&ThisClass::SceneCompleted);if(!Success)Event->CancelEvent();else if(Event.Get()==ViewEvent.Get())Event->CompleteEvent();}
  for(auto U:UI)if(U.IsValid())U->RestoreImmediately();UI.Reset();
  if(Dialogue){Dialogue->StopDialogue();Dialogue->DestroyComponent();Dialogue=nullptr;}

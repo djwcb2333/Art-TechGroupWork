@@ -1,4 +1,5 @@
 #include "DWPlayerCharacter.h"
+#include "DWGameplayCameraShake.h"
 #include "DWWorldEvent.h"
 #include "DWUserSettings.h"
 #include "DWLocalizationLibrary.h"
@@ -38,6 +39,7 @@
 
 ADWPlayerCharacter::ADWPlayerCharacter()
 {
+    GameplayCameraShake=CreateDefaultSubobject<UDWGameplayCameraShakeComponent>(TEXT("GameplayCameraShake"));
     Inventory=CreateDefaultSubobject<UDWInventoryComponent>(TEXT("DoughWorldInventory"));
     SwordPlaceholder=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SwordPlaceholder"));
     SwordPlaceholder->SetupAttachment(GetMesh());SwordPlaceholder->SetCollisionEnabled(ECollisionEnabled::NoCollision);SwordPlaceholder->SetCanEverAffectNavigation(false);
