@@ -14,6 +14,7 @@ class UTextBlock;
 class UDWTextVoiceProfile;
 UENUM(BlueprintType)
 enum class EDWCinematicPhase:uint8 { Idle,TravelOut,SceneEvent,Hold,TravelBack,UIReturn };
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDWCinematicTargetReached);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDWCinematicFinished,bool,bSuccessful);
 
 UCLASS(Blueprintable)
@@ -35,7 +36,10 @@ class GDATTEST_API UDWCinematicComponent:public UActorComponent
 public:
  UDWCinematicComponent();
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Targets") TObjectPtr<AActor> TargetCamera;
- UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Targets") TObjectPtr<AActor> EventActor;
+ /** View-only introductions commit their own saved ID after the camera and UI return. */
+ UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Targets") bool bViewOnly=false;
+ UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Targets",meta=(EditCondition="bViewOnly")) FName ViewEventId;
+ UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Targets",meta=(EditCondition="!bViewOnly")) TObjectPtr<AActor> EventActor;
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Camera",meta=(ClampMin="0",Units="s")) float TravelOutSeconds=1.5f;
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Camera",meta=(ClampMin="0",Units="s")) float TravelBackSeconds=1.2f;
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Camera",meta=(ClampMin="1",ClampMax="8")) float EaseExponent=2.f;
@@ -53,6 +57,7 @@ public:
  UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="Cinematic|Diagnostics") FString LastError;
  UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="Cinematic|Diagnostics") int32 PlaybackCount=0;
  UPROPERTY(BlueprintAssignable,Category="Cinematic") FDWCinematicFinished OnFinished;
+ UPROPERTY(BlueprintAssignable,Category="Cinematic") FDWCinematicTargetReached OnTargetReached;
  UFUNCTION(BlueprintCallable,Category="Cinematic") bool PlayCinematic(APlayerController* PlayerController);
  UFUNCTION(BlueprintCallable,Category="Cinematic") void CancelCinematic();
  UFUNCTION(BlueprintPure,Category="Cinematic") bool IsPlaying()const{return Phase!=EDWCinematicPhase::Idle;}
@@ -60,8 +65,10 @@ public:
  UFUNCTION(BlueprintPure,Category="Cinematic") UDWDialogueSequenceComponent* GetDialoguePlayer()const{return Dialogue;}
  virtual void TickComponent(float Dt,ELevelTick TickType,FActorComponentTickFunction* TickFunction)override;
 protected:
+ virtual void BeginPlay()override;
  virtual void EndPlay(const EEndPlayReason::Type R)override;
 private:
+ UPROPERTY(Transient) TObjectPtr<UDWWorldEventComponent> ViewEvent;
  UPROPERTY(Transient) TObjectPtr<ACameraActor> PlaybackCamera;
  UPROPERTY(Transient) TObjectPtr<UDWCinematicSubtitleWidget> Subtitle;
  UPROPERTY(Transient) TObjectPtr<UDWDialogueSequenceComponent> Dialogue;

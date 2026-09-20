@@ -20,6 +20,11 @@
 void UDWCinematicSubtitleWidget::ShowCue(FText Text,UDWTextVoiceProfile* Voice)
 {if(!SubtitleText)return;if(auto* R=UDWTextRevealLibrary::GetTextRevealComponent(SubtitleText)){if(Voice)R->VoiceProfile=Voice;R->PlayText(Text);}else SubtitleText->SetText(Text);}
 UDWCinematicComponent::UDWCinematicComponent(){PrimaryComponentTick.bCanEverTick=true;PrimaryComponentTick.bStartWithTickEnabled=false;}
+void UDWCinematicComponent::BeginPlay()
+{
+ Super::BeginPlay();
+ if(bViewOnly){ViewEvent=NewObject<UDWWorldEventComponent>(GetOwner(),NAME_None,RF_Transient);ViewEvent->EventId=ViewEventId;ViewEvent->RegisterComponent();}
+}
 void UDWCinematicComponent::SetPhase(EDWCinematicPhase P){Phase=P;PhaseSeconds=0;}
 bool UDWCinematicComponent::PlayCinematic(APlayerController* C)
 {
@@ -27,10 +32,10 @@ bool UDWCinematicComponent::PlayCinematic(APlayerController* C)
  auto Fail=[this](const TCHAR* M){LastError=M;return false;};
  if(IsPlaying())return Fail(TEXT("Already playing"));
  if(!IsValid(C)||!C->IsLocalController()||!C->GetPawn()||C->IsPaused())return Fail(TEXT("Player is not ready"));
- if(!IsValid(TargetCamera)||!IsValid(EventActor))return Fail(TEXT("Assign Target Camera and Event Actor"));
+ if(!IsValid(TargetCamera)||(!bViewOnly&&!IsValid(EventActor)))return Fail(TEXT("Assign Target Camera and either View Only + View Event ID, or Event Actor"));
  if(!SubtitleLines.IsEmpty()){bool HasText=false;for(const auto& Line:SubtitleLines)HasText|=!Line.Resolve(this).IsEmptyOrWhitespace();if(!HasText||!SubtitleWidgetClass)return Fail(TEXT("Subtitle Lines needs a non-empty line and a Subtitle Widget Class"));}
- if(TargetCamera->GetWorld()!=GetWorld()||EventActor->GetWorld()!=GetWorld())return Fail(TEXT("Targets must be in the same world"));
- auto* E=EventActor->FindComponentByClass<UDWWorldEventComponent>();if(!E||!E->IsReady())return Fail(TEXT("Event is completed, running, or has an invalid/duplicate ID"));
+ if(TargetCamera->GetWorld()!=GetWorld()||(!bViewOnly&&EventActor->GetWorld()!=GetWorld()))return Fail(TEXT("Targets must be in the same world"));
+ auto* E=bViewOnly?ViewEvent.Get():EventActor->FindComponentByClass<UDWWorldEventComponent>();if(!E||!E->IsReady())return Fail(TEXT("Event is completed, running, or has an invalid/duplicate ID"));
  auto* GI=GetWorld()->GetGameInstance<UDWGameInstance>();
  if(GI&&(GI->IsPlayerRestorePending()||GI->GetSubsystem<UDWLoadingTransitionSubsystem>()->IsTransitionActive()))return Fail(TEXT("Wait for loading/restoration"));
  if(auto* H=Cast<ADWGameplayHUD>(C->GetHUD());H&&H->IsBlockingGameplay())return Fail(TEXT("Close gameplay menus before starting"));
@@ -82,7 +87,9 @@ void UDWCinematicComponent::TickComponent(float Dt,ELevelTick Type,FActorCompone
     Dialogue=NewObject<UDWDialogueSequenceComponent>(GetOwner(),NAME_None,RF_Transient);Dialogue->RegisterComponent();Dialogue->Lines=SubtitleLines;
     if(!Dialogue->PlayDialogue(Subtitle->GetDialogueTextBlock())){LastError=Dialogue->LastError;Cleanup(false);break;}
    }else if(!Text.IsEmpty()&&SubtitleWidgetClass){Subtitle=CreateWidget<UDWCinematicSubtitleWidget>(PC.Get(),SubtitleWidgetClass);if(Subtitle){Subtitle->AddToViewport(100);Subtitle->ShowCue(Text,VoiceProfile);}}
-   if(!Event->RequestEvent()){LastError=TEXT("Scene event could not start");Cleanup(false);}
+   if(!Event->RequestEvent()){LastError=TEXT("Scene event could not start");Cleanup(false);break;}
+   OnTargetReached.Broadcast();
+   if(bViewOnly&&IsPlaying())SetPhase(EDWCinematicPhase::Hold);
   }break;
  case EDWCinematicPhase::SceneEvent:
   if(PhaseSeconds>FMath::Max(1.f,EventTimeoutSeconds)){LastError=TEXT("Scene event timed out: call Complete Event when its animation finishes");Cleanup(false);}break;
@@ -104,7 +111,7 @@ void UDWCinematicComponent::SceneCompleted(){if(Phase==EDWCinematicPhase::SceneE
 void UDWCinematicComponent::CancelCinematic(){if(IsPlaying()){LastError=TEXT("Cancelled");Cleanup(false);}}
 void UDWCinematicComponent::Cleanup(bool Success)
 {
- if(Event.IsValid()){Event->OnCompleted.RemoveDynamic(this,&ThisClass::SceneCompleted);if(!Success)Event->CancelEvent();}
+ if(Event.IsValid()){Event->OnCompleted.RemoveDynamic(this,&ThisClass::SceneCompleted);if(!Success)Event->CancelEvent();else if(Event.Get()==ViewEvent.Get())Event->CompleteEvent();}
  for(auto U:UI)if(U.IsValid())U->RestoreImmediately();UI.Reset();
  if(Dialogue){Dialogue->StopDialogue();Dialogue->DestroyComponent();Dialogue=nullptr;}
  if(Subtitle){Subtitle->RemoveFromParent();Subtitle=nullptr;}
@@ -121,7 +128,7 @@ void UDWCinematicComponent::Cleanup(bool Success)
  if(auto* W=GetWorld())W->GetSubsystem<UDWWorldEventSubsystem>()->Release(this);
  SetPhase(EDWCinematicPhase::Idle);SetComponentTickEnabled(false);Event.Reset();OnFinished.Broadcast(Success);
 }
-void UDWCinematicComponent::EndPlay(const EEndPlayReason::Type R){if(IsPlaying())Cleanup(false);Super::EndPlay(R);}
+void UDWCinematicComponent::EndPlay(const EEndPlayReason::Type R){if(IsPlaying())Cleanup(false);if(ViewEvent){ViewEvent->DestroyComponent();ViewEvent=nullptr;}Super::EndPlay(R);}
 ADWCinematicTrigger::ADWCinematicTrigger()
 {
  TriggerBox=CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));RootComponent=TriggerBox;TriggerBox->SetBoxExtent(FVector(160,300,150));TriggerBox->SetCollisionProfileName(TEXT("Trigger"));TriggerBox->SetGenerateOverlapEvents(true);
