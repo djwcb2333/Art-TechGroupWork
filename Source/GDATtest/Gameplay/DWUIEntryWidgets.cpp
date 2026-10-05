@@ -2,6 +2,7 @@
 #include "DWGameplayWidget.h"
 #include "DWGameplayConfig.h"
 #include "DWInventoryComponent.h"
+#include "DWInventoryInteraction.h"
 #include "DWPlayerCharacter.h"
 #include "DWLocalizationLibrary.h"
 #include "Components/Button.h"
@@ -54,6 +55,33 @@ void UDWInventorySlotWidget::ApplyItemData(UDWGameplayWidget* OwnerScreen,int32 
 }
 void UDWInventorySlotWidget::ClickSlot(){if(Screen)Screen->SelectInventorySlot(SlotIndex);}
 
+FReply UDWInventorySlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& Geometry,const FPointerEvent& Event)
+{
+    if(Screen)
+    {
+        bool bDetectDrag=false;
+        if(Screen->HandleInventorySlotPointer(SlotIndex,Event,bDetectDrag))
+        {
+            if(bDetectDrag&&Screen->GetInventory()&&Screen->GetInventory()->CaptureSlotSnapshot(SlotIndex,DragSnapshot))
+                return FReply::Handled().DetectDrag(TakeWidget(),Screen->InventoryControls.DragButton);
+            return FReply::Handled();
+        }
+    }
+    return Super::NativeOnPreviewMouseButtonDown(Geometry,Event);
+}
+
+void UDWInventorySlotWidget::NativeOnDragDetected(const FGeometry& Geometry,const FPointerEvent& Event,UDragDropOperation*& OutOperation)
+{
+    if(Screen)OutOperation=Screen->CreateInventoryDrag(DragSnapshot,this);
+    if(!OutOperation)Super::NativeOnDragDetected(Geometry,Event,OutOperation);
+}
+
+bool UDWInventorySlotWidget::NativeOnDrop(const FGeometry& Geometry,const FDragDropEvent& Event,UDragDropOperation* Operation)
+{
+    if(Screen&&Screen->HandleInventorySlotDrop(SlotIndex,Operation))return true;
+    return Super::NativeOnDrop(Geometry,Event,Operation);
+}
+
 void UDWRecipeEntryWidget::NativeConstruct()
 {
     Super::NativeConstruct();
@@ -67,9 +95,10 @@ void UDWRecipeEntryWidget::ApplyRecipeData(UDWGameplayWidget* OwnerScreen,const 
     if(RecipeNameText)RecipeNameText->SetText(UDWLocalizationLibrary::GetRecipeDisplayName(this,R));
     if(IngredientsText)IngredientsText->SetText(FText::FromString(DWText(this,TEXT("需要："),TEXT("Needs: ")).ToString()+DWStackSummary(Screen,R.Inputs,true)));
     if(OutputsText)OutputsText->SetText(FText::FromString(DWText(this,TEXT("获得："),TEXT("Makes: ")).ToString()+DWStackSummary(Screen,R.Outputs,false)));
-    if(RequirementText)RequirementText->SetText(R.bRequiresYeast?DWText(this,TEXT("仅酵母形态可制作"),TEXT("Requires Yeast form")):DWText(this,TEXT("任意形态可制作"),TEXT("Any form can craft")));
+    const bool bNeedsForm=Screen&&Screen->GetGameplayConfig()&&Screen->GetGameplayConfig()->bRequireTransformationForCrafting&&R.bRequiresYeast;
+    if(RequirementText)RequirementText->SetText(bNeedsForm?DWText(this,TEXT("仅酵母形态可制作"),TEXT("Requires Yeast form")):DWText(this,TEXT("任意形态可制作"),TEXT("Any form can craft")));
     if(CraftButton)CraftButton->SetIsEnabled(bCan);
-    if(CraftButtonText)CraftButtonText->SetText(bCan?DWText(this,TEXT("制作一份"),TEXT("Craft one")):DWText(this,TEXT("材料 / 形态 / 背包空间不足"),TEXT("Check materials, form and bag space")));
+    if(CraftButtonText)CraftButtonText->SetText(bCan?DWText(this,TEXT("制作一份"),TEXT("Craft one")):(bNeedsForm?DWText(this,TEXT("检查材料、形态与背包空间"),TEXT("Check materials, form and bag space")):DWText(this,TEXT("检查材料与背包空间"),TEXT("Check materials and bag space"))));
     OnRecipePresentationUpdated(bCan);
 }
 void UDWRecipeEntryWidget::ClickCraft(){if(Screen){Screen->PlayClick();Screen->CraftRecipe(RecipeId);}}

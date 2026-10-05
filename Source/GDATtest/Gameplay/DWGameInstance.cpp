@@ -11,6 +11,10 @@
 #include "Misc/PackageName.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
+#include "DWSaveSettings.h"
+#include "DWSaveStorage.h"
+#include "Misc/Paths.h"
+#include "HAL/FileManager.h"
 
 void UDWGameInstance::Init()
 {
@@ -18,6 +22,7 @@ void UDWGameInstance::Init()
 #if WITH_DEV_AUTOMATION_TESTS
  FString Prefix;if(FParse::Value(FCommandLine::Get(),TEXT("DWVerificationSavePrefix="),Prefix)&&Prefix.StartsWith(TEXT("DW_QA_"))&&Prefix.Len()<80&&!Prefix.Contains(TEXT("/"))&&!Prefix.Contains(TEXT("\\")))VerificationSavePrefix=Prefix;
 #endif
+ InitializeSaveStorage();
  GetSubsystem<UDWLoadingTransitionSubsystem>()->OnFinished.AddDynamic(this,&UDWGameInstance::HandleTravelFinished);
 }
 void UDWGameInstance::HandleTravelFailure(FText Reason)
@@ -65,10 +70,10 @@ TArray<FDWSlotSummary> UDWGameInstance::GetSlotSummaries() const
         FDWSlotSummary Summary;
         Summary.SlotIndex = Index;
         const FString SlotName = MakeSlotName(Index);
-        Summary.bExists = UGameplayStatics::DoesSaveGameExist(SlotName, 0);
+        Summary.bExists = SlotExists(SlotName);
         if (Summary.bExists)
         {
-            const UDWSaveGame* Save = Cast<UDWSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+            const UDWSaveGame* Save = Cast<UDWSaveGame>(ReadSlot(SlotName));
             if (Save)
             {
                 Summary.DisplayName = Save->DisplayName;
@@ -125,7 +130,7 @@ bool UDWGameInstance::NewGame(int32 SlotIndex, const FString& Name)
     LastSaveError = FText::GetEmpty();
     if (!IsValidSlot(SlotIndex)) return Fail(DWText(this, TEXT("只能使用存档槽 1 至 3。"), TEXT("Only save slots 1 through 3 are available.")));
     if (!GetWorld() || !GetSubsystem<UDWLoadingTransitionSubsystem>()) return Fail(DWText(this, TEXT("游戏世界尚未准备好。"), TEXT("The game world is not ready yet.")));
-    if (UGameplayStatics::DoesSaveGameExist(MakeSlotName(SlotIndex), 0))
+    if (SlotExists(MakeSlotName(SlotIndex)))
         return Fail(DWText(this, TEXT("该槽位已有存档，请先删除或选择空槽位。"), TEXT("This slot already contains a save. Delete it first or choose an empty slot.")));
 
     UDWSaveGame* Save = Cast<UDWSaveGame>(UGameplayStatics::CreateSaveGameObject(UDWSaveGame::StaticClass()));
@@ -137,7 +142,7 @@ bool UDWGameInstance::NewGame(int32 SlotIndex, const FString& Name)
     Save->Health = FMath::Max(1.f, GetConfig()->MaxHealth);
     Save->bHasPlayerTransform = false;
     if (!ValidateSave(Save)) return false;
-    if (!UGameplayStatics::SaveGameToSlot(Save, MakeSlotName(SlotIndex), 0))
+    if (!WriteSlot(Save, MakeSlotName(SlotIndex)))
         return Fail(DWText(this, TEXT("写入新存档失败，请检查磁盘空间与写入权限。"), TEXT("Unable to write the new save. Check disk space and write permissions.")));
 
     bSaveTravelInFlight=true;PreviousTravelSlot=ActiveSlot;ActiveSlot = SlotIndex;
@@ -155,9 +160,9 @@ bool UDWGameInstance::LoadGameSlot(int32 SlotIndex)
     LastSaveError = FText::GetEmpty();
     if (!IsValidSlot(SlotIndex)) return Fail(DWText(this, TEXT("只能使用存档槽 1 至 3。"), TEXT("Only save slots 1 through 3 are available.")));
     if (!GetWorld() || !GetSubsystem<UDWLoadingTransitionSubsystem>()) return Fail(DWText(this, TEXT("游戏世界尚未准备好。"), TEXT("The game world is not ready yet.")));
-    if (!UGameplayStatics::DoesSaveGameExist(MakeSlotName(SlotIndex), 0))
+    if (!SlotExists(MakeSlotName(SlotIndex)))
         return Fail(DWText(this, TEXT("该存档槽为空。"), TEXT("This save slot is empty.")));
-    UDWSaveGame* Save = Cast<UDWSaveGame>(UGameplayStatics::LoadGameFromSlot(MakeSlotName(SlotIndex), 0));
+    UDWSaveGame* Save = Cast<UDWSaveGame>(ReadSlot(MakeSlotName(SlotIndex)));
     if (!ValidateSave(Save)) return false;
 
     bSaveTravelInFlight=true;PreviousTravelSlot=ActiveSlot;ActiveSlot = SlotIndex;
@@ -174,8 +179,8 @@ bool UDWGameInstance::DeleteGameSlot(int32 SlotIndex)
     LastSaveError = FText::GetEmpty();
     if (!IsValidSlot(SlotIndex)) return Fail(DWText(this, TEXT("只能使用存档槽 1 至 3。"), TEXT("Only save slots 1 through 3 are available.")));
     const FString SlotName = MakeSlotName(SlotIndex);
-    if (!UGameplayStatics::DoesSaveGameExist(SlotName, 0)) return true;
-    if (!UGameplayStatics::DeleteGameInSlot(SlotName, 0))
+    if (!SlotExists(SlotName)) return true;
+    if (!RemoveSlot(SlotName))
         return Fail(DWText(this, TEXT("删除存档失败，文件可能被占用。"), TEXT("Unable to delete the save. The file may be in use.")));
     if (ActiveSlot == SlotIndex)
     {
@@ -200,7 +205,7 @@ bool UDWGameInstance::SaveCurrentGame()
 
     UDWSaveGame* Save = Cast<UDWSaveGame>(UGameplayStatics::CreateSaveGameObject(UDWSaveGame::StaticClass()));
     if (!Save) return Fail(DWText(this, TEXT("无法创建存档对象。"), TEXT("Unable to create the save object.")));
-    const UDWSaveGame* Existing = Cast<UDWSaveGame>(UGameplayStatics::LoadGameFromSlot(MakeSlotName(ActiveSlot), 0));
+    const UDWSaveGame* Existing = Cast<UDWSaveGame>(ReadSlot(MakeSlotName(ActiveSlot)));
     Save->DisplayName = Existing ? Existing->DisplayName : FText::Format(DWText(this, TEXT("冒险 {0}"), TEXT("Adventure {0}")), FText::AsNumber(ActiveSlot + 1)).ToString();
     Player->CaptureSaveData(Save);
     if(Existing)Save->VisitedMaps=Existing->VisitedMaps;
@@ -212,7 +217,7 @@ bool UDWGameInstance::SaveCurrentGame()
     Save->Version = UDWSaveGame::CurrentVersion;
     Save->Timestamp = FDateTime::UtcNow();
     if (!ValidateSave(Save)) return false;
-    if (!UGameplayStatics::SaveGameToSlot(Save, MakeSlotName(ActiveSlot), 0))
+    if (!WriteSlot(Save, MakeSlotName(ActiveSlot)))
         return Fail(DWText(this, TEXT("保存失败，请检查磁盘空间与写入权限。"), TEXT("Saving failed. Check disk space and write permissions.")));
     return true;
 }
@@ -258,7 +263,7 @@ bool UDWGameInstance::TravelToGameplayMap(TSoftObjectPtr<UWorld> Destination)
  if(T->IsTransitionActive())return false;
  if(!IsAllowedGameplayMap(Map)||!FPackageName::DoesPackageExist(Map))return Fail(DWText(this,TEXT("请在 Additional Gameplay Maps 中登记目标地图。"),TEXT("Register the destination in Additional Gameplay Maps first.")));
  if(!SaveCurrentGame())return false;
- auto* Save=Cast<UDWSaveGame>(UGameplayStatics::LoadGameFromSlot(MakeSlotName(ActiveSlot),0));if(!Save)return false;
+ auto* Save=Cast<UDWSaveGame>(ReadSlot(MakeSlotName(ActiveSlot)));if(!Save)return false;
  Save->MapPackage=Map;Save->WorldActors.Reset();Save->CompletedWorldEvents.Reset();Save->bHasPlayerTransform=false;
  for(const auto& M:Save->VisitedMaps)if(M.MapPackage==Map){Save->WorldActors=M.Actors;Save->CompletedWorldEvents=M.CompletedWorldEvents;Save->PlayerTransform=M.PlayerTransform;Save->bHasPlayerTransform=true;break;}
  if(!ValidateSave(Save))return false;
@@ -266,3 +271,48 @@ bool UDWGameInstance::TravelToGameplayMap(TSoftObjectPtr<UWorld> Destination)
  if(!T->RequestMap(Map)){HandleTravelFailure(T->LastError);return false;}
  return true;
 }
+
+
+void UDWGameInstance::InitializeSaveStorage()
+{
+    bUseDocumentsStorage = !GIsEditor;
+    SaveDirectory = bUseDocumentsStorage ? DWSaveStorage::DocumentsDirectory(GetDefault<UDWSaveSettings>()->DocumentsFolderName) : FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / TEXT("SaveGames"));
+#if WITH_DEV_AUTOMATION_TESTS
+    if (!VerificationSavePrefix.IsEmpty())
+    {
+        // QA must never import or replace a player's normal slots.
+        FString TestDirectory;
+        if (FParse::Value(FCommandLine::Get(), TEXT("DWSaveTestDirectory="), TestDirectory) && !FPaths::IsRelative(TestDirectory))
+        { SaveDirectory = TestDirectory; bUseDocumentsStorage = true; }
+        else { SaveDirectory = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / TEXT("SaveGames")); bUseDocumentsStorage = true; }
+    }
+#endif
+    if (SaveDirectory.IsEmpty() || !IFileManager::Get().MakeDirectory(*SaveDirectory, true))
+    { UE_LOG(LogTemp, Error, TEXT("DoughWorld: cannot create save directory: %s"), *SaveDirectory); return; }
+    UE_LOG(LogTemp, Display, TEXT("DoughWorld save directory: %s"), *SaveDirectory);
+    // One-time copy of slots visible to this installation. Originals are never moved/deleted.
+    // The marker prevents an explicitly deleted slot reappearing from the legacy location.
+    const FString Marker = SaveDirectory / TEXT(".legacy-import-v1");
+    if (bUseDocumentsStorage && VerificationSavePrefix.IsEmpty() && !IFileManager::Get().FileExists(*Marker))
+    {
+        bool bComplete = true;
+        for (int32 Index=0; Index<SaveSlotCount; ++Index)
+        {
+            const FString Slot = MakeSlotName(Index);
+            if (!DWSaveStorage::Exists(SaveDirectory, Slot) && UGameplayStatics::DoesSaveGameExist(Slot, 0))
+            {
+                TArray<uint8> Bytes;
+                if (!UGameplayStatics::LoadDataFromSlot(Bytes, Slot, 0) || !DWSaveStorage::WriteBytes(SaveDirectory / (Slot + TEXT(".sav")), Bytes)) bComplete = false;
+            }
+        }
+        if (bComplete) { TArray<uint8> MarkerBytes; MarkerBytes.Add(1); DWSaveStorage::WriteBytes(Marker, MarkerBytes); }
+    }
+}
+bool UDWGameInstance::SlotExists(const FString& Slot) const
+{ return bUseDocumentsStorage ? DWSaveStorage::Exists(SaveDirectory, Slot) : UGameplayStatics::DoesSaveGameExist(Slot, 0); }
+USaveGame* UDWGameInstance::ReadSlot(const FString& Slot) const
+{ return bUseDocumentsStorage ? DWSaveStorage::Read(SaveDirectory, Slot) : UGameplayStatics::LoadGameFromSlot(Slot, 0); }
+bool UDWGameInstance::WriteSlot(USaveGame* Save, const FString& Slot) const
+{ return bUseDocumentsStorage ? DWSaveStorage::Write(SaveDirectory, Slot, Save) : UGameplayStatics::SaveGameToSlot(Save, Slot, 0); }
+bool UDWGameInstance::RemoveSlot(const FString& Slot) const
+{ return bUseDocumentsStorage ? DWSaveStorage::Delete(SaveDirectory, Slot) : UGameplayStatics::DeleteGameInSlot(Slot, 0); }

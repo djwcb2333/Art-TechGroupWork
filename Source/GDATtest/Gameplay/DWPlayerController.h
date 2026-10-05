@@ -26,6 +26,7 @@ public:
     ADWPlayerController();
     virtual void PlayerTick(float DeltaSeconds) override;
     bool IsGameplayBlocked() const;
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Camera") bool IsCameraInputAllowed() const;
     UFUNCTION(BlueprintPure,Category="DoughWorld|Input") TArray<FKey> GetConfiguredKeys() const;
     UFUNCTION(BlueprintCallable,Category="DoughWorld|Input") bool SetActionBinding(EDWInputAction Action,FKey Key,FText& Error,bool bPersist=true);
     UFUNCTION(BlueprintCallable,Category="DoughWorld|Input") bool RestoreAuthoredBindings(FText& Error);
@@ -44,7 +45,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DoughWorld|Input|Interaction") FKey KeyHarvest = EKeys::F;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DoughWorld|Input|Interaction") FKey KeyTransform = EKeys::E;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DoughWorld|Input|Interaction") FKey KeyThrow = EKeys::LeftMouseButton;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DoughWorld|Input|Camera") FKey KeyCameraDrag = EKeys::RightMouseButton;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DoughWorld|Input|Camera") FKey KeyCameraDrag = EKeys::MiddleMouseButton;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DoughWorld|Input|UI") FKey KeyInventory = EKeys::B;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DoughWorld|Input|UI") FKey KeyCrafting = EKeys::Tab;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DoughWorld|Input|UI") FKey KeyPauseMenu = EKeys::Escape;

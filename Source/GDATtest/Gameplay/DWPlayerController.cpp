@@ -6,10 +6,12 @@
 #include "DWPlayerCharacter.h"
 #include "DWGameplayHUD.h"
 #include "DWGameInstance.h"
+#include "DWLoadingTransition.h"
 #include "DWGameplayConfig.h"
 #include "DWLocalizationLibrary.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PlayerInput.h"
 #include "Engine/World.h"
 #include "InputCoreTypes.h"
 
@@ -25,7 +27,7 @@ namespace
     TArray<FKey> DefaultDWKeys()
     {
         return {EKeys::W,EKeys::S,EKeys::A,EKeys::D,EKeys::SpaceBar,EKeys::LeftShift,EKeys::RightShift,
-            EKeys::F,EKeys::E,EKeys::LeftMouseButton,EKeys::RightMouseButton,EKeys::B,EKeys::Tab,EKeys::Escape,EKeys::P};
+            EKeys::F,EKeys::E,EKeys::LeftMouseButton,EKeys::MiddleMouseButton,EKeys::B,EKeys::Tab,EKeys::Escape,EKeys::P};
     }
 
     FText DWKeyLabel(const UObject* Context, const FKey Key)
@@ -246,6 +248,14 @@ void ADWPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 }
 bool ADWPlayerController::IsGameplayBlocked()const
 {const auto* H=Cast<ADWGameplayHUD>(GetHUD());return UDWWorldEventSubsystem::IsPlaying(this)||IsPaused()||(H&&H->IsBlockingGameplay())||(Player()&&Player()->IsDead());}
+bool ADWPlayerController::IsCameraInputAllowed()const
+{
+    const auto* P=Player();const auto* H=Cast<ADWGameplayHUD>(GetHUD());
+    if(!IsLocalPlayerController()||!P||GetViewTarget()!=P||IsGameplayBlocked()||!H||!H->IsSessionStarted())return false;
+    const auto* GI=GetWorld()?GetWorld()->GetGameInstance<UDWGameInstance>():nullptr;
+    const auto* Loading=GI?GI->GetSubsystem<UDWLoadingTransitionSubsystem>():nullptr;
+    return !GI||(!GI->IsPlayerRestorePending()&&(!Loading||!Loading->IsTransitionActive()));
+}
 void ADWPlayerController::PlayerTick(float DeltaSeconds)
 {
     // A UI/input event may queue rebinding while Super::PlayerTick processes delegates.
@@ -265,7 +275,14 @@ void ADWPlayerController::PlayerTick(float DeltaSeconds)
     P->MoveCameraRelative(Forward,Right);
     P->SetSprintHeld(IsActionDown(EDWInputAction::Sprint)||IsActionDown(EDWInputAction::SprintAlternate));
     P->SetHarvestHeld(IsActionDown(EDWInputAction::Harvest));
-    if(IsActionDown(EDWInputAction::CameraDrag)){float X=0,Y=0;GetInputMouseDelta(X,Y);P->DragCamera(X,Y);}
+    if(IsCameraInputAllowed()&&PlayerInput)
+    {
+        // Raw frame-accumulated mouse movement avoids the legacy .07 axis scaling and mouse smoothing.
+        // Neither a movement delta nor a wheel amount is multiplied by DeltaSeconds.
+        if(IsActionDown(EDWInputAction::CameraDrag))
+            P->DragCamera(PlayerInput->GetRawKeyValue(EKeys::MouseX),PlayerInput->GetRawKeyValue(EKeys::MouseY));
+        P->ZoomCamera(PlayerInput->GetRawKeyValue(EKeys::MouseWheelAxis));
+    }
 }
 void ADWPlayerController::Dash(){if(Player()&&!IsGameplayBlocked())Player()->PerformDash();}
 void ADWPlayerController::SprintDown(){if(Player()&&!IsGameplayBlocked())Player()->SetSprintHeld(true);}
@@ -293,12 +310,41 @@ void ADWPlayerController::AssignKeys(const TArray<FKey>& K)
 void ADWPlayerController::LoadSavedBindings()
 {
  const TArray<FKey> Before=GetConfiguredKeys();TArray<FKey> K=Before;
- for(int32 I=0;I<K.Num();++I){FString Value;const FString Name=StaticEnum<EDWInputAction>()->GetNameStringByValue(I);if(GConfig->GetString(TEXT("DoughWorld.Input"),*Name,Value,GGameUserSettingsIni))K[I]=FKey(FName(*Value));}
- AssignKeys(K);FText Error;if(!ValidateInputBindings(Error)){AssignKeys(Before);UE_LOG(LogTemp,Warning,TEXT("Ignoring invalid saved bindings: %s"),*Error.ToString());}
+  const int32 CameraIndex=int32(EDWInputAction::CameraDrag);bool bSavedCameraDrag=false;
+  for(int32 I=0;I<K.Num();++I)
+  {
+      FString Value;const FString Name=StaticEnum<EDWInputAction>()->GetNameStringByValue(I);
+      if(GConfig->GetString(TEXT("DoughWorld.Input"),*Name,Value,GGameUserSettingsIni))
+      {K[I]=FKey(FName(*Value));if(I==CameraIndex)bSavedCameraDrag=true;}
+  }
+  AssignKeys(K);FText Error;
+  if(!ValidateInputBindings(Error)){AssignKeys(Before);UE_LOG(LogTemp,Warning,TEXT("Ignoring invalid saved bindings: %s"),*Error.ToString());return;}
+  int32 DefaultVersion=0;
+  GConfig->GetInt(TEXT("DoughWorld.Input"),TEXT("CameraDragDefaultVersion"),DefaultVersion,GGameUserSettingsIni);
+  if(DefaultVersion<2)
+  {
+      // One-time upgrade of the former default only. All other saved bindings remain untouched.
+      // Marking the version also preserves a deliberate RMB rebind made after this upgrade.
+      if(bSavedCameraDrag&&K[CameraIndex]==EKeys::RightMouseButton)
+      {
+          bool bMiddleUsed=false;
+          for(int32 I=0;I<K.Num();++I)if(I!=CameraIndex&&K[I]==EKeys::MiddleMouseButton)bMiddleUsed=true;
+          if(!bMiddleUsed)
+          {
+              K[CameraIndex]=EKeys::MiddleMouseButton;AssignKeys(K);
+              GConfig->SetString(TEXT("DoughWorld.Input"),TEXT("CameraDrag"),TEXT("MiddleMouseButton"),GGameUserSettingsIni);
+              UE_LOG(LogTemp,Log,TEXT("DoughWorld input: migrated legacy CameraDrag RMB to MMB; other saved keys preserved."));
+          }
+          else UE_LOG(LogTemp,Warning,TEXT("DoughWorld input: legacy CameraDrag RMB preserved because another custom action owns MMB; rebind in Controls."));
+      }
+      GConfig->SetInt(TEXT("DoughWorld.Input"),TEXT("CameraDragDefaultVersion"),2,GGameUserSettingsIni);
+      GConfig->Flush(false,GGameUserSettingsIni);
+  }
 }
 void ADWPlayerController::SaveBindings()const
 {
- const auto K=GetConfiguredKeys();for(int32 I=0;I<K.Num();++I)GConfig->SetString(TEXT("DoughWorld.Input"),*StaticEnum<EDWInputAction>()->GetNameStringByValue(I),*K[I].GetFName().ToString(),GGameUserSettingsIni);GConfig->Flush(false,GGameUserSettingsIni);
+  const auto K=GetConfiguredKeys();for(int32 I=0;I<K.Num();++I)GConfig->SetString(TEXT("DoughWorld.Input"),*StaticEnum<EDWInputAction>()->GetNameStringByValue(I),*K[I].GetFName().ToString(),GGameUserSettingsIni);
+  GConfig->SetInt(TEXT("DoughWorld.Input"),TEXT("CameraDragDefaultVersion"),2,GGameUserSettingsIni);GConfig->Flush(false,GGameUserSettingsIni);
 }
 bool ADWPlayerController::SetActionBinding(EDWInputAction Action,FKey Key,FText& Error,bool Persist)
 {

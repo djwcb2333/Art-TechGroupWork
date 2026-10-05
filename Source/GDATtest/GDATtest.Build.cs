@@ -25,7 +25,7 @@ public class GDATtest : ModuleRules
             "SlateCore"
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "Json", "MoviePlayer", "RenderCore", "RHI" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "DeveloperSettings", "Json", "MoviePlayer", "RenderCore", "RHI" });
 
         // DoughWorld UMG authoring is editor-only; runtime widgets use UMG.
         if (Target.bBuildEditor)

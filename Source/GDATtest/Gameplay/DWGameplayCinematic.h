@@ -7,6 +7,7 @@
 #include "DWDialogueSequence.h"
 #include "DWGameplayCinematic.generated.h"
 class UCameraShakeBase;
+class UInputComponent;
 class UBoxComponent;
 class ACameraActor;
 class UDWWorldEventComponent;
@@ -60,6 +61,9 @@ public:
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Timing",meta=(ClampMin="1",Units="s")) float EventTimeoutSeconds=30.f;
  /** Non-empty list takes priority over the legacy single subtitle. All lines share the WBP voice unless Voice Profile overrides it. */
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Subtitle") TArray<FDWDialogueLine> SubtitleLines;
+ /** Left click skips directly to the next line. The final click skips the extra hold, but waits for the world event before returning. */
+ UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Subtitle") bool bAllowClickToNextLine=true;
+ UFUNCTION(BlueprintCallable,Category="Cinematic|Subtitle") bool SkipSubtitleLine();
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Subtitle") FText ChineseSubtitle;
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Subtitle") FText EnglishSubtitle;
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Cinematic|Subtitle") TSubclassOf<UDWCinematicSubtitleWidget> SubtitleWidgetClass;
@@ -84,6 +88,10 @@ private:
  UPROPERTY(Transient) TObjectPtr<ACameraActor> PlaybackCamera;
  UPROPERTY(Transient) TObjectPtr<UDWCinematicSubtitleWidget> Subtitle;
  UPROPERTY(Transient) TObjectPtr<UDWDialogueSequenceComponent> Dialogue;
+ UPROPERTY(Transient) TObjectPtr<UInputComponent> SubtitleInput;
+ bool bSkipPressHeld=false,bSubtitleDismissed=false;
+ void SubtitlePressed();
+ void SubtitleReleased();
  TWeakObjectPtr<APlayerController> PC;
  TWeakObjectPtr<APawn> Pawn;
  TWeakObjectPtr<AActor> PreviousViewTarget;

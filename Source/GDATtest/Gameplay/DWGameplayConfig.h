@@ -60,6 +60,10 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Inventory", meta=(TitleProperty="ItemId"))
     TArray<FDWItemDefinition> Items;
 
+    /** Off permits crafting in either form. On enforces each recipe's existing Requires Yeast flag. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Crafting", meta=(DisplayName="合成是否需要变身 / Require Transformation For Crafting"))
+    bool bRequireTransformationForCrafting = false;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Crafting", meta=(TitleProperty="RecipeId"))
     TArray<FDWRecipeDefinition> Recipes;
 

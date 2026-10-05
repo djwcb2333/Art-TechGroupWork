@@ -91,7 +91,8 @@ void ADWPlayerCharacter::BeginPlay()
     CameraYaw=CameraArm->GetComponentRotation().Yaw;
     CameraPitch=FMath::Clamp(CameraArm->GetComponentRotation().Pitch,MinCameraPitch,MaxCameraPitch);
     CameraArm->SetUsingAbsoluteRotation(true);CameraArm->bUsePawnControlRotation=false;CameraRestOffset=CameraArm->SocketOffset;
-    CameraArm->TargetArmLength=FMath::Max(100.f,CameraDistance);
+    CameraDistance=ClampCameraDistance(CameraDistance);
+    CameraArm->TargetArmLength=CameraDistance;
     // The title pauses the world before its first tick, so initialize the view immediately.
     CameraArm->SetWorldRotation(FRotator(CameraPitch,CameraYaw,0));
     InitializeFormVisuals();
@@ -106,7 +107,8 @@ void ADWPlayerCharacter::PrepareCameraForReveal()
  const bool Lag=CameraArm->bEnableCameraLag,RotLag=CameraArm->bEnableCameraRotationLag;
  CameraArm->bEnableCameraLag=false;CameraArm->bEnableCameraRotationLag=false;
  CameraArm->SetWorldRotation(FRotator(CameraPitch,CameraYaw,0));
- CameraArm->TargetArmLength=FMath::Max(100.f,CameraDistance);
+  CameraDistance=ClampCameraDistance(CameraDistance);
+  CameraArm->TargetArmLength=CameraDistance;
  CameraArm->TickComponent(0.f,LEVELTICK_All,nullptr);
  CameraArm->bEnableCameraLag=Lag;CameraArm->bEnableCameraRotationLag=RotLag;
 }
@@ -132,6 +134,16 @@ void ADWPlayerCharacter::Tick(float Dt)
     // All movement effects now use the retained Niagara components; no mesh actors are spawned.
     if(CameraArm)
     {
+        CameraDistance=ClampCameraDistance(CameraDistance);
+        const auto* CameraController=Cast<ADWPlayerController>(GetController());
+        if(CameraController&&CameraController->IsCameraInputAllowed())
+        {
+            const float Speed=FMath::IsFinite(CameraZoomInterpSpeed)?FMath::Max(0.f,CameraZoomInterpSpeed):10.f;
+            const float Seconds=FMath::IsFinite(Dt)?FMath::Max(0.f,Dt):0.f;
+            const float Alpha=Speed>0.f?1.f-FMath::Exp(-Speed*Seconds):1.f;
+            const float Current=ClampCameraDistance(CameraArm->TargetArmLength);
+            CameraArm->TargetArmLength=FMath::Lerp(Current,CameraDistance,Alpha);
+        }
         ShakeElapsed+=Dt;const float Alpha=FMath::Clamp(1.f-ShakeElapsed/FMath::Max(0.01f,TransformShakeSeconds),0.f,1.f);
         const FVector Shake(0,FMath::Sin(ShakeElapsed*TransformShakeFrequency)*TransformShakeMagnitude*Alpha,FMath::Cos(ShakeElapsed*TransformShakeFrequency*1.2f)*TransformShakeMagnitude*Alpha);
         CameraArm->SocketOffset=CameraRestOffset+Shake;CameraArm->SetWorldRotation(FRotator(CameraPitch,CameraYaw,0));
@@ -173,7 +185,35 @@ void ADWPlayerCharacter::MoveCameraRelative(float Forward,float Right)
     const FVector2D V=FVector2D(Forward,Right).GetClampedToMaxSize(1.f);const FRotationMatrix R(FRotator(0,CameraYaw,0));
     AddMovementInput(R.GetUnitAxis(EAxis::X),V.X);AddMovementInput(R.GetUnitAxis(EAxis::Y),V.Y);
 }
-void ADWPlayerCharacter::DragCamera(float X,float Y){CameraYaw+=X*CameraDragSensitivity;CameraPitch=FMath::Clamp(CameraPitch+Y*CameraDragSensitivity,MinCameraPitch,MaxCameraPitch);}
+void ADWPlayerCharacter::DragCamera(float X,float Y)
+{
+    const auto* PC=Cast<ADWPlayerController>(GetController());
+    if(!CameraArm||!PC||!PC->IsCameraInputAllowed()||!FMath::IsFinite(X)||!FMath::IsFinite(Y))return;
+    const auto* Settings=UDWUserSettings::Resolve(this);
+    const float Multiplier=Settings?Settings->GetCameraSensitivityMultiplier():1.f;
+    const float Base=FMath::IsFinite(CameraDragSensitivity)?FMath::Clamp(CameraDragSensitivity,.01f,4.f):.4f;
+    const float Sensitivity=Base*Multiplier;
+    CameraYaw=FMath::UnwindDegrees(CameraYaw+X*Sensitivity);
+    CameraPitch=FMath::Clamp(CameraPitch+Y*Sensitivity,MinCameraPitch,MaxCameraPitch);
+}
+float ADWPlayerCharacter::ClampCameraDistance(float Distance) const
+{
+    const float Near=FMath::IsFinite(MinCameraDistance)?FMath::Max(100.f,MinCameraDistance):600.f;
+    const float Far=FMath::IsFinite(MaxCameraDistance)?FMath::Max(100.f,MaxCameraDistance):3000.f;
+    return FMath::Clamp(FMath::IsFinite(Distance)?Distance:1800.f,FMath::Min(Near,Far),FMath::Max(Near,Far));
+}
+float ADWPlayerCharacter::GetCurrentCameraDistance() const
+{
+    return CameraArm?CameraArm->TargetArmLength:ClampCameraDistance(CameraDistance);
+}
+void ADWPlayerCharacter::ZoomCamera(float WheelDelta)
+{
+    const auto* PC=Cast<ADWPlayerController>(GetController());
+    if(!CameraArm||!PC||!PC->IsCameraInputAllowed()||!FMath::IsFinite(WheelDelta)||FMath::IsNearlyZero(WheelDelta))return;
+    const float Step=FMath::IsFinite(CameraZoomStep)?FMath::Max(1.f,CameraZoomStep):150.f;
+    CameraDistance=ClampCameraDistance(ClampCameraDistance(CameraDistance)-WheelDelta*Step);
+    if(FMath::IsFinite(CameraZoomInterpSpeed)&&CameraZoomInterpSpeed<=0.f)CameraArm->TargetArmLength=CameraDistance;
+}
 void ADWPlayerCharacter::ClearHeldActions(){bSprintHeld=false;SetHarvestHeld(false);bSprinting=false;ConsumeMovementInputVector();StopPlayerVFX(true);StopMovementAudio();bHasVFXLocationSample=false;CurrentVFXGroundSpeed=0.f;}
 void ADWPlayerCharacter::PerformDash()
 {
@@ -521,7 +561,7 @@ bool ADWPlayerCharacter::ThrowAlcoholAt(FVector Target)
     if(IsDead()||bIsRolling||!AlcoholProjectileClass||!GetWorld()||GetWorld()->GetTimeSeconds()<NextThrowTime||bGameplayActionInProgress||bRestoringSave)return false;
     TGuardValue<bool> ActionGuard(bGameplayActionInProgress,true);
     const int32 Cost=FMath::Max(1,AlcoholCostPerThrow);
-    if(Inventory->CountItem(TEXT("Alcohol"))<Cost){Notify(DWText(this,TEXT("酒精不足：疾跑累计或酵母形态合成可获得"),TEXT("Not enough Alcohol. Sprint to produce it, or craft in Yeast form.")));return false;}
+    if(Inventory->CountItem(TEXT("Alcohol"))<Cost){Notify(DWText(this,TEXT("酒精不足：通过疾跑或制作获得"),TEXT("Not enough Alcohol. Obtain it through sprinting or crafting.")));return false;}
     if(!CanThrowAlcohol(Target))return false;
     FVector Delta=Target-GetActorLocation();if(Delta.Size2D()>MaxThrowRange){const FVector D=Delta.GetSafeNormal2D()*MaxThrowRange;Target=GetActorLocation()+D;Target.Z=GetActorLocation().Z-GetCapsuleComponent()->GetScaledCapsuleHalfHeight();}
     const FVector Facing=(Target-GetActorLocation()).GetSafeNormal2D();if(!Facing.IsNearlyZero())SetActorRotation(Facing.Rotation());
@@ -704,18 +744,40 @@ void ADWPlayerCharacter::ApplyFormMeshScale()
     const FVector DesiredScale=DoughMeshScale*CurrentFormVisualScale/CurrentAnimationRootScale;
     if(!GetMesh()->GetRelativeScale3D().Equals(DesiredScale,UE_KINDA_SMALL_NUMBER))GetMesh()->SetRelativeScale3D(DesiredScale);
 }
-namespace {FString DWActorSaveId(const TCHAR* Prefix,const AActor* A,FName Id){return FString(Prefix)+(Id.IsNone()?A->GetName():Id.ToString());}}
+namespace
+{
+FString DWActorPath(const AActor* Actor) { return UWorld::RemovePIEPrefix(Actor->GetPathName()); }
+FString DWLegacyId(const TCHAR* Prefix, const AActor* Actor, FName Id) { return FString(Prefix) + (Id.IsNone() ? Actor->GetName() : Id.ToString()); }
+template<class T> int32 DWIdCount(const TCHAR* Prefix, const T* Actor, FName Id)
+{
+    int32 Count = 0; const FString Key = DWLegacyId(Prefix, Actor, Id);
+    for (TActorIterator<T> It(Actor->GetWorld()); It; ++It)
+        if (!It->IsActorBeingDestroyed() && DWLegacyId(Prefix, *It, It->PersistentId) == Key) ++Count;
+    return Count;
+}
+template<class T> FString DWActorSaveId(const TCHAR* Prefix, const T* Actor, FName Id)
+{
+    const FString Legacy = DWLegacyId(Prefix, Actor, Id);
+    return DWIdCount(Prefix, Actor, Id) > 1 ? Legacy + TEXT("|") + DWActorPath(Actor) : Legacy;
+}
+template<class T> bool DWMatchesSave(const FString& Key, const FString& Path, const TCHAR* Prefix, const T* Actor)
+{
+    if (!Path.IsEmpty()) return Path == DWActorPath(Actor);
+    // Older saves retain their IDs. Never apply an ambiguous old record to several actors.
+    return Key == DWLegacyId(Prefix, Actor, Actor->PersistentId) && DWIdCount(Prefix, Actor, Actor->PersistentId) == 1;
+}
+}
 void ADWPlayerCharacter::CaptureSaveData(UDWSaveGame* Save)const
 {
     if(!Save)return;Save->CompletedWorldEvents=GetWorld()->GetSubsystem<UDWWorldEventSubsystem>()->ExportCompleted();Save->PlayerTransform=GetActorTransform();Save->bHasPlayerTransform=true;Save->Health=Health;Save->Transformation=Transformation;Save->bYeastForm=bYeastForm;
     Save->SprintAlcoholElapsed=SprintAlcoholElapsed;Save->TransformationDecayElapsed=TransformationDecayElapsed;Save->Inventory=Inventory->GetSlots();Save->WorldActors.Reset();
     for(TActorIterator<ADWResourceNode> It(GetWorld());It;++It)
-    {FDWPersistedActorState S;S.ActorId=DWActorSaveId(TEXT("Resource:"),*It,It->PersistentId);S.Health=It->RemainingAmount;S.bDestroyed=!It->IsAvailable();S.Transform=It->GetActorTransform();S.bHasTransform=true;Save->WorldActors.Add(S);}
+    {FDWPersistedActorState S;S.ActorId=DWActorSaveId(TEXT("Resource:"),*It,It->PersistentId);S.ActorPath=DWActorPath(*It);S.Health=It->RemainingAmount;S.bDestroyed=!It->IsAvailable();S.Transform=It->GetActorTransform();S.bHasTransform=true;Save->WorldActors.Add(S);}
     for(TActorIterator<ADWEnemyNest> It(GetWorld());It;++It)
-    {FDWPersistedActorState S;S.ActorId=DWActorSaveId(TEXT("Nest:"),*It,It->PersistentId);S.Health=It->Health;S.bDestroyed=It->Health<=0;S.Transform=It->GetActorTransform();S.bHasTransform=true;S.SpawnProgress=It->SpawnProgress;Save->WorldActors.Add(S);}
+    {FDWPersistedActorState S;S.ActorId=DWActorSaveId(TEXT("Nest:"),*It,It->PersistentId);S.ActorPath=DWActorPath(*It);S.Health=It->Health;S.bDestroyed=It->Health<=0;S.Transform=It->GetActorTransform();S.bHasTransform=true;S.SpawnProgress=It->SpawnProgress;Save->WorldActors.Add(S);}
     for(TActorIterator<ADWEnemyCharacter> It(GetWorld());It;++It)
-    {if(It->IsActorBeingDestroyed())continue;FDWPersistedActorState S;S.ActorId=DWActorSaveId(TEXT("Enemy:"),*It,It->PersistentId);S.Health=It->Health;S.bDestroyed=It->Health<=0;S.Transform=It->GetActorTransform();S.bHasTransform=true;
-     if(auto* Nest=It->SourceNest.Get()){if(!It->IsAlive())continue;S.bRuntimeSpawned=true;S.ActorClass=FSoftClassPath(It->GetClass());S.OwnerId=DWActorSaveId(TEXT("Nest:"),Nest,Nest->PersistentId);}
+    {if(It->IsActorBeingDestroyed())continue;FDWPersistedActorState S;S.ActorId=DWActorSaveId(TEXT("Enemy:"),*It,It->PersistentId);S.ActorPath=DWActorPath(*It);S.Health=It->Health;S.bDestroyed=It->Health<=0;S.Transform=It->GetActorTransform();S.bHasTransform=true;
+     if(auto* Nest=It->SourceNest.Get()){if(!It->IsAlive())continue;S.bRuntimeSpawned=true;S.ActorClass=FSoftClassPath(It->GetClass());S.OwnerId=DWActorSaveId(TEXT("Nest:"),Nest,Nest->PersistentId);S.OwnerPath=DWActorPath(Nest);}
      Save->WorldActors.Add(S);}
 }
 void ADWPlayerCharacter::ApplySaveData(const UDWSaveGame* Save)
@@ -736,10 +798,10 @@ void ADWPlayerCharacter::ApplySaveData(const UDWSaveGame* Save)
     for(auto* E:OldSpawned)E->Destroy();
     for(const auto& S:Save->WorldActors)
     {
-        for(TActorIterator<ADWResourceNode> It(GetWorld());It;++It)if(S.ActorId==DWActorSaveId(TEXT("Resource:"),*It,It->PersistentId)){It->RestoreRemainingAmount(FMath::Max(0,FMath::RoundToInt(S.Health)));if(S.bHasTransform)It->SetActorTransform(S.Transform);}
-        for(TActorIterator<ADWEnemyNest> It(GetWorld());It;++It)if(S.ActorId==DWActorSaveId(TEXT("Nest:"),*It,It->PersistentId)){It->SetHealthForLoad(S.bDestroyed?0:S.Health);It->SpawnProgress=FMath::Clamp(S.SpawnProgress,0.f,It->SpawnInterval);if(S.bHasTransform)It->SetActorTransform(S.Transform);}
-        if(!S.bRuntimeSpawned)for(TActorIterator<ADWEnemyCharacter> It(GetWorld());It;++It)if(!It->IsActorBeingDestroyed()&&S.ActorId==DWActorSaveId(TEXT("Enemy:"),*It,It->PersistentId)){It->SetHealthForLoad(S.bDestroyed?0:S.Health);if(S.bHasTransform)It->SetActorTransform(S.Transform,false,nullptr,ETeleportType::TeleportPhysics);}
-        if(S.bRuntimeSpawned&&!S.bDestroyed&&S.bHasTransform){ADWEnemyNest* SavedNest=nullptr;for(TActorIterator<ADWEnemyNest> It(GetWorld());It;++It)if(S.OwnerId==DWActorSaveId(TEXT("Nest:"),*It,It->PersistentId)){SavedNest=*It;break;}
+        for(TActorIterator<ADWResourceNode> It(GetWorld());It;++It)if(DWMatchesSave(S.ActorId,S.ActorPath,TEXT("Resource:"),*It)){It->RestoreRemainingAmount(FMath::Max(0,FMath::RoundToInt(S.Health)));if(S.bHasTransform)It->SetActorTransform(S.Transform);}
+        for(TActorIterator<ADWEnemyNest> It(GetWorld());It;++It)if(DWMatchesSave(S.ActorId,S.ActorPath,TEXT("Nest:"),*It)){It->SetHealthForLoad(S.bDestroyed?0:S.Health);It->SpawnProgress=FMath::Clamp(S.SpawnProgress,0.f,It->SpawnInterval);if(S.bHasTransform)It->SetActorTransform(S.Transform);}
+        if(!S.bRuntimeSpawned)for(TActorIterator<ADWEnemyCharacter> It(GetWorld());It;++It)if(!It->IsActorBeingDestroyed()&&DWMatchesSave(S.ActorId,S.ActorPath,TEXT("Enemy:"),*It)){It->SetHealthForLoad(S.bDestroyed?0:S.Health);if(S.bHasTransform)It->SetActorTransform(S.Transform,false,nullptr,ETeleportType::TeleportPhysics);}
+        if(S.bRuntimeSpawned&&!S.bDestroyed&&S.bHasTransform){ADWEnemyNest* SavedNest=nullptr;for(TActorIterator<ADWEnemyNest> It(GetWorld());It;++It)if(DWMatchesSave(S.OwnerId,S.OwnerPath,TEXT("Nest:"),*It)){SavedNest=*It;break;}
          UClass* C=S.ActorClass.TryLoadClass<ADWEnemyCharacter>();if(SavedNest&&C){auto* E=GetWorld()->SpawnActorDeferred<ADWEnemyCharacter>(C,S.Transform,SavedNest,nullptr,ESpawnActorCollisionHandlingMethod::AlwaysSpawn);if(E){E->SourceNest=SavedNest;E->SetHealthForLoad(S.Health);E->FinishSpawning(S.Transform);SavedNest->RegisterRestoredEnemy(E);}}}
 
     }

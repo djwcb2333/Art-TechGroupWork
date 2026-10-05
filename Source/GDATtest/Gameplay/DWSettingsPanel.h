@@ -29,6 +29,8 @@ class GDATTEST_API UDWSettingsPanel:public UUserWidget
 public:
  UFUNCTION(BlueprintCallable,Category="Settings") void InitializePanel(UDWGameplayWidget* Screen);
  UFUNCTION(BlueprintCallable,Category="Settings") void RefreshPanel();
+ /** The outer settings book owns navigation: 0 audio, 1 key bindings, 2 controls guide. */
+ UFUNCTION(BlueprintCallable,Category="Settings") void SetBookPage(int32 OptionsIndex);
  UFUNCTION(BlueprintPure,Category="Settings") bool IsCapturing()const{return Capturing!=EDWInputAction::Count;}
  UFUNCTION(BlueprintCallable,Category="Settings") void RequestBinding(EDWInputAction Action);
  UFUNCTION(BlueprintCallable,Category="Settings") void CancelCapture();
@@ -38,6 +40,7 @@ protected:
  virtual void NativeConstruct()override;
  UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> AudioTabButton;
  UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> ControlsTabButton;
+ UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> ControllerTabButton;
  UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UWidgetSwitcher> OptionsSwitcher;
  UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<USlider> MusicSlider;
  UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<USlider> VoiceSlider;
@@ -49,10 +52,17 @@ protected:
  UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UTextBlock> BindingStatus;
  UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> ResetKeysButton;
  UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> CancelBindingButton;
+ /** Read-only keyboard/mouse guide; the existing rebinding page remains separate. */
+ UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UTextBlock> ControlsGuideText;
+ UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UTextBlock> InventoryShortcutsText;
+ UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<USlider> CameraSensitivitySlider;
+ UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UTextBlock> CameraSensitivityLabel;
+ UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> CameraSensitivityResetButton;
 private:
  UPROPERTY(Transient) TObjectPtr<UDWGameplayWidget> OwnerScreen;
- EDWInputAction Capturing=EDWInputAction::Count;bool bRefreshing=false;
- UFUNCTION()void AudioTab();UFUNCTION()void ControlsTab();UFUNCTION()void ResetKeys();
+ EDWInputAction Capturing=EDWInputAction::Count;bool bRefreshing=false;bool bBookNavigation=false;
+ UFUNCTION()void AudioTab();UFUNCTION()void ControlsTab();UFUNCTION()void ControllerTab();UFUNCTION()void ResetKeys();
  UFUNCTION()void MusicChanged(float V);UFUNCTION()void VoiceChanged(float V);UFUNCTION()void EffectsChanged(float V);
- void SetStatus(FText Text);void Sound();void RefreshVolumes();
+ UFUNCTION()void CameraSensitivityChanged(float Value);UFUNCTION()void ResetCameraSensitivity();
+ void SetStatus(FText Text);void Sound();void RefreshVolumes();void RefreshControlsGuide();void RefreshCameraSensitivity();
 };

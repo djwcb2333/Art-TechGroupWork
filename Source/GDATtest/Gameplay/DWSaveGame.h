@@ -20,7 +20,7 @@ class GDATTEST_API UDWSaveGame : public USaveGame
     GENERATED_BODY()
 
 public:
-    static constexpr int32 CurrentVersion = 3;
+    static constexpr int32 CurrentVersion = 4;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, Category="Save")
     int32 Version = CurrentVersion;

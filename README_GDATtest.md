@@ -1,5 +1,13 @@
 # Bread of the Wild / Dough World — GDATtest
 
+## 当前版本：v0.3.0-alpha.1 · 小地图与交互优化版本
+
+2026-10-05。完整更新内容、玩家操作、编辑入口、默认参数及验证边界见 [版本记录](版本记录.html)（[Markdown](版本记录.md)）。本版包含小地图与镜头同步、五书签设置/主音量、中键拖拽与滚轮、背包分堆/合并/丢弃、合成变身开关、对白左键下一句，以及存档和打包修复。
+
+当前私有仓库为 [djwcb2333/Art-TechGroupWork](https://github.com/djwcb2333/Art-TechGroupWork)，Clone URL：`https://github.com/djwcb2333/Art-TechGroupWork.git`。工程路径与入口继续沿用 GDATtest；后面的旧版本章节属于历史记录。
+
+打包游戏进度使用当前 Windows 用户的“文档/DoughWorld”，可在 Project Settings → Project → DoughWorld Saves → Documents Folder Name 修改下一次构建采用的名称。编辑器 PIE 仍用工程 Saved/SaveGames。个人存档和设置不上传。
+
 这是完整的 Unreal C++ 可编辑工程。仓库根目录是包含 `GDATtest.uproject` 的目录。
 
 版本号、Alpha/Beta/RC、Git 分支、提交与标签的命名规则，见同目录的 [版本管理与命名指南](版本管理与命名指南.html)（[可编辑 Markdown](版本管理与命名指南.md)）。

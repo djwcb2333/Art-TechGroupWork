@@ -1,5 +1,6 @@
 #include "DWGameplayWidget.h"
 #include "DWSettingsPanel.h"
+#include "DWUserSettings.h"
 #include "DWLoadingTransition.h"
 #include "DWUIEntryWidgets.h"
 #include "DWProgressRing.h"
@@ -20,6 +21,7 @@
 #include "Components/CanvasPanel.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/Slider.h"
+#include "Components/SizeBox.h"
 #include "Components/ComboBoxString.h"
 #include "Components/CheckBox.h"
 #include "Engine/Engine.h"
@@ -35,7 +37,6 @@
 namespace
 {
     void DWSetText(UTextBlock* Widget,const FString& Text){if(Widget)Widget->SetText(FText::FromString(Text));}
-    void DWVolume(float Value){if(GEngine)if(auto* Audio=GEngine->GetMainAudioDeviceRaw())Audio->SetTransientPrimaryVolume(FMath::Clamp(Value,0.f,1.f));}
 
     FText DWActionLabel(const UDWGameplayWidget* Widget,EDWInputAction Action)
     {
@@ -56,10 +57,12 @@ namespace
         const FText Transform=DWActionLabel(Widget,EDWInputAction::Transform);
         DWSetNamedText(Widget,TEXT("FormText"),Player&&Player->IsYeastForm()
             ?DWText(Widget,TEXT("酵母形态 · 耗尽后还原"),TEXT("Yeast form - reverts at zero"))
-            :FText::Format(DWText(Widget,TEXT("面团形态 · [{0}] 变身"),TEXT("Dough form - [{0}] Transform")),Transform));
-        DWSetNamedText(Widget,TEXT("CraftingStatusText"),Player&&Player->IsYeastForm()
-            ?DWText(Widget,TEXT("酵母形态 · 可以制作"),TEXT("Yeast form - Ready to craft"))
-            :FText::Format(DWText(Widget,TEXT("变身值满后按 {0} 进入酵母形态"),TEXT("At full transformation, press {0} for Yeast form")),Transform));
+            :DWText(Widget,TEXT("面团形态"),TEXT("Dough form")));
+        const auto* Config=Widget->GetGameplayConfig();
+        DWSetNamedText(Widget,TEXT("CraftingStatusText"),Config&&Config->bRequireTransformationForCrafting
+            ?(Player&&Player->IsYeastForm()?DWText(Widget,TEXT("酵母形态 · 可以制作"),TEXT("Yeast form - Ready to craft"))
+                :FText::Format(DWText(Widget,TEXT("部分配方需要变身：变身值满后按 {0}"),TEXT("Some recipes need Yeast form: at full meter press {0}")),Transform))
+            :DWText(Widget,TEXT("无需变身 · 材料齐全即可制作"),TEXT("No transformation needed - craft when materials are ready")));
         DWSetNamedText(Widget,TEXT("Inventory_Description"),FText::Format(
             DWText(Widget,TEXT("点击物品查看用途与使用。按 {0} 返回游戏。"),TEXT("Select an item to inspect or use it. Press {0} to return to the game.")),
             DWActionLabel(Widget,EDWInputAction::Inventory)));
@@ -67,29 +70,10 @@ namespace
             DWText(Widget,TEXT("左侧背包，右侧配方。按 {0} 返回游戏。"),TEXT("Inventory on the left, recipes on the right. Press {0} to return to the game.")),
             DWActionLabel(Widget,EDWInputAction::Crafting)));
 
-        TArray<FString> MoveKeys;
-        bool bSingleLetters=true;
-        for(EDWInputAction Action:{EDWInputAction::MoveForward,EDWInputAction::MoveLeft,EDWInputAction::MoveBackward,EDWInputAction::MoveRight})
-        {
-            const FString Label=DWActionLabel(Widget,Action).ToString();
-            MoveKeys.Add(Label);bSingleLetters=bSingleLetters&&Label.Len()==1;
-        }
-        const FText Movement=FText::FromString(FString::Join(MoveKeys,bSingleLetters?TEXT(""):TEXT("/")));
-        FText Sprint=DWActionLabel(Widget,EDWInputAction::Sprint);
-        if(const auto* Controller=Cast<ADWPlayerController>(Widget->GetOwningPlayer()))
-        {
-            const FText Alternate=DWActionLabel(Widget,EDWInputAction::SprintAlternate);
-            if(!Controller->GetAppliedActionKey(EDWInputAction::Sprint).IsValid())Sprint=Alternate;
-            else if(Controller->GetAppliedActionKey(EDWInputAction::SprintAlternate).IsValid()&&!Sprint.EqualTo(Alternate))
-                Sprint=FText::FromString(Sprint.ToString()+TEXT("/")+Alternate.ToString());
-        }
-        FFormatOrderedArguments Keys;
-        Keys.Add(Movement);Keys.Add(Sprint);
-        for(EDWInputAction Action:{EDWInputAction::Dash,EDWInputAction::CameraDrag,EDWInputAction::Throw,EDWInputAction::Harvest,EDWInputAction::Inventory,EDWInputAction::Crafting,EDWInputAction::PauseMenu})
-            Keys.Add(DWActionLabel(Widget,Action));
-        DWSetNamedText(Widget,TEXT("ControlsHint"),FText::Format(
-            DWText(Widget,TEXT("{0} 移动   {1} 疾跑   {2} 冲刺   按住{3} 视角   {4} 投掷   {5} 采集   {6} 背包   {7} 制作   {8} 菜单"),
-                TEXT("{0} Move   {1} Sprint   {2} Dash   Hold {3} Camera   {4} Throw   {5} Gather   {6} Bag   {7} Craft   {8} Menu")),Keys));
+        // Retain the authored widgets and offscreen animation bindings, but hide permanent instructions.
+        if(UWidget* Hint=Widget->GetWidgetFromName(TEXT("ControlsCard")))Hint->SetVisibility(ESlateVisibility::Collapsed);
+        if(UWidget* Hint=Widget->GetWidgetFromName(TEXT("ControlsHint")))Hint->SetVisibility(ESlateVisibility::Collapsed);
+
     }
     bool DWHandleMenuKey(ADWGameplayHUD* HUD,ADWPlayerController* Controller,const FKey& Key,bool bRepeat)
     {
@@ -133,6 +117,7 @@ void UDWGameplayWidget::NativePreConstruct()
 {
     Super::NativePreConstruct();
     ApplyDesignerTextPreview();
+    ApplySliderPresentation(this);
 }
 
 void UDWGameplayWidget::RefreshTextPresentation()
@@ -172,15 +157,19 @@ void UDWGameplayWidget::NativeConstruct()
     for(UComboBoxString* Combo:{ResolutionCombo.Get(),WindowModeCombo.Get(),QualityCombo.Get()})
         if(Combo){Combo->OnSelectionChanged.RemoveDynamic(this,&UDWGameplayWidget::ChangeSettingsOption);Combo->OnSelectionChanged.AddDynamic(this,&UDWGameplayWidget::ChangeSettingsOption);}
     if(ExtendedSettings)ExtendedSettings->InitializePanel(this);
-    GConfig->GetFloat(TEXT("DoughWorld.UserSettings"),TEXT("MasterVolume"),MasterVolume,GGameUserSettingsIni);DWVolume(MasterVolume);
+    InitializeSettingsBook();
+    if(auto* GI=GetGameInstance())if(auto* Settings=GI->GetSubsystem<UDWUserSettings>())MasterVolume=Settings->GetMasterVolume();
     RefreshSettingsLabels();
     ApplyArtwork();
     if(HUD)ApplyMenuPage(HUD->GetMenuPage());
     RefreshFromHUD(true);
+    RefreshInventoryInteractionUI();
 }
 void UDWGameplayWidget::InitializeScreen(ADWGameplayHUD* InHUD){HUD=InHUD;ApplyArtwork();if(HUD)ApplyMenuPage(HUD->GetMenuPage());RefreshFromHUD(true);}
 void UDWGameplayWidget::NativeDestruct()
 {
+    CancelInventoryDiscard();
+    bInventoryUIInitialized=false;
     FinishPageTransition();
     CurrentPage=EDWMenuPage::None;
     Super::NativeDestruct();
@@ -189,6 +178,9 @@ void UDWGameplayWidget::NativeTick(const FGeometry& Geometry,float Dt)
 {
     Super::NativeTick(Geometry,Dt);
     RefreshFromHUD(false);
+    RefreshInventoryInteractionUI();
+    SliderStyleRefreshSeconds+=Dt;
+    if(SliderStyleRefreshSeconds>=.5f){ApplySliderPresentation(this);SliderStyleRefreshSeconds=0.f;}
     TickPageTransition(FPlatformTime::Seconds()); // Menu pages may pause world time.
 }
 
@@ -305,6 +297,7 @@ void UDWGameplayWidget::ApplyArtwork()
 
 void UDWGameplayWidget::ApplyWidgetPresentation(UUserWidget* Target)
 {
+    ApplySliderPresentation(Target);
     if(!Target||!Target->WidgetTree)return;
     Target->WidgetTree->ForEachWidget([this,Target](UWidget* W)
     {
@@ -332,6 +325,7 @@ void UDWGameplayWidget::ApplyMenuPage(EDWMenuPage Page)
 {
     const bool bPageChanged=CurrentPage!=Page;
     if(bPageChanged||Page==EDWMenuPage::None)FinishPageTransition();
+    if(Page!=CurrentPage)CancelInventoryDiscard();
     CurrentPage=Page;
     if(ExtendedSettings){if(Page!=EDWMenuPage::Settings)ExtendedSettings->CancelCapture();else ExtendedSettings->RefreshPanel();}
     if(MenuRoot)MenuRoot->SetVisibility(Page==EDWMenuPage::None?ESlateVisibility::Collapsed:ESlateVisibility::Visible);
@@ -339,7 +333,7 @@ void UDWGameplayWidget::ApplyMenuPage(EDWMenuPage Page)
     int32 Index=0;
     switch(Page){case EDWMenuPage::SaveSlots:Index=1;break;case EDWMenuPage::Inventory:Index=2;break;case EDWMenuPage::Crafting:Index=3;break;case EDWMenuPage::Pause:Index=4;break;case EDWMenuPage::Settings:Index=5;break;case EDWMenuPage::Defeat:Index=6;break;default:break;}
     if(PageSwitcher&&PageSwitcher->GetChildrenCount()>Index)PageSwitcher->SetActiveWidgetIndex(Index);
-    if(Page==EDWMenuPage::Settings)LoadSettings();
+    if(Page==EDWMenuPage::Settings){LoadSettings();RefreshSettingsBook();}
     if(Page==EDWMenuPage::SaveSlots)RefreshSaves();
     if(Page==EDWMenuPage::Inventory||Page==EDWMenuPage::Crafting){RefreshInventory();RefreshRecipes();}
     const bool bSlot=GetDWGameInstance()&&GetDWGameInstance()->HasActiveSlot();
@@ -371,7 +365,7 @@ void UDWGameplayWidget::RefreshFromHUD(bool bForceLists)
     const float Sprint=P?P->GetSprintAlcoholProgress():0.f;
     if(HUDLayer)HUDLayer->SetVisibility(HUD->IsSessionStarted()?ESlateVisibility::SelfHitTestInvisible:ESlateVisibility::Collapsed);
     if(HUDPauseButton)HUDPauseButton->SetVisibility(HUD->IsSessionStarted()&&HUD->GetMenuPage()==EDWMenuPage::None?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
-    DWSetNamedText(this,TEXT("HUDPauseButton_Label"),FText::Format(DWText(this,TEXT("暂停 [{0}]"),TEXT("Pause [{0}]")),DWActionLabel(this,EDWInputAction::PauseAlternate)));
+    DWSetNamedText(this,TEXT("HUDPauseButton_Label"),DWText(this,TEXT("暂停"),TEXT("Pause")));
     if(auto* L=Cast<UTextBlock>(GetWidgetFromName(TEXT("HUDPauseButton_Label"))))L->SetAutoWrapText(false);
     DWSetNamedText(this,TEXT("PauseQuitButton_Label"),DWText(this,TEXT("保存并退出游戏"),TEXT("Save & quit game")));
     if(HealthBar)HealthBar->SetPercent(H);if(TransformationBar)TransformationBar->SetPercent(T);if(SprintRing)SprintRing->SetFraction(Sprint);
@@ -448,17 +442,19 @@ void UDWGameplayWidget::RefreshSaves()
 }
 void UDWGameplayWidget::SelectInventorySlot(int32 Index)
 {
+    if(IsInventoryDiscardPending())return;
     UDWAudioLibrary::PlayEvent(this,GetGameplayConfig(),EDWAudioEvent::UISelection);
     SelectedSlot=Index;RefreshInventory();const auto* Bag=GetInventory();const FName Id=Bag&&Bag->GetSlots().IsValidIndex(Index)?Bag->GetSlots()[Index].ItemId:NAME_None;OnInventorySelectionChanged(Index,Id);
 }
 void UDWGameplayWidget::ClickUse()
 {
+    if(IsInventoryDiscardPending())return;
     PlayClick();const auto* Bag=GetInventory();const FName Id=Bag&&Bag->GetSlots().IsValidIndex(SelectedSlot)?Bag->GetSlots()[SelectedSlot].ItemId:NAME_None;
     const bool Used=GetPlayer()&&GetPlayer()->UseInventoryItem(SelectedSlot);
     UDWAudioLibrary::PlayEvent(this,GetGameplayConfig(),Used?EDWAudioEvent::ItemUseSuccess:EDWAudioEvent::ItemUseFailed);
     if(!Used)SetToast(TEXT("当前无法使用该物品。"));RefreshFromHUD(true);OnItemUseResult(Id,Used);
 }
-void UDWGameplayWidget::CraftRecipe(FName Id){const bool Done=GetPlayer()&&GetPlayer()->CraftRecipe(Id);UDWAudioLibrary::PlayEvent(this,GetGameplayConfig(),Done?EDWAudioEvent::CraftSuccess:EDWAudioEvent::CraftFailed);SetToast(Done?TEXT("制作完成，物品已加入背包。"):TEXT("制作失败：请检查材料、形态和空间。"));RefreshFromHUD(true);OnRecipeCraftResult(Id,Done);}
+void UDWGameplayWidget::CraftRecipe(FName Id){if(IsInventoryDiscardPending())return;const bool Done=GetPlayer()&&GetPlayer()->CraftRecipe(Id);UDWAudioLibrary::PlayEvent(this,GetGameplayConfig(),Done?EDWAudioEvent::CraftSuccess:EDWAudioEvent::CraftFailed);SetToast(Done?TEXT("制作完成，物品已加入背包。"):(GetGameplayConfig()&&GetGameplayConfig()->bRequireTransformationForCrafting?TEXT("制作失败：请检查材料、形态和空间。"):TEXT("制作失败：请检查材料和背包空间。")));RefreshFromHUD(true);OnRecipeCraftResult(Id,Done);}
 void UDWGameplayWidget::LoadSlot(int32 Index){if(!GetDWGameInstance()||!GetDWGameInstance()->LoadGameSlot(Index)){SaveError(TEXT("加载失败。"));return;}OnUIAction(TEXT("LoadSlot"));if(HUD&&!GetDWGameInstance()->GetSubsystem<UDWLoadingTransitionSubsystem>()->IsTransitionActive()){HUD->SetSessionStarted(true);HUD->ClosePanels();}}
 void UDWGameplayWidget::NewSlot(int32 Index){if(!GetDWGameInstance()||!GetDWGameInstance()->NewGame(Index,FString::Printf(TEXT("存档 %d"),Index+1))){SaveError(TEXT("新建失败。"));return;}OnUIAction(TEXT("NewSlot"));if(HUD&&!GetDWGameInstance()->GetSubsystem<UDWLoadingTransitionSubsystem>()->IsTransitionActive()){HUD->SetSessionStarted(true);HUD->ClosePanels();}}
 void UDWGameplayWidget::DeleteSlot(int32 Index){const bool Done=GetDWGameInstance()&&GetDWGameInstance()->DeleteGameSlot(Index);if(Done)SetToast(TEXT("存档已删除。"));else SaveError(TEXT("删除失败。"));RefreshSaves();OnUIAction(TEXT("DeleteSlot"));}
@@ -473,7 +469,7 @@ void UDWGameplayWidget::ClickSaveTitle(){PlayClick();if(!GetDWGameInstance()||!G
 void UDWGameplayWidget::ClickNoSaveTitle(){PlayClick();OnUIAction(TEXT("ReturnToTitle"));if(GetDWGameInstance())GetDWGameInstance()->ReturnToTitle();}
 void UDWGameplayWidget::ClickDeathLoad(){PlayClick();if(GetDWGameInstance())LoadSlot(GetDWGameInstance()->GetActiveSlot());}
 void UDWGameplayWidget::ClickSettingsBack(){PlayClick();if(HUD)HUD->ReturnFromSettings();}
-void UDWGameplayWidget::ChangeVolume(float Value){MasterVolume=FMath::Clamp(Value,0.f,1.f);DWVolume(MasterVolume);if(VolumeValueText)VolumeValueText->SetText(FText::Format(DWText(this,TEXT("主音量  {0}%"),TEXT("Master volume  {0}%")),FMath::RoundToInt(MasterVolume*100.f)));}
+void UDWGameplayWidget::ChangeVolume(float Value){MasterVolume=FMath::Clamp(Value,0.f,1.f);if(!bUpdatingSettingsControls)if(auto* GI=GetGameInstance())if(auto* Settings=GI->GetSubsystem<UDWUserSettings>())Settings->SetMasterVolume(MasterVolume);if(VolumeValueText)VolumeValueText->SetText(FText::Format(DWText(this,TEXT("主音量  {0}%"),TEXT("Master volume  {0}%")),FMath::RoundToInt(MasterVolume*100.f)));}
 void UDWGameplayWidget::RefreshSettingsLabels()
 {
     TGuardValue<bool> Guard(bUpdatingLanguageOptions,true);
@@ -505,6 +501,7 @@ void UDWGameplayWidget::RefreshSettingsLabels()
         QualityCombo->SetSelectedIndex(FMath::Clamp(Index,0,3));
     }
     ChangeVolume(MasterVolume);
+    RefreshSettingsBook();
 }
 void UDWGameplayWidget::ChangeLanguage(FString SelectedItem,ESelectInfo::Type SelectionType)
 {
@@ -516,6 +513,7 @@ void UDWGameplayWidget::ChangeLanguage(FString SelectedItem,ESelectInfo::Type Se
 }
 void UDWGameplayWidget::LoadSettings()
 {
+    if(auto* GI=GetGameInstance())if(auto* Settings=GI->GetSubsystem<UDWUserSettings>())MasterVolume=Settings->GetMasterVolume();
     TGuardValue<bool> SettingsGuard(bUpdatingSettingsControls,true);
     auto* S=UGameUserSettings::GetGameUserSettings();
     RefreshSettingsLabels();
@@ -545,33 +543,60 @@ void UDWGameplayWidget::ClickApplySettings()
         if(QualityCombo)S->SetOverallScalabilityLevel(FMath::Clamp(QualityCombo->GetSelectedIndex(),0,3));
         if(VSyncCheck)S->SetVSyncEnabled(VSyncCheck->IsChecked());S->ApplySettings(false);S->SaveSettings();
     }
-    GConfig->SetFloat(TEXT("DoughWorld.UserSettings"),TEXT("MasterVolume"),MasterVolume,GGameUserSettingsIni);GConfig->Flush(false,GGameUserSettingsIni);
-    SetToast(TEXT("设置已保存；全屏与分辨率请在独立运行窗口检查。"));OnUIAction(TEXT("ApplySettings"));
+    if(auto* GI=GetGameInstance())if(auto* Settings=GI->GetSubsystem<UDWUserSettings>())Settings->SetMasterVolume(MasterVolume);
+    SetToast(DWText(this,TEXT("设置已保存。"),TEXT("Settings saved.")).ToString());OnUIAction(TEXT("ApplySettings"));
 }
 
 FReply UDWGameplayWidget::NativeOnPreviewKeyDown(const FGeometry& G,const FKeyEvent& E)
 {
     if(ExtendedSettings&&ExtendedSettings->IsCapturing()){if(!E.IsRepeat())ExtendedSettings->CaptureKey(E.GetKey());return FReply::Handled();}
+    if(HandleInventoryKey(E))return FReply::Handled();
     // Remapped menu keys (including Enter/Space) take priority over focused buttons.
     if(HUD&&HUD->IsBlockingGameplay()&&DWHandleMenuKey(HUD,Cast<ADWPlayerController>(GetOwningPlayer()),E.GetKey(),E.IsRepeat()))return FReply::Handled();
     return Super::NativeOnPreviewKeyDown(G,E);
 }
 FReply UDWGameplayWidget::NativeOnPreviewMouseButtonDown(const FGeometry& G,const FPointerEvent& E)
 {
-    if(ExtendedSettings&&ExtendedSettings->IsCapturing()){if(ExtendedSettings->IsCancelHit(E.GetScreenSpacePosition()))return Super::NativeOnPreviewMouseButtonDown(G,E);ExtendedSettings->CaptureKey(E.GetEffectingButton());return FReply::Handled();}
+    if(ExtendedSettings&&ExtendedSettings->IsCapturing()){if(IsSettingsBookNavigationHit(E.GetScreenSpacePosition())){ExtendedSettings->CancelCapture();return Super::NativeOnPreviewMouseButtonDown(G,E);}if(ExtendedSettings->IsCancelHit(E.GetScreenSpacePosition()))return Super::NativeOnPreviewMouseButtonDown(G,E);ExtendedSettings->CaptureKey(E.GetEffectingButton());return FReply::Handled();}
+    if(IsInventoryDiscardPending()){if(HandleInventoryDiscardPointer(E))return FReply::Handled();return Super::NativeOnPreviewMouseButtonDown(G,E);}
     if(HUD&&HUD->IsBlockingGameplay()&&DWHandleMenuKey(HUD,Cast<ADWPlayerController>(GetOwningPlayer()),E.GetEffectingButton(),false))return FReply::Handled();
     return Super::NativeOnPreviewMouseButtonDown(G,E);
 }
 FReply UDWGameplayWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEvent& E)
 {
+    if(HandleInventoryKey(E))return FReply::Handled();
     if(DWHandleMenuKey(HUD,Cast<ADWPlayerController>(GetOwningPlayer()),E.GetKey(),E.IsRepeat()))return FReply::Handled();
     return Super::NativeOnKeyDown(G,E);
 }
 FReply UDWGameplayWidget::NativeOnMouseButtonDown(const FGeometry& G,const FPointerEvent& E)
 {
+    if(IsInventoryDiscardPending())return FReply::Handled();
     if(DWHandleMenuKey(HUD,Cast<ADWPlayerController>(GetOwningPlayer()),E.GetEffectingButton(),false))return FReply::Handled();
     return HUD&&HUD->IsBlockingGameplay()?FReply::Handled():Super::NativeOnMouseButtonDown(G,E);
 }
 
 void UDWGameplayWidget::ClickPause(){PlayClick();if(HUD)HUD->TogglePause();}
 void UDWGameplayWidget::ClickPauseQuit(){PlayClick();if(!GetDWGameInstance()||!GetDWGameInstance()->SaveCurrentGame()){SaveError(TEXT("保存失败，未退出游戏。"));return;}UKismetSystemLibrary::QuitGame(this,GetOwningPlayer(),EQuitPreference::Quit,false);}
+
+void UDWGameplayWidget::ApplySliderPresentation(UUserWidget* Target)
+{
+    if(!Target||!Target->WidgetTree)return;
+    Target->WidgetTree->ForEachWidget([this](UWidget* W)
+    {
+        if(auto* Nested=Cast<UUserWidget>(W))ApplySliderPresentation(Nested);
+        if(auto* Slider=Cast<USlider>(W))
+        {
+            FSliderStyle Style=Slider->GetWidgetStyle();
+            const float Thickness=FMath::Clamp(SliderTrackThickness,1.f,24.f);
+            const FVector2D Thumb(FMath::Clamp(SliderThumbSize,12.f,48.f));
+            if(auto* Box=Cast<USizeBox>(Slider->GetParent()))
+                if(Box->GetHeightOverride()>0&&Box->GetHeightOverride()<Thumb.Y)Box->SetHeightOverride(Thumb.Y);
+            if(Style.BarThickness!=Thickness||Style.NormalThumbImage.ImageSize!=Thumb||Style.HoveredThumbImage.ImageSize!=Thumb||Style.DisabledThumbImage.ImageSize!=Thumb)
+            {
+                Style.BarThickness=Thickness;Style.NormalThumbImage.ImageSize=Thumb;
+                Style.HoveredThumbImage.ImageSize=Thumb;Style.DisabledThumbImage.ImageSize=Thumb;
+                Slider->SetWidgetStyle(Style);
+            }
+        }
+    });
+}

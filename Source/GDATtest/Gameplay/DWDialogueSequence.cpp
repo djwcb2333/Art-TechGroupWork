@@ -67,6 +67,15 @@ void UDWDialogueSequenceComponent::AdvanceDialogue()
  if(!bRunning||bPaused)return;
  if(bHolding)StartNextLine();else if(Reveal.IsValid())Reveal->SkipToEnd();
 }
+bool UDWDialogueSequenceComponent::SkipDialogueLine()
+{
+ if(!bRunning||bPaused)return false;
+ const uint32 Expected=Revision;const int32 Line=CurrentLineIndex;
+ if(!bHolding&&Reveal.IsValid())Reveal->SkipToEnd();
+ // A line-finished listener may stop, restart, or advance the queue itself.
+ if(bRunning&&!bPaused&&Revision==Expected&&CurrentLineIndex==Line&&bHolding)StartNextLine();
+ return true;
+}
 void UDWDialogueSequenceComponent::PauseDialogue(){if(bRunning){bPaused=true;if(Reveal.IsValid())Reveal->Pause();}}
 void UDWDialogueSequenceComponent::ResumeDialogue(){if(bRunning){bPaused=false;if(Reveal.IsValid())Reveal->Resume();}}
 void UDWDialogueSequenceComponent::StopDialogue(bool ClearText){if(bRunning){LastError=TEXT("Stopped");Finish(false,ClearText);}}

@@ -21,7 +21,7 @@ void UDWInventoryComponent::InitializeInventory(UDWGameplayConfig* InConfig)
         UE_LOG(LogTemp, Warning, TEXT("DW inventory rejected configuration that would invalidate its existing contents."));
         return;
     }
-    OnChanged.Broadcast();
+    ++Revision; OnChanged.Broadcast();
 }
 
 int32 UDWInventoryComponent::CountItem(FName ItemId) const
@@ -98,7 +98,7 @@ bool UDWInventoryComponent::TryAddItem(FName ItemId, int32 Quantity)
     TArray<FDWItemStack> Candidate = Slots;
     if (!AddToSlots(Candidate, ItemId, Quantity)) return false;
     Slots = MoveTemp(Candidate);
-    OnChanged.Broadcast();
+    ++Revision; OnChanged.Broadcast();
     return true;
 }
 
@@ -107,14 +107,14 @@ bool UDWInventoryComponent::TryRemoveItem(FName ItemId, int32 Quantity)
     TArray<FDWItemStack> Candidate = Slots;
     if (!RemoveFromSlots(Candidate, ItemId, Quantity)) return false;
     Slots = MoveTemp(Candidate);
-    OnChanged.Broadcast();
+    ++Revision; OnChanged.Broadcast();
     return true;
 }
 
 bool UDWInventoryComponent::MakeCraftedSlots(FName RecipeId, bool bYeast, TArray<FDWItemStack>& OutSlots) const
 {
     const FDWRecipeDefinition* Recipe = GetConfig()->GetRecipeDefinition(RecipeId);
-    if (!Recipe || (Recipe->bRequiresYeast && !bYeast) || Recipe->Inputs.IsEmpty() || Recipe->Outputs.IsEmpty()) return false;
+    if (!Recipe || (GetConfig()->bRequireTransformationForCrafting && Recipe->bRequiresYeast && !bYeast) || Recipe->Inputs.IsEmpty() || Recipe->Outputs.IsEmpty()) return false;
     OutSlots = Slots;
     // Inputs are removed first, so their emptied slots can hold outputs. The source never changes on failure.
     for (const FDWItemStack& Input : Recipe->Inputs)
@@ -135,7 +135,7 @@ bool UDWInventoryComponent::TryCraft(FName RecipeId, bool bYeast)
     TArray<FDWItemStack> Candidate;
     if (!MakeCraftedSlots(RecipeId, bYeast, Candidate)) return false;
     Slots = MoveTemp(Candidate);
-    OnChanged.Broadcast();
+    ++Revision; OnChanged.Broadcast();
     return true;
 }
 
@@ -145,7 +145,7 @@ bool UDWInventoryComponent::ConsumeOneAtSlot(int32 SlotIndex)
     const FDWItemDefinition* Item = GetConfig()->GetItemDefinition(Slots[SlotIndex].ItemId);
     if (!Item || !Item->bUsable) return false;
     if (--Slots[SlotIndex].Quantity == 0) Slots.RemoveAt(SlotIndex);
-    OnChanged.Broadcast();
+    ++Revision; OnChanged.Broadcast();
     return true;
 }
 
@@ -153,6 +153,98 @@ bool UDWInventoryComponent::SetSlots(const TArray<FDWItemStack>& InSlots)
 {
     if (!AreSlotsValid(InSlots)) return false;
     Slots = InSlots;
-    OnChanged.Broadcast();
+    ++Revision; OnChanged.Broadcast();
+    return true;
+}
+
+bool UDWInventoryComponent::CaptureSlotSnapshot(int32 SlotIndex, FDWInventorySlotSnapshot& OutSnapshot) const
+{
+    OutSnapshot=FDWInventorySlotSnapshot();
+    if(!Slots.IsValidIndex(SlotIndex)||!AreSlotsValid(Slots))return false;
+    OutSnapshot.SlotIndex=SlotIndex;
+    OutSnapshot.ItemId=Slots[SlotIndex].ItemId;
+    OutSnapshot.Quantity=Slots[SlotIndex].Quantity;
+    OutSnapshot.Revision=Revision;
+    return true;
+}
+
+bool UDWInventoryComponent::IsSlotSnapshotCurrent(const FDWInventorySlotSnapshot& Snapshot) const
+{
+    return Snapshot.Revision==Revision&&Slots.IsValidIndex(Snapshot.SlotIndex)&&
+        Snapshot.ItemId==Slots[Snapshot.SlotIndex].ItemId&&Snapshot.Quantity==Slots[Snapshot.SlotIndex].Quantity&&
+        AreSlotsValid(Slots);
+}
+
+bool UDWInventoryComponent::TryDiscardSnapshot(const FDWInventorySlotSnapshot& Snapshot)
+{
+    if(!IsSlotSnapshotCurrent(Snapshot))return false;
+    TArray<FDWItemStack> Candidate=Slots;
+    Candidate.RemoveAt(Snapshot.SlotIndex);
+    if(!AreSlotsValid(Candidate))return false;
+    Slots=MoveTemp(Candidate);
+    ++Revision; OnChanged.Broadcast();
+    return true;
+}
+
+bool UDWInventoryComponent::TrySplitSlot(int32 SlotIndex, int32 Quantity, int32& OutNewSlot)
+{
+    OutNewSlot=INDEX_NONE;
+    if(!AreSlotsValid(Slots)||!Slots.IsValidIndex(SlotIndex)||Quantity<1||Quantity>=Slots[SlotIndex].Quantity||
+        Slots.Num()>=GetConfig()->MaxInventorySlots)return false;
+    TArray<FDWItemStack> Candidate=Slots;
+    const FName ItemId=Candidate[SlotIndex].ItemId;
+    Candidate[SlotIndex].Quantity-=Quantity;
+    Candidate.Emplace(ItemId,Quantity);
+    if(!AreSlotsValid(Candidate))return false;
+    OutNewSlot=Candidate.Num()-1;
+    Slots=MoveTemp(Candidate);
+    ++Revision; OnChanged.Broadcast();
+    return true;
+}
+
+bool UDWInventoryComponent::TryQuickStack(FName ItemId)
+{
+    if(!AreSlotsValid(Slots))return false;
+    TArray<FDWItemStack> Candidate=Slots;
+    bool bChanged=false;
+    for(int32 I=0;I<Candidate.Num();++I)
+    {
+        if(!ItemId.IsNone()&&Candidate[I].ItemId!=ItemId)continue;
+        for(int32 J=I+1;J<Candidate.Num()&&Candidate[I].Quantity<GetConfig()->MaxStackSize;++J)
+        {
+            if(Candidate[J].ItemId!=Candidate[I].ItemId||Candidate[J].Quantity<1)continue;
+            const int32 Move=FMath::Min(Candidate[J].Quantity,GetConfig()->MaxStackSize-Candidate[I].Quantity);
+            Candidate[I].Quantity+=Move;Candidate[J].Quantity-=Move;bChanged|=Move>0;
+        }
+    }
+    if(!bChanged)return false;
+    Candidate.RemoveAll([](const FDWItemStack& Stack){return Stack.Quantity==0;});
+    if(!AreSlotsValid(Candidate))return false;
+    Slots=MoveTemp(Candidate);
+    ++Revision; OnChanged.Broadcast();
+    return true;
+}
+
+bool UDWInventoryComponent::TryMoveOrMergeSnapshot(const FDWInventorySlotSnapshot& Snapshot,int32 TargetSlot)
+{
+    if(!IsSlotSnapshotCurrent(Snapshot)||TargetSlot<0||TargetSlot>=GetConfig()->MaxInventorySlots||TargetSlot==Snapshot.SlotIndex)return false;
+    TArray<FDWItemStack> Candidate=Slots;
+    if(!Candidate.IsValidIndex(TargetSlot))
+    {
+        if(Snapshot.SlotIndex==Candidate.Num()-1)return false;
+        const FDWItemStack Moved=Candidate[Snapshot.SlotIndex];
+        Candidate.RemoveAt(Snapshot.SlotIndex);Candidate.Add(Moved);
+    }
+    else if(Candidate[TargetSlot].ItemId!=Snapshot.ItemId)Candidate.Swap(Snapshot.SlotIndex,TargetSlot);
+    else
+    {
+        const int32 Move=FMath::Min(Candidate[Snapshot.SlotIndex].Quantity,GetConfig()->MaxStackSize-Candidate[TargetSlot].Quantity);
+        if(Move<1)return false;
+        Candidate[TargetSlot].Quantity+=Move;Candidate[Snapshot.SlotIndex].Quantity-=Move;
+        if(Candidate[Snapshot.SlotIndex].Quantity==0)Candidate.RemoveAt(Snapshot.SlotIndex);
+    }
+    if(!AreSlotsValid(Candidate))return false;
+    Slots=MoveTemp(Candidate);
+    ++Revision; OnChanged.Broadcast();
     return true;
 }

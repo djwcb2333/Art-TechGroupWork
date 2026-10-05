@@ -20,3 +20,6 @@
 # Keep .vsconfig, Config, Source, Content, Build and project plugin dependencies.
 # Do not ignore *.obj: this project contains OBJ mesh source assets.
 # Do not ignore __ExternalActors__, __ExternalObjects__ or *_BuiltData.uasset.
+
+# Generated cook/editor file-open-order logs; retain other Build resources.
+/Build/Windows/FileOpenOrder/*.log

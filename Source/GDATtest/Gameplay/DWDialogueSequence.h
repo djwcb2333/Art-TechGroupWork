@@ -43,6 +43,8 @@ public:
  UFUNCTION(BlueprintCallable,Category="Dialogue") bool PlayDialogue(UTextBlock* TextBlock);
  /** First press reveals the current line silently; a later press advances. */
  UFUNCTION(BlueprintCallable,Category="Dialogue") void AdvanceDialogue();
+ /** Immediately skip the current line, including its reveal and hold. Leaves AdvanceDialogue behavior unchanged. */
+ UFUNCTION(BlueprintCallable,Category="Dialogue") bool SkipDialogueLine();
  UFUNCTION(BlueprintCallable,Category="Dialogue") void PauseDialogue();
  UFUNCTION(BlueprintCallable,Category="Dialogue") void ResumeDialogue();
  UFUNCTION(BlueprintCallable,Category="Dialogue") void StopDialogue(bool bClearText=true);

@@ -14,6 +14,8 @@
 #include "Camera/PlayerCameraManager.h"
 #include "Components/BoxComponent.h"
 #include "Components/TextBlock.h"
+#include "Components/InputComponent.h"
+#include "InputCoreTypes.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
@@ -70,7 +72,40 @@ bool UDWCinematicComponent::PlayCinematic(APlayerController* C)
  if(auto* Hero=Cast<ADWPlayerCharacter>(Pawn.Get()))Hero->ClearHeldActions();
  UI.Reset();for(auto* U:UDWUIOffscreenComponent::FindForPlayer(C)){UI.Add(U);U->HideForCinematic();}
  E->OnCompleted.AddUniqueDynamic(this,&ThisClass::SceneCompleted);
+ bSubtitleDismissed=false;bSkipPressHeld=C->IsInputKeyDown(EKeys::LeftMouseButton);
+ SubtitleInput=NewObject<UInputComponent>(this,NAME_None,RF_Transient);SubtitleInput->RegisterComponent();
+ SubtitleInput->Priority=10000;SubtitleInput->bBlockInput=false;
+ auto& Press=SubtitleInput->BindKey(EKeys::LeftMouseButton,IE_Pressed,this,&ThisClass::SubtitlePressed);Press.bConsumeInput=true;Press.bExecuteWhenPaused=true;
+ auto& Release=SubtitleInput->BindKey(EKeys::LeftMouseButton,IE_Released,this,&ThisClass::SubtitleReleased);Release.bConsumeInput=true;Release.bExecuteWhenPaused=true;
+ C->PushInputComponent(SubtitleInput);
  C->SetViewTarget(PlaybackCamera);SetPhase(EDWCinematicPhase::TravelOut);SetComponentTickEnabled(true);++PlaybackCount;if(ShakeStart==EDWCinematicShakeStart::AtStart)StartCinematicShake();return true;
+}
+void UDWCinematicComponent::SubtitlePressed()
+{
+ if(bSkipPressHeld)return;
+ bSkipPressHeld=true;SkipSubtitleLine();
+}
+void UDWCinematicComponent::SubtitleReleased(){bSkipPressHeld=false;}
+bool UDWCinematicComponent::SkipSubtitleLine()
+{
+ if(!bAllowClickToNextLine||bSubtitleDismissed||!PC.IsValid()||PC->IsPaused()||!Subtitle||
+    (Phase!=EDWCinematicPhase::SceneEvent&&Phase!=EDWCinematicPhase::Hold))return false;
+ if(auto* H=Cast<ADWGameplayHUD>(PC->GetHUD());H&&H->IsBlockingGameplay())return false;
+ if(Dialogue){
+  if(Dialogue->IsPaused())return false;
+  if(Dialogue->IsPlaying()){
+   if(!Dialogue->SkipDialogueLine())return false;
+   if(!IsPlaying()||!Subtitle||!Dialogue)return true;
+   if(Dialogue->IsPlaying())return true;
+   if(!Dialogue->bCompleted)return false;
+  }
+ }else{
+  const FText Text=DWText(this,*ChineseSubtitle.ToString(),*EnglishSubtitle.ToString());
+  if(Text.IsEmptyOrWhitespace())return false;
+  if(auto* R=UDWTextRevealLibrary::GetTextRevealComponent(Subtitle->GetDialogueTextBlock()))R->Stop(false);
+ }
+ bSubtitleDismissed=true;Subtitle->SetVisibility(ESlateVisibility::Collapsed);
+ return true;
 }
 void UDWCinematicComponent::UpdateCamera(float T,bool Back)
 {
@@ -113,7 +148,7 @@ void UDWCinematicComponent::TickComponent(float Dt,ELevelTick Type,FActorCompone
   if(PhaseSeconds>FMath::Max(1.f,EventTimeoutSeconds)){LastError=TEXT("Scene event timed out: call Complete Event when its animation finishes");Cleanup(false);}break;
  case EDWCinematicPhase::Hold:
   if(Dialogue&&Dialogue->IsPlaying()){PhaseSeconds=0;break;}
-  if(PhaseSeconds>=FMath::Max(0.f,HoldAfterEventSeconds)){if(Subtitle){Subtitle->RemoveFromParent();Subtitle=nullptr;}SetPhase(EDWCinematicPhase::TravelBack);}break;
+  if(bSubtitleDismissed||PhaseSeconds>=FMath::Max(0.f,HoldAfterEventSeconds)){if(Subtitle){Subtitle->RemoveFromParent();Subtitle=nullptr;}SetPhase(EDWCinematicPhase::TravelBack);}break;
  case EDWCinematicPhase::TravelBack:
   UpdateCamera(PhaseSeconds/FMath::Max(.001f,TravelBackSeconds),true);
   if(PhaseSeconds>=FMath::Max(TravelBackSeconds,AspectTransitionSeconds)){
@@ -129,6 +164,8 @@ void UDWCinematicComponent::SceneCompleted(){if(Phase==EDWCinematicPhase::SceneE
 void UDWCinematicComponent::CancelCinematic(){if(IsPlaying()){LastError=TEXT("Cancelled");Cleanup(false);}}
 void UDWCinematicComponent::Cleanup(bool Success)
 {
+ if(SubtitleInput){if(PC.IsValid())PC->PopInputComponent(SubtitleInput);SubtitleInput->DestroyComponent();SubtitleInput=nullptr;}
+ bSkipPressHeld=false;bSubtitleDismissed=false;
  StopCinematicShake(true);
  if(Event.IsValid()){Event->OnCompleted.RemoveDynamic(this,&ThisClass::SceneCompleted);if(!Success)Event->CancelEvent();else if(Event.Get()==ViewEvent.Get())Event->CompleteEvent();}
  for(auto U:UI)if(U.IsValid())U->RestoreImmediately();UI.Reset();

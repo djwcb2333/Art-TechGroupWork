@@ -5,6 +5,7 @@
 #include "DWLocalizationLibrary.h"
 #include "Types/SlateEnums.h"
 #include "Slate/WidgetTransform.h"
+#include "DWInventoryInteraction.h"
 #include "DWGameplayWidget.generated.h"
 class UDWGameplayConfig; class UDWGameInstance; class ADWPlayerCharacter; class UDWInventoryComponent;
 class UButton; class UTextBlock; class UProgressBar; class UBorder; class UWidgetSwitcher; class UUniformGridPanel;
@@ -28,6 +29,25 @@ class GDATTEST_API UDWGameplayWidget : public UUserWidget
 {
     GENERATED_BODY()
 public:
+    /** Fixed for players; editors can change combinations in WBP class defaults. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Inventory Controls") FDWInventoryControls InventoryControls;
+    UFUNCTION(BlueprintPure,Category="Inventory UI") FText GetInventoryControlHelp() const;
+    UFUNCTION(BlueprintPure,Category="Inventory UI") bool IsInventoryDiscardPending() const { return bInventoryDiscardPending; }
+    UFUNCTION(BlueprintCallable,Category="Inventory UI") bool RequestDiscardSelectedInventory();
+    UFUNCTION(BlueprintCallable,Category="Inventory UI") void ConfirmInventoryDiscard();
+    UFUNCTION(BlueprintCallable,Category="Inventory UI") void CancelInventoryDiscard();
+    bool HandleInventorySlotPointer(int32 SlotIndex,const FPointerEvent& Event,bool& bStartDrag);
+    UDragDropOperation* CreateInventoryDrag(const FDWInventorySlotSnapshot& Snapshot,UDWInventorySlotWidget* Source);
+    bool HandleInventorySlotDrop(int32 SlotIndex,UDragDropOperation* Operation);
+
+    /** Shared styling also applies to future sliders discovered in nested widgets. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Sliders",meta=(ClampMin="1",ClampMax="24")) float SliderTrackThickness=8.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Sliders",meta=(ClampMin="12",ClampMax="48")) float SliderThumbSize=22.f;
+    void ApplySliderPresentation(UUserWidget* Target);
+    UFUNCTION(BlueprintCallable,Category="UI|Settings") void SelectSettingsBookTab(int32 Tab);
+    UFUNCTION(BlueprintPure,Category="UI|Settings") int32 GetSettingsBookTab() const{return SettingsBookTab;}
+    void InitializeSettingsBook();
+    void RefreshSettingsBook();
     /** Static TextBlock labels in this WBP only. Match the Hierarchy widget name, e.g. TitleText.
      * These bilingual values take priority over the legacy title and translation catalog.
      * Dynamic health/inventory/input labels are still supplied by their gameplay systems.
@@ -80,6 +100,8 @@ public:
     UFUNCTION(BlueprintImplementableEvent,Category="UI|Events") void OnRecipeCraftResult(FName RecipeId,bool bSuccess);
     UFUNCTION(BlueprintImplementableEvent,Category="UI|Events") void OnUIAction(FName Action);
 protected:
+    virtual bool NativeOnDrop(const FGeometry& Geometry,const FDragDropEvent& Event,UDragDropOperation* Operation) override;
+
     virtual void NativePreConstruct() override;
     virtual void NativeConstruct() override;
     virtual void NativeDestruct() override;
@@ -149,6 +171,29 @@ protected:
     UPROPERTY(Transient,BlueprintReadOnly,Category="UI") TObjectPtr<ADWGameplayHUD> HUD;
     UPROPERTY(BlueprintReadOnly,Category="UI") int32 SelectedSlot=INDEX_NONE;
 private:
+    int32 SettingsBookTab=0;
+    UFUNCTION() void BookGraphicsTab();
+    UFUNCTION() void BookAudioTab();
+    UFUNCTION() void BookKeysTab();
+    UFUNCTION() void BookControllerTab();
+    UFUNCTION() void BookGeneralTab();
+    UPROPERTY(Transient,meta=(BindWidgetOptional)) TObjectPtr<UBorder> InventoryDiscardModal;
+    UPROPERTY(Transient,meta=(BindWidgetOptional)) TObjectPtr<UTextBlock> InventoryDiscardMessage;
+    UPROPERTY(Transient) TWeakObjectPtr<UDWInventoryComponent> PendingDiscardInventory;
+    FDWInventorySlotSnapshot PendingDiscardSnapshot;
+    bool bInventoryDiscardPending=false;
+    bool bInventoryUIInitialized=false;
+    bool IsInventoryInteractionPage() const;
+    bool HandleInventoryKey(const FKeyEvent& Event);
+    bool RequestInventoryDiscard(const FDWInventorySlotSnapshot& Snapshot);
+    void ConfigureInventoryDiscardPopup();
+    bool PositionInventoryDiscardPopup(const FVector2D& ScreenPosition);
+    bool HandleInventoryDiscardPointer(const FPointerEvent& Event);
+    bool RequestInventoryDiscardAtScreenPosition(const FDWInventorySlotSnapshot& Snapshot,const FVector2D& ScreenPosition);
+    bool IsSettingsBookNavigationHit(FVector2D Position) const;
+    void EnsureInventoryInteractionUI();
+    void RefreshInventoryInteractionUI();
+
     bool FindTextOverride(const UTextBlock* Text,EDWGameLanguage Language,FText& OutText) const;
     void ApplyDesignerTextPreview();
     EDWMenuPage CurrentPage=EDWMenuPage::None;
@@ -162,6 +207,7 @@ private:
     float PageTransitionOvershoot=1.f;
     void TickPageTransition(double Now);
     uint32 InventoryHash=0;
+    float SliderStyleRefreshSeconds=0.f;
     float MasterVolume=1.f;
     int32 LanguageRevision=INDEX_NONE;
     bool bUpdatingLanguageOptions=false;

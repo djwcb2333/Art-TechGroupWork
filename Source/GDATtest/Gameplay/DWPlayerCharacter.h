@@ -53,8 +53,16 @@ public:
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Audio|Throw") TObjectPtr<USoundBase> ThrowSound;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Audio|Throw",meta=(ClampMin="0",ClampMax="4")) float ThrowSoundVolume=1.f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Audio|Throw",meta=(ClampMin="0.25",ClampMax="4")) float ThrowSoundPitch=1.f;
-    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Camera",meta=(ClampMin="0.01")) float CameraDragSensitivity=0.22f;
+    /** Degrees per raw mouse movement unit. Player settings multiply this value; never multiply a mouse delta by frame time. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Camera",meta=(ClampMin="0.01",ClampMax="4")) float CameraDragSensitivity=0.4f;
+    /** Initial / requested spring-arm length. Runtime zoom remains within the editable distance limits. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Camera",meta=(ClampMin="100",Units="cm")) float CameraDistance=1800.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Camera",meta=(ClampMin="100",Units="cm")) float MinCameraDistance=600.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Camera",meta=(ClampMin="100",Units="cm")) float MaxCameraDistance=3000.f;
+    /** Positive wheel input moves closer by this many centimeters per wheel unit, independent of frame time. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Camera",meta=(ClampMin="1",Units="cm")) float CameraZoomStep=150.f;
+    /** Exponential interpolation speed. Zero applies the target immediately; larger positive values settle faster. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Camera",meta=(ClampMin="0")) float CameraZoomInterpSpeed=10.f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Camera") float MinCameraPitch=-80.f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Camera") float MaxCameraPitch=-25.f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Transformation") TObjectPtr<USoundBase> TransformSound;
@@ -202,6 +210,8 @@ public:
     UFUNCTION(BlueprintImplementableEvent,Category="DoughWorld|Events") void OnPlayerDied();
     void MoveCameraRelative(float Forward,float Right);
     void DragCamera(float DeltaX,float DeltaY);
+    UFUNCTION(BlueprintCallable,Category="DoughWorld|Camera") void ZoomCamera(float WheelDelta);
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Camera") float GetCurrentCameraDistance() const;
     void ClearHeldActions();
     UFUNCTION(BlueprintCallable,Category="DoughWorld|Save") void CaptureSaveData(UDWSaveGame* Save) const;
     UFUNCTION(BlueprintCallable,Category="DoughWorld|Save") void ApplySaveData(const UDWSaveGame* Save);
@@ -255,6 +265,7 @@ private:
     void PlayFormTransitionVFX(bool bEntering);
     void UpdateHarvest(float DeltaSeconds);
     void UpdateAnimation();
+    float ClampCameraDistance(float Distance) const;
     void StartAttackAnimation();
     void InitializeFormVisuals();
     void UpdateFormAppearance(bool bImmediate=false);

@@ -8,6 +8,7 @@
 class ADWPlayerCharacter;
 class UDWGameplayConfig;
 class UDWSaveGame;
+class USaveGame;
 class UDWLoadingTransitionSettings;
 
 /** Owns three persistent slots; stores pending restoration across level travel. */
@@ -79,6 +80,16 @@ private:
 
     FString MakeSlotName(int32 SlotIndex)const;
     FString VerificationSavePrefix;
+    FString SaveDirectory;
+    bool bUseDocumentsStorage = false;
+    void InitializeSaveStorage();
+    bool SlotExists(const FString& Slot) const;
+    USaveGame* ReadSlot(const FString& Slot) const;
+    bool WriteSlot(USaveGame* Save, const FString& Slot) const;
+    bool RemoveSlot(const FString& Slot) const;
+public:
+    UFUNCTION(BlueprintPure, Category="DoughWorld|Save") FString GetSaveDirectory() const { return SaveDirectory; }
+private:
     static bool IsValidSlot(int32 SlotIndex);
     bool ValidateSave(const UDWSaveGame* Save);
     bool Fail(const FText& Reason);

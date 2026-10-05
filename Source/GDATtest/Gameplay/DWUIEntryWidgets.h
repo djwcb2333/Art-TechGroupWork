@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "DWGameplayTypes.h"
+#include "DWInventoryComponent.h"
 #include "DWUIEntryWidgets.generated.h"
 class UButton; class UTextBlock; class UImage; class UBorder; class UDWGameplayWidget;
 
@@ -16,12 +17,16 @@ public:
     UFUNCTION(BlueprintImplementableEvent,Category="Inventory UI") void OnItemPresentationUpdated(bool bSelected);
 protected:
     virtual void NativeConstruct() override;
+    virtual FReply NativeOnPreviewMouseButtonDown(const FGeometry& Geometry,const FPointerEvent& Event) override;
+    virtual void NativeOnDragDetected(const FGeometry& Geometry,const FPointerEvent& Event,UDragDropOperation*& OutOperation) override;
+    virtual bool NativeOnDrop(const FGeometry& Geometry,const FDragDropEvent& Event,UDragDropOperation* Operation) override;
     UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> SlotButton;
     UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UImage> ItemIcon;
     UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UTextBlock> ItemNameText;
     UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UTextBlock> QuantityText;
     UPROPERTY(Transient) TObjectPtr<UDWGameplayWidget> Screen;
     UFUNCTION() void ClickSlot();
+    FDWInventorySlotSnapshot DragSnapshot;
 };
 
 UCLASS(Blueprintable)

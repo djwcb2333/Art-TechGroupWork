@@ -9,6 +9,17 @@ class UDWGameplayConfig;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDWInventoryChanged);
 
+/** A drag/confirmation references one exact inventory revision; it never removes items early. */
+USTRUCT(BlueprintType)
+struct FDWInventorySlotSnapshot
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadOnly, Category="Inventory") int32 SlotIndex=INDEX_NONE;
+    UPROPERTY(BlueprintReadOnly, Category="Inventory") FName ItemId;
+    UPROPERTY(BlueprintReadOnly, Category="Inventory") int32 Quantity=0;
+    UPROPERTY(BlueprintReadOnly, Category="Inventory") int64 Revision=INDEX_NONE;
+};
+
 /** Every inventory mutation succeeds completely or leaves all slots unchanged. */
 UCLASS(ClassGroup=(DoughWorld), BlueprintType, Blueprintable, meta=(BlueprintSpawnableComponent))
 class GDATTEST_API UDWInventoryComponent : public UActorComponent
@@ -52,10 +63,36 @@ public:
     UFUNCTION(BlueprintPure, Category="DoughWorld|Inventory")
     bool AreSlotsValid(const TArray<FDWItemStack>& InSlots) const;
 
+    UFUNCTION(BlueprintPure, Category="DoughWorld|Inventory")
+    bool CaptureSlotSnapshot(int32 SlotIndex, FDWInventorySlotSnapshot& OutSnapshot) const;
+
+    UFUNCTION(BlueprintPure, Category="DoughWorld|Inventory")
+    bool IsSlotSnapshotCurrent(const FDWInventorySlotSnapshot& Snapshot) const;
+
+    /** Permanently removes the selected stack only if nothing changed since confirmation opened. */
+    UFUNCTION(BlueprintCallable, Category="DoughWorld|Inventory")
+    bool TryDiscardSnapshot(const FDWInventorySlotSnapshot& Snapshot);
+
+    /** Splits to the next free compact slot, preserving every item when the bag is full. */
+    UFUNCTION(BlueprintCallable, Category="DoughWorld|Inventory")
+    bool TrySplitSlot(int32 SlotIndex, int32 Quantity, int32& OutNewSlot);
+
+    /** Combines partial stacks of this item within the bag; None combines all item types. */
+    UFUNCTION(BlueprintCallable, Category="DoughWorld|Inventory")
+    bool TryQuickStack(FName ItemId);
+
+    /** Same item merges up to the cap; different item swaps; empty slots move to the compact end. */
+    UFUNCTION(BlueprintCallable, Category="DoughWorld|Inventory")
+    bool TryMoveOrMergeSnapshot(const FDWInventorySlotSnapshot& Snapshot, int32 TargetSlot);
+
+    UFUNCTION(BlueprintPure, Category="DoughWorld|Inventory")
+    int64 GetInventoryRevision() const { return Revision; }
+
     UPROPERTY(BlueprintAssignable, Category="DoughWorld|Inventory")
     FDWInventoryChanged OnChanged;
 
 private:
+    int64 Revision=0;
     UPROPERTY(Transient)
     TObjectPtr<UDWGameplayConfig> Config;
 

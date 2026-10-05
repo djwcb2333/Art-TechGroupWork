@@ -82,6 +82,8 @@ struct GDATTEST_API FDWPersistedActorState
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category="Save")
     FString ActorId;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category="Save") FString ActorPath;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category="Save") FString OwnerPath;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,SaveGame,Category="Save") FTransform Transform=FTransform::Identity;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,SaveGame,Category="Save") bool bHasTransform=false;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,SaveGame,Category="Save") float SpawnProgress=0;

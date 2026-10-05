@@ -54,6 +54,7 @@ bool FDWCraftingAtomicTest::RunTest(const FString& Parameters)
 {
     UDWGameplayConfig* Config;
     UDWInventoryComponent* Inventory = DWCoreTests::MakeInventory(Config, 2, 40);
+    Config->bRequireTransformationForCrafting = true; // This legacy test explicitly exercises the enabled form gate.
     Inventory->TryAddItem(TEXT("Flour"), 2);
     Inventory->TryAddItem(TEXT("Water"), 2);
     TestFalse(TEXT("Dough form cannot craft yeast recipe"), Inventory->TryCraft(TEXT("CraftDough"), false));
