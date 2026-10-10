@@ -55,7 +55,7 @@ FString UDWUIAuthoringLibrary::GetLastBuildReport(){return DWUILastBuildReport;}
 
 namespace
 {
-    const FLinearColor Ink(.97f,.92f,.83f,1),Muted(.7f,.68f,.63f,1),Gold(.88f,.64f,.28f,1),Panel(.13f,.10f,.085f,.97f);
+    const FLinearColor DWUIAuthoringInkColor(.97f,.92f,.83f,1),DWUIAuthoringMutedColor(.7f,.68f,.63f,1),DWUIAuthoringGoldColor(.88f,.64f,.28f,1),DWUIAuthoringPanelColor(.13f,.10f,.085f,.97f);
     struct FUIDesigner
     {
         UWidgetTree* Tree;
@@ -64,7 +64,7 @@ namespace
         {
             T* W=Tree->ConstructWidget<T>(Class,FName(*Name));W->bIsVariable=true;return W;
         }
-        UTextBlock* Text(const FString& Name,const FString& Value,int32 Size=18,FLinearColor Color=Ink)
+        UTextBlock* Text(const FString& Name,const FString& Value,int32 Size=18,FLinearColor Color=DWUIAuthoringInkColor)
         {
             auto* W=Make<UTextBlock>(Name);W->SetText(FText::FromString(Value));
             // UMG assets must serialize a UFont reference; CoreStyle's transient CompositeFont does not survive saving.
@@ -78,7 +78,7 @@ namespace
             auto* T=Text(TextName.IsEmpty()?Name+TEXT("_Label"):TextName,Label,18);T->SetJustification(ETextJustify::Center);
             auto* Slot=Cast<UButtonSlot>(B->AddChild(T));if(Slot){Slot->SetPadding(FMargin(20,12));Slot->SetHorizontalAlignment(HAlign_Fill);Slot->SetVerticalAlignment(VAlign_Center);}return B;
         }
-        UBorder* Card(const FString& Name,UWidget* Child,FLinearColor Color=Panel,FMargin Padding=FMargin(20))
+        UBorder* Card(const FString& Name,UWidget* Child,FLinearColor Color=DWUIAuthoringPanelColor,FMargin Padding=FMargin(20))
         {
             auto* B=Make<UBorder>(Name);B->SetBrushColor(Color);B->SetPadding(Padding);B->SetContent(Child);return B;
         }
@@ -91,7 +91,7 @@ namespace
         USizeBox* Size(const FString& Name,UWidget* Child,float Width=0,float Height=0)
         {auto* B=Make<USizeBox>(Name);if(Width>0)B->SetWidthOverride(Width);if(Height>0)B->SetHeightOverride(Height);B->SetContent(Child);return B;}
         void Heading(UVerticalBox* Parent,const FString& Prefix,const FString& Title,const FString& Description)
-        {V(Parent,Text(Prefix+TEXT("_Heading"),Title,30,Gold));V(Parent,Text(Prefix+TEXT("_Description"),Description,16,Muted));}
+        {V(Parent,Text(Prefix+TEXT("_Heading"),Title,30,DWUIAuthoringGoldColor));V(Parent,Text(Prefix+TEXT("_Description"),Description,16,DWUIAuthoringMutedColor));}
         UBorder* Page(const FString& Name,UVerticalBox*& OutBody,float Width=620.f)
         {
             OutBody=Make<UVerticalBox>(Name+TEXT("_Body"));auto* Scroll=Make<UScrollBox>(Name+TEXT("_Scroll"));Scroll->AddChild(OutBody);
@@ -134,7 +134,7 @@ namespace
     void BuildInventorySlot(UWidgetBlueprint* BP)
     {
         FUIDesigner D(BP);auto* Content=D.Make<UVerticalBox>(TEXT("SlotContent"));
-        auto* Image=D.Make<UImage>(TEXT("ItemIcon"));Image->SetColorAndOpacity(Gold);
+        auto* Image=D.Make<UImage>(TEXT("ItemIcon"));Image->SetColorAndOpacity(DWUIAuthoringGoldColor);
         D.V(Content,D.Size(TEXT("ItemIconSize"),Image,32,32),3)->SetHorizontalAlignment(HAlign_Center);
         auto* Name=D.Text(TEXT("ItemNameText"),TEXT("物品名称"),14);Name->SetJustification(ETextJustify::Center);D.V(Content,Name,4);
         auto* Quantity=D.Text(TEXT("QuantityText"),TEXT("40"),15);Quantity->SetJustification(ETextJustify::Right);D.V(Content,Quantity,0);
@@ -144,17 +144,17 @@ namespace
     void BuildRecipe(UWidgetBlueprint* BP)
     {
         FUIDesigner D(BP);auto* V=D.Make<UVerticalBox>(TEXT("RecipeContent"));
-        D.V(V,D.Text(TEXT("RecipeNameText"),TEXT("配方名称"),24,Gold));
+        D.V(V,D.Text(TEXT("RecipeNameText"),TEXT("配方名称"),24,DWUIAuthoringGoldColor));
         D.V(V,D.Text(TEXT("IngredientsText"),TEXT("需要：材料 × 数量（拥有 0）"),16));
         D.V(V,D.Text(TEXT("OutputsText"),TEXT("获得：物品 × 数量"),16,FLinearColor(.35f,.8f,.55f)));
-        D.V(V,D.Text(TEXT("RequirementText"),TEXT("仅酵母形态可制作"),14,Muted));
+        D.V(V,D.Text(TEXT("RequirementText"),TEXT("仅酵母形态可制作"),14,DWUIAuthoringMutedColor));
         D.V(V,D.Button(TEXT("CraftButton"),TEXT("制作一份"),TEXT("CraftButtonText")));
         BP->WidgetTree->RootWidget=D.Card(TEXT("RecipeCard"),V);
     }
     void BuildSaveSlot(UWidgetBlueprint* BP)
     {
         FUIDesigner D(BP);auto* Row=D.Make<UHorizontalBox>(TEXT("SaveRow"));auto* Labels=D.Make<UVerticalBox>(TEXT("SaveLabels"));
-        D.V(Labels,D.Text(TEXT("SlotNameText"),TEXT("存档槽位"),22),3);D.V(Labels,D.Text(TEXT("SlotDateText"),TEXT("保存时间 / 新冒险"),15,Muted),3);D.H(Row,Labels,8,true)->SetVerticalAlignment(VAlign_Center);
+        D.V(Labels,D.Text(TEXT("SlotNameText"),TEXT("存档槽位"),22),3);D.V(Labels,D.Text(TEXT("SlotDateText"),TEXT("保存时间 / 新冒险"),15,DWUIAuthoringMutedColor),3);D.H(Row,Labels,8,true)->SetVerticalAlignment(VAlign_Center);
         D.H(Row,D.Button(TEXT("LoadButton"),TEXT("加载")),5)->SetVerticalAlignment(VAlign_Center);
         D.H(Row,D.Button(TEXT("NewButton"),TEXT("新建")),5)->SetVerticalAlignment(VAlign_Center);
         D.H(Row,D.Button(TEXT("DeleteButton"),TEXT("删除"),TEXT("DeleteButtonText")),5)->SetVerticalAlignment(VAlign_Center);
@@ -175,28 +175,28 @@ namespace
         auto* Hud=D.Make<UCanvasPanel>(TEXT("HUDLayer"));D.Canvas(Root,Hud,FAnchors(0,0,1,1),FMargin(0));Hud->SetVisibility(ESlateVisibility::HitTestInvisible);
         auto* Status=D.Make<UVerticalBox>(TEXT("StatusContent"));D.V(Status,D.Text(TEXT("HealthValueText"),TEXT("生命 100 / 100"),20));
         auto* HP=D.Make<UProgressBar>(TEXT("HealthBar"));HP->SetPercent(1);HP->SetFillColorAndOpacity(FLinearColor(.86f,.28f,.22f));D.V(Status,D.Size(TEXT("HealthBarSize"),HP,0,14));
-        D.V(Status,D.Text(TEXT("TransformationValueText"),TEXT("变身 0%"),18));auto* TP=D.Make<UProgressBar>(TEXT("TransformationBar"));TP->SetFillColorAndOpacity(FLinearColor(.34f,.78f,.57f));D.V(Status,D.Size(TEXT("TransformationBarSize"),TP,0,10));D.V(Status,D.Text(TEXT("FormText"),TEXT("● 面团形态 · [E] 变身"),17,Gold));
+        D.V(Status,D.Text(TEXT("TransformationValueText"),TEXT("变身 0%"),18));auto* TP=D.Make<UProgressBar>(TEXT("TransformationBar"));TP->SetFillColorAndOpacity(FLinearColor(.34f,.78f,.57f));D.V(Status,D.Size(TEXT("TransformationBarSize"),TP,0,10));D.V(Status,D.Text(TEXT("FormText"),TEXT("● 面团形态 · [E] 变身"),17,DWUIAuthoringGoldColor));
         D.Canvas(Hud,D.Card(TEXT("StatusCard"),Status),FAnchors(0,0),FMargin(28,28,330,215));
-        auto* Brewing=D.Make<UVerticalBox>(TEXT("BrewingContent"));D.V(Brewing,D.Text(TEXT("BrewingTitle"),TEXT("疾跑酿造"),19,Gold))->SetHorizontalAlignment(HAlign_Center);
+        auto* Brewing=D.Make<UVerticalBox>(TEXT("BrewingContent"));D.V(Brewing,D.Text(TEXT("BrewingTitle"),TEXT("疾跑酿造"),19,DWUIAuthoringGoldColor))->SetHorizontalAlignment(HAlign_Center);
         auto* RingLayer=D.Make<UOverlay>(TEXT("RingLayer"));RingLayer->AddChildToOverlay(D.Make<UDWProgressRing>(TEXT("SprintRing")));
         auto* RingText=D.Text(TEXT("RingValueText"),TEXT("0%"),24);auto* RingSlot=RingLayer->AddChildToOverlay(RingText);RingSlot->SetHorizontalAlignment(HAlign_Center);RingSlot->SetVerticalAlignment(VAlign_Center);
         D.V(Brewing,D.Size(TEXT("RingDimensions"),RingLayer,92,92))->SetHorizontalAlignment(HAlign_Center);
-        D.V(Brewing,D.Text(TEXT("BrewingHint"),TEXT("停止后保留进度"),14,Muted))->SetHorizontalAlignment(HAlign_Center);D.V(Brewing,D.Text(TEXT("AlcoholCountText"),TEXT("酒精 × 0"),18))->SetHorizontalAlignment(HAlign_Center);
+        D.V(Brewing,D.Text(TEXT("BrewingHint"),TEXT("停止后保留进度"),14,DWUIAuthoringMutedColor))->SetHorizontalAlignment(HAlign_Center);D.V(Brewing,D.Text(TEXT("AlcoholCountText"),TEXT("酒精 × 0"),18))->SetHorizontalAlignment(HAlign_Center);
         D.Canvas(Hud,D.Card(TEXT("BrewingCard"),Brewing),FAnchors(1,0),FMargin(-28,28,185,242),FVector2D(1,0));
         auto* Help=D.Text(TEXT("ControlsHint"),TEXT("WASD 移动   Shift 疾跑   空格 冲刺   右键拖拽 视角   左键 投掷   F 采集   B 背包   Tab 制作   Esc 菜单"),15);Help->SetJustification(ETextJustify::Center);
         D.Canvas(Hud,D.Card(TEXT("ControlsCard"),Help),FAnchors(.5f,1),FMargin(0,-22,1120,60),FVector2D(.5f,1));
-        auto* Interaction=D.Text(TEXT("InteractionText"),TEXT("按住 F 采集 · 0%"),20,Gold);Interaction->SetJustification(ETextJustify::Center);
+        auto* Interaction=D.Text(TEXT("InteractionText"),TEXT("按住 F 采集 · 0%"),20,DWUIAuthoringGoldColor);Interaction->SetJustification(ETextJustify::Center);
         D.Canvas(Hud,D.Card(TEXT("InteractionContainer"),Interaction),FAnchors(.5f,1),FMargin(0,-104,570,60),FVector2D(.5f,1));
 
         auto* Switch=D.Make<UWidgetSwitcher>(TEXT("PageSwitcher"));Switch->SetActiveWidgetIndex(0);
         auto* Menu=D.Card(TEXT("MenuRoot"),Switch,FLinearColor(.025f,.02f,.02f,.86f),FMargin(30));D.Canvas(Root,Menu,FAnchors(0,0,1,1),FMargin(0));
 
         UVerticalBox* TitleBody=nullptr;auto* TitlePage=D.Page(TEXT("TitlePage"),TitleBody,620);
-        auto* Subtitle=D.Text(TEXT("SubtitleText"),TEXT("DOUGH WORLD"),22,Gold);Subtitle->SetAutoWrapText(false);
+        auto* Subtitle=D.Text(TEXT("SubtitleText"),TEXT("DOUGH WORLD"),22,DWUIAuthoringGoldColor);Subtitle->SetAutoWrapText(false);
         D.V(TitleBody,Subtitle,16)->SetHorizontalAlignment(HAlign_Center);
         auto* Title=D.Text(TEXT("TitleText"),TEXT("面团世界"),52);Title->SetAutoWrapText(false);
         D.V(TitleBody,Title,24)->SetHorizontalAlignment(HAlign_Center);
-        auto* Tagline=D.Text(TEXT("Tagline"),TEXT("探索 · 收集 · 发酵 · 生存"),18,Muted);Tagline->SetAutoWrapText(false);
+        auto* Tagline=D.Text(TEXT("Tagline"),TEXT("探索 · 收集 · 发酵 · 生存"),18,DWUIAuthoringMutedColor);Tagline->SetAutoWrapText(false);
         D.V(TitleBody,Tagline,14)->SetHorizontalAlignment(HAlign_Center);
         D.V(TitleBody,D.Button(TEXT("StartButton"),TEXT("开始游戏")));D.V(TitleBody,D.Button(TEXT("TitleSettingsButton"),TEXT("设置")));D.V(TitleBody,D.Button(TEXT("QuitButton"),TEXT("退出游戏")));
         auto* TitleOverlay=D.Make<UOverlay>(TEXT("TitlePageOverlay"));auto* TitleBG=D.Make<UImage>(TEXT("TitleBackgroundImage"));TitleBG->SetVisibility(ESlateVisibility::Collapsed);TitleOverlay->AddChildToOverlay(TitleBG);TitleOverlay->AddChildToOverlay(TitlePage);AddPage(Switch,TitleOverlay);
@@ -205,11 +205,11 @@ namespace
         auto* SaveList=D.Make<UVerticalBox>(TEXT("SaveSlotList"));for(int32 I=0;I<3;++I)D.V(SaveList,D.Make<UDWSaveSlotWidget>(TEXT("SaveSlotPreview_")+FString::FromInt(I),SaveClass));D.V(Saves,SaveList);D.V(Saves,D.Button(TEXT("SlotsBackButton"),TEXT("返回标题")));AddPage(Switch,SavesPage);
 
         UVerticalBox* Inventory=nullptr;auto* InventoryPage=D.Page(TEXT("InventoryCard"),Inventory,660);D.Heading(Inventory,TEXT("Inventory"),TEXT("背包"),TEXT("点击物品查看用途与使用。按 B 返回游戏。"));
-        auto* Grid=D.Make<UUniformGridPanel>(TEXT("InventoryGrid"));FillInventoryPreview(D,Grid,SlotClass,TEXT("InventoryPreview_"));D.V(Inventory,Grid);D.V(Inventory,D.Text(TEXT("InventoryCapacityText"),TEXT("每槽上限 40 · 共 24 槽"),15,Muted));D.V(Inventory,D.Text(TEXT("InventoryDetailsText"),TEXT("选择物品查看用途"),17));D.V(Inventory,D.Button(TEXT("InventoryUseButton"),TEXT("使用一个")));D.V(Inventory,D.Button(TEXT("InventoryCloseButton"),TEXT("返回游戏")));AddPage(Switch,InventoryPage);
+        auto* Grid=D.Make<UUniformGridPanel>(TEXT("InventoryGrid"));FillInventoryPreview(D,Grid,SlotClass,TEXT("InventoryPreview_"));D.V(Inventory,Grid);D.V(Inventory,D.Text(TEXT("InventoryCapacityText"),TEXT("每槽上限 40 · 共 24 槽"),15,DWUIAuthoringMutedColor));D.V(Inventory,D.Text(TEXT("InventoryDetailsText"),TEXT("选择物品查看用途"),17));D.V(Inventory,D.Button(TEXT("InventoryUseButton"),TEXT("使用一个")));D.V(Inventory,D.Button(TEXT("InventoryCloseButton"),TEXT("返回游戏")));AddPage(Switch,InventoryPage);
 
         UVerticalBox* Crafting=nullptr;auto* CraftPage=D.Page(TEXT("CraftingCard"),Crafting,1120);D.Heading(Crafting,TEXT("Crafting"),TEXT("制作台"),TEXT("左侧背包，右侧配方。按 Tab 返回游戏。"));
         auto* CraftRow=D.Make<UHorizontalBox>(TEXT("CraftingColumns"));auto* CraftBag=D.Make<UVerticalBox>(TEXT("CraftingBag"));auto* CGrid=D.Make<UUniformGridPanel>(TEXT("CraftingInventoryGrid"));FillInventoryPreview(D,CGrid,SlotClass,TEXT("CraftingPreview_"));D.V(CraftBag,CGrid);D.V(CraftBag,D.Text(TEXT("CraftingDetailsText"),TEXT("选择物品查看用途"),16));D.V(CraftBag,D.Button(TEXT("CraftingUseButton"),TEXT("使用一个")));D.H(CraftRow,CraftBag,10);
-        auto* RecipesColumn=D.Make<UVerticalBox>(TEXT("RecipesColumn"));D.V(RecipesColumn,D.Text(TEXT("CraftingStatusText"),TEXT("酵母形态 · 可以制作"),17,Gold));auto* Recipes=D.Make<UVerticalBox>(TEXT("RecipeList"));for(int32 I=0;I<2;++I)D.V(Recipes,D.Make<UDWRecipeEntryWidget>(TEXT("RecipePreview_")+FString::FromInt(I),RecipeClass));D.V(RecipesColumn,Recipes);D.H(CraftRow,RecipesColumn,10,true);D.V(Crafting,CraftRow);D.V(Crafting,D.Button(TEXT("CraftingCloseButton"),TEXT("返回游戏")));AddPage(Switch,CraftPage);
+        auto* RecipesColumn=D.Make<UVerticalBox>(TEXT("RecipesColumn"));D.V(RecipesColumn,D.Text(TEXT("CraftingStatusText"),TEXT("酵母形态 · 可以制作"),17,DWUIAuthoringGoldColor));auto* Recipes=D.Make<UVerticalBox>(TEXT("RecipeList"));for(int32 I=0;I<2;++I)D.V(Recipes,D.Make<UDWRecipeEntryWidget>(TEXT("RecipePreview_")+FString::FromInt(I),RecipeClass));D.V(RecipesColumn,Recipes);D.H(CraftRow,RecipesColumn,10,true);D.V(Crafting,CraftRow);D.V(Crafting,D.Button(TEXT("CraftingCloseButton"),TEXT("返回游戏")));AddPage(Switch,CraftPage);
 
         UVerticalBox* Pause=nullptr;auto* PausePage=D.Page(TEXT("PausePage"),Pause,640);D.Heading(Pause,TEXT("Pause"),TEXT("游戏已暂停"),TEXT("保存进度后可以继续探索或返回标题。"));D.V(Pause,D.Button(TEXT("ContinueButton"),TEXT("继续游戏")));D.V(Pause,D.Button(TEXT("SaveButton"),TEXT("保存游戏")));D.V(Pause,D.Button(TEXT("PauseSettingsButton"),TEXT("设置")));D.V(Pause,D.Button(TEXT("SaveAndTitleButton"),TEXT("保存并返回标题")));D.V(Pause,D.Button(TEXT("NoSaveTitleButton"),TEXT("返回标题（不保存）")));AddPage(Switch,PausePage);
 
@@ -397,7 +397,7 @@ bool UDWUIAuthoringLibrary::UpgradeGameplayUXAssets(bool bInspectOnly)
                 else Help->RemoveFromParent(); // Only the new task-owned help text moves out of the scrolling area.
                 FSlateFontInfo Font=Help->GetFont();Font.Size=16;Help->SetFont(Font);Help->SetJustification(ETextJustify::Center);
                 Help->SetVisibility(ESlateVisibility::HitTestInvisible);
-                auto* Footer=UI.Card(Entry.Key.ToString(),Help,Panel,FMargin(12,8));Footer->SetVisibility(ESlateVisibility::Collapsed);
+                auto* Footer=UI.Card(Entry.Key.ToString(),Help,DWUIAuthoringPanelColor,FMargin(12,8));Footer->SetVisibility(ESlateVisibility::Collapsed);
                 UI.Canvas(CastChecked<UCanvasPanel>(BP->WidgetTree->RootWidget),Footer,FAnchors(.5f,1.f),FMargin(0,-14,1050,96),FVector2D(.5f,1.f))->SetZOrder(100);
             }
         if(!BP->WidgetTree->FindWidget(TEXT("InventoryDiscardModal")))

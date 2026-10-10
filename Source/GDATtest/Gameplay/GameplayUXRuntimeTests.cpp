@@ -17,6 +17,7 @@
 #include "DWSettingsPanel.h"
 #include "DWSaveSettings.h"
 #include "DWSaveStorage.h"
+#include "DWSaveGame.h"
 #include "DWUserSettings.h"
 #include "Components/Button.h"
 #include "Components/CanvasPanelSlot.h"
@@ -95,7 +96,7 @@ enum class EStage : uint8
     AudioBegin,AudioWait,BookNavigationReady,BookNavigationHover,BookNavigationDown,BookNavigationUp,BookPageReady,BookShotWait,
     InventoryOpen,InventoryCheck,InventoryPageReady,InventoryShotWait,
     GlobalInventoryReady,GlobalSlotHover,GlobalSlotDown,GlobalDragMove,GlobalDrop,
-    GlobalPopupReady,GlobalPopupShotWait,GlobalButtonHover,GlobalButtonDown,GlobalButtonUp,GlobalCycleWait,FinalWait
+    GlobalPopupReady,GlobalPopupShotWait,GlobalButtonHover,GlobalButtonDown,GlobalButtonUp,GlobalCycleWait,FinalWait,SaveGuardAfterLoad,SaveGuardAfterDirectTravel
 };
 struct FRun
 {
@@ -105,6 +106,7 @@ struct FRun
     FString Report,SaveDirectory,Prefix,UserIni,ShotDirectory;
     TArray<TSharedPtr<FJsonValue>> Checks,Samples,LayoutSamples,RoutedInputs,Skipped;
     TArray<FString> Shots;
+    uint32 SaveGuardWorldId=0;
     EStage Stage=EStage::Menu;
     double Started=FPlatformTime::Seconds(),StageStarted=Started;
     bool bPassed=true,bOldDamage=true,bSawSmooth=false,bFinished=false;
@@ -318,10 +320,10 @@ struct FRun
         Check(PrefixName+TEXT("master_volume_only_on_audio"),bMaster==(BookTab==1),bMaster?Master.GetLocalSize().ToString():TEXT("No visible arranged path"));
         if(BookTab>=1&&BookTab<=3)
         {
-            auto* Panel=Cast<UDWSettingsPanel>(Widget->GetWidgetFromName(TEXT("ExtendedSettings")));
-            auto* Options=Panel?Cast<UWidgetSwitcher>(Panel->GetWidgetFromName(TEXT("OptionsSwitcher"))):nullptr;
+            auto* SettingsPanelForTest=Cast<UDWSettingsPanel>(Widget->GetWidgetFromName(TEXT("ExtendedSettings")));
+            auto* Options=SettingsPanelForTest?Cast<UWidgetSwitcher>(SettingsPanelForTest->GetWidgetFromName(TEXT("OptionsSwitcher"))):nullptr;
             FGeometry OptionPage;Check(PrefixName+TEXT("correct_shared_options_page"),Options&&Options->GetActiveWidgetIndex()==BookTab-1&&Arranged(Options->GetActiveWidget(),OptionPage));
-            auto* InnerTabs=Panel?Panel->GetWidgetFromName(TEXT("SettingsTabs")):nullptr;FGeometry OldTabs;
+            auto* InnerTabs=SettingsPanelForTest?SettingsPanelForTest->GetWidgetFromName(TEXT("SettingsTabs")):nullptr;FGeometry OldTabs;
             Check(PrefixName+TEXT("old_internal_tabs_hidden_and_disabled"),InnerTabs&&!InnerTabs->GetIsEnabled()&&!Arranged(InnerTabs,OldTabs));
         }
         auto Item=MakeShared<FJsonObject>();Item->SetStringField(TEXT("stage"),PrefixName);
@@ -404,6 +406,34 @@ struct FRun
             if(ProtectedPlayer.Get()==Player)Player->SetCanBeDamaged(bOldDamage);
         }
     }
+    void VerifySaveTransitionGuard()
+    {
+        // Opt-in diagnostic runs only after the ordinary isolated QA has completed.
+        if(!FParse::Param(FCommandLine::Get(),TEXT("DWProjectAuditSaveGuard")))return;
+        auto* Instance=GI.Get();auto* Transition=Instance?Instance->GetSubsystem<UDWLoadingTransitionSubsystem>():nullptr;
+        if(!Instance||!Transition||!IsolationValid()){Check(TEXT("save.guard.isolated_context"),false);return;}
+        const FString SourceSlot=Prefix+TEXT("1"),TargetSlot=Prefix+TEXT("2");
+        const FString TargetPath=SaveDirectory/(TargetSlot+TEXT(".sav"));
+        Check(TEXT("save.guard.idle_save_succeeds"),Instance->SaveCurrentGame());
+        TArray<uint8> Before,After;
+        auto* Target=Cast<UDWSaveGame>(DWSaveStorage::Read(SaveDirectory,SourceSlot));
+        const bool bFresh=Target&&!DWSaveStorage::Exists(SaveDirectory,TargetSlot);
+        Check(TEXT("save.guard.destination_is_fresh_isolated_slot"),bFresh);if(!bFresh)return;
+        Target->DisplayName=TEXT("DW_QA_ProtectedDestination");Target->Health=13.f;
+        const bool bWritten=DWSaveStorage::Write(SaveDirectory,TargetSlot,Target);
+        Check(TEXT("save.guard.destination_fixture_written"),bWritten);if(!bWritten)return;
+        Before.Reset();After.Reset();const bool bReadBefore=FFileHelper::LoadFileToArray(Before,*TargetPath)&&!Before.IsEmpty();
+        Check(TEXT("save.guard.destination_fixture_readable"),bReadBefore);if(!bReadBefore)return;
+        const bool bLoading=Instance->LoadGameSlot(1);
+        Check(TEXT("save.guard.real_cross_slot_load_started"),bLoading&&Instance->GetActiveSlot()==1&&Instance->IsPlayerRestorePending());
+        if(bLoading)
+        {
+            Check(TEXT("save.guard.cross_slot_load_rejects_old_player_save"),!Instance->SaveCurrentGame());
+            const bool bReadAfter=FFileHelper::LoadFileToArray(After,*TargetPath);
+            Check(TEXT("save.guard.destination_bytes_preserved"),bReadAfter&&Before==After);
+        }
+        // The next QA stages wait for restoration and verify saving resumes after each travel mode.
+    }
     bool Finish(const FString& Error=FString())
     {
         if(bFinished)return false;bFinished=true;if(!Error.IsEmpty())Check(TEXT("Runtime completes without interruption"),false,Error);
@@ -413,7 +443,7 @@ struct FRun
         Result->SetStringField(TEXT("mode"),FPlatformProperties::RequiresCookedData()?TEXT("Windows Development cooked"):TEXT("Standalone game"));
         Result->SetNumberField(TEXT("elapsedSeconds"),FPlatformTime::Seconds()-Started);
         Result->SetStringField(TEXT("saveDirectory"),SaveDirectory);Result->SetStringField(TEXT("savePrefix"),Prefix);
-        Result->SetStringField(TEXT("gameUserSettingsIni"),UserIni);Result->SetNumberField(TEXT("slot"),0);
+        Result->SetStringField(TEXT("gameUserSettingsIni"),UserIni);Result->SetNumberField(TEXT("slot"),GI.IsValid()?GI->GetActiveSlot():INDEX_NONE);
         Result->SetArrayField(TEXT("checks"),Checks);Result->SetArrayField(TEXT("cameraSamples"),Samples);Result->SetArrayField(TEXT("layoutSamples"),LayoutSamples);Result->SetArrayField(TEXT("routedInputSamples"),RoutedInputs);Result->SetArrayField(TEXT("optionalSkipped"),Skipped);
         TArray<TSharedPtr<FJsonValue>> Images;for(const auto& File:Shots)Images.Add(MakeShared<FJsonValueString>(File));Result->SetArrayField(TEXT("screenshots"),Images);
         Result->SetStringField(TEXT("inputBoundary"),TEXT("Camera uses simulated PlayerController::InputKey. The inventory global sequence sends frame-separated FPointerEvents through FSlateApplication Process methods, including hit testing, preview/bubble, drag detection, capture and drop routing. Before each captured button release, global held-pointer moves leave and re-enter its actual geometry in the release frame to synchronize hover after platform cursor polling. No button callbacks are invoked directly by that global sequence. This is engine-level input injection, not OS hardware input. The separate inventory helper also exercises direct widget events and atomic APIs."));
@@ -581,12 +611,12 @@ struct FRun
             case EStage::SettingsCheck:
             {
                 if(Elapsed<.2)return true;Check(TEXT("Settings/menu blocks both input pipeline and direct camera requests"),!PC->IsCameraInputAllowed()&&SameCamera(Player));ReleaseMouse(PC);
-                auto* Panel=Cast<UDWSettingsPanel>(Widget->GetWidgetFromName(TEXT("ExtendedSettings")));
-                auto* Slider=Panel?Cast<USlider>(Panel->GetWidgetFromName(TEXT("CameraSensitivitySlider"))):nullptr;
+                auto* SettingsPanelForTest=Cast<UDWSettingsPanel>(Widget->GetWidgetFromName(TEXT("ExtendedSettings")));
+                auto* Slider=SettingsPanelForTest?Cast<USlider>(SettingsPanelForTest->GetWidgetFromName(TEXT("CameraSensitivitySlider"))):nullptr;
                 Check(TEXT("Actual editable settings panel contains the sensitivity slider"),Slider!=nullptr);
                 if(Slider){const float Value=(1.75f-.25f)/(3.f-.25f);Slider->SetValue(Value);Slider->OnValueChanged.Broadcast(Value);Check(TEXT("Actual settings slider delegate updates sensitivity"),FMath::IsNearlyEqual(Settings->GetCameraSensitivityMultiplier(),1.75f,.001f));}
                 Settings->SetMasterVolume(.42f,true);Settings->SetCategoryVolume(EDWSoundCategory::Music,.31f,true);Settings->SetCategoryVolume(EDWSoundCategory::Voice,.57f,true);Settings->SetCategoryVolume(EDWSoundCategory::SFX,.79f,true);Settings->SetCameraSensitivityMultiplier(1.75f,true);
-                if(Panel)Panel->RefreshPanel();
+                if(SettingsPanelForTest)SettingsPanelForTest->RefreshPanel();
                 // Capture all five book pages later, with the authored book-tab routing and settled layout.
                 Advance(EStage::SettingsShotWait);break;
             }
@@ -626,13 +656,13 @@ struct FRun
                 const bool bStable=BookFrameStable(Widget);
                 if(Elapsed<FMath::Max(.7f,Widget->PageEnterSeconds+.1f))return true;
                 if((!CurrentPageSettled(Widget)||!bStable)&&Elapsed<3.0)return true;
-                auto* Panel=Cast<UDWSettingsPanel>(Widget->GetWidgetFromName(TEXT("ExtendedSettings")));
+                auto* SettingsPanelForTest=Cast<UDWSettingsPanel>(Widget->GetWidgetFromName(TEXT("ExtendedSettings")));
                 FGeometry AudioButton;auto* Button=Widget->GetWidgetFromName(TEXT("SettingsBookAudioTabButton"));
-                const bool bReady=Panel&&Widget->GetSettingsBookTab()==2&&Arranged(Button,AudioButton);
+                const bool bReady=SettingsPanelForTest&&Widget->GetSettingsBookTab()==2&&Arranged(Button,AudioButton);
                 Check(TEXT("settings.book.capture_navigation_has_actual_keys_page_and_audio_tab"),bReady);
                 if(!bReady)return Finish(TEXT("Book navigation hit-route test is missing its actual page or button"));
-                BookBindingsBefore=PC->GetConfiguredKeys();Panel->RequestBinding(EDWInputAction::CameraDrag);
-                Check(TEXT("settings.book.camera_binding_capture_started"),Panel->IsCapturing());
+                BookBindingsBefore=PC->GetConfiguredKeys();SettingsPanelForTest->RequestBinding(EDWInputAction::CameraDrag);
+                Check(TEXT("settings.book.camera_binding_capture_started"),SettingsPanelForTest->IsCapturing());
                 BookAudioPosition=AudioButton.LocalToAbsolute(AudioButton.GetLocalSize()*.5f);
                 Advance(EStage::BookNavigationHover);break;
             }
@@ -643,8 +673,8 @@ struct FRun
                 auto* Button=Cast<UButton>(Widget->GetWidgetFromName(TEXT("SettingsBookAudioTabButton")));
                 Check(TEXT("settings.book.audio_tab_has_global_hit_path_while_capturing"),HitContains(BookAudioPosition,Button));
                 SlateDown(BookAudioPosition);
-                auto* Panel=Cast<UDWSettingsPanel>(Widget->GetWidgetFromName(TEXT("ExtendedSettings")));
-                Check(TEXT("settings.book.navigation_down_cancels_capture_and_reaches_button"),Panel&&!Panel->IsCapturing()&&Button&&Button->IsPressed());
+                auto* SettingsPanelForTest=Cast<UDWSettingsPanel>(Widget->GetWidgetFromName(TEXT("ExtendedSettings")));
+                Check(TEXT("settings.book.navigation_down_cancels_capture_and_reaches_button"),SettingsPanelForTest&&!SettingsPanelForTest->IsCapturing()&&Button&&Button->IsPressed());
                 Advance(EStage::BookNavigationUp);break;
             }
             case EStage::BookNavigationUp:
@@ -653,9 +683,9 @@ struct FRun
                 auto* AudioButton=Cast<UButton>(Widget->GetWidgetFromName(TEXT("SettingsBookAudioTabButton")));
                 ReenterHeldButton(AudioButton,BookAudioPosition);
                 Check(TEXT("settings.book.release_has_hover_and_capture"),AudioButton&&AudioButton->IsHovered()&&AudioButton->GetCachedWidget().IsValid()&&AudioButton->GetCachedWidget()->HasMouseCapture(),ButtonState(AudioButton));
-                SlateUp(BookAudioPosition);auto* Panel=Cast<UDWSettingsPanel>(Widget->GetWidgetFromName(TEXT("ExtendedSettings")));
+                SlateUp(BookAudioPosition);auto* SettingsPanelForTest=Cast<UDWSettingsPanel>(Widget->GetWidgetFromName(TEXT("ExtendedSettings")));
                 const auto Keys=PC->GetConfiguredKeys();
-                Check(TEXT("settings.book.global_audio_click_cancels_capture_without_rebinding"),Panel&&!Panel->IsCapturing()&&Widget->GetSettingsBookTab()==1
+                Check(TEXT("settings.book.global_audio_click_cancels_capture_without_rebinding"),SettingsPanelForTest&&!SettingsPanelForTest->IsCapturing()&&Widget->GetSettingsBookTab()==1
                     &&Keys==BookBindingsBefore&&Keys.IsValidIndex(int32(EDWInputAction::CameraDrag))&&Keys[int32(EDWInputAction::CameraDrag)]==EKeys::MiddleMouseButton);
                 BookTab=0;StableBookFrames=0;Widget->SelectSettingsBookTab(0);HUD->Notify(FText::GetEmpty());Advance(EStage::BookPageReady);break;
             }
@@ -667,8 +697,8 @@ struct FRun
                 if((!CurrentPageSettled(Widget)||!bStable)&&Elapsed<3.0)return true;
                 Check(FString::Printf(TEXT("settings.book.page%d.stable_before_screenshot"),BookTab),CurrentPageSettled(Widget)&&bStable);
                 VerifyBookPage(Widget);
-                static const TCHAR* Names[]={TEXT("SettingsGraphics"),TEXT("SettingsMasterAndCategoryAudio"),TEXT("SettingsKeys"),TEXT("SettingsSensitivityControls"),TEXT("SettingsGeneral")};
-                Shot(Names[BookTab]);Advance(EStage::BookShotWait);break;
+                static const TCHAR* SettingsScreenshotNames[]={TEXT("SettingsGraphics"),TEXT("SettingsMasterAndCategoryAudio"),TEXT("SettingsKeys"),TEXT("SettingsSensitivityControls"),TEXT("SettingsGeneral")};
+                Shot(SettingsScreenshotNames[BookTab]);Advance(EStage::BookShotWait);break;
             }
             case EStage::BookShotWait:
                 // Screenshot consumption and page switching occur in separate rendered frames.
@@ -767,12 +797,46 @@ struct FRun
                 if(Elapsed<.35)return true;
                 if(++GlobalCycle<2){HUD->Notify(FText::GetEmpty());Advance(EStage::GlobalInventoryReady);}
                 else Advance(EStage::FinalWait);break;
+            case EStage::SaveGuardAfterLoad:
+            {
+                Check(TEXT("save.guard.target_health_restored"),Instance->GetActiveSlot()==1&&FMath::IsNearlyEqual(Player->GetHealth(),13.f));
+                Check(TEXT("save.guard.save_after_completed_load_succeeds"),Instance->SaveCurrentGame());
+                SaveGuardWorldId=Current->GetUniqueID();
+                TGuardValue<bool> NoAnimation(Loading->GetDefaultSettings()->bEnabled,false);
+                const bool DirectTravel=Instance->TravelToGameplayMap(TSoftObjectPtr<UWorld>(FSoftObjectPath(Current->GetPackage()->GetName())));
+                Check(TEXT("save.guard.disabled_animation_travel_starts"),DirectTravel);
+                Check(TEXT("save.guard.pending_direct_travel_rejects_save"),!Instance->SaveCurrentGame());
+                if(!DirectTravel)return Finish(TEXT("Direct travel did not start"));
+                Advance(EStage::SaveGuardAfterDirectTravel);break;
+            }
+            case EStage::SaveGuardAfterDirectTravel:
+                if(Current->GetUniqueID()==SaveGuardWorldId)return true;
+                Check(TEXT("save.guard.direct_travel_restored_target"),Instance->GetActiveSlot()==1&&!Instance->IsPlayerRestorePending());
+                Check(TEXT("save.guard.disabled_animation_does_not_permanently_block_saving"),Instance->SaveCurrentGame());
+                return Finish();
             case EStage::FinalWait:
             {
                 if(Elapsed<.8)return true;bool Ready=true;for(const auto& File:Shots)Ready&=IFileManager::Get().FileSize(*File)>512;
                 if(!Ready&&Elapsed<3.0)return true;Check(TEXT("Screenshot requests produced nonempty PNG evidence before exit"),Ready);
                 Widget->CancelInventoryDiscard();Settings->SetCameraSensitivityMultiplier(1.75f,true);
-                Check(TEXT("Only isolated slot0 remains active"),Instance->GetActiveSlot()==0&&IsolationValid());return Finish();
+                Check(TEXT("Only isolated slot0 remains active"),Instance->GetActiveSlot()==0&&IsolationValid());
+                if(!FParse::Param(FCommandLine::Get(),TEXT("DWProjectAuditSaveGuard")))return Finish();
+                {
+                    auto* FeedbackConfig=Instance->GetConfig();TGuardValue<bool> FormGuard(Player->bYeastForm,false);
+                    TGuardValue<bool> GateGuard(FeedbackConfig->bRequireTransformationForCrafting,false);
+                    Check(TEXT("crafting.feedback.missing_recipe_fails"),!Player->CraftRecipe(TEXT("DW_QA_MissingRecipe")));
+                    FString Feedback=HUD->GetToast().ToString();
+                    Check(TEXT("crafting.feedback.gate_off_has_no_form_requirement"),!Feedback.Contains(TEXT("Yeast"))&&!Feedback.Contains(TEXT("酵母")));
+                    FeedbackConfig->bRequireTransformationForCrafting=true;
+                    const FDWRecipeDefinition* GatedRecipe=FeedbackConfig->Recipes.FindByPredicate([](const FDWRecipeDefinition& R){return R.bRequiresYeast;});
+                    if(GatedRecipe)
+                    {
+                        Check(TEXT("crafting.feedback.gated_recipe_fails_without_form"),!Player->CraftRecipe(GatedRecipe->RecipeId));
+                        Feedback=HUD->GetToast().ToString();
+                        Check(TEXT("crafting.feedback.enabled_gate_explains_form"),Feedback.Contains(TEXT("Yeast"))||Feedback.Contains(TEXT("酵母")));
+                    }
+                }
+                VerifySaveTransitionGuard();Advance(EStage::SaveGuardAfterLoad);break;
             }
         }
         return true;

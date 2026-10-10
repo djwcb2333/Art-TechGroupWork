@@ -192,6 +192,11 @@ bool UDWGameInstance::DeleteGameSlot(int32 SlotIndex)
 
 bool UDWGameInstance::SaveCurrentGame()
 {
+    // ActiveSlot already points to the destination while the old pawn can still exist.
+    // Never serialize that pawn until travel and pending restoration have completed.
+    const auto* SaveTransition=GetSubsystem<UDWLoadingTransitionSubsystem>();
+    if(bSaveTravelInFlight||PendingSave||(SaveTransition&&SaveTransition->IsTransitionActive()))
+        return Fail(DWText(this,TEXT("请等待读档或场景过渡完成再保存，原存档已保留。"),TEXT("Please wait for loading or the transition to finish before saving. The original save has been preserved.")));
     if(UDWWorldEventSubsystem::IsPlaying(this))return Fail(DWText(this,TEXT("请等待场景演出结束再保存。"),TEXT("Please wait for the cinematic before saving.")));
     LastSaveError = FText::GetEmpty();
     if (!HasActiveSlot()) return Fail(DWText(this, TEXT("尚未进入存档，无法保存标题界面。"), TEXT("No save slot is active. You cannot save from the title screen.")));
@@ -269,6 +274,7 @@ bool UDWGameInstance::TravelToGameplayMap(TSoftObjectPtr<UWorld> Destination)
  if(!ValidateSave(Save))return false;
  PendingSave=Save;PreviousTravelSlot=ActiveSlot;bSaveTravelInFlight=true;
  if(!T->RequestMap(Map)){HandleTravelFailure(T->LastError);return false;}
+ if(!T->IsTransitionActive())bSaveTravelInFlight=false;
  return true;
 }
 

@@ -551,7 +551,9 @@ void ADWPlayerCharacter::TryTransform()
     PlayFormTransitionVFX(true);
     if(TransformSound)UDWAudioLibrary::PlayWorldSound(this,TransformSound,GetActorLocation());
     if(TransformCameraShake)if(auto* PC=Cast<APlayerController>(GetController()))PC->ClientStartCameraShake(TransformCameraShake);
-    Notify(DWText(this,TEXT("酵母形态：已开放合成"),TEXT("Yeast form: crafting unlocked.")));
+    Notify(GameplayConfig&&GameplayConfig->bRequireTransformationForCrafting
+        ?DWText(this,TEXT("酵母形态：已开放变身配方"),TEXT("Yeast form: transformation-only recipes unlocked."))
+        :DWText(this,TEXT("已进入酵母形态"),TEXT("Entered Yeast form.")));
     OnFormChanged(true);
 }
 void ADWPlayerCharacter::NotifyAlcoholHit()
@@ -594,7 +596,11 @@ bool ADWPlayerCharacter::CraftRecipe(FName RecipeId)
     if(IsDead()||!Inventory||bGameplayActionInProgress||bRestoringSave)return false;
     TGuardValue<bool> ActionGuard(bGameplayActionInProgress,true);
     const bool Result=Inventory->TryCraft(RecipeId,bYeastForm);
-    Notify(Result?DWText(this,TEXT("制作完成"),TEXT("Crafting complete.")):DWText(this,TEXT("制作失败：检查酵母形态、材料和背包空间"),TEXT("Crafting failed. Check Yeast form, ingredients and inventory space.")));
+    const FDWRecipeDefinition* FeedbackRecipe=GameplayConfig?GameplayConfig->GetRecipeDefinition(RecipeId):nullptr;
+    const bool bBlockedByForm=GameplayConfig&&GameplayConfig->bRequireTransformationForCrafting&&FeedbackRecipe&&FeedbackRecipe->bRequiresYeast&&!bYeastForm;
+    Notify(Result?DWText(this,TEXT("制作完成"),TEXT("Crafting complete."))
+        :(bBlockedByForm?DWText(this,TEXT("该配方需要先变身为酵母形态"),TEXT("This recipe requires Yeast form."))
+        :DWText(this,TEXT("制作失败：检查配方、材料和背包空间"),TEXT("Crafting failed. Check the recipe, ingredients and inventory space."))));
     if(Result)OnRecipeCrafted(RecipeId);return Result;
 }
 float ADWPlayerCharacter::TakeDamage(float Amount,const FDamageEvent& Event,AController* InstigatorController,AActor* Causer)

@@ -81,10 +81,10 @@ bool UDWTextRevealAuthoringLibrary::CreateDemoAssets()
  if(LoadObject<UWidgetBlueprint>(nullptr,*(P+TEXT(".WBP_DWTextRevealDemo"))))return true;
  auto* BP=Cast<UWidgetBlueprint>(FKismetEditorUtilities::CreateBlueprint(UDWTextRevealDemoWidget::StaticClass(),CreatePackage(*P),TEXT("WBP_DWTextRevealDemo"),BPTYPE_Normal,UWidgetBlueprint::StaticClass(),UWidgetBlueprintGeneratedClass::StaticClass()));if(!BP)return false;
  UWidgetTree* Tree=BP->WidgetTree;
- auto Text=[&](FName Name,const FString& Value,int32 Size){auto* T=Tree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(),Name);T->bIsVariable=true;T->SetText(FText::FromString(Value));T->SetFont(FSlateFontInfo(LoadObject<UFont>(nullptr,TEXT("/Engine/EngineFonts/Roboto.Roboto")),Size,TEXT("Regular")));T->SetColorAndOpacity(FSlateColor(FLinearColor(.94,.85,.65,1)));T->SetAutoWrapText(true);return T;};
+ auto Text=[&](FName Name,const FString& Value,int32 Size){auto* T=Tree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(),Name);T->bIsVariable=true;T->SetText(FText::FromString(Value));T->SetFont(FSlateFontInfo(LoadObject<UFont>(nullptr,TEXT("/Engine/EngineFonts/Roboto.Roboto")),Size,TEXT("Regular")));T->SetColorAndOpacity(FSlateColor(FLinearColor(.94f,.85f,.65f,1.f)));T->SetAutoWrapText(true);return T;};
  auto* Root=Tree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass(),TEXT("RootCanvas"));Tree->RootWidget=Root;
- auto* Background=Tree->ConstructWidget<UBorder>(UBorder::StaticClass(),TEXT("Background"));Background->SetBrushColor(FLinearColor(.035,.05,.055,1));auto* BG=Root->AddChildToCanvas(Background);BG->SetAnchors(FAnchors(0,0,1,1));BG->SetOffsets(FMargin(0));
- auto* Card=Tree->ConstructWidget<UBorder>(UBorder::StaticClass(),TEXT("DialogueCard"));Card->SetBrushColor(FLinearColor(.09,.115,.12,1));Card->SetPadding(FMargin(30));
+ auto* Background=Tree->ConstructWidget<UBorder>(UBorder::StaticClass(),TEXT("Background"));Background->SetBrushColor(FLinearColor(.035f,.05f,.055f,1.f));auto* BG=Root->AddChildToCanvas(Background);BG->SetAnchors(FAnchors(0,0,1,1));BG->SetOffsets(FMargin(0));
+ auto* Card=Tree->ConstructWidget<UBorder>(UBorder::StaticClass(),TEXT("DialogueCard"));Card->SetBrushColor(FLinearColor(.09f,.115f,.12f,1.f));Card->SetPadding(FMargin(30));
  auto* Slot=Root->AddChildToCanvas(Card);Slot->SetAnchors(FAnchors(.5,.5));Slot->SetAlignment(FVector2D(.5,.5));Slot->SetAutoSize(true);
  auto* Size=Tree->ConstructWidget<USizeBox>(USizeBox::StaticClass(),TEXT("CardSize"));Size->SetWidthOverride(930);Card->SetContent(Size);
  auto* Body=Tree->ConstructWidget<UVerticalBox>(UVerticalBox::StaticClass(),TEXT("CardBody"));Size->SetContent(Body);
@@ -101,7 +101,7 @@ bool UDWTextRevealAuthoringLibrary::CreateDemoAssets()
  const TPair<FName,FString> Labels[]={{TEXT("EnglishButton"),TEXT("English")},{TEXT("ChineseButton"),TEXT("中文")},{TEXT("MixedButton"),TEXT("Mixed")},{TEXT("ReplayButton"),TEXT("Replay")},{TEXT("PauseButton"),TEXT("Pause / Resume")},{TEXT("SkipButton"),TEXT("Show all")},{TEXT("ClearButton"),TEXT("Clear")}};
  for(const auto& Pair:Labels)
  {
-  auto* B=Tree->ConstructWidget<UButton>(UButton::StaticClass(),Pair.Key);B->bIsVariable=true;B->SetBackgroundColor(FLinearColor(.28,.36,.36));
+  auto* B=Tree->ConstructWidget<UButton>(UButton::StaticClass(),Pair.Key);B->bIsVariable=true;B->SetBackgroundColor(FLinearColor(.28f,.36f,.36f));
   auto* L=Text(FName(*(Pair.Key.ToString()+TEXT("_Label"))),Pair.Value,15);auto* BS=Cast<UButtonSlot>(B->AddChild(L));BS->SetPadding(FMargin(10,13));Buttons->AddChildToHorizontalBox(B)->SetPadding(FMargin(4,0));
   if(auto* Bounce=Cast<UDWUIBounceComponent>(Ext->AddComponent(UDWUIBounceComponent::StaticClass(),Pair.Key,Error)))Bounce->bPlayOnConstruct=false;
  }
