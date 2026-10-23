@@ -17,6 +17,9 @@ public:
     /** Additional playable maps that may be saved and travelled to by the GameInstance. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Maps") TArray<TSoftObjectPtr<UWorld>> AdditionalGameplayMaps;
 
+    /** Exact map package -> isolated gameplay profile. The default config owns this registry. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Maps") TMap<FName,TSoftObjectPtr<UDWGameplayConfig>> MapConfigOverrides;
+
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Player|Health", meta=(ClampMin="1"))
     float MaxHealth = 100.f;

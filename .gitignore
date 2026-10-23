@@ -23,3 +23,6 @@
 
 # Generated cook/editor file-open-order logs; retain other Build resources.
 /Build/Windows/FileOpenOrder/*.log
+
+# This source plugin is rebuilt per machine; keep its source and Content.
+/Plugins/DesertBuildingLab/Binaries/

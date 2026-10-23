@@ -1,11 +1,17 @@
 #include "DWGameInstance.h"
+#include "DWCombatRules.h"
+#include "DWCombatItemRegistry.h"
 #include "DWWorldEvent.h"
 #include "DWLoadingTransition.h"
 #include "DWGameplayConfig.h"
+#include "DWGatheringProfile.h"
 #include "DWLocalizationLibrary.h"
 #include "DWInventoryComponent.h"
 #include "DWPlayerCharacter.h"
 #include "DWSaveGame.h"
+#include "DWCombatPlayerSave.h"
+#include "DWCombatWorldPersistence.h"
+#include "DWCombatRecoverySubsystem.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/PackageName.h"
@@ -18,7 +24,11 @@
 
 void UDWGameInstance::Init()
 {
- Super::Init();GetSubsystem<UDWLoadingTransitionSubsystem>()->OnFailed.AddDynamic(this,&UDWGameInstance::HandleTravelFailure);
+ bCombatSaveAlive=true;Super::Init();GetSubsystem<UDWLoadingTransitionSubsystem>()->OnFailed.AddDynamic(this,&UDWGameInstance::HandleTravelFailure);
+ if(!FDWCombatRules::LoadProjectPayload(CombatRules,CombatRulesError))
+ {UE_LOG(LogTemp,Error,TEXT("DW_COMBAT_RULES_INVALID: %s"),*CombatRulesError);}
+ else
+ {UE_LOG(LogTemp,Display,TEXT("DW_COMBAT_RULES_NUMERIC_READY: %d base, %d derived, %d equipment bindings pending; %s"),CombatRules->GetBaseParameterCount(),CombatRules->GetDerivedParameterCount(),CombatRules->GetUnboundEquipmentCount(),*CombatRules->GetDesignVersion());}
 #if WITH_DEV_AUTOMATION_TESTS
  FString Prefix;if(FParse::Value(FCommandLine::Get(),TEXT("DWVerificationSavePrefix="),Prefix)&&Prefix.StartsWith(TEXT("DW_QA_"))&&Prefix.Len()<80&&!Prefix.Contains(TEXT("/"))&&!Prefix.Contains(TEXT("\\")))VerificationSavePrefix=Prefix;
 #endif
@@ -30,9 +40,9 @@ void UDWGameInstance::HandleTravelFailure(FText Reason)
  if(bSaveTravelInFlight){PendingSave=nullptr;ActiveSlot=PreviousTravelSlot;bSaveTravelInFlight=false;}LastSaveError=Reason;
 }
 
-void UDWGameInstance::HandleTravelFinished(){bSaveTravelInFlight=false;}
+void UDWGameInstance::HandleTravelFinished(){bSaveTravelInFlight=false;ShowPendingCombatRestoreError();}
 
-UDWGameplayConfig* UDWGameInstance::GetConfig()
+UDWGameplayConfig* UDWGameInstance::GetDefaultGameplayConfig()
 {
     if (!Config)
     {
@@ -41,6 +51,50 @@ UDWGameplayConfig* UDWGameInstance::GetConfig()
         Config->RefreshDefinitionsFromTables();
     }
     return Config;
+}
+
+UDWGameplayConfig* UDWGameInstance::GetConfigForMap(const FString& MapPackage)
+{
+    UDWGameplayConfig* Default=GetDefaultGameplayConfig();
+    if(!Default)return nullptr;
+    const FName Key(*UWorld::RemovePIEPrefix(MapPackage));
+    const TSoftObjectPtr<UDWGameplayConfig>* Override=Default->MapConfigOverrides.Find(Key);
+    if(!Override)return Default;
+    if(Override->IsNull())return nullptr; // An explicitly registered but missing profile must not validate a save.
+    if(auto* Cached=MapConfigs.Find(Key);Cached&&IsValid(Cached->Get()))return Cached->Get();
+    UDWGameplayConfig* Loaded=Override->LoadSynchronous();
+    if(!IsValid(Loaded))return nullptr;
+    Loaded->RefreshDefinitionsFromTables();
+    if(const auto* Gathering=Cast<UDWGatheringProfile>(Loaded))
+    {
+        FString Error;
+        if(!Gathering->ValidateGatheringDefinitions(Error))
+        {UE_LOG(LogTemp,Error,TEXT("DW gathering map profile rejected: %s"),*Error);return nullptr;}
+    }
+    MapConfigs.Add(Key,Loaded);
+    return Loaded;
+}
+
+UDWGameplayConfig* UDWGameInstance::GetConfig()
+{
+    const UWorld* World=GetWorld();
+    const FString Map=World?World->GetOutermost()->GetName():FString();
+    if(UDWGameplayConfig* Effective=GetConfigForMap(Map))return Effective;
+    // Existing callers require a non-null fallback, but save/profile admission still fails closed.
+    UE_LOG(LogTemp,Error,TEXT("DW current map profile unavailable for %s; default data is read-only fallback."),*Map);
+    return GetDefaultGameplayConfig();
+}
+
+bool UDWGameInstance::AreGameplayMapProfilesCompatible(const FString& FirstMap,const FString& SecondMap)
+{
+    UDWGameplayConfig* First=GetConfigForMap(FirstMap);
+    UDWGameplayConfig* Second=GetConfigForMap(SecondMap);
+    return First&&Second&&First==Second;
+}
+
+bool UDWGameInstance::ValidateCombatItemRegistration(FString& OutError)
+{
+    return FDWCombatItemRegistry::ValidateItems(GetConfig(),OutError);
 }
 
 bool UDWGameInstance::IsValidSlot(int32 SlotIndex)
@@ -94,6 +148,7 @@ bool UDWGameInstance::ValidateSave(const UDWSaveGame* Save)
 {
     if (!Save || (Save->Version < 1 || Save->Version > UDWSaveGame::CurrentVersion))
         return Fail(DWText(this, TEXT("存档格式无法读取或版本不兼容。"), TEXT("The save format is unreadable or its version is incompatible.")));
+    if(RejectGatheringPreviewPersistence(Save->MapPackage))return false;
     if (!Save->MapPackage.StartsWith(TEXT("/Game/")) ||
         !FPackageName::IsValidLongPackageName(Save->MapPackage) ||
         !FPackageName::DoesPackageExist(Save->MapPackage) ||
@@ -106,8 +161,16 @@ bool UDWGameInstance::ValidateSave(const UDWSaveGame* Save)
         (Save->bHasPlayerTransform && !Save->PlayerTransform.IsValid()))
         return Fail(DWText(this, TEXT("存档包含无效的玩家属性或位置，已停止加载。"), TEXT("Loading stopped: the save contains invalid player attributes or a position.")));
 
+    FString CombatError;
+    if(!CombatRules||!DWCombatPlayerSave::Validate(*CombatRules,*Save,CombatError))
+        return Fail(DWText(this,TEXT("战斗资源存档缺失或不兼容，已停止加载；原文件已保留。"),TEXT("Combat resource data is missing or incompatible. Loading stopped; the original file was preserved.")));
+    if(!FDWCombatWorldPersistence::Validate(*CombatRules,*Save,CombatError))
+        return Fail(DWText(this,TEXT("完整战斗存档缺失或不兼容，原文件已保留。"),TEXT("The complete combat save is missing or incompatible. The original file was preserved.")));
     UDWInventoryComponent* Validator = NewObject<UDWInventoryComponent>(this);
-    Validator->InitializeInventory(GetConfig());
+    UDWGameplayConfig* SavedConfig=GetConfigForMap(Save->MapPackage);
+    if(!SavedConfig)return Fail(DWText(this,TEXT("存档地图的玩法配置不可用；原文件已保留。"),TEXT("The saved map gameplay profile is unavailable. The original save was preserved.")));
+    Validator->InitializeInventory(SavedConfig);
+    if(!Validator->TryApplyCombatStackPolicy(*CombatRules,CombatError))return Fail(FText::FromString(CombatError));
     if (!Validator->AreSlotsValid(Save->Inventory))
         return Fail(DWText(this, TEXT("存档背包与当前物品或容量配置不兼容；原存档已保留。"), TEXT("The saved inventory is incompatible with the current items or capacity. The original save has been preserved.")));
 
@@ -125,6 +188,7 @@ bool UDWGameInstance::ValidateSave(const UDWSaveGame* Save)
 
 bool UDWGameInstance::NewGame(int32 SlotIndex, const FString& Name)
 {
+    if(RejectGatheringPreviewPersistence())return false;
     if(UDWWorldEventSubsystem::IsPlaying(this))return Fail(DWText(this,TEXT("请等待场景演出结束。"),TEXT("Please wait for the cinematic.")));
     if(auto* T=GetSubsystem<UDWLoadingTransitionSubsystem>();T&&T->IsTransitionActive())return Fail(DWText(this,TEXT("请等待当前过渡完成。"),TEXT("Please wait for the current transition.")));
     LastSaveError = FText::GetEmpty();
@@ -139,12 +203,15 @@ bool UDWGameInstance::NewGame(int32 SlotIndex, const FString& Name)
     if (Save->DisplayName.IsEmpty()) Save->DisplayName = FText::Format(DWText(this, TEXT("冒险 {0}"), TEXT("Adventure {0}")), FText::AsNumber(SlotIndex + 1)).ToString();
     Save->Timestamp = FDateTime::UtcNow();
     Save->MapPackage = GetConfig()->GameplayMap;
-    Save->Health = FMath::Max(1.f, GetConfig()->MaxHealth);
+    FString CombatError;
+    if(!CombatRules||!DWCombatPlayerSave::MakeNew(*CombatRules,*Save,CombatError))return Fail(FText::FromString(CombatError));
     Save->bHasPlayerTransform = false;
+    if(!FDWCombatWorldPersistence::MarkNewAdventure(*CombatRules,*Save,CombatError))return Fail(FText::FromString(CombatError));
     if (!ValidateSave(Save)) return false;
     if (!WriteSlot(Save, MakeSlotName(SlotIndex)))
         return Fail(DWText(this, TEXT("写入新存档失败，请检查磁盘空间与写入权限。"), TEXT("Unable to write the new save. Check disk space and write permissions.")));
 
+    ResetCombatSaveFlow();
     bSaveTravelInFlight=true;PreviousTravelSlot=ActiveSlot;ActiveSlot = SlotIndex;
     PendingSave = Save;
     auto* Transition=GetSubsystem<UDWLoadingTransitionSubsystem>();
@@ -155,6 +222,7 @@ bool UDWGameInstance::NewGame(int32 SlotIndex, const FString& Name)
 
 bool UDWGameInstance::LoadGameSlot(int32 SlotIndex)
 {
+    if(RejectGatheringPreviewPersistence())return false;
     if(UDWWorldEventSubsystem::IsPlaying(this))return Fail(DWText(this,TEXT("请等待场景演出结束。"),TEXT("Please wait for the cinematic.")));
     if(auto* T=GetSubsystem<UDWLoadingTransitionSubsystem>();T&&T->IsTransitionActive())return Fail(DWText(this,TEXT("请等待当前过渡完成。"),TEXT("Please wait for the current transition.")));
     LastSaveError = FText::GetEmpty();
@@ -165,6 +233,7 @@ bool UDWGameInstance::LoadGameSlot(int32 SlotIndex)
     UDWSaveGame* Save = Cast<UDWSaveGame>(ReadSlot(MakeSlotName(SlotIndex)));
     if (!ValidateSave(Save)) return false;
 
+    ResetCombatSaveFlow();
     bSaveTravelInFlight=true;PreviousTravelSlot=ActiveSlot;ActiveSlot = SlotIndex;
     PendingSave = Save;
     auto* Transition=GetSubsystem<UDWLoadingTransitionSubsystem>();
@@ -175,6 +244,8 @@ bool UDWGameInstance::LoadGameSlot(int32 SlotIndex)
 
 bool UDWGameInstance::DeleteGameSlot(int32 SlotIndex)
 {
+    // Preview slot lists must not edit formal saves. Other maps keep their old behavior.
+    if(RejectGatheringPreviewPersistence())return false;
     if(auto* T=GetSubsystem<UDWLoadingTransitionSubsystem>();T&&T->IsTransitionActive())return Fail(DWText(this,TEXT("请等待当前过渡完成。"),TEXT("Please wait for the current transition.")));
     LastSaveError = FText::GetEmpty();
     if (!IsValidSlot(SlotIndex)) return Fail(DWText(this, TEXT("只能使用存档槽 1 至 3。"), TEXT("Only save slots 1 through 3 are available.")));
@@ -184,7 +255,7 @@ bool UDWGameInstance::DeleteGameSlot(int32 SlotIndex)
         return Fail(DWText(this, TEXT("删除存档失败，文件可能被占用。"), TEXT("Unable to delete the save. The file may be in use.")));
     if (ActiveSlot == SlotIndex)
     {
-        ActiveSlot = INDEX_NONE;
+        ResetCombatSaveFlow();ActiveSlot = INDEX_NONE;
         PendingSave = nullptr;
     }
     return true;
@@ -192,49 +263,12 @@ bool UDWGameInstance::DeleteGameSlot(int32 SlotIndex)
 
 bool UDWGameInstance::SaveCurrentGame()
 {
-    // ActiveSlot already points to the destination while the old pawn can still exist.
-    // Never serialize that pawn until travel and pending restoration have completed.
-    const auto* SaveTransition=GetSubsystem<UDWLoadingTransitionSubsystem>();
-    if(bSaveTravelInFlight||PendingSave||(SaveTransition&&SaveTransition->IsTransitionActive()))
-        return Fail(DWText(this,TEXT("请等待读档或场景过渡完成再保存，原存档已保留。"),TEXT("Please wait for loading or the transition to finish before saving. The original save has been preserved.")));
-    if(UDWWorldEventSubsystem::IsPlaying(this))return Fail(DWText(this,TEXT("请等待场景演出结束再保存。"),TEXT("Please wait for the cinematic before saving.")));
-    LastSaveError = FText::GetEmpty();
-    if (!HasActiveSlot()) return Fail(DWText(this, TEXT("尚未进入存档，无法保存标题界面。"), TEXT("No save slot is active. You cannot save from the title screen.")));
-    UWorld* World = GetWorld();
-    ADWPlayerCharacter* Player = Cast<ADWPlayerCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
-    if (!World || !Player) return Fail(DWText(this, TEXT("当前玩家尚未准备好，未覆盖原存档。"), TEXT("The player is not ready yet. The original save has not been overwritten.")));
-    if (Player->IsDead()) return Fail(DWText(this, TEXT("角色已死亡，保留上次存档供重新加载。"), TEXT("The character has died. The previous save has been kept for reloading.")));
-    const FString MapPackage = UWorld::RemovePIEPrefix(World->GetOutermost()->GetName());
-    if (!IsAllowedGameplayMap(MapPackage))
-        return Fail(DWText(this, TEXT("当前关卡不是正式玩法测试地图，未覆盖原存档。"), TEXT("This level is not the designated gameplay test map. The original save has not been overwritten.")));
-
-    UDWSaveGame* Save = Cast<UDWSaveGame>(UGameplayStatics::CreateSaveGameObject(UDWSaveGame::StaticClass()));
-    if (!Save) return Fail(DWText(this, TEXT("无法创建存档对象。"), TEXT("Unable to create the save object.")));
-    const UDWSaveGame* Existing = Cast<UDWSaveGame>(ReadSlot(MakeSlotName(ActiveSlot)));
-    Save->DisplayName = Existing ? Existing->DisplayName : FText::Format(DWText(this, TEXT("冒险 {0}"), TEXT("Adventure {0}")), FText::AsNumber(ActiveSlot + 1)).ToString();
-    Player->CaptureSaveData(Save);
-    if(Existing)Save->VisitedMaps=Existing->VisitedMaps;
-    FDWMapSnapshot* Snapshot=Save->VisitedMaps.FindByPredicate([&](const FDWMapSnapshot& M){return M.MapPackage==MapPackage;});
-    if(!Snapshot)Snapshot=&Save->VisitedMaps.AddDefaulted_GetRef();
-    Snapshot->MapPackage=MapPackage;Snapshot->Actors=Save->WorldActors;Snapshot->CompletedWorldEvents=Save->CompletedWorldEvents;Snapshot->PlayerTransform=Save->PlayerTransform;
-    Save->bHasPlayerTransform = true;
-    Save->MapPackage = MapPackage;
-    Save->Version = UDWSaveGame::CurrentVersion;
-    Save->Timestamp = FDateTime::UtcNow();
-    if (!ValidateSave(Save)) return false;
-    if (!WriteSlot(Save, MakeSlotName(ActiveSlot)))
-        return Fail(DWText(this, TEXT("保存失败，请检查磁盘空间与写入权限。"), TEXT("Saving failed. Check disk space and write permissions.")));
-    return true;
+    return SaveCombatSnapshot(nullptr,false);
 }
 
 void UDWGameInstance::ApplyPendingSave(ADWPlayerCharacter* Player)
 {
-    if (!Player || !PendingSave || !HasActiveSlot()) return;
-    const UWorld* World = Player->GetWorld();
-    if (!World || UWorld::RemovePIEPrefix(World->GetOutermost()->GetName()) != PendingSave->MapPackage) return;
-    if (!ValidateSave(PendingSave)) return;
-    Player->ApplySaveData(PendingSave);
-    PendingSave = nullptr;
+    ApplyCompletePendingSave(Player);
 }
 
 void UDWGameInstance::ReturnToTitle()
@@ -247,6 +281,7 @@ void UDWGameInstance::ReturnToTitle()
         Fail(DWText(this, TEXT("标题地图不存在，已留在当前关卡。"), TEXT("The title map is missing. You have remained in the current level.")));
         return;
     }
+    ResetCombatSaveFlow();
     bSaveTravelInFlight=true;PreviousTravelSlot=ActiveSlot;ActiveSlot = INDEX_NONE;
     PendingSave = nullptr;
     auto* Transition=GetSubsystem<UDWLoadingTransitionSubsystem>();
@@ -256,17 +291,22 @@ void UDWGameInstance::ReturnToTitle()
 
 bool UDWGameInstance::IsAllowedGameplayMap(const FString& Map)
 {
- auto* C=GetConfig();if(Map==C->GameplayMap)return true;
+ auto* C=GetDefaultGameplayConfig();if(!C)return false;
+ if(Map==C->GameplayMap)return true;
  if(Map==C->MainMenuMap)return false;
  for(const auto& M:C->AdditionalGameplayMaps)if(M.ToSoftObjectPath().GetLongPackageName()==Map)return true;
+ if(C->MapConfigOverrides.Contains(FName(*Map)))return GetConfigForMap(Map)!=nullptr;
  return false;
 }
 bool UDWGameInstance::TravelToGameplayMap(TSoftObjectPtr<UWorld> Destination)
 {
  const FString Map=Destination.ToSoftObjectPath().GetLongPackageName();
+ if(RejectGatheringPreviewPersistence()||RejectGatheringPreviewPersistence(Map))return false;
  auto* T=GetSubsystem<UDWLoadingTransitionSubsystem>();
  if(T->IsTransitionActive())return false;
  if(!IsAllowedGameplayMap(Map)||!FPackageName::DoesPackageExist(Map))return Fail(DWText(this,TEXT("请在 Additional Gameplay Maps 中登记目标地图。"),TEXT("Register the destination in Additional Gameplay Maps first.")));
+ const FString CurrentMap=GetWorld()?UWorld::RemovePIEPrefix(GetWorld()->GetOutermost()->GetName()):FString();
+ if(!AreGameplayMapProfilesCompatible(CurrentMap,Map))return Fail(DWText(this,TEXT("不同资源配置的地图暂不支持携带背包互相旅行，请分别开始或加载该地图的存档。"),TEXT("Travel with inventory between different gameplay profiles is not supported. Start or load that map separately.")));
  if(!SaveCurrentGame())return false;
  auto* Save=Cast<UDWSaveGame>(ReadSlot(MakeSlotName(ActiveSlot)));if(!Save)return false;
  Save->MapPackage=Map;Save->WorldActors.Reset();Save->CompletedWorldEvents.Reset();Save->bHasPlayerTransform=false;
@@ -319,6 +359,6 @@ bool UDWGameInstance::SlotExists(const FString& Slot) const
 USaveGame* UDWGameInstance::ReadSlot(const FString& Slot) const
 { return bUseDocumentsStorage ? DWSaveStorage::Read(SaveDirectory, Slot) : UGameplayStatics::LoadGameFromSlot(Slot, 0); }
 bool UDWGameInstance::WriteSlot(USaveGame* Save, const FString& Slot) const
-{ return bUseDocumentsStorage ? DWSaveStorage::Write(SaveDirectory, Slot, Save) : UGameplayStatics::SaveGameToSlot(Save, Slot, 0); }
+{ return DWSaveStorage::Write(SaveDirectory, Slot, Save); }
 bool UDWGameInstance::RemoveSlot(const FString& Slot) const
 { return bUseDocumentsStorage ? DWSaveStorage::Delete(SaveDirectory, Slot) : UGameplayStatics::DeleteGameInSlot(Slot, 0); }

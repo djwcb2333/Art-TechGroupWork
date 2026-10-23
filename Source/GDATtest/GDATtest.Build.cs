@@ -18,6 +18,8 @@ public class GDATtest : ModuleRules
 			"NavigationSystem",
 			"StateTreeModule",
 			"GameplayStateTreeModule",
+            "AnimGraphRuntime",
+            "ProceduralMeshComponent",
 			"Niagara",
             "Landscape",
 			"UMG",
@@ -27,10 +29,13 @@ public class GDATtest : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "DeveloperSettings", "Json", "MoviePlayer", "RenderCore", "RHI" });
 
+        // Generated from the authoritative combat parameter table; one packaged UFS file.
+        RuntimeDependencies.Add("$(ProjectDir)/Content/DoughWorld/Gameplay/Combat/DWCombatRules.json", StagedFileType.UFS);
+
         // DoughWorld UMG authoring is editor-only; runtime widgets use UMG.
         if (Target.bBuildEditor)
         {
-            PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd", "UMGEditor", "Kismet", "KismetCompiler", "AssetRegistry", "AssetTools", "MovieScene", "MovieSceneTracks" });
+            PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd", "UMGEditor", "AnimGraph", "BlueprintGraph", "Kismet", "KismetCompiler", "AssetRegistry", "AssetTools", "MovieScene", "MovieSceneTracks" });
         }
 
 		PublicIncludePaths.AddRange(new string[] {

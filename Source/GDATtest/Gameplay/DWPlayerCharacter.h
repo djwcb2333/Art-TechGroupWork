@@ -1,12 +1,26 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "TopDownActionCharacter.h"
+#include "DWCombatTypes.h"
+#include "DWCombatKnockback.h"
+#include "DWCombatCommitLedger.h"
+#include "DWCombatPlayerVitals.h"
+#include "DWCombatMoldRoot.h"
+#include "DWYeastDashPlan.h"
+#include "DWCombatInputLedger.h"
+#include "DWCombatCoreInjectionTransaction.h"
 #include "DWPlayerCharacter.generated.h"
+
+class UDWGatheringComponent;
+class UDWWeaponAnimationComponent;
+class UDWCombatFeedbackComponent;
 class UDWGameplayCameraShakeComponent;
 class UDWGameplayConfig; class UDWInventoryComponent; class UDWSaveGame;
 class ADWResourceNode; class ADWAlcoholProjectile; class UAnimationAsset;
 class USpringArmComponent; class USoundBase; class UCameraShakeBase; class UNiagaraSystem;
 class UStaticMeshComponent; class UAudioComponent; class UNiagaraComponent;
+class UBoxComponent;
+class ADWGatheringPond;
 
 /** Uses the existing TopDown action-character movement; gameplay is independent of the imported programming pawn. */
 UCLASS(Blueprintable)
@@ -17,11 +31,40 @@ public:
     /** Settle the spring arm before the loading cover is removed, even while paused. */
     UFUNCTION(BlueprintCallable,Category="DoughWorld|Camera") void PrepareCameraForReveal();
     ADWPlayerCharacter();
+    /** Editor PIE, exact CombatTest map and no adventure slot only. No shipping/adventure grant. */
+    /** Grant missing permanent test weapons once; independent of the ammo toggle. Editor CombatTest without an adventure slot only. */
+    UPROPERTY(EditAnywhere,Category="DoughWorld|Combat|Testing") bool GiveCombatTestWeapons=true;
+    /** Editor-only exact CombatTest map/no-slot supply. Does not enter either form or bypass inventory Use. */
+    UPROPERTY(EditAnywhere,Category="DoughWorld|Combat|Testing") bool GiveCombatTestCores=true;
+    UPROPERTY(EditAnywhere,Category="DoughWorld|Combat|Testing",meta=(ClampMin="0",ClampMax="1000")) int32 CombatTestCoresPerType=10;
+    UPROPERTY(EditAnywhere,Category="DoughWorld|Combat|Testing") bool GiveCombatTestAmmo=true;
+    UPROPERTY(EditAnywhere,Category="DoughWorld|Combat|Testing",meta=(ClampMin="0",ClampMax="1000")) int32 CombatTestAmmoPerType=100;
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Root") bool IsFormallyRooted()const{return FormalRoot.IsActive();}
+    bool TryToggleFormalRoot();
+    bool IsFormallyRootedAtFrameOffset(double Seconds)const;
+    bool GetFormalRootIdentity(FDWMoldRootIdentity& Out)const;
+    FDWMoldRootSnapshot CaptureFormalRootSnapshot()const{return FormalRoot.Capture();}
+    double GetFormalRootDamageMultiplier()const{return IsFormallyRooted()?FormalRoot.GetConfig().DamageMultiplier:1.;}
+    double GetFormalRootRangedRateMultiplier()const{return IsFormallyRooted()?FormalRoot.GetConfig().RangedRateMultiplier:1.;}
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Root|Animation") TObjectPtr<UAnimationAsset> RootEnterAnimation;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Root|Animation") TObjectPtr<UAnimationAsset> RootExitAnimation;
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Dash") bool IsFormalDashing()const{return FormalDash.IsActive();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Dash") double GetFormalDashCooldown()const{return FormalDash.CooldownSeconds();}
+    float GetMovementCameraYaw()const{return CameraYaw;}
+    bool TryStartFormalDash(const FDWCombatInputPress&,FVector MoveDirection,FVector AimDirection);
+    void PublishFormalDashStartEffects(); // Call after D02 binds the accepted hold or observes its quick-tap release.
+    bool ApplyFormalDashRelease(const FDWCombatInputPress&);
+    void CancelFormalDashInput(const FDWCombatInputPress&);
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat") bool IsCombatKnockedBack()const{return CombatKnockback.bActive;}
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Feedback") TObjectPtr<UDWCombatFeedbackComponent> CombatFeedback;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Camera") TObjectPtr<UDWGameplayCameraShakeComponent> GameplayCameraShake;
     virtual void Tick(float DeltaSeconds) override;
     virtual float TakeDamage(float Amount,const FDamageEvent& Event,AController* InstigatorController,AActor* Causer) override;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Inventory") TObjectPtr<UDWInventoryComponent> Inventory;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Gathering") TObjectPtr<UDWGatheringComponent> GatheringComponent;
+    bool CanPerformGatheringAction() const;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Equipment") TObjectPtr<UStaticMeshComponent> SwordPlaceholder;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Equipment") TObjectPtr<UDWWeaponAnimationComponent> WeaponAnimationComponent;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Equipment") FName SwordSocket=TEXT("bone_005_R");
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Config") TObjectPtr<UDWGameplayConfig> GameplayConfig;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Animation") TObjectPtr<UAnimationAsset> IdleAnimation;
@@ -30,6 +73,64 @@ public:
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Animation") TObjectPtr<UAnimationAsset> TransformAnimation;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Animation") TObjectPtr<UAnimationAsset> DeathAnimation;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Animation") TObjectPtr<UAnimationAsset> DashAnimation;
+    /** Enables the authored combat Animation Blueprint. Native single-node playback is completely bypassed. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Animation") bool bUseCombatAnimBlueprint=false;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Animation") TObjectPtr<UAnimationAsset> MeleeAnimation;
+    /** Empty steps or a disabled combo preserve all legacy single-strike fields below. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Combo") bool bEnableMeleeCombo=true;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Combo",meta=(TitleProperty="Animation")) TArray<FDWMeleeComboStep> MeleeComboSteps;
+    /** Accept one next press only within this many seconds of the recovery end, never during windup/active. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Combo",meta=(ClampMin="0",Units="s")) float MeleeComboInputBufferSeconds=.25f;
+    /** After the next step becomes ready, an unbuffered press can continue the chain for this duration. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Combo",meta=(ClampMin="0",Units="s")) float MeleeComboResetSeconds=.65f;
+    /** Extra wait between steps. The last step instead uses the existing Melee Cooldown. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Combo",meta=(ClampMin="0",Units="s")) float MeleeComboStepCooldown=.04f;
+    /** Zero-based active step, or -1 while idle / using the legacy single strike. */
+    UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="DoughWorld|Combat|Combo") int32 CurrentMeleeComboStep=INDEX_NONE;
+    UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="DoughWorld|Combat|Combo") bool bMeleeComboInputBuffered=false;
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Animation") UAnimationAsset* GetCurrentMeleeAnimation() const;
+    /** Optional deform bone for a weapon contained in the character mesh. None preserves the old static weapon behavior. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Combo") FName AnimatedMeleeWeaponBone=NAME_None;
+    /** During melee only, show a reversible weapon swing when the animation or weapon socket is missing. Does not affect damage. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Placeholder",meta=(DisplayName="Enable Melee Weapon Placeholder")) bool bEnableMeleeWeaponPlaceholder=true;
+    UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="DoughWorld|Combat|Placeholder") bool bMeleeWeaponPlaceholderActive=false;
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Animation") EDWCombatAnimationState GetCombatAnimationState() const;
+    UAnimationAsset* GetCombatThrowSequence() const {return ActiveAttackClip;}
+    float GetCombatThrowStartSeconds() const {return ActiveAttackStartSeconds;}
+    float GetCombatThrowEndSeconds() const {return ActiveAttackEndSeconds;}
+    float GetCombatThrowPlayRate() const {return ActiveAttackAnimationRate;}
+    float GetCombatThrowElapsedSeconds() const;
+    int32 GetCombatThrowSerial() const {return ThrowAnimationSerial;}
+    float GetMeleeAnimationElapsedSeconds() const;
+    float GetMeleeAnimationDuration() const;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Combat|Melee") TObjectPtr<UBoxComponent> MeleeDamageVolume;
+    /** Length forward from capsule centre. The box follows the locked attack direction, not weapon art. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Melee",meta=(ClampMin="1",Units="cm")) float MeleeRange=180.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Melee",meta=(ClampMin="1",Units="cm")) float MeleeHalfWidth=65.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Melee",meta=(ClampMin="1",Units="cm")) float MeleeHalfHeight=70.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Melee",meta=(ClampMin="0")) float MeleeDamage=25.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Melee",meta=(ClampMin="0",Units="s")) float MeleeWindupSeconds=.2f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Melee",meta=(ClampMin="0.01",Units="s")) float MeleeActiveSeconds=.12f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Melee",meta=(ClampMin="0",Units="s")) float MeleeRecoverySeconds=.3f;
+    /** Extra delay after recovery; one button press starts at most one attack. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Melee",meta=(ClampMin="0",Units="s")) float MeleeCooldown=.15f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Melee",meta=(ClampMin="0",Units="cm")) float MeleeKnockbackDistance=80.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Melee",meta=(ClampMin="0.01",Units="s")) float MeleeKnockbackSeconds=.15f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Dash") bool bEnableDashDamage=true;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Dash",meta=(ClampMin="0")) float DashDamage=35.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Dash",meta=(ClampMin="1",Units="cm")) float DashDamageRadius=60.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Dash",meta=(ClampMin="0",Units="cm")) float DashKnockbackDistance=250.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Dash",meta=(ClampMin="0.01",Units="s")) float DashKnockbackSeconds=.25f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat") bool bCombatRequireLineOfSight=true;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Debug") bool bDrawCombatDebug=false;
+    UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="DoughWorld|Combat") EDWCombatPhase AttackPhase=EDWCombatPhase::None;
+    UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="DoughWorld|Combat") int32 AttackSerial=0;
+    UFUNCTION(BlueprintCallable,Category="DoughWorld|Combat") bool PerformMeleeAttack(FVector TargetLocation);
+    UFUNCTION(BlueprintCallable,Category="DoughWorld|Combat") void CancelCombatActions();
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat") bool IsCombatActionAllowed() const;
+    bool IsCombatSimulationSuspended() const;
+    /** Actual transformed hurtbox query, exposed for isolated geometry and gameplay verification. */
+    UFUNCTION(BlueprintCallable,Category="DoughWorld|Combat") TArray<AActor*> CollectMeleeTargets();
     /** Natural clip playback multiplier. 1 plays the source speed; 0.75 is slower. Sampled once per successful throw; does not change Throw Cooldown. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Animation|Attack",meta=(DisplayName="Attack Animation Play Rate",ClampMin="0.05",ClampMax="4",UIMin="0.25",UIMax="2")) float AttackAnimationPlayRate=1.f;
     /** Source clip time to begin each accepted attack. Use a single cycle when the imported source contains several baked swings. */
@@ -171,9 +272,18 @@ public:
     UFUNCTION(BlueprintPure,Category="DoughWorld") float GetTransformation() const {return Transformation;}
     UFUNCTION(BlueprintPure,Category="DoughWorld") float GetSprintAlcoholProgress() const;
     UFUNCTION(BlueprintPure,Category="DoughWorld") bool IsYeastForm() const {return bYeastForm;}
-    UFUNCTION(BlueprintPure,Category="DoughWorld") bool IsDead() const {return Health<=0.f;}
+    UFUNCTION(BlueprintPure,Category="DoughWorld") bool IsDead() const;
     UFUNCTION(BlueprintCallable,Category="DoughWorld") bool UseInventoryItem(int32 SlotIndex);
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Core Injection") bool IsCoreInjecting() const;
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Core Injection") float GetCoreInjectionRemainingSeconds() const;
+    // Native exact-slot entry shared by inventory UI and shortcut use. No immediate core grant.
+    bool CanRequestCoreInjection(const FDWInventorySlotSnapshot& Slot,bool bAllowPausedMenu=false) const;
+    bool RequestCoreInjection(const FDWInventorySlotSnapshot& Slot);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Animation|Core Injection") TObjectPtr<UAnimationAsset> CoreInjectionAnimation;
+    UAnimationAsset* GetCoreInjectionAnimationForPlayback() const;
     UFUNCTION(BlueprintCallable,Category="DoughWorld") bool CraftRecipe(FName RecipeId);
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Recovery") bool CanCombatRespawn()const;
+    UFUNCTION(BlueprintCallable,Category="DoughWorld|Recovery") bool RequestCombatRespawn();
     UFUNCTION(BlueprintCallable,Category="DoughWorld") void RequestSave();
     UFUNCTION(BlueprintCallable,Category="DoughWorld") void NotifyAlcoholHit();
     UFUNCTION(BlueprintCallable,Category="DoughWorld") void TryTransform();
@@ -216,13 +326,138 @@ public:
     UFUNCTION(BlueprintCallable,Category="DoughWorld|Save") void CaptureSaveData(UDWSaveGame* Save) const;
     UFUNCTION(BlueprintCallable,Category="DoughWorld|Save") void ApplySaveData(const UDWSaveGame* Save);
     void TickGameplayClocks(float DeltaSeconds,bool bActuallySprinting);
+    bool TryApplySaveData(const UDWSaveGame* Save);
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") bool HasCombatVitalsReady() const {return CombatVitals.IsReady();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") EDWCombatBaseForm GetCombatBaseForm() const {return CombatVitals.GetForm();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatWater() const {return CombatVitals.GetWater();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatSatiety() const {return CombatVitals.GetSatiety();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatSpecial() const {return CombatVitals.GetSpecial();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatFormRemaining() const {return CombatVitals.GetFormRemaining();}
+    EDWCombatBaseForm GetCombatBaseFormAtFrameOffset(double Seconds) const;
+    double GetCombatFrameSliceStartWorldSeconds(double DeltaSeconds) const;
+    uint64 GetCombatDamageRevision() const {return CombatDamageRevision;}
+    double GetLastCombatDamageWorldTime() const {return LastCombatDamageWorldTime;}
+    bool IsCombatRestoreInProgress() const {return bRestoringSave;}
+    // Gathering-profile native environmental facts. No new UI or Blueprint refill grant.
+    bool TryReceiveGatheringWater(ADWGatheringPond& Source,double RequestedAmount,double& OutAdded);
+    void SetGatheringEnvironmentSlow(const AActor* Source,double Fraction);
+    void RemoveGatheringEnvironmentSlow(const AActor* Source);
+    double GetGatheringEnvironmentMovementMultiplier() const;
+
 protected:
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+    virtual void UnPossessed() override;
+    virtual void NotifyHit(UPrimitiveComponent* MyComp,AActor* Other,UPrimitiveComponent* OtherComp,bool bSelfMoved,FVector HitLocation,FVector HitNormal,FVector NormalImpulse,const FHitResult& Hit) override;
 private:
+    bool TryGiveCombatTestWeapons();
+    bool TryGiveCombatTestCores();
+    bool bCombatTestCoresFinished=false;
+    bool bCombatTestWeaponsFinished=false,bGivingCombatTestWeapons=false;
+    TWeakObjectPtr<UWorld> CombatTestWeaponGrantWorld;
+    TWeakObjectPtr<UDWWeaponAnimationComponent> CombatTestWeaponGrantComponent;
+    DWCombatCommit::FEntityLife CombatTestWeaponGrantLife;
+    uint64 CombatTestWeaponGrantEpoch=0,CombatTestWeaponGrantRestoreEpoch=0;
+    friend class UDWWeaponAnimationComponent;
+    friend class UDWCombatAuthoritySubsystem;
+    friend class FDWCombatMinePersistence;
+    FDWPlayerCombatKnockbackState CombatKnockback;
+    uint64 CombatKnockbackRevision=0;
+    FTransform CombatRollRestTransform;
+    bool bCombatRollRestorePending=false;
+    FDWPlayerCombatKnockback PrepareCombatKnockback(FVector Direction,float Distance,float Seconds,DWCombatCommit::FEntityLife Life)const;
+    FDWPlayerCombatKnockback PrepareCombatKnockbackAtImpact(FVector Direction,float Distance,float Seconds,DWCombatCommit::FEntityLife Life,bool bRootedAtImpact)const;
+    void CommitCombatKnockbackFacts(const FDWPlayerCombatKnockback& Prepared);
+    void ResetCombatKnockbackFacts();
+    void InterruptLegacyRollForKnockbackFacts();
+    void PublishCombatKnockbackEffects();
+    bool AdvanceCombatKnockback(float DeltaSeconds);
+    friend class FDWCombatRecoveryTransaction;
+    bool bCombatRecoveryPositionPending=false;
+    friend class FDWCombatPlayerStateTransaction;
+    friend class FDWCombatPlayerPersistence;
+    friend class FDWCombatDashTransaction;
+    FDWYeastDashPlan FormalDash;
+    FDWCombatInputPress DashInputOrigin;
+    DWCombatCommit::FEntityLife FormalDashLife;
+    TWeakObjectPtr<UWorld> FormalDashWorld;
+    uint64 FormalDashEpoch=0,LastFormalDashRequestOrdinal=0,LastPublishedFormalDashSerial=0;
+    FDWCombatInputEdge LastFormalDashEdge;
+    bool bApplyingFormalDashMotion=false;
+    struct FPaidFormalDashSlice
+    {
+        bool bPending=false,bMoved=false;uint64 Serial=0;FVector Start=FVector::ZeroVector,Finish=FVector::ZeroVector;double DistanceCm=0.;
+        EDWYeastDashEnd End=EDWYeastDashEnd::None;
+    } PaidFormalDashSlice;
+    virtual bool CanUseLegacyRoll()const override{return false;}
+    bool IsFormalDashCurrent()const;
+    void EndFormalDashFacts(EDWYeastDashEnd Reason);
+    double GetFormalDashBoundary(double MaximumSeconds,bool& bWall)const;
+    void QueueFormalDashSlice(const FDWYeastDashStep&,bool bWall);
+    bool PumpFormalDashSlice();
+    friend class FDWCombatCoreInjectionTransaction;
+    friend class FDWCombatMoldRootTransaction;
+    FDWMoldRootPlan FormalRoot;
+    FDWMoldRootIdentity FormalRootIdentity;
+    bool bRootEntryDue=false,bRootMovementPending=false;
+    bool PrepareFormalRootEntry(FDWMoldRootConfig& Out)const;
+    void EndFormalRootFacts(EDWMoldRootEnd Reason);
+    bool PublishFormalRootMovementEffects();
+    // D22: native only. Adopt a prevalidated candidate and fresh identity with the complete ring transaction.
+    void AdoptFormalRootRestoreUnchecked(FDWMoldRootPlan&& Candidate,const FDWMoldRootIdentity& Identity)
+    {FormalRoot=MoveTemp(Candidate);FormalRootIdentity=Identity;bRootMovementPending=true;bRootEntryDue=false;}
+    FDWCombatPlayerVitalsRuntime CombatVitals;
+    TMap<TWeakObjectPtr<AActor>,double> GatheringEnvironmentSlowSources;
+    FDWCoreInjectionSession CoreInjection;
+    DWCombatCommit::FReceiptId LastCoreInjectionReceipt;
+    bool bCoreInjectionCompletionDue=false;
+    void CancelCoreInjectionFacts();
+    bool IsCoreInjectionCurrent() const;
+    bool CompleteCoreInjectionAtBoundary();
+    uint64 CombatDamageRevision=0;
+    double LastCombatDamageWorldTime=-1.;
+    bool bCombatDeathEffectsPending=false,bHasCombatFormFrameSlice=false;
+    bool bAdvancingGameplayClocks=false;
+    // Transient D02 pause continuation; D22 weapon/pending timeline serialization remains separate.
+    struct FPaidCombatWeaponSlice
+    {
+        bool bPending=false,bWasBusy=false;
+        double Seconds=0.,StartWorldSeconds=0.,FormExpiryOffset=0.;
+        bool bStartRooted=false;
+        double RootExitOffset=0.;
+        EDWCombatBaseForm StartForm=EDWCombatBaseForm::Normal;
+        DWCombatCommit::FEntityLife Life;
+        uint64 WorldEpoch=0,BoundaryRevision=0;
+        int32 ActionSerial=0;
+        uint8 WeaponSelection=0;
+        FName Role;
+        TWeakObjectPtr<UWorld> World;
+        TWeakObjectPtr<UDWWeaponAnimationComponent> Weapon;
+    } PaidCombatWeaponSlice;
+    bool bCombatFrameStartRooted=false;
+    double CombatFrameRootExitOffset=0.;
+    EDWCombatBaseForm CombatFrameStartForm=EDWCombatBaseForm::Normal;
+    double CombatFrameExpiryOffset=0.,CombatSliceStartWorldSeconds=0.;
+    DWCombatCommit::FEntityLife CombatFrameLife;
+    void InitializeCombatVitals();
+    void SyncCombatVitalsCompatibility();
+    void RefreshCombatMovementSpeed();
+    float GetCombatHealthFloor() const;
+    double GetCombatIncomingMultiplier() const;
+    bool CanReceiveCombatDamage() const;
+    void RecordCombatDamageFacts(float Applied);
+    void CommitCombatDeathFacts();
+    void PublishCombatDeathEffects();
     UPROPERTY(Transient) TObjectPtr<USpringArmComponent> CameraArm;
     UPROPERTY(Transient) TObjectPtr<UAnimationAsset> ActiveAnimation;
     UPROPERTY(Transient) TObjectPtr<UAnimationAsset> ActiveAttackClip;
+    UPROPERTY(Transient) FDWMeleeComboStep ActiveMeleeStep;
+    UPROPERTY(Transient) TObjectPtr<UAnimationAsset> ActiveMeleeClip;
+    bool bHasMeleeAnimationSnapshot=false,bActiveMeleeCombo=false,bRestartMeleeAnimation=false;
+    int32 NextMeleeComboStep=INDEX_NONE;
+    float MeleeComboExpiresAt=0.f;
+    FVector BufferedMeleeTarget=FVector::ZeroVector;
+    FName LastAnimatedMeleeWeaponBone=NAME_None;
     UPROPERTY(Transient) TObjectPtr<UAudioComponent> GatherLoopComponent;
     UPROPERTY(Transient) TObjectPtr<UAudioComponent> MovementAudioComponent;
     // Playback implementation only. Author resources and transforms in the public VFX settings.
@@ -245,6 +480,22 @@ private:
     float AttackUntil=0.f,TransformUntil=0.f,ShakeElapsed=100.f,TrailElapsed=0.f;
     float ActiveAttackAnimationRate=1.f;
     float ActiveAttackStartSeconds=0.f;
+    float ActiveAttackEndSeconds=0.f,ThrowAnimationStartTime=0.f;
+    int32 ThrowAnimationSerial=0;
+    float MeleeStartTime=0.f,MeleeActiveStartTime=0.f,MeleeActiveEndTime=0.f,MeleeEndTime=0.f,NextMeleeTime=0.f;
+    float ActiveMeleeDuration=.62f,FrozenMeleeAnimationElapsed=0.f;
+    FVector MeleeDirection=FVector::ForwardVector,LastDashCombatLocation=FVector::ZeroVector;
+    FVector DashCombatDirection=FVector::ForwardVector;
+    TSet<TWeakObjectPtr<AActor>> MeleeHitActors,DashHitActors;
+    DWCombatCommit::FActionId MeleeCommitAction,DashCommitAction;
+    bool bMeleeWindowSampled=false,bDashCombatActive=false,bApplyingCombatDamage=false;
+    bool bMeleePreviousOrientToMovement=true;
+    FTransform MeleeWeaponRestTransform;
+    TWeakObjectPtr<USceneComponent> MeleeWeaponRestParent;
+    FName MeleeWeaponRestSocket=NAME_None;
+    bool bMeleeWeaponRestVisible=false,bMeleeWeaponRestHidden=false;
+    bool bMeleeWeaponRestAbsoluteLocation=false,bMeleeWeaponRestAbsoluteRotation=false,bMeleeWeaponRestAbsoluteScale=false;
+    bool bMeleeWeaponCapsuleFallback=false,bMeleeWeaponDefaultCube=false;
     bool bRestartAttackAnimation=false;
     float CameraYaw=0.f,CameraPitch=-60.f;
     FVector CameraRestOffset=FVector::ZeroVector;
@@ -265,6 +516,20 @@ private:
     void PlayFormTransitionVFX(bool bEntering);
     void UpdateHarvest(float DeltaSeconds);
     void UpdateAnimation();
+    void UpdateCombat(float DeltaSeconds);
+    void UpdateMeleeDamageVolume();
+    bool BeginMeleeStep(FVector TargetLocation,int32 ComboStep);
+    void FinishMeleeStep();
+    void ClearMeleeComboContinuation();
+    void TryStartBufferedMeleeStep();
+    void UpdateAnimatedMeleeWeaponVisibility();
+    void BeginMeleeWeaponPlaceholder();
+    void UpdateMeleeWeaponPlaceholder();
+    void RestoreMeleeWeaponPlaceholder();
+    void SweepDashCombat(const FVector& Start,const FVector& End);
+    bool HasCombatLineOfSight(AActor* Target,const FVector& Origin,const FVector& End) const;
+    bool CanDamageCombatTarget(AActor* Target) const;
+    void DamageCombatTarget(AActor* Target,float Amount,float KnockbackDistance,float KnockbackSeconds,const FVector& Direction,TSet<TWeakObjectPtr<AActor>>& HitActors,DWCombatCommit::FActionDamage Identity={});
     float ClampCameraDistance(float Distance) const;
     void StartAttackAnimation();
     void InitializeFormVisuals();

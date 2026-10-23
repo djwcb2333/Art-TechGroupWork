@@ -14,6 +14,7 @@ public:
  UFUNCTION(BlueprintCallable,Category="Settings") void SetupRow(EDWInputAction Action,UDWGameplayWidget* Screen);
  void Refresh();
 protected:
+ virtual void NativeOnInitialized()override;
  virtual void NativeConstruct()override;
  UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UTextBlock> ActionLabel;
  UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UTextBlock> BindingLabel;
@@ -37,6 +38,7 @@ public:
  bool CaptureKey(FKey Key);bool IsCancelHit(FVector2D Position)const;
  UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Settings") TSubclassOf<UDWKeyBindingRow> BindingRowClass;
 protected:
+ virtual void NativeOnInitialized()override;
  virtual void NativeConstruct()override;
  UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> AudioTabButton;
  UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> ControlsTabButton;

@@ -1,0 +1,1727 @@
+{
+  "payload_schema_version": 1,
+  "design_version": "角色战斗_已裁定_revision105_追加试玩反馈20261022_第三轮",
+  "source_sha256": "5f3436dfa002a1167478f5741c4121ec2316ee9327ae268ec32722621f709a6c",
+  "parameters": [
+    {
+      "id": "ai.alert_delay_s",
+      "value": 0.5,
+      "unit": "秒"
+    },
+    {
+      "id": "ai.disengage_s",
+      "value": 6,
+      "unit": "秒"
+    },
+    {
+      "id": "ai.elite.alert_radius_m",
+      "value": 10,
+      "unit": "米"
+    },
+    {
+      "id": "ai.elite.disengage_distance_m",
+      "value": 15,
+      "unit": "米"
+    },
+    {
+      "id": "ai.humanoid.alert_radius_m",
+      "value": 8,
+      "unit": "米"
+    },
+    {
+      "id": "ai.humanoid.disengage_distance_m",
+      "value": 12,
+      "unit": "米"
+    },
+    {
+      "id": "ai.return_speed_multiplier",
+      "value": 1,
+      "unit": "倍率"
+    },
+    {
+      "id": "ai.windup_lock_fraction",
+      "value": 0.5,
+      "unit": "比例"
+    },
+    {
+      "id": "core.mold.drop_probability",
+      "value": 0.5,
+      "unit": "概率"
+    },
+    {
+      "id": "core.pickup_radius_m",
+      "value": 1.5,
+      "unit": "米"
+    },
+    {
+      "id": "core.stack_limit",
+      "value": 40,
+      "unit": "颗"
+    },
+    {
+      "id": "core.success_drop_count",
+      "value": 1,
+      "unit": "颗"
+    },
+    {
+      "id": "core.yeast.drop_probability",
+      "value": 0.5,
+      "unit": "概率"
+    },
+    {
+      "id": "enemy.attack.hits_per_target",
+      "value": 1,
+      "unit": "次"
+    },
+    {
+      "id": "enemy.elite.active_s",
+      "value": 0.25,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.elite.attack_arc_deg",
+      "value": 120,
+      "unit": "度"
+    },
+    {
+      "id": "enemy.elite.attack_height_m",
+      "value": 2.5,
+      "unit": "米"
+    },
+    {
+      "id": "enemy.elite.attack_knockback_multiplier",
+      "value": 0.25,
+      "unit": "倍率"
+    },
+    {
+      "id": "enemy.elite.damage",
+      "value": 26,
+      "unit": "点"
+    },
+    {
+      "id": "enemy.elite.extra_cooldown_s",
+      "value": 0,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.elite.health",
+      "value": 300,
+      "unit": "点"
+    },
+    {
+      "id": "enemy.elite.knockback_multiplier",
+      "value": 0.5,
+      "unit": "倍率"
+    },
+    {
+      "id": "enemy.elite.outgoing_knockback_m",
+      "value": 1.5,
+      "unit": "米"
+    },
+    {
+      "id": "enemy.elite.outgoing_knockback_s",
+      "value": 0.35,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.elite.range_m",
+      "value": 2.8,
+      "unit": "米"
+    },
+    {
+      "id": "enemy.elite.recovery_s",
+      "value": 1.5,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.elite.speed_mps",
+      "value": 2.8,
+      "unit": "米/秒"
+    },
+    {
+      "id": "enemy.elite.windup_s",
+      "value": 1.1,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.mold.active_s",
+      "value": 0.15,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.mold.attack_arc_deg",
+      "value": 100,
+      "unit": "度"
+    },
+    {
+      "id": "enemy.mold.attack_height_m",
+      "value": 1.8,
+      "unit": "米"
+    },
+    {
+      "id": "enemy.mold.attack_knockback_multiplier",
+      "value": 1,
+      "unit": "倍率"
+    },
+    {
+      "id": "enemy.mold.damage",
+      "value": 14,
+      "unit": "点"
+    },
+    {
+      "id": "enemy.mold.extra_cooldown_s",
+      "value": 0,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.mold.health",
+      "value": 100,
+      "unit": "点"
+    },
+    {
+      "id": "enemy.mold.knockback_multiplier",
+      "value": 1,
+      "unit": "倍率"
+    },
+    {
+      "id": "enemy.mold.outgoing_knockback_m",
+      "value": 0.6,
+      "unit": "米"
+    },
+    {
+      "id": "enemy.mold.outgoing_knockback_s",
+      "value": 0.2,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.mold.range_m",
+      "value": 1.8,
+      "unit": "米"
+    },
+    {
+      "id": "enemy.mold.recovery_s",
+      "value": 0.85,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.mold.speed_mps",
+      "value": 3.8,
+      "unit": "米/秒"
+    },
+    {
+      "id": "enemy.mold.windup_s",
+      "value": 0.7,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.yeast.active_s",
+      "value": 0.15,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.yeast.attack_arc_deg",
+      "value": 100,
+      "unit": "度"
+    },
+    {
+      "id": "enemy.yeast.attack_height_m",
+      "value": 1.8,
+      "unit": "米"
+    },
+    {
+      "id": "enemy.yeast.attack_knockback_multiplier",
+      "value": 1,
+      "unit": "倍率"
+    },
+    {
+      "id": "enemy.yeast.damage",
+      "value": 12,
+      "unit": "点"
+    },
+    {
+      "id": "enemy.yeast.extra_cooldown_s",
+      "value": 0,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.yeast.health",
+      "value": 80,
+      "unit": "点"
+    },
+    {
+      "id": "enemy.yeast.knockback_multiplier",
+      "value": 1,
+      "unit": "倍率"
+    },
+    {
+      "id": "enemy.yeast.outgoing_knockback_m",
+      "value": 0.6,
+      "unit": "米"
+    },
+    {
+      "id": "enemy.yeast.outgoing_knockback_s",
+      "value": 0.2,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.yeast.range_m",
+      "value": 1.8,
+      "unit": "米"
+    },
+    {
+      "id": "enemy.yeast.recovery_s",
+      "value": 0.7,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.yeast.speed_mps",
+      "value": 4.4,
+      "unit": "米/秒"
+    },
+    {
+      "id": "enemy.yeast.windup_s",
+      "value": 0.55,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.zombie.active_s",
+      "value": 0.2,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.zombie.attack_arc_deg",
+      "value": 100,
+      "unit": "度"
+    },
+    {
+      "id": "enemy.zombie.attack_height_m",
+      "value": 1.8,
+      "unit": "米"
+    },
+    {
+      "id": "enemy.zombie.attack_knockback_multiplier",
+      "value": 1,
+      "unit": "倍率"
+    },
+    {
+      "id": "enemy.zombie.damage",
+      "value": 16,
+      "unit": "点"
+    },
+    {
+      "id": "enemy.zombie.extra_cooldown_s",
+      "value": 0,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.zombie.health",
+      "value": 90,
+      "unit": "点"
+    },
+    {
+      "id": "enemy.zombie.knockback_multiplier",
+      "value": 1,
+      "unit": "倍率"
+    },
+    {
+      "id": "enemy.zombie.outgoing_knockback_m",
+      "value": 0.6,
+      "unit": "米"
+    },
+    {
+      "id": "enemy.zombie.outgoing_knockback_s",
+      "value": 0.2,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.zombie.range_m",
+      "value": 1.8,
+      "unit": "米"
+    },
+    {
+      "id": "enemy.zombie.recovery_s",
+      "value": 1,
+      "unit": "秒"
+    },
+    {
+      "id": "enemy.zombie.speed_mps",
+      "value": 3.2,
+      "unit": "米/秒"
+    },
+    {
+      "id": "enemy.zombie.windup_s",
+      "value": 0.85,
+      "unit": "秒"
+    },
+    {
+      "id": "form.core_cost",
+      "value": 1,
+      "unit": "颗"
+    },
+    {
+      "id": "form.duration_s",
+      "value": 15,
+      "unit": "秒"
+    },
+    {
+      "id": "form.injection_s",
+      "value": 0.6,
+      "unit": "秒"
+    },
+    {
+      "id": "hud.form_warning_s",
+      "value": 5,
+      "unit": "秒"
+    },
+    {
+      "id": "hud.message_duration_s",
+      "value": 2,
+      "unit": "秒"
+    },
+    {
+      "id": "mold.mine.count",
+      "value": 6,
+      "unit": "枚"
+    },
+    {
+      "id": "mold.mine.damage",
+      "value": 18,
+      "unit": "点"
+    },
+    {
+      "id": "mold.mine.damage_radius_m",
+      "value": 1.2,
+      "unit": "米"
+    },
+    {
+      "id": "mold.mine.deploy_cooldown_s",
+      "value": 12,
+      "unit": "秒"
+    },
+    {
+      "id": "mold.mine.ground_tolerance_m",
+      "value": 0.5,
+      "unit": "米"
+    },
+    {
+      "id": "mold.mine.hits_per_target_per_root",
+      "value": 1,
+      "unit": "次"
+    },
+    {
+      "id": "mold.mine.knockback_duration_s",
+      "value": 0.25,
+      "unit": "秒"
+    },
+    {
+      "id": "mold.mine.knockback_m",
+      "value": 1.2,
+      "unit": "米"
+    },
+    {
+      "id": "mold.mine.ring_radius_m",
+      "value": 2.3,
+      "unit": "米"
+    },
+    {
+      "id": "mold.mine.trigger_radius_m",
+      "value": 0.65,
+      "unit": "米"
+    },
+    {
+      "id": "mold.mobile.incoming_multiplier",
+      "value": 0.8,
+      "unit": "倍率"
+    },
+    {
+      "id": "mold.root.damage_multiplier",
+      "value": 1.35,
+      "unit": "倍率"
+    },
+    {
+      "id": "mold.root.enter_visual_s",
+      "value": 0.35,
+      "unit": "秒"
+    },
+    {
+      "id": "mold.root.exit_visual_s",
+      "value": 0.35,
+      "unit": "秒"
+    },
+    {
+      "id": "mold.root.incoming_multiplier",
+      "value": 0.45,
+      "unit": "倍率"
+    },
+    {
+      "id": "mold.root.move_mps",
+      "value": 0,
+      "unit": "米/秒"
+    },
+    {
+      "id": "mold.root.ranged_rate_multiplier",
+      "value": 1.6,
+      "unit": "倍率"
+    },
+    {
+      "id": "mold.root.spend_per_second",
+      "value": 16,
+      "unit": "点/秒"
+    },
+    {
+      "id": "mold.root.start_cost",
+      "value": 10,
+      "unit": "点"
+    },
+    {
+      "id": "player.attack_move_multiplier",
+      "value": 0,
+      "unit": "倍率"
+    },
+    {
+      "id": "player.attack_turn_degps",
+      "value": 0,
+      "unit": "度/秒"
+    },
+    {
+      "id": "player.health.floor",
+      "value": 0,
+      "unit": "点"
+    },
+    {
+      "id": "player.health.initial_fraction",
+      "value": 1,
+      "unit": "比例"
+    },
+    {
+      "id": "player.health.max",
+      "value": 100,
+      "unit": "点"
+    },
+    {
+      "id": "player.health.regen_per_s",
+      "value": 0,
+      "unit": "点/秒"
+    },
+    {
+      "id": "player.hit_invulnerable_s",
+      "value": 0,
+      "unit": "秒"
+    },
+    {
+      "id": "player.hit_stagger_s",
+      "value": 0,
+      "unit": "秒"
+    },
+    {
+      "id": "player.hydration.drain_per_second",
+      "value": 0.1,
+      "unit": "点/秒"
+    },
+    {
+      "id": "player.hydration.empty_damage",
+      "value": 1,
+      "unit": "点/次"
+    },
+    {
+      "id": "player.hydration.empty_interval_s",
+      "value": 5,
+      "unit": "秒"
+    },
+    {
+      "id": "player.hydration.floor",
+      "value": 0,
+      "unit": "点"
+    },
+    {
+      "id": "player.hydration.initial_fraction",
+      "value": 0.5,
+      "unit": "比例"
+    },
+    {
+      "id": "player.hydration.max",
+      "value": 100,
+      "unit": "点"
+    },
+    {
+      "id": "player.move.base_mps",
+      "value": 6,
+      "unit": "米/秒"
+    },
+    {
+      "id": "player.normal.damage_multiplier",
+      "value": 1,
+      "unit": "倍率"
+    },
+    {
+      "id": "player.normal.incoming_multiplier",
+      "value": 1,
+      "unit": "倍率"
+    },
+    {
+      "id": "player.normal.rate_multiplier",
+      "value": 1,
+      "unit": "倍率"
+    },
+    {
+      "id": "player.satiety.drain_per_second",
+      "value": 0.05,
+      "unit": "点/秒"
+    },
+    {
+      "id": "player.satiety.empty_damage",
+      "value": 1,
+      "unit": "点/次"
+    },
+    {
+      "id": "player.satiety.empty_interval_s",
+      "value": 5,
+      "unit": "秒"
+    },
+    {
+      "id": "player.satiety.floor",
+      "value": 0,
+      "unit": "点"
+    },
+    {
+      "id": "player.satiety.initial_fraction",
+      "value": 0.5,
+      "unit": "比例"
+    },
+    {
+      "id": "player.satiety.max",
+      "value": 100,
+      "unit": "点"
+    },
+    {
+      "id": "respawn.health.fraction",
+      "value": 1,
+      "unit": "比例"
+    },
+    {
+      "id": "respawn.hydration.fraction",
+      "value": 0.5,
+      "unit": "比例"
+    },
+    {
+      "id": "respawn.satiety.fraction",
+      "value": 0.5,
+      "unit": "比例"
+    },
+    {
+      "id": "save.combat_schema_version",
+      "value": 1,
+      "unit": "版本"
+    },
+    {
+      "id": "special.floor",
+      "value": 0,
+      "unit": "点"
+    },
+    {
+      "id": "special.gain_per_second",
+      "value": 5,
+      "unit": "点/秒"
+    },
+    {
+      "id": "special.initial",
+      "value": 25,
+      "unit": "点"
+    },
+    {
+      "id": "special.max",
+      "value": 100,
+      "unit": "点"
+    },
+    {
+      "id": "special.normal",
+      "value": 0,
+      "unit": "点"
+    },
+    {
+      "id": "unarmed.active_s",
+      "value": 0.12,
+      "unit": "秒"
+    },
+    {
+      "id": "unarmed.arc_deg",
+      "value": 70,
+      "unit": "度"
+    },
+    {
+      "id": "unarmed.damage",
+      "value": 4,
+      "unit": "点"
+    },
+    {
+      "id": "unarmed.interval_s",
+      "value": 0.9,
+      "unit": "秒"
+    },
+    {
+      "id": "unarmed.knockback_m",
+      "value": 0,
+      "unit": "米"
+    },
+    {
+      "id": "unarmed.range_m",
+      "value": 0.9,
+      "unit": "米"
+    },
+    {
+      "id": "unarmed.recovery_s",
+      "value": 0.6,
+      "unit": "秒"
+    },
+    {
+      "id": "unarmed.windup_s",
+      "value": 0.18,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.alcohol.arc_height_m",
+      "value": 2,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.alcohol.area_radius_m",
+      "value": 2.2,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.alcohol.collision_radius_m",
+      "value": 0.12,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.alcohol.duration_s",
+      "value": 6,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.alcohol.flight_s",
+      "value": 0.7,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.alcohol.impact_damage",
+      "value": 0,
+      "unit": "点"
+    },
+    {
+      "id": "weapon.alcohol.interval_s",
+      "value": 1.1,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.alcohol.knockback_m",
+      "value": 0,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.alcohol.range_m",
+      "value": 10,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.alcohol.recovery_s",
+      "value": 0.35,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.alcohol.slow_fraction",
+      "value": 0.25,
+      "unit": "比例"
+    },
+    {
+      "id": "weapon.alcohol.stock_per_throw",
+      "value": 1,
+      "unit": "瓶"
+    },
+    {
+      "id": "weapon.alcohol.tick_damage",
+      "value": 4,
+      "unit": "点"
+    },
+    {
+      "id": "weapon.alcohol.tick_interval_s",
+      "value": 0.5,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.alcohol.windup_s",
+      "value": 0.25,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.axe.active_s",
+      "value": 0.15,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.axe.arc_deg",
+      "value": 100,
+      "unit": "度"
+    },
+    {
+      "id": "weapon.axe.block_arc_deg",
+      "value": 180,
+      "unit": "度"
+    },
+    {
+      "id": "weapon.axe.block_reduction",
+      "value": 0.75,
+      "unit": "比例"
+    },
+    {
+      "id": "weapon.axe.counter_hits",
+      "value": 3,
+      "unit": "次"
+    },
+    {
+      "id": "weapon.axe.counter_multiplier",
+      "value": 1.25,
+      "unit": "倍率"
+    },
+    {
+      "id": "weapon.axe.damage",
+      "value": 24,
+      "unit": "点"
+    },
+    {
+      "id": "weapon.axe.interval_s",
+      "value": 0.85,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.axe.knockback_m",
+      "value": 0.9,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.axe.lower_visual_s",
+      "value": 0.1,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.axe.parry_after_s",
+      "value": 0.2,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.axe.parry_before_s",
+      "value": 0.2,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.axe.raise_visual_s",
+      "value": 0.1,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.axe.range_m",
+      "value": 1.8,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.axe.re_raise_cooldown_s",
+      "value": 0.6,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.axe.recovery_s",
+      "value": 0.52,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.axe.windup_s",
+      "value": 0.18,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.bow.ammo_per_shot",
+      "value": 1,
+      "unit": "支"
+    },
+    {
+      "id": "weapon.bow.area_duration_s",
+      "value": 4,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.bow.area_radius_m",
+      "value": 2.2,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.bow.area_tick_damage",
+      "value": 0,
+      "unit": "点"
+    },
+    {
+      "id": "weapon.bow.collision_radius_m",
+      "value": 0.08,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.bow.damage",
+      "value": 24,
+      "unit": "点"
+    },
+    {
+      "id": "weapon.bow.interval_s",
+      "value": 1.1,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.bow.knockback_m",
+      "value": 1.5,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.bow.projectile_speed_mps",
+      "value": 18,
+      "unit": "米/秒"
+    },
+    {
+      "id": "weapon.bow.range_m",
+      "value": 14,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.bow.recovery_s",
+      "value": 0.41666666666666674,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.bow.slow_fraction",
+      "value": 0.35,
+      "unit": "比例"
+    },
+    {
+      "id": "weapon.bow.windup_s",
+      "value": 0.6833333333333333,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.dagger.active_s",
+      "value": 0.1,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.dagger.arc_deg",
+      "value": 60,
+      "unit": "度"
+    },
+    {
+      "id": "weapon.dagger.back_arc_deg",
+      "value": 90,
+      "unit": "度"
+    },
+    {
+      "id": "weapon.dagger.damage",
+      "value": 14,
+      "unit": "点"
+    },
+    {
+      "id": "weapon.dagger.elite_maxhp_fraction",
+      "value": 0.5,
+      "unit": "比例"
+    },
+    {
+      "id": "weapon.dagger.grace_s",
+      "value": 3,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.dagger.interval_s",
+      "value": 0.3,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.dagger.knockback_m",
+      "value": 0,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.dagger.range_m",
+      "value": 1.2,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.dagger.recovery_s",
+      "value": 0.14,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.dagger.refresh_radius_m",
+      "value": 8,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.dagger.stage1_duration_s",
+      "value": 0.9666666666666667,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.dagger.stage2_duration_s",
+      "value": 0.9,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.dagger.stage3_duration_s",
+      "value": 0.8,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.dagger.stage4_duration_s",
+      "value": 1.1833333333333333,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.dagger.windup_s",
+      "value": 0.06,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.gun.ammo_per_shot",
+      "value": 1,
+      "unit": "发"
+    },
+    {
+      "id": "weapon.gun.collision_radius_m",
+      "value": 0.08,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.gun.damage",
+      "value": 8,
+      "unit": "点"
+    },
+    {
+      "id": "weapon.gun.interval_s",
+      "value": 0.24,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.gun.knockback_m",
+      "value": 0.25,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.gun.projectile_speed_mps",
+      "value": 20,
+      "unit": "米/秒"
+    },
+    {
+      "id": "weapon.gun.range_m",
+      "value": 14,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.gun.recovery_s",
+      "value": 0.12,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.gun.target_arc_deg",
+      "value": 180,
+      "unit": "度"
+    },
+    {
+      "id": "weapon.gun.turn_rate_degps",
+      "value": 360,
+      "unit": "度/秒"
+    },
+    {
+      "id": "weapon.gun.windup_s",
+      "value": 0.04,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.hits_per_target_per_stage",
+      "value": 1,
+      "unit": "次"
+    },
+    {
+      "id": "weapon.knockback_duration_s",
+      "value": 0.2,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.shotgun.ammo_per_shot",
+      "value": 1,
+      "unit": "发"
+    },
+    {
+      "id": "weapon.shotgun.far_fraction",
+      "value": 0.25,
+      "unit": "比例"
+    },
+    {
+      "id": "weapon.shotgun.far_knockback_m",
+      "value": 0.4,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.shotgun.full_damage_range_m",
+      "value": 3,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.shotgun.interval_s",
+      "value": 1,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.shotgun.magazine",
+      "value": 6,
+      "unit": "发"
+    },
+    {
+      "id": "weapon.shotgun.near_knockback_m",
+      "value": 1.5,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.shotgun.pellet_damage",
+      "value": 5,
+      "unit": "点"
+    },
+    {
+      "id": "weapon.shotgun.pellets",
+      "value": 8,
+      "unit": "枚"
+    },
+    {
+      "id": "weapon.shotgun.range_m",
+      "value": 9,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.shotgun.recovery_s",
+      "value": 0.45,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.shotgun.reload_move_multiplier",
+      "value": 0.5,
+      "unit": "倍率"
+    },
+    {
+      "id": "weapon.shotgun.reload_one_s",
+      "value": 0.55,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.shotgun.spread_angle_deg",
+      "value": 35,
+      "unit": "度"
+    },
+    {
+      "id": "weapon.shotgun.windup_s",
+      "value": 0.1,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.spear.active_s",
+      "value": 0.18,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.spear.arc_deg",
+      "value": 80,
+      "unit": "度"
+    },
+    {
+      "id": "weapon.spear.damage",
+      "value": 28,
+      "unit": "点"
+    },
+    {
+      "id": "weapon.spear.edge_band_fraction",
+      "value": 0.25,
+      "unit": "比例"
+    },
+    {
+      "id": "weapon.spear.interval_s",
+      "value": 1,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.spear.knockback_m",
+      "value": 0.6,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.spear.min_damage_fraction",
+      "value": 0.5,
+      "unit": "比例"
+    },
+    {
+      "id": "weapon.spear.range_m",
+      "value": 3.2,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.spear.recovery_s",
+      "value": 0.62,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.spear.windup_s",
+      "value": 0.2,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.switch_lock_s",
+      "value": 0.15,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.sword.charge_s",
+      "value": 1.6,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.sword.follow_gap_s",
+      "value": 0.45,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.sword.knockback_m",
+      "value": 2.5,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.sword.range_m",
+      "value": 4.5,
+      "unit": "米"
+    },
+    {
+      "id": "weapon.sword.recovery_s",
+      "value": 1,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.sword.slam_active_s",
+      "value": 0.22,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.sword.slam_arc_deg",
+      "value": 80,
+      "unit": "度"
+    },
+    {
+      "id": "weapon.sword.slam_damage",
+      "value": 70,
+      "unit": "点"
+    },
+    {
+      "id": "weapon.sword.sweep_active_s",
+      "value": 0.25,
+      "unit": "秒"
+    },
+    {
+      "id": "weapon.sword.sweep_arc_deg",
+      "value": 160,
+      "unit": "度"
+    },
+    {
+      "id": "weapon.sword.sweep_damage",
+      "value": 50,
+      "unit": "点"
+    },
+    {
+      "id": "yeast.dash.collision_radius_m",
+      "value": 0.6,
+      "unit": "米"
+    },
+    {
+      "id": "yeast.dash.cooldown_s",
+      "value": 0.2,
+      "unit": "秒"
+    },
+    {
+      "id": "yeast.dash.damage",
+      "value": 30,
+      "unit": "点"
+    },
+    {
+      "id": "yeast.dash.hits_per_target",
+      "value": 1,
+      "unit": "次"
+    },
+    {
+      "id": "yeast.dash.knockback_duration_s",
+      "value": 0.2,
+      "unit": "秒"
+    },
+    {
+      "id": "yeast.dash.knockback_m",
+      "value": 1.5,
+      "unit": "米"
+    },
+    {
+      "id": "yeast.dash.min_duration_s",
+      "value": 1,
+      "unit": "秒"
+    },
+    {
+      "id": "yeast.dash.speed_mps",
+      "value": 12,
+      "unit": "米/秒"
+    },
+    {
+      "id": "yeast.dash.spend_per_second",
+      "value": 30,
+      "unit": "点/秒"
+    },
+    {
+      "id": "yeast.dash.start_cost",
+      "value": 10,
+      "unit": "点"
+    },
+    {
+      "id": "yeast.incoming_multiplier",
+      "value": 1.15,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.move_multiplier",
+      "value": 1.08,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.unarmed.damage_multiplier",
+      "value": 1,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.unarmed.rate_multiplier",
+      "value": 1,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.alcohol.damage_multiplier",
+      "value": 1,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.alcohol.range_m",
+      "value": 9,
+      "unit": "米"
+    },
+    {
+      "id": "yeast.weapon.alcohol.rate_multiplier",
+      "value": 1.05,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.axe.damage_multiplier",
+      "value": 1.18,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.axe.rate_multiplier",
+      "value": 1.1,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.bow.damage_multiplier",
+      "value": 1.05,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.bow.range_m",
+      "value": 12.6,
+      "unit": "米"
+    },
+    {
+      "id": "yeast.weapon.bow.rate_multiplier",
+      "value": 1.08,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.dagger.damage_multiplier",
+      "value": 1.1,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.dagger.rate_multiplier",
+      "value": 1.25,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.gun.damage_multiplier",
+      "value": 1,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.gun.range_m",
+      "value": 13.3,
+      "unit": "米"
+    },
+    {
+      "id": "yeast.weapon.gun.rate_multiplier",
+      "value": 1.12,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.shotgun.damage_multiplier",
+      "value": 1.1,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.shotgun.range_m",
+      "value": 8.6,
+      "unit": "米"
+    },
+    {
+      "id": "yeast.weapon.shotgun.rate_multiplier",
+      "value": 1.1,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.spear.damage_multiplier",
+      "value": 1.2,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.spear.rate_multiplier",
+      "value": 1.15,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.sword.damage_multiplier",
+      "value": 1.3,
+      "unit": "倍率"
+    },
+    {
+      "id": "yeast.weapon.sword.rate_multiplier",
+      "value": 1.08,
+      "unit": "倍率"
+    }
+  ],
+  "derived_parameters": [
+    {
+      "id": "player.health.initial",
+      "unit": "点",
+      "operation": "product",
+      "refs": [
+        "player.health.max",
+        "player.health.initial_fraction"
+      ]
+    },
+    {
+      "id": "player.hydration.initial",
+      "unit": "点",
+      "operation": "product",
+      "refs": [
+        "player.hydration.max",
+        "player.hydration.initial_fraction"
+      ]
+    },
+    {
+      "id": "player.satiety.initial",
+      "unit": "点",
+      "operation": "product",
+      "refs": [
+        "player.satiety.max",
+        "player.satiety.initial_fraction"
+      ]
+    },
+    {
+      "id": "respawn.health",
+      "unit": "点",
+      "operation": "product",
+      "refs": [
+        "player.health.max",
+        "respawn.health.fraction"
+      ]
+    },
+    {
+      "id": "respawn.hydration",
+      "unit": "点",
+      "operation": "product",
+      "refs": [
+        "player.hydration.max",
+        "respawn.hydration.fraction"
+      ]
+    },
+    {
+      "id": "respawn.satiety",
+      "unit": "点",
+      "operation": "product",
+      "refs": [
+        "player.satiety.max",
+        "respawn.satiety.fraction"
+      ]
+    }
+  ],
+  "rules": {
+    "second_core": "reject_without_consuming",
+    "core_eligible_enemies": [
+      "mold",
+      "yeast"
+    ],
+    "core_roll": "once_per_effective_death_save_success_and_failure",
+    "pause_freezes_world": true,
+    "death_ends_form": true,
+    "special_growth": "continuous_game_time",
+    "special_during_ability": true,
+    "low_special_only_stops_ability": true,
+    "dash_min_budget_required": true,
+    "dash_min_form_remaining_required": true,
+    "dash_direction": "locked_on_start",
+    "dash_allow_attack": false,
+    "dash_invulnerable": false,
+    "mold_can_turn": true,
+    "mold_immune_normal_knockback": true,
+    "root_any_legal_ground": true,
+    "mines_cleared_on_exit": true,
+    "combat_hostility_persists_across_all_form_changes": true,
+    "elite_backstab_basis": "max_health",
+    "elite_backstab_final_damage": true,
+    "elite_backstab_add_normal_damage": false,
+    "elite_backstab_multiply_buffs": false,
+    "attack_button": "LeftMouseButton",
+    "axe_block_button": "RightMouseButton",
+    "other_right_button": "None",
+    "reload_button": "R",
+    "dash_button": "Space",
+    "root_button": "E",
+    "generic_sprint": false,
+    "replenishment_items": "deferred",
+    "old_full_game_design": "paused",
+    "alcohol_first_tick": "after_one_interval",
+    "alcohol_last_tick": "at_or_before_duration",
+    "ui_low_resource_warning": "derive_dash_budget_and_root_strict_greater_than_start_fee",
+    "attack_movement": "locked_during_action_except_shotgun_reload",
+    "attack_rotation": "locked_during_action_except_sword_charge_ready_stage_entry_gap_and_shotgun_reload",
+    "unarmed_enabled": true,
+    "weapon_switch_cancels_unfinished": true,
+    "switch_preserves_attack_cooldowns": true,
+    "core_use_stationary": true,
+    "core_damage_interrupts": true,
+    "core_use_from_inventory_and_quickslot": true,
+    "inventory_pauses_world": true,
+    "injection_starts_after_inventory_closes": true,
+    "form_expiry_keeps_weapon_action": true,
+    "damage_snapshot": "at_attack_commit",
+    "sword_damage_snapshot": "both_stages_at_slam_commit",
+    "timing_snapshot": "at_each_phase_start",
+    "dash_direction_source": "move_input_else_aim",
+    "dash_passes_enemies": true,
+    "dash_wall_stop": true,
+    "dash_normal_damage_interrupts": false,
+    "dash_control_interrupts": true,
+    "dash_cooldown_starts": "on_dash_end",
+    "root_overrides_actions": true,
+    "root_effects_immediate": true,
+    "root_requires_positive_duration": true,
+    "root_normal_damage_interrupts": false,
+    "mines_only_legal_positions": true,
+    "mines_do_not_reposition": true,
+    "mines_aoe_blocked_by_walls": true,
+    "mines_ignore_already_hit_targets": true,
+    "mine_cooldown_starts": "only_after_at_least_one_placed",
+    "mine_cooldown_persists_across_forms_death_save": true,
+    "player_friendly_fire": "manual_can_damage_neutral_thugs_not_npc_or_self",
+    "automatic_targets": "currently_hostile_only",
+    "enemy_fights_enemy": false,
+    "enemy_attacks_town_npc": false,
+    "slow_stacking": "strongest_only_until_outside_all_areas",
+    "alcohol_stacking": "strongest_tick_rate_only_no_overlap_multiplication",
+    "melee_multitarget": true,
+    "damage_blocked_by_walls": true,
+    "simultaneous_knockback": "strongest_not_sum",
+    "wall_impact_extra_damage": false,
+    "spear_distance": "attack_origin_to_nearest_target_collision_edge_at_hit",
+    "spear_curve": "linear_before_outer_full_damage_band",
+    "parry_resolution": "pending_damage_until_after_window_expires",
+    "parry_requires_axe_equipped_at_impact": true,
+    "parry_holds_do_not_refresh": true,
+    "parry_cooldown_only_blocks_perfect_reopen": true,
+    "axe_block_move": false,
+    "axe_block_turn": true,
+    "axe_block_attack_requires_release": true,
+    "axe_counter_consumption": "once_at_swing_commit_even_if_no_hit",
+    "axe_counter_refresh": "reset_not_stack",
+    "axe_counter_clear": "weapon_switch_or_base_form_change_or_death",
+    "sword_charge_release_early": "cancel",
+    "sword_full_charge": "hold_ready_until_release_then_auto_slam_and_sweep_once",
+    "sword_charge_move_turn": "stationary_can_turn_to_mouse_during_charge_and_ready",
+    "sword_gap_turn": true,
+    "sword_cancel": "WASD_before_slam_or_during_gap_legal_dash_after_slam",
+    "sword_yeast_rate_applies": "recovery_only",
+    "dagger_grace": "reenter_unengaged_circle_resets",
+    "dagger_unequip_ends_grace_without_reset": true,
+    "dagger_damage_breaks_grace": true,
+    "dagger_backstab_requires_unaware_or_valid_grace": true,
+    "dagger_refresh": "reset_unengaged_around_stabbed_target",
+    "dagger_refresh_excludes_surviving_elite": true,
+    "dagger_backstab_targets": "one_nearest_in_aim_cone",
+    "gun_no_target": "straight_shot_consumes_ammo",
+    "gun_lock": "one_visible_hostile_at_launch_no_retarget",
+    "gun_target_lost": "straight_current_direction",
+    "gun_inventory_ammo_no_magazine": true,
+    "bow_tap_no_charge": true,
+    "shotgun_hitscan": true,
+    "shotgun_spread": "uniform_fan",
+    "arrow_first_hit": "direct_damage_once_then_fixed_ground_zone",
+    "alcohol_trajectory": "authored_parabolic_path_to_clamped_ground_target",
+    "areas_follow_target": false,
+    "bow_knockback": "once_on_impact_area_not_twice_on_direct_target",
+    "shotgun_damage_curve": "linear_per_pellet",
+    "shotgun_knockback": "strongest_hit_once_per_shot",
+    "reload_transfer": "only_on_completed_shell",
+    "reload_can_fire_interrupt": true,
+    "ammo_consume": "on_actual_projectile_or_bottle_commit",
+    "shotgun_fire_consumes": "magazine_only_no_second_reserve_debit",
+    "ai_requires_line_of_sight": true,
+    "ai_ally_alarm": false,
+    "ai_hearing_alarm": false,
+    "ai_hostility_memory": "per_enemy",
+    "ai_disengage": "outside_range_and_no_sight_and_no_mutual_damage_continuously",
+    "ai_return_preserves_health": true,
+    "ai_elite_attack_interrupt_immune": true,
+    "ai_ordinary_effective_knockback_interrupts": true,
+    "core_pickup": "automatic_keep_ground_if_full",
+    "core_ground_expiry": "none",
+    "core_credit": "player_direct_area_mine_or_causal_knockback_only",
+    "respawn_location": "last_activated_safe_point",
+    "death_inventory_keep": [
+      "permanent_weapons",
+      "loaded_shotgun_shells"
+    ],
+    "death_bag": [
+      "unused_cores",
+      "reserve_ammo",
+      "alcohol_bottle_stock"
+    ],
+    "death_bag_claim_once": true,
+    "death_enemy_state": "return_home_preserve_alive_health_and_deaths_then_normal_disengage",
+    "save_policy": "battle_snapshot_allowed",
+    "load_root": "keep_rooted_position_mines_ring_hit_set_and_cd",
+    "load_cancel_actions": [
+      "dash",
+      "charge",
+      "attack",
+      "reload",
+      "injection_uncommitted"
+    ],
+    "load_no_refund": true,
+    "load_shield": "release_guard_but_keep_pending_damage_packets",
+    "legacy_save_policy": "delete_legacy_game_saves_no_migration",
+    "legacy_cleanup_executed": false,
+    "pause_release": "track_physical_release_no_new_press",
+    "pause_sword_release": "cancel_early_charge_or_execute_ready_release_after_resume",
+    "interaction_button": "F",
+    "weapon_select": "existing_number_shortcuts",
+    "keyboard_mouse_only": true,
+    "enemy_healthbar_setting": true,
+    "enemy_healthbar_default": true,
+    "enemy_healthbar_only_in_combat": true,
+    "enemy_healthbar_setting_persists": true,
+    "dash_hits_neutral_thugs": true,
+    "axe_guard_cancels_unfinished_swing_preserves_cooldown": true,
+    "sword_cancel_requires_new_movement_press_after_charge_start": true,
+    "load_preserve_weapon_special_states": true,
+    "load_input": "clear_held_attack_and_guard_requests_keep_root_toggle_state",
+    "reload_movement": true,
+    "reload_interrupt_actions": [
+      "fire",
+      "weapon_switch",
+      "dash",
+      "core_injection",
+      "root"
+    ],
+    "sword_cancel_resets_attack_cooldown": true,
+    "sword_aim_sampling": "charge_and_ready_continuous_mouse_then_slam_entry_gap_sweep_entry_locked_while_active",
+    "spore_cancel_resets_attack_cooldown": false,
+    "spore_release_cancels_current_attack": true,
+    "spore_movement_cancels_current_attack": true,
+    "weapon_animation_retiming": "entire_authored_segment_scaled_to_current_gameplay_segment_duration",
+    "weapon_visual_cue_timing": "normalized_position_within_own_authored_segment_no_fixed_example_fraction",
+    "weapon_hit_authority": "independent_gameplay_hit_volumes_not_animation_or_visual_mesh_collision",
+    "dagger_combo": "single_press_first_complete_stage_repeated_presses_continue_next_full_stages_up_to_four",
+    "dagger_stage_duration": "stage1_to_stage4_duration_s_are_authoritative_complete_stage_durations",
+    "dagger_phase_scaling": "legacy_windup_active_recovery_over_interval_are_proportions_not_actual_point30_cycle"
+  },
+  "equipment_bindings": [
+    {
+      "weapon_id": "spear",
+      "design_name": "孢子长枪",
+      "engine_weapon_asset": null,
+      "engine_item_id": null,
+      "status": "策划ID保留；实际资源/物品表绑定待UE实施核对",
+      "ammo": "不消耗弹药",
+      "engine_ammo_item_id": null
+    },
+    {
+      "weapon_id": "axe",
+      "design_name": "焦壳盾斧",
+      "engine_weapon_asset": null,
+      "engine_item_id": null,
+      "status": "策划ID保留；实际资源/物品表绑定待UE实施核对",
+      "ammo": "不消耗弹药",
+      "engine_ammo_item_id": null
+    },
+    {
+      "weapon_id": "sword",
+      "design_name": "肉桂大剑",
+      "engine_weapon_asset": null,
+      "engine_item_id": null,
+      "status": "策划ID保留；实际资源/物品表绑定待UE实施核对",
+      "ammo": "不消耗弹药",
+      "engine_ammo_item_id": null
+    },
+    {
+      "weapon_id": "dagger",
+      "design_name": "菌菇匕首",
+      "engine_weapon_asset": null,
+      "engine_item_id": null,
+      "status": "策划ID保留；实际资源/物品表绑定待UE实施核对",
+      "ammo": "不消耗弹药",
+      "engine_ammo_item_id": null
+    },
+    {
+      "weapon_id": "gun",
+      "design_name": "孢子枪",
+      "engine_weapon_asset": null,
+      "engine_item_id": null,
+      "status": "策划ID保留；实际资源/物品表绑定待UE实施核对",
+      "ammo": "孢子弹",
+      "engine_ammo_item_id": null
+    },
+    {
+      "weapon_id": "bow",
+      "design_name": "霉菌弓",
+      "engine_weapon_asset": null,
+      "engine_item_id": null,
+      "status": "策划ID保留；实际资源/物品表绑定待UE实施核对",
+      "ammo": "霉菌箭",
+      "engine_ammo_item_id": null
+    },
+    {
+      "weapon_id": "shotgun",
+      "design_name": "面包渣霰弹枪",
+      "engine_weapon_asset": null,
+      "engine_item_id": null,
+      "status": "策划ID保留；实际资源/物品表绑定待UE实施核对",
+      "ammo": "面包渣弹",
+      "engine_ammo_item_id": null
+    },
+    {
+      "weapon_id": "alcohol",
+      "design_name": "酒精瓶",
+      "engine_weapon_asset": null,
+      "engine_item_id": null,
+      "status": "策划ID保留；实际资源/物品表绑定待UE实施核对",
+      "ammo": "酒精瓶库存",
+      "engine_ammo_item_id": null
+    }
+  ]
+}

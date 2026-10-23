@@ -14,6 +14,8 @@ UDWUserSettings* UDWUserSettings::Resolve(const UObject* C){auto* GI=C?UGameplay
 void UDWUserSettings::Initialize(FSubsystemCollectionBase& C)
 {
  Super::Initialize(C);Classes.SetNum(3);
+ bShowEnemyHealth=true;
+ GConfig->GetBool(TEXT("DoughWorld.CombatHUD"),TEXT("ShowEnemyHealth"),bShowEnemyHealth,GGameUserSettingsIni);
  for(int32 I=0;I<3;++I){GConfig->GetFloat(TEXT("DoughWorld.Audio"),DWAudioCategoryConfigNames[I],Volumes[I],GGameUserSettingsIni);Volumes[I]=FMath::IsFinite(Volumes[I])?FMath::Clamp(Volumes[I],0.f,1.f):1.f;}
  // Keep the existing preference key so old local settings remain compatible.
  GConfig->GetFloat(TEXT("DoughWorld.UserSettings"),TEXT("MasterVolume"),MasterVolume,GGameUserSettingsIni);
@@ -42,6 +44,11 @@ void UDWUserSettings::SetCameraSensitivityMultiplier(float V,bool Save)
 {
  CameraSensitivityMultiplier=FMath::IsFinite(V)?FMath::Clamp(V,CameraSensitivityMinimum,CameraSensitivityMaximum):1.f;
  if(Save){GConfig->SetFloat(TEXT("DoughWorld.Camera"),TEXT("SensitivityMultiplier"),CameraSensitivityMultiplier,GGameUserSettingsIni);GConfig->Flush(false,GGameUserSettingsIni);}
+}
+void UDWUserSettings::SetShowEnemyHealth(bool Show,bool Save)
+{
+ bShowEnemyHealth=Show;
+ if(Save&&GConfig){GConfig->SetBool(TEXT("DoughWorld.CombatHUD"),TEXT("ShowEnemyHealth"),Show,GGameUserSettingsIni);GConfig->Flush(false,GGameUserSettingsIni);}
 }
 void UDWUserSettings::SetCategoryVolume(EDWSoundCategory C,float V,bool Save)
 {

@@ -1,4 +1,8 @@
 #include "DWGameplayWidget.h"
+#include "DWC01UIStyle.h"
+#include "DWHandbookButton.h"
+#include "Widgets/Input/SEditableText.h"
+#include "Framework/Application/SlateApplication.h"
 #include "DWSettingsPanel.h"
 #include "DWUserSettings.h"
 #include "DWLoadingTransition.h"
@@ -9,9 +13,12 @@
 #include "DWGameInstance.h"
 #include "DWGameplayConfig.h"
 #include "DWInventoryComponent.h"
+#include "DWCombatItemRegistry.h"
+#include "DWCombatAuthoritySubsystem.h"
 #include "DWAudioLibrary.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/Button.h"
+#include "Components/PanelWidget.h"
 #include "Components/Border.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
@@ -22,6 +29,12 @@
 #include "Components/WidgetSwitcher.h"
 #include "Components/Slider.h"
 #include "Components/SizeBox.h"
+#include "Components/VerticalBoxSlot.h"
+#include "Components/ScrollBox.h"
+#include "Components/ScaleBox.h"
+#include "Components/BorderSlot.h"
+#include "Brushes/SlateRoundedBoxBrush.h"
+#include "Brushes/SlateNoResource.h"
 #include "Components/ComboBoxString.h"
 #include "Components/CheckBox.h"
 #include "Engine/Engine.h"
@@ -78,6 +91,16 @@ namespace
     bool DWHandleMenuKey(ADWGameplayHUD* HUD,ADWPlayerController* Controller,const FKey& Key,bool bRepeat)
     {
         if(!HUD||!Controller||!Key.IsValid())return false;
+        if(ADWGameplayHUD::IsHandbookPage(HUD->GetMenuPage()))
+        {
+            const auto Focus=FSlateApplication::IsInitialized()?FSlateApplication::Get().GetKeyboardFocusedWidget():TSharedPtr<SWidget>();
+            if(Focus.IsValid()&&(Focus->GetTypeAsString().Contains(TEXT("EditableText"))||Focus->GetTypeAsString().Contains(TEXT("SpinBox"))))return false;
+            if(Key==Controller->GetAppliedActionKey(EDWInputAction::PreviousBookTab)){if(!bRepeat)HUD->CycleHandbook(-1);return true;}
+            if(Key==Controller->GetAppliedActionKey(EDWInputAction::NextBookTab)){if(!bRepeat)HUD->CycleHandbook(1);return true;}
+        }
+        const EDWInputAction BookActions[]={EDWInputAction::Character,EDWInputAction::Building,EDWInputAction::LanguageJournal};
+        const EDWMenuPage BookPages[]={EDWMenuPage::Character,EDWMenuPage::Building,EDWMenuPage::LanguageJournal};
+        for(int32 I=0;I<3;++I)if(HUD->IsSessionStarted()&&Key==Controller->GetAppliedActionKey(BookActions[I])){if(!bRepeat)HUD->ToggleHandbook(BookPages[I]);return true;}
         if(Key==Controller->GetAppliedActionKey(EDWInputAction::PauseMenu)||Key==Controller->GetAppliedActionKey(EDWInputAction::PauseAlternate))
         {if(!bRepeat)HUD->TogglePause();return true;}
         if(HUD->IsSessionStarted()&&Key==Controller->GetAppliedActionKey(EDWInputAction::Inventory))
@@ -158,6 +181,9 @@ void UDWGameplayWidget::NativeConstruct()
         if(Combo){Combo->OnSelectionChanged.RemoveDynamic(this,&UDWGameplayWidget::ChangeSettingsOption);Combo->OnSelectionChanged.AddDynamic(this,&UDWGameplayWidget::ChangeSettingsOption);}
     if(ExtendedSettings)ExtendedSettings->InitializePanel(this);
     InitializeSettingsBook();
+    InitializeCombatSettings();
+    InitializeHandbook();
+    InitializeC01Display();
     if(auto* GI=GetGameInstance())if(auto* Settings=GI->GetSubsystem<UDWUserSettings>())MasterVolume=Settings->GetMasterVolume();
     RefreshSettingsLabels();
     ApplyArtwork();
@@ -178,10 +204,13 @@ void UDWGameplayWidget::NativeTick(const FGeometry& Geometry,float Dt)
 {
     Super::NativeTick(Geometry,Dt);
     RefreshFromHUD(false);
+    InitializeC01Display();RefreshC01Presentation(Dt);TickC01QuickDock();TickC01Feedback();
     RefreshInventoryInteractionUI();
+    if(ADWGameplayHUD::IsHandbookPage(CurrentPage))RefreshHandbook();
     SliderStyleRefreshSeconds+=Dt;
     if(SliderStyleRefreshSeconds>=.5f){ApplySliderPresentation(this);SliderStyleRefreshSeconds=0.f;}
     TickPageTransition(FPlatformTime::Seconds()); // Menu pages may pause world time.
+    TickC01Buttons(); // Last: text, translation and book refresh have all settled for this frame.
 }
 
 bool UDWGameplayWidget::ShouldAnimatePageEntrance(EDWMenuPage Page) const
@@ -295,20 +324,121 @@ void UDWGameplayWidget::ApplyArtwork()
     }
 }
 
+// Preserve authored WBP nodes and callbacks; the only wrapper is created before Slate/Bounce.
+void UDWGameplayWidget::PrepareSavePageLayout()
+{
+    if(!WidgetTree)return;
+    if(auto* Page=Cast<UBorder>(GetWidgetFromName(TEXT("SaveSlotsPage"))))
+    {
+        Page->SetPadding(FMargin(44,32));
+        if(Page->GetContent())if(auto* LayoutSlot=Cast<UBorderSlot>(Page->GetContent()->Slot))LayoutSlot->SetPadding(FMargin(44,32));
+    }
+    if(auto* Box=Cast<USizeBox>(GetWidgetFromName(TEXT("SaveSlotsPage_Size"))))
+    {
+        Box->SetWidthOverride(1020);Box->ClearMaxDesiredHeight();
+        // This page always shows all three slots; keep the authored ScrollBox dormant.
+        if(auto* Body=GetWidgetFromName(TEXT("SaveSlotsPage_Body"));Body&&Body->GetParent()!=Box)
+        {Body->RemoveFromParent();Box->SetContent(Body);}
+        // Fit the complete page in a smaller viewport, never scroll or fold its cards.
+        if(auto* Page=Cast<UBorder>(Box->GetParent()))
+        {
+            Box->RemoveFromParent();
+            auto* Fit=WidgetTree->ConstructWidget<UScaleBox>(UScaleBox::StaticClass(),TEXT("C05SaveFit"));
+            Fit->SetStretch(EStretch::ScaleToFit);Fit->SetStretchDirection(EStretchDirection::DownOnly);
+            Fit->SetContent(Box);Page->SetContent(Fit);
+            if(auto* LayoutSlot=Cast<UBorderSlot>(Fit->Slot))LayoutSlot->SetPadding(FMargin(44,32));
+        }
+    }
+    if(auto* Description=GetWidgetFromName(TEXT("Slots_Description")))Description->SetVisibility(ESlateVisibility::Collapsed);
+    if(auto* Heading=Cast<UTextBlock>(GetWidgetFromName(TEXT("Slots_Heading"))))
+    {
+        Heading->SetJustification(ETextJustify::Center);Heading->SetAutoWrapText(false);
+        if(auto* LayoutSlot=Cast<UVerticalBoxSlot>(Heading->Slot)){LayoutSlot->SetHorizontalAlignment(HAlign_Fill);LayoutSlot->SetPadding(FMargin(0,0,0,20));}
+    }
+    if(auto* List=GetWidgetFromName(TEXT("SaveSlotList")))
+        if(auto* LayoutSlot=Cast<UVerticalBoxSlot>(List->Slot))LayoutSlot->SetPadding(FMargin(0));
+    if(auto* Back=Cast<UButton>(GetWidgetFromName(TEXT("SlotsBackButton"))))
+    {
+        auto* Box=Cast<USizeBox>(GetWidgetFromName(TEXT("C05SlotsBackSize")));
+        if(!Box)if(auto* Body=Cast<UVerticalBox>(Back->GetParent()))
+        {
+            Back->RemoveFromParent();Box=WidgetTree->ConstructWidget<USizeBox>(USizeBox::StaticClass(),TEXT("C05SlotsBackSize"));
+            Box->SetContent(Back);auto* LayoutSlot=Body->AddChildToVerticalBox(Box);LayoutSlot->SetPadding(FMargin(0,20,0,0));
+        }
+        if(Box)Box->SetHeightOverride(56);
+    }
+}
+
 void UDWGameplayWidget::ApplyWidgetPresentation(UUserWidget* Target)
 {
     ApplySliderPresentation(Target);
     if(!Target||!Target->WidgetTree)return;
     Target->WidgetTree->ForEachWidget([this,Target](UWidget* W)
     {
+        // Style only the known legacy pages/cards. Runtime book/settings/frontend retain
+        // their explicit state colors, backgrounds and authored hierarchy.
+        bool bLegacyC01Text=false;
+        if(bUseC01HUD)
+        {
+            for(UWidget* Parent=W;Parent;Parent=Parent->GetParent())
+            {
+                const FName Name=Parent->GetFName();
+                if(Name==TEXT("PausePage")||Name==TEXT("DefeatPage")||Name==TEXT("SaveSlotsPage")||Name==TEXT("SaveSlotCard"))
+                {bLegacyC01Text=true;break;}
+            }
+            if(auto* Border=Cast<UBorder>(W))
+            {
+                const FName Name=Border->GetFName();
+                if(Name==TEXT("PausePage")||Name==TEXT("DefeatPage")||Name==TEXT("SaveSlotsPage"))
+                {
+                    Border->SetBrush(DWC01UI::Texture(TEXT("T_DW_C01_Menu_Paper_1160x650"),FVector2D(1160,650)));
+                    Border->SetBrushColor(FLinearColor::White);
+                }
+                // SaveSlotCard owns its regular rounded brush and hover tint in UDWSaveSlotWidget.
+            }
+            // A default only: never overwrite explicit tab selection, danger or
+            // transparent-rest registration already supplied by the new UI.
+            if(auto* Button=Cast<UButton>(W);Button&&!C01Buttons.Contains(Button))
+            {
+                const FName Name=Button->GetFName();
+                const bool Danger=Name==TEXT("DeleteButton")||Name==TEXT("QuitButton")||
+                    Name==TEXT("NoSaveTitleButton")||Name==TEXT("DeathTitleButton")||
+                    Name==TEXT("PauseQuitButton")||Name==TEXT("InventoryDiscardConfirmButton");
+                // A bag cell is already constructed here. Register its color-only role
+                // before the generic presentation pass can attempt a button spring.
+                const bool ItemSlot=Cast<UDWInventorySlotWidget>(Target)&&Name==TEXT("SlotButton");
+                StyleC01Button(Button,Danger?DWC01UI::Danger():DWC01UI::Paper(),false,false,ItemSlot);
+                if(Name==TEXT("SlotsBackButton"))
+                {
+                    StyleC01Button(Button,FMath::Lerp(DWC01UI::Paper(),FLinearColor::White,.50f));
+                    auto Design=Button->GetStyle();Design.Normal=Design.Hovered=Design.Pressed=Design.Disabled=FSlateRoundedBoxBrush(FLinearColor::White,12.f);Button->SetStyle(Design);
+                }
+            }
+        }
         if(auto* T=Cast<UTextBlock>(W))
         {
             const TWeakObjectPtr<UTextBlock> Key(T);
             if(!AuthoredLabels.Contains(Key))AuthoredLabels.Add(Key,T->GetText());
             FText Copy;
             if(Target==this&&FindTextOverride(T,UDWLocalizationLibrary::GetLanguage(this),Copy))T->SetText(Copy);
+            else if(const auto* BookLabel=HandbookLabels.Find(Key))T->SetText(DWText(this,*BookLabel->Key,*BookLabel->Value));
             else T->SetText(UDWLocalizationLibrary::TranslateLabel(this,AuthoredLabels.FindChecked(Key)));
             if(HUD&&HUD->GameUIFont){FSlateFontInfo Font=T->GetFont();Font.FontObject=HUD->GameUIFont;T->SetFont(Font);}
+            if(bLegacyC01Text)
+            {
+                FLinearColor TextColor=DWC01UI::Ink();
+                for(UWidget* Parent=T->GetParent();Parent;Parent=Parent->GetParent())
+                {
+                    if(auto* Button=Cast<UButton>(Parent))
+                    {
+                        if(const auto* Visual=C01Buttons.Find(Button);Visual&&!Visual->bSelected&&Visual->Base.Equals(DWC01UI::Danger(),.0001f))TextColor=FLinearColor::White;
+                        break;
+                    }
+                }
+                T->SetColorAndOpacity(FSlateColor(TextColor));
+                FSlateFontInfo Font=T->GetFont();Font.OutlineSettings.OutlineSize=0;T->SetFont(Font);
+                T->SetShadowColorAndOpacity(FLinearColor::Transparent);T->SetShadowOffset(FVector2D::ZeroVector);
+            }
         }
     });
 }
@@ -318,12 +448,19 @@ UWidget* UDWGameplayWidget::GenerateComboOption(FString Option)
     auto* Text=NewObject<UTextBlock>(this);
     Text->SetText(FText::FromString(Option));
     FSlateFontInfo Font=Text->GetFont();Font.Size=18;if(HUD&&HUD->GameUIFont)Font.FontObject=HUD->GameUIFont;
-    Text->SetFont(Font);Text->SetColorAndOpacity(FSlateColor(FLinearColor(.12f,.07f,.035f,1.f)));return Text;
+    Text->SetFont(Font);Text->SetColorAndOpacity(FSlateColor(bUseC01HUD?DWC01UI::Ink():FLinearColor(.12f,.07f,.035f,1.f)));
+    if(!bUseC01HUD)return Text;
+    Text->SetAutoWrapText(false);Text->SetJustification(ETextJustify::Center);
+    bool Latin=false,CJK=false;for(TCHAR C:Option){Latin|=(C>=TEXT('A')&&C<=TEXT('Z'))||(C>=TEXT('a')&&C<=TEXT('z'));CJK|=C>=0x2e80;}
+    Text->SetRenderTranslation(FVector2D(0,Latin&&!CJK?-Font.Size*C01ButtonLatinOpticalOffsetEm:0));
+    auto* Center=NewObject<UBorder>(this);Center->SetBrush(FSlateNoResource());Center->SetPadding(FMargin(0,2));
+    Center->SetHorizontalAlignment(HAlign_Fill);Center->SetVerticalAlignment(VAlign_Center);Center->SetContent(Text);return Center;
 }
 
 void UDWGameplayWidget::ApplyMenuPage(EDWMenuPage Page)
 {
     const bool bPageChanged=CurrentPage!=Page;
+    const bool bBookSwitch=bPageChanged&&ADWGameplayHUD::IsHandbookPage(CurrentPage)&&ADWGameplayHUD::IsHandbookPage(Page);
     if(bPageChanged||Page==EDWMenuPage::None)FinishPageTransition();
     if(Page!=CurrentPage)CancelInventoryDiscard();
     CurrentPage=Page;
@@ -332,6 +469,7 @@ void UDWGameplayWidget::ApplyMenuPage(EDWMenuPage Page)
     // Designer PageSwitcher order: title, slots, inventory, crafting, pause, settings, defeat.
     int32 Index=0;
     switch(Page){case EDWMenuPage::SaveSlots:Index=1;break;case EDWMenuPage::Inventory:Index=2;break;case EDWMenuPage::Crafting:Index=3;break;case EDWMenuPage::Pause:Index=4;break;case EDWMenuPage::Settings:Index=5;break;case EDWMenuPage::Defeat:Index=6;break;default:break;}
+    if(ADWGameplayHUD::IsHandbookPage(Page)&&HandbookPageIndex!=INDEX_NONE)Index=HandbookPageIndex;
     if(PageSwitcher&&PageSwitcher->GetChildrenCount()>Index)PageSwitcher->SetActiveWidgetIndex(Index);
     if(Page==EDWMenuPage::Settings){LoadSettings();RefreshSettingsBook();}
     if(Page==EDWMenuPage::SaveSlots)RefreshSaves();
@@ -339,16 +477,27 @@ void UDWGameplayWidget::ApplyMenuPage(EDWMenuPage Page)
     const bool bSlot=GetDWGameInstance()&&GetDWGameInstance()->HasActiveSlot();
     if(SaveButton)SaveButton->SetIsEnabled(bSlot);
     if(SaveAndTitleButton)SaveAndTitleButton->SetIsEnabled(bSlot);
-    if(DeathLoadButton)DeathLoadButton->SetIsEnabled(bSlot);
+    if(DeathLoadButton)
+    {
+        DeathLoadButton->SetIsEnabled(GetPlayer()&&GetPlayer()->CanCombatRespawn());
+        if(auto* Label=Cast<UTextBlock>(DeathLoadButton->GetChildAt(0)))
+            Label->SetText(DWText(this,TEXT("返回安全点"),TEXT("Return to safe point")));
+    }
+    if(ADWGameplayHUD::IsHandbookPage(Page))RefreshHandbook();
     OnMenuPageChanged(Page);
     // Blueprint notifications may redirect to another page. Animate only the page
     // that actually remains current, and never replay merely because a list refreshed.
-    if(bPageChanged&&CurrentPage==Page&&Page!=EDWMenuPage::None)PlayCurrentPageEntrance();
+    if(bPageChanged&&CurrentPage==Page&&Page!=EDWMenuPage::None)
+    {
+        if(bBookSwitch){if(HandbookFrame&&bAnimatePageTransitions)HandbookFrame->Pulse();}
+        else PlayCurrentPageEntrance();
+    }
 }
 
 void UDWGameplayWidget::RefreshFromHUD(bool bForceLists)
 {
     if(!HUD)return;
+    RefreshCombatHUD();
     const int32 NewRevision=UDWLocalizationLibrary::GetRevision(this);
     if(LanguageRevision!=NewRevision)
     {
@@ -359,10 +508,12 @@ void UDWGameplayWidget::RefreshFromHUD(bool bForceLists)
         OnLanguageChanged(UDWLocalizationLibrary::GetLanguage(this));
     }
     const auto* P=GetPlayer();const auto* C=GetGameplayConfig();
-    const float HP=P?P->GetHealth():0.f,MaxHP=C?C->MaxHealth:100.f;
-    const float H=FMath::Clamp(HP/FMath::Max(1.f,MaxHP),0.f,1.f);
-    const float T=P&&C?FMath::Clamp(P->GetTransformation()/FMath::Max(1.f,C->MaxTransformation),0.f,1.f):0.f;
-    const float Sprint=P?P->GetSprintAlcoholProgress():0.f;
+    const float HP=P?P->GetHealth():0.f,MaxHP=CombatHUD.bReady?static_cast<float>(CombatHUD.Health.Maximum):(C?C->MaxHealth:100.f);
+    const float H=CombatHUD.bReady?static_cast<float>(CombatHUD.Health.Fraction):FMath::Clamp(HP/FMath::Max(1.f,MaxHP),0.f,1.f);
+    const float T=CombatHUD.bReady?static_cast<float>(CombatHUD.Special.Fraction):(P&&C?FMath::Clamp(P->GetTransformation()/FMath::Max(1.f,C->MaxTransformation),0.f,1.f):0.f);
+    const float Sprint=CombatHUD.bReady
+        ?(CombatHUD.Form==EDWCombatBaseForm::Normal?0.f:static_cast<float>(FMath::Clamp(CombatHUD.FormRemaining/CombatHUDConfig.Player.FormDurationSeconds,0.,1.)))
+        :(P?P->GetSprintAlcoholProgress():0.f);
     if(HUDLayer)HUDLayer->SetVisibility(HUD->IsSessionStarted()?ESlateVisibility::SelfHitTestInvisible:ESlateVisibility::Collapsed);
     if(HUDPauseButton)HUDPauseButton->SetVisibility(HUD->IsSessionStarted()&&HUD->GetMenuPage()==EDWMenuPage::None?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
     DWSetNamedText(this,TEXT("HUDPauseButton_Label"),DWText(this,TEXT("暂停"),TEXT("Pause")));
@@ -370,9 +521,16 @@ void UDWGameplayWidget::RefreshFromHUD(bool bForceLists)
     DWSetNamedText(this,TEXT("PauseQuitButton_Label"),DWText(this,TEXT("保存并退出游戏"),TEXT("Save & quit game")));
     if(HealthBar)HealthBar->SetPercent(H);if(TransformationBar)TransformationBar->SetPercent(T);if(SprintRing)SprintRing->SetFraction(Sprint);
     if(HealthValueText)HealthValueText->SetText(FText::Format(DWText(this,TEXT("生命  {0} / {1}"),TEXT("Health  {0} / {1}")),FMath::RoundToInt(HP),FMath::RoundToInt(MaxHP)));
-    if(TransformationValueText)TransformationValueText->SetText(FText::Format(DWText(this,TEXT("变身  {0}%"),TEXT("Transform  {0}%")),FMath::RoundToInt(T*100.f)));
+    if(TransformationValueText)TransformationValueText->SetText(CombatHUD.bReady
+        ?FText::Format(DWText(this,TEXT("特殊  {0} / {1}"),TEXT("Special  {0} / {1}")),FText::FromString(FString::Printf(TEXT("%.1f"),CombatHUD.Special.Value)),FMath::RoundToInt(CombatHUD.Special.Maximum))
+        :FText::Format(DWText(this,TEXT("变身  {0}%"),TEXT("Transform  {0}%")),FMath::RoundToInt(T*100.f)));
     DWRefreshInputLabels(this);
-    DWSetText(RingValueText,FString::Printf(TEXT("%.0f%%"),Sprint*100.f));
+    if(CombatHUD.bReady&&FormText)FormText->SetText(DWCombatHUD::FormLabel(this,CombatHUD.Form));
+    // The existing Designer label predates safe-point recovery; update only its runtime copy.
+    DWSetNamedText(this,TEXT("Defeat_Description"),DWText(this,
+        TEXT("返回已激活的安全点复活，再找回死亡袋中的掉落物品。"),
+        TEXT("Respawn at your activated safe point, then recover dropped items from your death bag.")));
+    DWSetText(RingValueText,CombatHUD.bReady?(CombatHUD.Form==EDWCombatBaseForm::Normal?TEXT("—"):FString::Printf(TEXT("%.1fs"),CombatHUD.FormRemaining)):FString::Printf(TEXT("%.0f%%"),Sprint*100.f));
     if(AlcoholCountText)AlcoholCountText->SetText(FText::Format(DWText(this,TEXT("酒精  × {0}"),TEXT("Alcohol  x {0}")),GetInventory()?GetInventory()->CountItem(TEXT("Alcohol")):0));
     const FText Prompt=HUD->bUseLegacyInteractionPrompt&&P?P->GetInteractionPrompt():FText();
     if(InteractionText)InteractionText->SetText(Prompt);
@@ -397,7 +555,7 @@ void UDWGameplayWidget::RefreshInventory()
     {
         if(!Grid)continue;
         if(!InventorySlotClass)continue;
-        if(Grid->GetChildrenCount()!=Count)Grid->ClearChildren();
+        if(Grid->GetChildrenCount()!=Count){DWC01UI::ReleaseMotionTree(Grid);Grid->ClearChildren();}
         for(int32 I=0;I<Count;++I)
         {
             auto* Entry=Cast<UDWInventorySlotWidget>(Grid->GetChildAt(I));
@@ -414,31 +572,37 @@ void UDWGameplayWidget::RefreshSelection()
     const FDWItemStack Item=Bag&&Bag->GetSlots().IsValidIndex(SelectedSlot)?Bag->GetSlots()[SelectedSlot]:FDWItemStack();
     const auto* D=C?C->GetItemDefinition(Item.ItemId):nullptr;
     FString Description=DWText(this,TEXT("选择物品查看用途，再点击使用。"),TEXT("Select an item to see its use, then choose Use.")).ToString();
-    const bool bCanUse=D&&Item.Quantity>0&&D->bUsable;
+    const auto ItemRole=FDWCombatItemRegistry::GetItemRole(Item.ItemId);
+    const bool bCore=ItemRole==EDWCombatItemRole::MoldCore||ItemRole==EDWCombatItemRole::YeastCore;
+    FDWInventorySlotSnapshot CoreSlot;
+    const bool bCanUse=bCore?(GetPlayer()&&Bag&&Bag->CaptureSlotSnapshot(SelectedSlot,CoreSlot)&&GetPlayer()->CanRequestCoreInjection(CoreSlot,true)):(D&&Item.Quantity>0&&D->bUsable);
     if(D&&Item.Quantity>0)
     {
         Description=UDWLocalizationLibrary::GetItemDisplayName(this,*D).ToString();
         if(D->HealAmount>0)Description+=FText::Format(DWText(this,TEXT(" · 恢复 {0} 生命"),TEXT(" - Restores {0} health")),FMath::RoundToInt(D->HealAmount)).ToString();
         if(D->TransformationGainPercent>0)Description+=FText::Format(DWText(this,TEXT(" · +{0}% 变身值"),TEXT(" - +{0}% transformation")),FMath::RoundToInt(D->TransformationGainPercent)).ToString();
-        if(!D->bUsable)Description+=DWText(this,TEXT(" · 制作 / 战斗材料"),TEXT(" - Crafting / combat material")).ToString();
+        if(ItemRole==EDWCombatItemRole::PermanentWeapon||ItemRole==EDWCombatItemRole::ThrowableStock)Description+=DWText(this,TEXT(" · 可从背包装备"),TEXT(" - Equip from inventory")).ToString();
+        else if(!D->bUsable)Description+=DWText(this,TEXT(" · 制作 / 战斗材料"),TEXT(" - Crafting / combat material")).ToString();
     }
     DWSetText(InventoryDetailsText,Description);DWSetText(CraftingDetailsText,Description);
     if(InventoryUseButton)InventoryUseButton->SetIsEnabled(bCanUse);if(CraftingUseButton)CraftingUseButton->SetIsEnabled(bCanUse);
+    if(auto* Equip=Cast<UButton>(GetWidgetFromName(TEXT("HandbookInventoryEquip"))))Equip->SetIsEnabled(CanEquipInventorySlot(SelectedSlot));
 }
 void UDWGameplayWidget::RefreshRecipes()
 {
     DWRefreshInputLabels(this);
+    if(HandbookRecipeList){RefreshHandbookRecipes();return;}
     if(!RecipeList||!RecipeEntryClass||!GetGameplayConfig())return;
     const auto& Recipes=GetGameplayConfig()->Recipes;
-    if(RecipeList->GetChildrenCount()!=Recipes.Num())RecipeList->ClearChildren();
+    if(RecipeList->GetChildrenCount()!=Recipes.Num()){DWC01UI::ReleaseMotionTree(RecipeList);RecipeList->ClearChildren();}
     for(int32 I=0;I<Recipes.Num();++I){auto* Entry=Cast<UDWRecipeEntryWidget>(RecipeList->GetChildAt(I));if(!Entry){Entry=CreateWidget<UDWRecipeEntryWidget>(GetOwningPlayer(),RecipeEntryClass);if(Entry)RecipeList->AddChildToVerticalBox(Entry);}if(Entry)Entry->ApplyRecipeData(this,Recipes[I]);}
 }
 void UDWGameplayWidget::RefreshSaves()
 {
     if(!SaveSlotList||!SaveSlotClass||!GetDWGameInstance())return;
     const auto Summaries=GetDWGameInstance()->GetSlotSummaries();
-    if(SaveSlotList->GetChildrenCount()!=Summaries.Num())SaveSlotList->ClearChildren();
-    for(int32 I=0;I<Summaries.Num();++I){auto* Entry=Cast<UDWSaveSlotWidget>(SaveSlotList->GetChildAt(I));if(!Entry){Entry=CreateWidget<UDWSaveSlotWidget>(GetOwningPlayer(),SaveSlotClass);if(Entry)SaveSlotList->AddChildToVerticalBox(Entry);}if(Entry)Entry->ApplySaveData(this,Summaries[I]);}
+    if(SaveSlotList->GetChildrenCount()!=Summaries.Num()){DWC01UI::ReleaseMotionTree(SaveSlotList);SaveSlotList->ClearChildren();}
+    for(int32 I=0;I<Summaries.Num();++I){auto* Entry=Cast<UDWSaveSlotWidget>(SaveSlotList->GetChildAt(I));if(!Entry){Entry=CreateWidget<UDWSaveSlotWidget>(GetOwningPlayer(),SaveSlotClass);if(Entry)SaveSlotList->AddChildToVerticalBox(Entry);}if(Entry){Entry->ApplySaveData(this,Summaries[I]);if(auto* LayoutSlot=Cast<UVerticalBoxSlot>(Entry->Slot)){LayoutSlot->SetHorizontalAlignment(HAlign_Fill);LayoutSlot->SetPadding(FMargin(0,0,0,I+1<Summaries.Num()?16.f:0.f));}}}
 }
 void UDWGameplayWidget::SelectInventorySlot(int32 Index)
 {
@@ -450,7 +614,27 @@ void UDWGameplayWidget::ClickUse()
 {
     if(IsInventoryDiscardPending())return;
     PlayClick();const auto* Bag=GetInventory();const FName Id=Bag&&Bag->GetSlots().IsValidIndex(SelectedSlot)?Bag->GetSlots()[SelectedSlot].ItemId:NAME_None;
-    const bool Used=GetPlayer()&&GetPlayer()->UseInventoryItem(SelectedSlot);
+    bool Used=false;
+    const auto Role=FDWCombatItemRegistry::GetItemRole(Id);
+    if(Role==EDWCombatItemRole::MoldCore||Role==EDWCombatItemRole::YeastCore)
+    {
+        const TWeakObjectPtr<ADWPlayerCharacter> P(GetPlayer());
+        auto* A=UDWCombatAuthoritySubsystem::Get(P.Get());FDWInventorySlotSnapshot CoreSlot;
+        if(A&&P.IsValid()&&Bag&&Bag->CaptureSlotSnapshot(SelectedSlot,CoreSlot)&&P->CanRequestCoreInjection(CoreSlot,true))
+        {
+            const auto Life=A->CaptureActorLife(P.Get());const uint64 Epoch=A->GetWorldEpoch();
+            const TWeakObjectPtr<UDWInventoryComponent> OriginalInventory(P->GetInventory());
+            // Closing a panel can run user callbacks. The original slot/life must survive them.
+            if(HUD)HUD->ClosePanels();
+            A=UDWCombatAuthoritySubsystem::Get(P.Get());
+            if(A&&P.IsValid()&&A->GetWorldEpoch()==Epoch&&GetPlayer()==P.Get()&&P->GetInventory()==OriginalInventory.Get())
+            {
+                const auto Current=A->CaptureActorLife(P.Get());
+                if(Current.Entity==Life.Entity&&Current.Life==Life.Life)Used=P->RequestCoreInjection(CoreSlot);
+            }
+        }
+    }
+    else Used=GetPlayer()&&GetPlayer()->UseInventoryItem(SelectedSlot);
     UDWAudioLibrary::PlayEvent(this,GetGameplayConfig(),Used?EDWAudioEvent::ItemUseSuccess:EDWAudioEvent::ItemUseFailed);
     if(!Used)SetToast(TEXT("当前无法使用该物品。"));RefreshFromHUD(true);OnItemUseResult(Id,Used);
 }
@@ -467,7 +651,12 @@ void UDWGameplayWidget::ClickClose(){PlayClick();if(HUD)HUD->ClosePanels();}
 void UDWGameplayWidget::ClickSave(){PlayClick();if(GetDWGameInstance()&&GetDWGameInstance()->SaveCurrentGame())SetToast(TEXT("保存成功。"));else SaveError(TEXT("保存失败。"));OnUIAction(TEXT("Save"));}
 void UDWGameplayWidget::ClickSaveTitle(){PlayClick();if(!GetDWGameInstance()||!GetDWGameInstance()->SaveCurrentGame()){SaveError(TEXT("保存失败，未返回标题。"));return;}OnUIAction(TEXT("SaveAndTitle"));GetDWGameInstance()->ReturnToTitle();}
 void UDWGameplayWidget::ClickNoSaveTitle(){PlayClick();OnUIAction(TEXT("ReturnToTitle"));if(GetDWGameInstance())GetDWGameInstance()->ReturnToTitle();}
-void UDWGameplayWidget::ClickDeathLoad(){PlayClick();if(GetDWGameInstance())LoadSlot(GetDWGameInstance()->GetActiveSlot());}
+void UDWGameplayWidget::ClickDeathLoad()
+{
+    PlayClick();auto* P=GetPlayer();
+    if(!P||!P->RequestCombatRespawn())
+        if(HUD)HUD->Notify(DWText(this,TEXT("尚无可用的已激活安全点。"),TEXT("No activated safe point is available.")));
+}
 void UDWGameplayWidget::ClickSettingsBack(){PlayClick();if(HUD)HUD->ReturnFromSettings();}
 void UDWGameplayWidget::ChangeVolume(float Value){MasterVolume=FMath::Clamp(Value,0.f,1.f);if(!bUpdatingSettingsControls)if(auto* GI=GetGameInstance())if(auto* Settings=GI->GetSubsystem<UDWUserSettings>())Settings->SetMasterVolume(MasterVolume);if(VolumeValueText)VolumeValueText->SetText(FText::Format(DWText(this,TEXT("主音量  {0}%"),TEXT("Master volume  {0}%")),FMath::RoundToInt(MasterVolume*100.f)));}
 void UDWGameplayWidget::RefreshSettingsLabels()
@@ -570,6 +759,8 @@ FReply UDWGameplayWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEvent& E)
 }
 FReply UDWGameplayWidget::NativeOnMouseButtonDown(const FGeometry& G,const FPointerEvent& E)
 {
+    // Bubble-phase fallback only: child buttons handle their own clicks first; gaps/disabled cells cannot attack the world.
+    if(IsC01QuickDockPointer(E.GetScreenSpacePosition()))return FReply::Handled();
     if(IsInventoryDiscardPending())return FReply::Handled();
     if(DWHandleMenuKey(HUD,Cast<ADWPlayerController>(GetOwningPlayer()),E.GetEffectingButton(),false))return FReply::Handled();
     return HUD&&HUD->IsBlockingGameplay()?FReply::Handled():Super::NativeOnMouseButtonDown(G,E);

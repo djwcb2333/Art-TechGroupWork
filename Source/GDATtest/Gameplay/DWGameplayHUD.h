@@ -13,7 +13,7 @@ class USoundBase;
 UENUM(BlueprintType)
 enum class EDWMenuPage : uint8
 {
-    None, Title, SaveSlots, Inventory, Crafting, Pause, Settings, Defeat
+    None, Title, SaveSlots, Inventory, Crafting, Pause, Settings, Defeat, Character, Building, LanguageJournal
 };
 
 /** Owns game UI state; layout is supplied by a real, editable Widget Blueprint. */
@@ -49,6 +49,9 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Dough World|UI|Artwork") TObjectPtr<UFont> GameUIFont;
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Dough World|UI|Artwork") FLinearColor UIAccentColor = FLinearColor(.88f, .64f, .28f, 1.f);
 
+    static bool IsHandbookPage(EDWMenuPage Page);
+    UFUNCTION(BlueprintCallable, Category="Dough World|UI") void ToggleHandbook(EDWMenuPage Page);
+    UFUNCTION(BlueprintCallable, Category="Dough World|UI") void CycleHandbook(int32 Direction);
     UFUNCTION(BlueprintCallable, Category="Dough World|UI") void ToggleInventory();
     UFUNCTION(BlueprintCallable, Category="Dough World|UI") void ToggleCrafting();
     UFUNCTION(BlueprintCallable, Category="Dough World|UI") void TogglePause();
@@ -56,12 +59,26 @@ public:
     UFUNCTION(BlueprintCallable, Category="Dough World|UI") void ShowDefeat();
     UFUNCTION(BlueprintCallable, Category="Dough World|UI") void ShowMenu(EDWMenuPage Page);
     UFUNCTION(BlueprintCallable, Category="Dough World|UI") void ShowToast(const FText& Text);
+    /** Combat hints use the rule table duration; menu/save notices retain their original duration. */
+    UFUNCTION(BlueprintCallable, Category="Dough World|UI") void ShowCombatToast(const FText& Text);
     UFUNCTION(BlueprintCallable, Category="Dough World|UI") void Notify(const FText& Text) { ShowToast(Text); }
     UFUNCTION(BlueprintCallable, Category="Dough World|UI") void ClosePanels();
     UFUNCTION(BlueprintPure, Category="Dough World|UI") bool IsBlockingGameplay() const;
     UFUNCTION(BlueprintPure, Category="Dough World|UI") EDWMenuPage GetMenuPage() const { return MenuPage; }
 
     FText GetToast() const;
+    UFUNCTION(BlueprintCallable,Category="Dough World|UI") void NotifyItemAcquired(FName ItemId,int32 Amount);
+    UFUNCTION(BlueprintPure,Category="Dough World|UI") FText GetPickupToast() const;
+
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Pickup",meta=(ClampMin="0",Units="s")) float C01PickupEnterSeconds=.18f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Pickup",meta=(ClampMin="0",Units="s")) float C01PickupHoldSeconds=2.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Pickup",meta=(ClampMin="0",Units="s")) float C01PickupExitSeconds=.18f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Pickup",meta=(ClampMin="0.05",Units="s")) float C01PickupBounceSeconds=.38f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Pickup",meta=(ClampMin="0.05",ClampMax="3")) float C01PickupDampingRatio=.55f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Pickup",meta=(ClampMin="0.05",ClampMax="1")) float C01PickupEntryScale=.82f;
+    UFUNCTION(BlueprintPure,Category="UI|C01|Pickup") double GetPickupToastAge()const;
+    UFUNCTION(BlueprintPure,Category="UI|C01|Pickup") double GetPickupToastRemaining()const;
+    UFUNCTION(BlueprintPure,Category="UI|C01|Feedback") double GetToastRemaining()const;
     void RefreshPanels();
     void ReturnFromSettings();
     void OpenSettings();
@@ -89,6 +106,7 @@ private:
     bool bSessionStarted = false;
     FText Toast;
     double ToastUntil = 0;
+    FText PickupToast;double PickupToastStarted=0.,PickupToastUntil=0.;
     UPROPERTY(Transient) TObjectPtr<UAudioComponent> MusicComponent;
     UPROPERTY(Transient) TObjectPtr<USoundBase> CurrentMusic;
     void PlayPanelTransitionSound(EDWMenuPage Page, bool bOpening);

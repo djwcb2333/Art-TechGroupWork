@@ -1,0 +1,23 @@
+{
+  "FileVersion": 3,
+  "Version": 13,
+  "VersionName": "0.4.9-ui.1",
+  "FriendlyName": "Desert Building Lab",
+  "Description": "Visual modular building designer with native editor camera, validated placement ghosts, reusable linked assets, variants and separate foundation/floor structures.",
+  "Category": "Procedural",
+  "CreatedBy": "PCGStudy",
+  "CanContainContent": true,
+  "EnabledByDefault": true,
+  "Modules": [
+    {
+      "Name": "DesertBuildingLab",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "DesertBuildingLabEditor",
+      "Type": "Editor",
+      "LoadingPhase": "PostEngineInit"
+    }
+  ]
+}

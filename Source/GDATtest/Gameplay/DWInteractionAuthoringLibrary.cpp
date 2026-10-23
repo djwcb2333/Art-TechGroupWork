@@ -12,6 +12,7 @@ FString UDWInteractionAuthoringLibrary::GetLastBuildReport(){return DWPromptBuil
 #include "UObject/SavePackage.h"
 #include "Misc/PackageName.h"
 #include "Misc/Paths.h"
+#include "Misc/FileHelper.h"
 #include "HAL/FileManager.h"
 #include "Engine/Font.h"
 #include "Engine/FontFace.h"
@@ -138,6 +139,26 @@ bool UDWInteractionAuthoringLibrary::AddLanguageSelectorToExistingUI()
         if(!UPackage::SavePackage(WidgetBP->GetOutermost(),WidgetBP,*File,Args))return false;
     }
     return true;
+#else
+    return false;
+#endif
+}
+
+bool UDWInteractionAuthoringLibrary::UpdateExistingFontFacePayload(const FString& FacePath,const FString& SourceFile)
+{
+#if WITH_EDITOR
+    UFontFace* Face=LoadObject<UFontFace>(nullptr,*FacePath);
+    TArray<uint8> Bytes;
+    if(!Face||!FFileHelper::LoadFileToArray(Bytes,*SourceFile)||Bytes.Num()<12)
+    {DWPromptBuildReport=TEXT("Existing FontFace or valid source file missing.");return false;}
+    // Do not reconstruct the FontFace: retain hinting, loading, layout and platform overrides.
+    Face->Modify();Face->SourceFilename=FPaths::ConvertRelativePathToFull(SourceFile);
+    Face->FontFaceData->SetData(MoveTemp(Bytes));Face->CacheSubFaces();Face->PostEditChange();Face->MarkPackageDirty();
+    const FString File=FPackageName::LongPackageNameToFilename(Face->GetOutermost()->GetName(),FPackageName::GetAssetPackageExtension());
+    FSavePackageArgs Args;Args.TopLevelFlags=RF_Public|RF_Standalone;Args.SaveFlags=SAVE_NoError;
+    const bool Saved=UPackage::SavePackage(Face->GetOutermost(),Face,*File,Args);
+    DWPromptBuildReport=Saved?TEXT("Existing FontFace payload updated and saved; composite preserved."):TEXT("FontFace save failed.");
+    return Saved;
 #else
     return false;
 #endif

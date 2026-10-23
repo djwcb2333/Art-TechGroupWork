@@ -13,6 +13,11 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Components/SizeBox.h"
+#include "Components/VerticalBox.h"
+#include "Components/VerticalBoxSlot.h"
+#include "Components/CanvasPanelSlot.h"
+#include "DWC01UIStyle.h"
 #include "Engine/GameInstance.h"
 #include "Engine/Texture2D.h"
 #include "HAL/PlatformTime.h"
@@ -41,11 +46,55 @@ namespace
     {
         if (Widget) Widget->SetRenderTransform(FWidgetTransform());
     }
+
+    void AlignC01TitleButtons(UButton* Start,UButton* Settings,UButton* Quit)
+    {
+        UButton* Buttons[]={Start,Settings,Quit};
+        if(!Start||!Settings||!Quit)return;
+        // Keep the existing hierarchy and authored outer position/background.
+        UWidget* LayoutWidgets[3]={Start,Settings,Quit};
+        for(int32 I=0;I<3;++I)
+            if(auto* Box=Cast<USizeBox>(Buttons[I]->GetParent()))LayoutWidgets[I]=Box;
+        const bool bCommonParent=LayoutWidgets[0]->GetParent()==LayoutWidgets[1]->GetParent()&&
+            LayoutWidgets[0]->GetParent()==LayoutWidgets[2]->GetParent();
+        if(!bCommonParent)return;
+        if(Cast<UVerticalBox>(LayoutWidgets[0]->GetParent()))
+        {
+            for(int32 I=0;I<3;++I)
+            {
+                if(auto* Slot=Cast<UVerticalBoxSlot>(LayoutWidgets[I]->Slot))
+                {Slot->SetHorizontalAlignment(HAlign_Fill);Slot->SetVerticalAlignment(VAlign_Center);Slot->SetPadding(FMargin(0,8));}
+                if(auto* Box=Cast<USizeBox>(LayoutWidgets[I])){Box->SetWidthOverride(340);Box->SetMinDesiredHeight(56);}
+            }
+        }
+        else if(auto* StartSlot=Cast<UCanvasPanelSlot>(LayoutWidgets[0]->Slot))
+        {
+            const FVector2D Position=StartSlot->GetPosition();
+            const FAnchors Anchors=StartSlot->GetAnchors();
+            const FVector2D Alignment=StartSlot->GetAlignment();
+            for(int32 I=0;I<3;++I)if(auto* Slot=Cast<UCanvasPanelSlot>(LayoutWidgets[I]->Slot))
+            {
+                Slot->SetAnchors(Anchors);Slot->SetAlignment(Alignment);Slot->SetAutoSize(false);
+                Slot->SetPosition(Position+FVector2D(0,72*I));Slot->SetSize(FVector2D(340,56));
+            }
+        }
+    }
 }
 
 void UDWFrontendWidget::NativeConstruct()
 {
     Super::NativeConstruct();
+    if(TitleText)
+    {
+        TitleText->SetColorAndOpacity(FSlateColor(FLinearColor::White));
+        // Keep the authored font/size and layout; white C01 title has no old brown outline.
+        FSlateFontInfo Font=TitleText->GetFont();
+        if(Font.OutlineSettings.OutlineSize!=0){Font.OutlineSettings.OutlineSize=0;TitleText->SetFont(Font);}
+        TitleText->SetShadowColorAndOpacity(FLinearColor::Transparent);TitleText->SetShadowOffset(FVector2D::ZeroVector);
+    }
+    for(UButton* Button:{StartButton.Get(),TitleSettingsButton.Get(),QuitButton.Get()})
+        if(Button)StyleC01Button(Button,DWC01UI::Paper());
+    AlignC01TitleButtons(StartButton,TitleSettingsButton,QuitButton);
     SetIsFocusable(true);
     bHasObservedPage = false;
     if (SkipIntroButton)
@@ -430,6 +479,15 @@ void UDWFrontendWidget::ScheduleMenuMusic()
 void UDWFrontendWidget::NativeTick(const FGeometry& Geometry, float DeltaSeconds)
 {
     Super::NativeTick(Geometry, DeltaSeconds); // Existing localization, font, save-slot and settings behavior.
+    // The title stays white after shared language/font/style refreshes.
+    if(TitleText)
+    {
+        TitleText->SetColorAndOpacity(FSlateColor(FLinearColor::White));
+        // Keep the authored font/size and layout; white C01 title has no old brown outline.
+        FSlateFontInfo Font=TitleText->GetFont();
+        if(Font.OutlineSettings.OutlineSize!=0){Font.OutlineSettings.OutlineSize=0;TitleText->SetFont(Font);}
+        TitleText->SetShadowColorAndOpacity(FLinearColor::Transparent);TitleText->SetShadowOffset(FVector2D::ZeroVector);
+    }
     ReleaseFinishedPresentationSounds();
     const double Now = FPlatformTime::Seconds(); // Independent of the paused world's game time.
     const EDWMenuPage Page = HUD ? HUD->GetMenuPage() : EDWMenuPage::None;

@@ -57,9 +57,9 @@ public:
     /** Color-space coverage samples per axis. 3 gives nine samples; 2 gives four; 1 disables supersampling. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|Art",meta=(ClampMin="1",ClampMax="3",DisplayName="Edge AA Sample Grid")) int32 EdgeSampleGrid=3;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|View",meta=(ClampMin="0.05",ClampMax="2",Units="s")) float CaptureInterval=0.2f;
-    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|UI",meta=(ClampMin="160",ClampMax="400")) float Diameter=300.f;
-    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|UI") bool bMatchBrewingCardWidth=true;
-    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|UI") FVector2D BottomRightMargin=FVector2D(24.f,76.f);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|UI",meta=(ClampMin="160",ClampMax="400")) float Diameter=180.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|UI") bool bMatchBrewingCardWidth=false;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|UI") FVector2D BottomRightMargin=FVector2D(30.f,30.f);
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|UI") TSoftObjectPtr<UMaterialInterface> MapMaterial;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|UI") TSoftClassPtr<UDWMinimapWidget> WidgetClass;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|Art") FLinearColor GroundTint=FLinearColor(.48f,.43f,.36f,1.f);
@@ -101,7 +101,7 @@ private:
     float CaptureElapsed=100.f,ScanElapsed=100.f;
     bool bVisible=false;
     int32 CaptureRequestCount=0;
-    bool CanShow(bool bIgnoreCinematic=false) const;
+    bool CanShow(bool bIgnoreCinematic=false,bool bIgnoreMenu=false) const;
     bool EnsureCapture();
     void ScanActors();
     void CaptureNow();

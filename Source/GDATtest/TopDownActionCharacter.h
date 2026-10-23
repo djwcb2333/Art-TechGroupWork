@@ -40,12 +40,14 @@ public:
     void StartForwardRoll();
 
 protected:
+    virtual bool CanUseLegacyRoll()const{return true;}
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
     virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp,
         bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 
 private:
+    friend class ADWPlayerCharacter; // Fixed native knockback/legacy-roll lifecycle bridge; no public bypass.
     void FinishRoll();
     float RollElapsed = 0.f;
     float ActiveRollDuration = 0.45f;

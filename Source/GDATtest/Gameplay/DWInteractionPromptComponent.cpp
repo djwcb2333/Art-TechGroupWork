@@ -113,6 +113,33 @@ UDWInteractionPromptWidget* UDWInteractionPromptComponent::GetPromptWidget() con
     return Cast<UDWInteractionPromptWidget>(GetUserWidgetObject());
 }
 
+void UDWInteractionPromptComponent::NotifyHarvestCommitted(int32 ActualAmount)
+{
+    // No fraction-reset heuristic: only ResourceNode's accepted commit calls this path.
+    // A blocked/full bag, interrupted hold, or restored stock never emits completion.
+    UWorld* World=GetWorld();
+    if(ActualAmount<=0||!World||!World->IsGameWorld()||World->bIsTearingDown||World->IsPaused()
+        ||!bPromptEnabled||!IsActive()||!IsVisible()||!IsValid(GetOwner())||GetOwner()->IsHidden())return;
+    APlayerController* PC=UGameplayStatics::GetPlayerController(this,0);
+    ADWPlayerCharacter* Player=PC?Cast<ADWPlayerCharacter>(PC->GetPawn()):nullptr;
+    const ADWPlayerController* DWPC=Cast<ADWPlayerController>(PC);
+    const ADWGameplayHUD* HUD=PC?Cast<ADWGameplayHUD>(PC->GetHUD()):nullptr;
+    const ADWResourceNode* Resource=Cast<ADWResourceNode>(GetOwner());
+    if(!PC||!PC->IsLocalPlayerController()||!Player||Player->IsDead()||!Resource
+        ||(DWPC&&DWPC->IsGameplayBlocked())||(HUD&&(!HUD->IsSessionStarted()||HUD->IsBlockingGameplay())))return;
+    // GetFocusedResource becomes null immediately on depletion, so include the currently
+    // visible target. This is what keeps the final successful batch visible for its pulse.
+    if(!bPromptDesiredVisible&&Player->GetFocusedResource()!=Resource)return;
+    PrepareWidget();
+    if(UDWInteractionPromptWidget* Prompt=GetPromptWidget())
+    {
+        if(!Prompt->bUseC01Presentation)return;
+        C04CompletionPawn=Player;
+        C04CompletionDeadline=FPlatformTime::Seconds()+double(Prompt->GetCompletionDisplaySeconds());
+        Prompt->NotifyHarvestCompleted();
+    }
+}
+
 void UDWInteractionPromptComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -133,6 +160,11 @@ void UDWInteractionPromptComponent::TickComponent(float DeltaTime, ELevelTick Ti
         || !IsValid(PC) || !IsValid(Pawn) || !PC->IsLocalPlayerController() || World->IsPaused()
         || (Player && Player->IsDead()) || (DWPC && DWPC->IsGameplayBlocked())
         || (HUD && (!HUD->IsSessionStarted() || HUD->IsBlockingGameplay()));
+    if(bBlocked||C04CompletionPawn.Get()!=Pawn)
+    {
+        C04CompletionDeadline=0.;
+        C04CompletionPawn.Reset();
+    }
 
     bool bShouldShow = false;
     if (!bBlocked)
@@ -141,8 +173,11 @@ void UDWInteractionPromptComponent::TickComponent(float DeltaTime, ELevelTick Ti
         const bool bWithinHeight = FMath::Abs(Delta.Z) <= FMath::Max(0.f, HeightTolerance);
         if (const ADWResourceNode* Resource = Cast<ADWResourceNode>(Owner))
         {
-            bShouldShow = bWithinHeight && Player && Player->GetFocusedResource() == Resource;
-            if (bShouldShow)
+            const bool bFocused=bWithinHeight&&Player&&Player->GetFocusedResource()==Resource;
+            const bool bRetainCompletion=bWithinHeight&&C04CompletionDeadline>FPlatformTime::Seconds()
+                &&Delta.SizeSquared2D()<=FMath::Square(FMath::Max(1.f,Resource->InteractionRadius));
+            bShouldShow=bFocused||bRetainCompletion;
+            if (bFocused)
             {
                 const UDWGameplayConfig* Config = Player->GetGameplayConfig();
                 const FDWItemDefinition* Item = Config ? Config->GetItemDefinition(Resource->ItemId) : nullptr;
@@ -150,6 +185,12 @@ void UDWInteractionPromptComponent::TickComponent(float DeltaTime, ELevelTick Ti
                 const FText HarvestKey=DWPC?DWPC->GetActionKeyLabel(EDWInputAction::Harvest):FText::FromString(TEXT("--"));
                 Prompt->SetPromptText(Title, DWText(this, TEXT("长按采集"), TEXT("Hold to gather")), HarvestKey);
                 Prompt->SetProgress(Player->GetHarvestProgress(), true);
+            }
+            else if(bRetainCompletion)
+            {
+                // Retain the final title and a completely filled panel while the depleted
+                // resource's completion spring settles. No interaction remains enabled here.
+                Prompt->SetProgress(1.f,true);
             }
         }
         else
@@ -170,6 +211,9 @@ void UDWInteractionPromptComponent::TickComponent(float DeltaTime, ELevelTick Ti
     ChangePromptVisibility(bShouldShow, bBlocked);
     if (!IsValid(this) || !IsValid(Prompt)) return;
     Prompt->AdvancePresentation(FMath::Max(0.f, DeltaTime));
+    const FVector2D RequiredDrawSize=Prompt->GetMinimumDrawSize(),PromptDrawSize=GetDrawSize();
+    const FVector2D SafeDrawSize(FMath::Max(PromptDrawSize.X,RequiredDrawSize.X),FMath::Max(PromptDrawSize.Y,RequiredDrawSize.Y));
+    if(!SafeDrawSize.Equals(PromptDrawSize,.1))SetDrawSize(SafeDrawSize);
     RefreshDebugVisibility();
 }
 
@@ -223,17 +267,19 @@ void UDWInteractionPromptComponent::RefreshDebugVisibility()
 void UDWInteractionPromptComponent::SetPromptEnabled(bool bEnabled)
 {
     bPromptEnabled = bEnabled;
-    if (!bEnabled) ChangePromptVisibility(false, true);
+    if (!bEnabled){C04CompletionDeadline=0.;C04CompletionPawn.Reset();ChangePromptVisibility(false, true);}
 }
 
 void UDWInteractionPromptComponent::Deactivate()
 {
+    C04CompletionDeadline=0.;C04CompletionPawn.Reset();
     ChangePromptVisibility(false, true);
     Super::Deactivate();
 }
 
 void UDWInteractionPromptComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+    C04CompletionDeadline=0.;C04CompletionPawn.Reset();
     ChangePromptVisibility(false, true);
     InitializedWidget.Reset();
     AppliedStyle.Reset();

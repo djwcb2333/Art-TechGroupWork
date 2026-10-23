@@ -364,6 +364,17 @@ void UDWLoadingTransitionSubsystem::Finish()
   OnFinished.Broadcast();
  }
 }
+bool UDWLoadingTransitionSubsystem::RevealCombatRestoreFailure(UWorld* FailedWorld,const FText& Reason)
+{
+ if(!bAlive||Mode!=EMode::Travel||!FailedWorld||FailedWorld->bIsTearingDown||!FailedWorld->HasBegunPlay()||
+    ArrivedWorld.Get()!=FailedWorld||GetWorld()!=FailedWorld)return false;
+ if(Phase==EDWLoadingPhase::Opening)return true; // Do not restart the opening timer on each UI tick.
+ if(Phase!=EDWLoadingPhase::Travelling&&Phase!=EDWLoadingPhase::Complete)return false;
+ LastError=Reason;bFailed=true;
+ // This is a failed data restore in an already-loaded world, not a map-load failure.
+ // No OnFailed rollback of ActiveSlot/Pending, and no OnLoadingComplete success notification.
+ SetPhase(EDWLoadingPhase::Opening);return true;
+}
 bool UDWLoadingTransitionSubsystem::PrimeDestinationCamera()
 {
  auto* W=ArrivedWorld.Get();auto* PC=GetGameInstance()->GetFirstLocalPlayerController();

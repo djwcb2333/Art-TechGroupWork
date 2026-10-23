@@ -43,6 +43,7 @@ protected:
     virtual void BeginPlay() override;
     void RefreshAvailability();
 private:
+    friend class FDWCombatWorldObjectsPersistence;
     bool bAvailabilityInitialized = false;
     bool bLastAvailable = false;
     bool bCommittingHarvest = false;

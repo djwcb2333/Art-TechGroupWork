@@ -40,6 +40,10 @@ public:
     UFUNCTION(BlueprintPure,Category="DoughWorld|Minimap")
     UDWMinimapComponent* GetMinimapComponent() const;
 
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|C01") bool bUseC01Appearance=true;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|Motion",meta=(ClampMin="0",Units="s")) float NavigationPulseSeconds=.34f;
+    float GetFooterHeight()const{return bUseC01Appearance?0.f:44.f;}
+
     /** Brief uniform pulse only on navigation selection/change/clear; no continuous idle animation. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|Motion")
     bool bAnimateNavigationChanges=true;
@@ -72,4 +76,5 @@ private:
     void FinishNavigationFeedback();
     void UpdateNavigationText(bool bVisible);
     float NavigationPulseElapsed=.34f;
+    bool bNavigationPulseActive=false;
 };

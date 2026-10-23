@@ -111,6 +111,9 @@ private:
  FDelegateHandle PostLoadHandle,TravelFailureHandle;
  FDelegateHandle BeginDrawHandle,EndDrawHandle;
  TWeakObjectPtr<class UGameViewportClient> ObservedViewport;
+ friend class UDWGameInstance;
+ // Only GI's terminal restore error can reveal its already-loaded world's recovery UI.
+ bool RevealCombatRestoreFailure(UWorld* FailedWorld,const FText& Reason);
  bool PrimeDestinationCamera();
  bool CheckDestinationReadiness();
  TMap<FName,FText> ReadinessTasks;

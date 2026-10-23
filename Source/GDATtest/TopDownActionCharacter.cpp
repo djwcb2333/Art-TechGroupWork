@@ -42,6 +42,7 @@ void ATopDownActionCharacter::StartActionJump()
 
 void ATopDownActionCharacter::StartForwardRoll()
 {
+    if(!CanUseLegacyRoll())return;
     UCharacterMovementComponent* Movement = GetCharacterMovement();
     if (bIsRolling || !Movement->IsMovingOnGround() || GetWorld()->GetTimeSeconds() < NextRollTime) return;
 

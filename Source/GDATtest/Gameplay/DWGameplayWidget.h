@@ -6,11 +6,16 @@
 #include "Types/SlateEnums.h"
 #include "Slate/WidgetTransform.h"
 #include "DWInventoryInteraction.h"
+#include "DWCombatHUDModel.h"
+#include "DWC01UIStyle.h"
 #include "DWGameplayWidget.generated.h"
 class UDWGameplayConfig; class UDWGameInstance; class ADWPlayerCharacter; class UDWInventoryComponent;
 class UButton; class UTextBlock; class UProgressBar; class UBorder; class UWidgetSwitcher; class UUniformGridPanel;
 class UVerticalBox; class UCanvasPanel; class USlider; class UComboBoxString; class UCheckBox; class UImage;
 class UDWSettingsPanel;
+class UDWHandbookFrame;
+class UDWHandbookButton;
+class UDWC01HUDAnchor; class UDWUIBounceComponent; class UHorizontalBox; class USizeBox;
 class UDWProgressRing; class UDWInventorySlotWidget; class UDWRecipeEntryWidget; class UDWSaveSlotWidget;
 
 /** Static label copy authored in a Widget Blueprint; does not replace live gameplay values. */
@@ -29,6 +34,67 @@ class GDATTEST_API UDWGameplayWidget : public UUserWidget
 {
     GENERATED_BODY()
 public:
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01") bool bUseC01HUD=true;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01",meta=(ClampMin="160",ClampMax="400")) float C01HUDDiameter=248.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01") FVector2D C01HUDMargin=FVector2D(72,30);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Motion",meta=(ClampMin="0",Units="s")) float C01FocusSeconds=.18f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Motion",meta=(ClampMin="0",Units="s")) float C01HoverSeconds=.12f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Motion",meta=(ClampMin="0",ClampMax="1")) float C01SlotHoverLighten=.38f;
+    /** Optical lift as a fraction of font size; only Latin button labels, independent of Bounce. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Typography",meta=(ClampMin="0",ClampMax="0.3")) float C01ButtonLatinOpticalOffsetEm=.15f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Motion",meta=(ClampMin="0",Units="s")) float C01PressSeconds=.08f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Motion",meta=(ClampMin="0",Units="s")) float C01ResourceSeconds=.24f;
+    /** Shared by the first three bag cells and the three real inventory quick slots. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Quick Slots",meta=(ClampMin="0",ClampMax="12")) float C01QuickSlotOutlineThickness=3.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Quick Slots",meta=(ClampMin="64",ClampMax="128")) float C01QuickSlotSize=92.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Quick Slots",meta=(ClampMin="0",ClampMax="32")) float C01QuickSlotGap=16.f;
+    void StyleC01Button(UButton*,FLinearColor BaseColor,bool bSelected=false,bool bTransparentRest=false,bool bItemSlot=false);
+    void RefreshC01Presentation(float DeltaSeconds);
+    UFUNCTION(BlueprintPure,Category="UI|C01|Diagnostics") FVector2D GetC01CinematicOffset() const;
+    void InitializeC01Display();void TickC01Buttons();void TickC01Feedback();
+    void PrepareSavePageLayout();
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Feedback",meta=(ClampMin="0",Units="s")) float C01FeedbackEnterSeconds=.18f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Feedback",meta=(ClampMin="0",Units="s")) float C01FeedbackExitSeconds=.18f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Feedback",meta=(DisplayName="Feedback Float Distance (Pixels)")) float C01FeedbackFloatDistance=12.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Feedback") FVector2D C01FeedbackCurve1=FVector2D(.25,.1);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Feedback") FVector2D C01FeedbackCurve2=FVector2D(.25,1);
+    void TickC01QuickDock();bool IsC01QuickDockPointer(FVector2D ScreenPosition)const;
+    UFUNCTION(BlueprintPure,Category="UI|Inventory|Quick slots") bool CanActivateQuickInventorySlot(int32 SlotIndex)const;
+    UFUNCTION(BlueprintCallable,Category="UI|Inventory|Quick slots") void ActivateQuickInventorySlot(int32 SlotIndex);
+    UFUNCTION(BlueprintPure,Category="UI|Inventory|Equipment") bool CanEquipInventorySlot(int32 SlotIndex)const;
+    UFUNCTION(BlueprintCallable,Category="UI|Inventory|Equipment") bool EquipInventorySlot(int32 SlotIndex);
+    /** Native additions preserve the saved WBP layout. Position is measured from the bottom-left. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat") bool bShowCombatInfoPanel=true;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat") FVector2D CombatInfoMargin=FVector2D(24.,24.);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat",meta=(ClampMin="260")) float CombatInfoWidth=480.f;
+    UFUNCTION(BlueprintPure,Category="UI|Combat") FDWCombatHUDSnapshot GetCombatHUDSnapshot()const{return CombatHUD;}
+    UFUNCTION(BlueprintCallable,Category="UI|Combat") void RefreshCombatHUD();
+    /** Local runtime UMG cells reuse DW UI Bounce; native paint retains the read-only reload ring. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead",meta=(ClampMin="0.05",Units="s")) float ShotgunShellBounceSeconds=.32f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead",meta=(ClampMin="0.05",ClampMax="1")) float ShotgunShellEntryScale=.72f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead",meta=(ClampMin="0.05",ClampMax="3")) float ShotgunShellDampingRatio=.55f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead",meta=(ClampMin="0",ClampMax="16")) float ShotgunShellCornerRadius=3.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead") bool bShowShotgunOverhead=true;
+    /** Added to the current scaled capsule top, in world centimetres. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead") FVector ShotgunHeadWorldOffset=FVector(0.,0.,24.);
+    /** DPI-independent screen offset; negative Y moves the row upward. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead") FVector2D ShotgunHeadScreenOffset=FVector2D(0.,-16.);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead") FVector2D ShotgunAmmoSlotSize=FVector2D(11.,17.);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead",meta=(ClampMin="0")) float ShotgunAmmoSlotGap=4.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead",meta=(ClampMin="0.5")) float ShotgunAmmoOutlineThickness=1.5f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead",meta=(ClampMin="1")) float ShotgunReloadRingRadius=8.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead",meta=(ClampMin="0")) float ShotgunReloadRingGap=7.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead",meta=(ClampMin="0.5")) float ShotgunReloadRingThickness=2.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead") FLinearColor ShotgunLoadedColor=FLinearColor(1.f,.76f,.28f,1.f);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead") FLinearColor ShotgunEmptyColor=FLinearColor(.42f,.44f,.47f,.9f);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead") FLinearColor ShotgunAmmoOutlineColor=FLinearColor(.03f,.025f,.02f,.9f);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead") FLinearColor ShotgunReloadRingColor=FLinearColor(1.f,.88f,.54f,1.f);
+    UFUNCTION(BlueprintCallable,Category="UI|Combat") void InitializeCombatSettings();
+    UFUNCTION(BlueprintCallable,Category="UI|Handbook") void HandleHandbookAction(int32 Action);
+    void RegisterHandbookLabel(UTextBlock* Label,const TCHAR* Chinese,const TCHAR* English);
+    void InitializeHandbook();void RefreshHandbook();void RefreshHandbookRecipes();
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Handbook",meta=(ClampMin="0.5",ClampMax="1")) float HandbookScreenFraction=.86f;
+    UFUNCTION(BlueprintPure,Category="UI|Handbook") bool HasHandbook() const {return HandbookPageIndex!=INDEX_NONE;}
     /** Fixed for players; editors can change combinations in WBP class defaults. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Inventory Controls") FDWInventoryControls InventoryControls;
     UFUNCTION(BlueprintPure,Category="Inventory UI") FText GetInventoryControlHelp() const;
@@ -102,6 +168,8 @@ public:
 protected:
     virtual bool NativeOnDrop(const FGeometry& Geometry,const FDragDropEvent& Event,UDragDropOperation* Operation) override;
 
+    virtual int32 NativePaint(const FPaintArgs&,const FGeometry&,const FSlateRect&,FSlateWindowElementList&,int32,const FWidgetStyle&,bool)const override;
+    virtual void NativeOnInitialized() override;
     virtual void NativePreConstruct() override;
     virtual void NativeConstruct() override;
     virtual void NativeDestruct() override;
@@ -171,6 +239,41 @@ protected:
     UPROPERTY(Transient,BlueprintReadOnly,Category="UI") TObjectPtr<ADWGameplayHUD> HUD;
     UPROPERTY(BlueprintReadOnly,Category="UI") int32 SelectedSlot=INDEX_NONE;
 private:
+    UPROPERTY(Transient) TObjectPtr<UDWC01HUDAnchor> C01HUDAnchor;
+    UPROPERTY(Transient) TObjectPtr<UBorder> C01QuickDock;
+    UPROPERTY(Transient) TObjectPtr<UBorder> C01PickupPanel;
+    UPROPERTY(Transient) TObjectPtr<UTextBlock> C01PickupLabel;
+    UPROPERTY(Transient) TObjectPtr<UDWUIBounceComponent> C01PickupBounce;
+    UPROPERTY(Transient) TObjectPtr<UBorder> C01ShellDock;
+    UPROPERTY(Transient) TObjectPtr<UHorizontalBox> C01ShellRow;
+    UPROPERTY(Transient) TArray<TObjectPtr<UBorder>> C01ShellCells;
+    UPROPERTY(Transient) TArray<TObjectPtr<USizeBox>> C01ShellSizes;
+    UPROPERTY(Transient) TArray<TObjectPtr<UDWUIBounceComponent>> C01ShellBounces;
+    TWeakObjectPtr<ADWPlayerCharacter> C01ShellPlayer;
+    uint64 C01ShellRestoreEpoch=0;
+    int32 C01PreviousLoaded=INDEX_NONE;
+    double C01PreviousPickupAge=-1.;
+    FText C01PreviousPickupText;
+    void TickC01RuntimeMeters();
+    UPROPERTY(Transient) TArray<TObjectPtr<UDWHandbookButton>> C01QuickButtons;
+    UPROPERTY(Transient) TArray<TObjectPtr<UImage>> C01QuickIcons;
+    UPROPERTY(Transient) TArray<TObjectPtr<UImage>> C01QuickOutlines;
+    UPROPERTY(Transient) TArray<TObjectPtr<UTextBlock>> C01QuickNames;
+    UPROPERTY(Transient) TArray<TObjectPtr<UTextBlock>> C01QuickQuantities;
+    UPROPERTY(Transient) TArray<TObjectPtr<UTextBlock>> C01QuickKeys;
+    UPROPERTY(Transient) TObjectPtr<UVerticalBox> HandbookEquipmentList;
+    UPROPERTY(Transient) TObjectPtr<UButton> HandbookRelatedRecipeButton;
+    UPROPERTY(Transient) TObjectPtr<UButton> HandbookCraftMoreButton;
+    TMap<TWeakObjectPtr<UButton>,FDWC01ButtonVisual> C01Buttons;
+    FVector4f C01VisualResources=FVector4f(0,0,0,0);
+    bool bC01VisualReady=false;TWeakObjectPtr<ADWPlayerCharacter> C01VisualPlayer;
+    UPROPERTY(Transient) FDWCombatHUDSnapshot CombatHUD;
+    FDWCombatHUDConfig CombatHUDConfig;
+    const FDWCombatRules* CombatHUDRules=nullptr; // Immutable GI-owned rules; refreshed on owner/rules change.
+    UPROPERTY(Transient) TObjectPtr<UCheckBox> CombatEnemyHealthCheck;
+    UPROPERTY(Transient) TObjectPtr<UTextBlock> CombatEnemyHealthLabel;
+    void RefreshCombatSettings();
+    UFUNCTION() void ChangeCombatEnemyHealth(bool Checked);
     int32 SettingsBookTab=0;
     UFUNCTION() void BookGraphicsTab();
     UFUNCTION() void BookAudioTab();
@@ -196,6 +299,19 @@ private:
 
     bool FindTextOverride(const UTextBlock* Text,EDWGameLanguage Language,FText& OutText) const;
     void ApplyDesignerTextPreview();
+    TMap<TWeakObjectPtr<UTextBlock>,TPair<FString,FString>> HandbookLabels;
+    int32 HandbookPageIndex=INDEX_NONE;int32 HandbookRecipeIndex=0;
+    int64 HandbookInventoryRevision=-1;int32 HandbookLanguageRevision=-1;
+    UPROPERTY(Transient) TObjectPtr<UWidgetSwitcher> HandbookPages;
+    UPROPERTY(Transient) TObjectPtr<UVerticalBox> HandbookRecipeList;
+    UPROPERTY(Transient) TObjectPtr<UTextBlock> HandbookRecipeDetails;
+    UPROPERTY(Transient) TObjectPtr<UTextBlock> HandbookStats;
+    UPROPERTY(Transient) TObjectPtr<UDWHandbookFrame> HandbookFrame;
+    UPROPERTY(Transient) TObjectPtr<UTextBlock> HandbookSelection;
+    UPROPERTY(Transient) TObjectPtr<UImage> HandbookItemImage;
+    UPROPERTY(Transient) TObjectPtr<UImage> HandbookRecipeImage;
+    UPROPERTY(Transient) TObjectPtr<UButton> HandbookCraftButton;
+    UPROPERTY(Transient) TArray<TObjectPtr<UButton>> HandbookTabButtons;
     EDWMenuPage CurrentPage=EDWMenuPage::None;
     UPROPERTY(Transient) TObjectPtr<UWidget> PageTransitionWidget;
     FWidgetTransform PageTransitionBaseTransform;
@@ -206,6 +322,11 @@ private:
     float PageTransitionOffsetY=0.f;
     float PageTransitionOvershoot=1.f;
     void TickPageTransition(double Now);
+    FText C01LastFeedbackText;
+    double C01FeedbackStarted=0.,C01FeedbackPreviousRemaining=0.;
+    bool bC01FeedbackBaselineCaptured=false;
+    FWidgetTransform C01FeedbackBaseTransform;
+    float C01FeedbackBaseOpacity=1.f;
     uint32 InventoryHash=0;
     float SliderStyleRefreshSeconds=0.f;
     float MasterVolume=1.f;

@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
 #include "DWGameplayTypes.h"
+#include "DWCombatPlayerSave.h"
+#include "DWCombatWorldSave.h"
 #include "DWSaveGame.generated.h"
 
 USTRUCT(BlueprintType)
@@ -24,6 +26,10 @@ public:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, Category="Save")
     int32 Version = CurrentVersion;
+    // Additive resource subblock only. Missing schema is rejected without migrating/deleting files.
+    UPROPERTY(SaveGame) FDWCombatPlayerResourceSave CombatPlayerResources;
+    // Complete D22 aggregate; never independently load a participant.
+    UPROPERTY(SaveGame) FDWCombatWorldSave CombatWorld;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,SaveGame,Category="Save") TArray<FDWMapSnapshot> VisitedMaps;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,SaveGame,Category="Save") TArray<FName> CompletedWorldEvents;
 

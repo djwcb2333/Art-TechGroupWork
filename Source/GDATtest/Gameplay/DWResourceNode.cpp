@@ -62,6 +62,9 @@ void ADWResourceNode::CommitHarvest(int32 ActualAmount)
     TGuardValue<bool> CommitGuard(bCommittingHarvest, true);
     const int32 Committed = bInfinite ? ActualAmount : FMath::Min(ActualAmount, RemainingAmount);
     if (!bInfinite) RemainingAmount -= Committed;
+    // Presentation follows the accepted inventory/stock commit, including the last batch.
+    // Notify before availability callbacks can hide the resource mesh or change focus.
+    if(InteractionPrompt)InteractionPrompt->NotifyHarvestCommitted(Committed);
     RefreshAvailability();
     OnHarvestCommitted(Committed);
 }

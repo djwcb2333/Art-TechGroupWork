@@ -1,6 +1,156 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bread of the Wild · v0.3.0-alpha.2 更新说明</title><style>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bread of the Wild · v0.4.0-alpha.1 更新说明</title><style>
 :root{color-scheme:light;--ink:#243246;--accent:#176858;--line:#d7e2df}*{box-sizing:border-box}body{margin:0;background:#edf3f1;color:var(--ink);font:16px/1.85 "Microsoft YaHei","Segoe UI",sans-serif}header{background:#173d34;color:#fff;padding:22px max(24px,calc((100vw - 1060px)/2));font-size:14px;letter-spacing:.05em}main{max-width:1060px;margin:28px auto 70px;padding:44px 52px;background:white;border-radius:16px;box-shadow:0 8px 36px #183e3410}h1{font-size:32px;line-height:1.4;margin:0 0 24px}h2{font-size:23px;line-height:1.5;margin-top:44px;padding-top:18px;border-top:1px solid var(--line)}p{margin:14px 0}a{color:#146e66;overflow-wrap:anywhere}code{background:#f0f3f6;padding:2px 5px;border-radius:4px;font:14px/1.7 Consolas,monospace;overflow-wrap:anywhere}pre{white-space:pre-wrap}blockquote{margin:20px 0;padding:16px 20px;background:#fff4db;border-left:5px solid #c18a24}blockquote p{margin:0}table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}th{background:#eaf3ef;text-align:left}td,th{padding:12px 14px;border:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}th:first-child{width:31%}li{margin:10px 0}img{display:block;max-width:100%;height:auto;border:1px solid var(--line);border-radius:9px;margin:22px auto}strong{color:#153e35}blockquote strong{color:#715013}@media(max-width:720px){main{margin:0;border-radius:0;padding:26px 19px}h1{font-size:26px}h2{font-size:21px}table{font-size:12px}td,th{padding:8px}}@media print{body{background:white}header{background:white;color:black;padding:0}main{box-shadow:none;max-width:none;padding:10px;margin:0}h2{break-after:avoid}tr,img{break-inside:avoid}a{color:#163e34}blockquote{background:#f3f3f3}}
-</style></head><body><header>BREAD OF THE WILD / DOUGH WORLD · v0.3.0-alpha.2 · 编译与稳定性修复版</header><main><h1 id="v0.3.0-alpha.2">v0.3.0-alpha.2 · 编译与稳定性修复版</h1>
+</style></head><body><header>BREAD OF THE WILD / DOUGH WORLD · v0.4.0-alpha.1 · 战斗、采集与界面整合测试版</header><main><h1 id="v0.4.0-alpha.1">v0.4.0-alpha.1 · 战斗、采集与界面整合测试版</h1>
+<ul>
+<li>日期：2026-10-24；阶段：Alpha 开发测试快照。</li>
+<li>上次已上传版本：v0.3.0-alpha.2「编译与稳定性修复版」，提交 <code>a4ba906</code>（2026-10-10）。</li>
+<li>本次新增整批玩法和内容，次版本从0.3提升为0.4，修订号归零，Alpha序号重新从1开始；不表示完成40%，也不表示Beta或最终验收。</li>
+<li>私有仓库：<a href="https://github.com/djwcb2333/Art-TechGroupWork">Art-TechGroupWork</a>。<a href="https://github.com/djwcb2333/Art-TechGroupWork/tree/v0.4.0-alpha.1">本版固定快照</a> · <a href="https://github.com/djwcb2333/Art-TechGroupWork/compare/v0.3.0-alpha.2...v0.4.0-alpha.1">相对上版完整文件差异</a>。上传完成后这两个版本链接可用。</li>
+<li>工程保持 <code>GDATtest.uproject</code>、UE 5.8.2、两个原有C++模块及既有资源位置。这里记录完整可编辑工程源码与资产快照，不是可直接运行的打包程序。</li>
+</ul>
+<h2 id="section">这次新增或改变了什么</h2>
+<h3 id="section-1">角色、战斗与动画</h3>
+<ul>
+<li>接入生命、水分、饱腹、特殊四资源与独立时钟，包含饥渴消耗、暂停冻结和资源结算顺序。</li>
+<li>霉菌/酵母核心可从背包使用；完成0.6秒注射后消耗1颗，进入15秒对应形态，初始特殊25。取消不扣核心，变身中不能重复消耗续时。</li>
+<li>酵母Space接付费冲撞、碰撞伤害/击退、墙体截断和同目标去重；霉菌E扎根接堡垒修正、持续消耗及一次6枚圈雷。最终演出和手感仍待验收。</li>
+<li>空手与八武器接入各自实际玩法：长矛距离收益、盾斧普通/完美格挡与强化、大剑蓄力后松键下砸/横扫、匕首连段/背刺、孢子枪追踪弹、霉菌弓与减速区、霰弹8粒射线与逐发装填、酒瓶抛物线与持续伤害区。</li>
+<li>伤害判定与动画表现分离；伤害、库存、弹药、核心及掉落使用单次权威提交，防止回调重入重复结算。永久拥有、当前装备、备用弹和匣内弹分别维护。</li>
+<li>新增主角武器动作数据、组件与片段，小怪/大怪动画蓝图及攻击/移动/死亡等动画；完整源段按正式动作时长映射，判定框独立。大剑角色/剑满蓄保留1秒循环，镜头满蓄为单次冲击。旧骨架、旧动画与原资源保留。</li>
+<li>接入四类可选敌人profile：霉菌近战、酵母近战、馊团僵尸、馊团精英，包含警戒/攻击阶段、返家、受击与精英抗打断；保留旧Legacy敌人。对应阵营打手归玩家击杀时各50%概率掉1颗核心，满包保留在世界。</li>
+<li>接入死亡袋、安全点复活及部分领取/防重领基础；正式新四敌和安全点投放不因这些代码存在就视为验收完成。</li>
+<li>现有Map1环境刷新调整为小怪/大怪85:15、总上限8、大怪上限2、12–20秒间隔，限导航连通区域；这不是全部地图生态已布置完成。</li>
+</ul>
+<h3 id="section-2">保存、输入与恢复</h3>
+<ul>
+<li>单地图战斗保存聚合接入资源、装备、弹匣、敌人、核心/死亡袋、弹体/持续区、盾暂挂伤害、堡垒和地雷等记录；临时文件加原子替换保护写盘。</li>
+<li>加载等待世界/玩家和请求的流送准备完成；失败返回既有存档列表，避免重复恢复已提交事实。暂停记录物理松键，恢复时先处理释放，避免卡招、继续开火或重复消耗。</li>
+<li>旧文件缺少新结构时可能被明确拒绝，<strong>没有承诺所有旧档兼容</strong>；本次发布不删除、不迁移、不覆盖个人存档。</li>
+<li><strong>跨地图完整冻结/异图安全点组合仍为外部未安装候选</strong>，不能从单地图保存推断已经支持。</li>
+</ul>
+<h3 id="ui">UI、背包与反馈</h3>
+<ul>
+<li>导入C01手绘UI素材155张，另新增关闭叉号；当前标题、设置、存档、背包与HUD已接入对应素材和玩法数据。英文字体采用Darumadrop One，中文字体保留；素材数量不代表每个设计候选界面均已实现。</li>
+<li>背包仍24格；局内只有3快捷格，对应背包索引0/1/2，前三格白边/编号、拖拽与武器装备接入。没有32格扩容或批量制作。</li>
+<li>HUD接四资源、形态、装备与真实霰弹装填；最终两圆尺寸248，左右/底部内距72/30，快捷格92、间距16。开关背包、过场退场/回归处理重叠和反向。</li>
+<li>标题/执行按钮沿用DW UI Bounce；物品槽仅线性提亮。新增可挂载Brush Fill、按钮动效与Glow Pulse组件；采集灰半透明底白字、左到右亮条，真实成功触发拾取Bounce/柔光，取消不冒充成功。</li>
+<li>设置五分类重排，文字按钮居中、单层左右12/上下4内距，英文长词按实际字体适配。存档三卡与返回一次完整显示、圆角与留白调整、卡片Hover渐亮。</li>
+<li>UI共158项资产变化：156个新Image包、既有英文字体和小地图材质。</li>
+</ul>
+<h3 id="section-3">独立资源采集测试版</h3>
+<ul>
+<li>测试图：内容抽屉打开 <code>/Game/DoughWorld/Maps/Gameplay/Levels/L_DoughWorld_GatheringTest</code>，点击Play运行；独立配置为 <code>/Game/DoughWorld/Core/Data/DA_DWGathering_Test</code>。</li>
+<li>59物品（保留17旧条目）、21新配方、8工具记录；新增糖树、结块面粉、水塘、散落糖块、制作站、残骸占位。</li>
+<li>接入Use选斧/镐、F或点击采集、耗尽延时掉落、满包留地、丢弃守恒、水塘补水及玩家/敌人减速、工作站门槛和建筑生成。</li>
+<li>每物品按配置堆叠，材料多数10、工具1；资源耐久100、简易/正式工具每次伤害25/50、间隔1秒、掉落延迟0.35秒、塘水300、补水20/秒、步速80%均为当前测试值，不是最终平衡。</li>
+<li>新增9份UE资产、21新源码，另15份既有源码局部接入。原全局DA只追加测试图与配置覆盖登记，旧图保留原流程。</li>
+<li><strong>测试图拒绝新建/保存/载入测试进度及跨Profile旅行，停止PIE后重置。</strong> 资源世界持久化与正式地图投放尚未完成。</li>
+</ul>
+<h3 id="section-4">地图、材质与建筑插件</h3>
+<ul>
+<li>新增Storm台地/桥路/建筑白盒及相应静态网格、纯色材质；包含后续用户副本，保留当前全部已有内容。白盒是空间测试，未视为正式完整玩法地图。</li>
+<li>新增 <code>L_DoughWorld_StormLandscape_Test_v03</code>：1009²高度图、630m窗口、45m谷深，复用现有图层/材质，保留Trial_Edit试笔层。另有中央岛网格绘制母材质/实例与独立UV网格，RGBA对应Sand/DesertDirt/DesertGrass/Dirt，坡度用Rock。</li>
+<li>主菜单现为 <code>/Game/DoughWorld/Maps/Gameplay/Levels/L_DWMainMenu_Showcase</code>；启动/默认/打包配置已跟随此前授权的移动更新。旧Frontend位置是指向新图的重定向器，本次原样保留，不再搬动或清理。</li>
+<li>新增完整项目插件 <code>Plugins/DesertBuildingLab</code>，描述版本 <code>0.4.9-ui.1</code>；上传Runtime/Editor源码31份、描述文件及361个插件资产，含Art05—Art09的建筑模块、材质、纹理和样式。插件版本与游戏版本分别维护。</li>
+<li><code>.uproject</code>启用内置ProceduralMeshComponent；游戏模块新增AnimGraphRuntime/ProceduralMeshComponent，编辑器依赖新增AnimGraph/BlueprintGraph，<code>DWCombatRules.json</code>登记为打包UFS依赖。</li>
+<li>仅为有完整源码的DesertBuildingLab精确忽略其 <code>Binaries/</code>：保留本机2DLL、2PDB、modules共5文件（139,331,258字节），不删除，接收方重新编译。其他未来二进制插件不受这条规则影响。</li>
+</ul>
+<h2 id="section-5">完整变化范围与保留规则</h2>
+<p>初步磁盘清单为1,127项：67修改、1,060新增，无删除。排除上述5个可再生插件输出后，游戏本身共有1,122项增量：</p>
+<table>
+<thead>
+<tr>
+<th>范围</th>
+<th style="text-align: right;">文件数</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Content/DoughWorld</td>
+<td style="text-align: right;">396</td>
+<td>395份UE资产和1份战斗JSON；UI、动画、敌人、地图、白盒、采集、武器等</td>
+</tr>
+<tr>
+<td>Source/GDATtest</td>
+<td style="text-align: right;">330</td>
+<td>52份既有文件修改、278新增；含功能与原生验证源码</td>
+</tr>
+<tr>
+<td>Plugins/DesertBuildingLab</td>
+<td style="text-align: right;">393</td>
+<td>361资产、31源码、1描述文件；不含本机编译输出</td>
+</tr>
+<tr>
+<td>Config与.uproject</td>
+<td style="text-align: right;">3</td>
+<td>两份配置和工程描述</td>
+</tr>
+</tbody>
+</table>
+<p>游戏增量约340,012,893字节（324.3MiB，按各变化文件当前完整尺寸合计，不是Git压缩体积或实际网络流量）。发布另更新README、版本记录MD/HTML、命名指南MD/HTML和.gitignore共6份维护文件。最终提交数以Git实际提交及上传验收记录为准。</p>
+<p>不上传个人Saved/存档、缓存、打包目录、外部Blender/Figma设计和工作区交付副本。2026-10-24结块面粉Low poly样件尚未导入UE，因此不计作本版UE模型。保留用户本次所有已有资源修改、候选资产和插件各代内容；本次上传不重新归类、迁移、改名、删除或生成覆盖UE资源。</p>
+<h2 id="section-6">已有验证与本次上传核对分开记录</h2>
+<p>下表引用各专题已有结果，<strong>不是10月24日本次上传重新运行的一套全回归</strong>，不同批次数量不相加：</p>
+<table>
+<thead>
+<tr>
+<th>范围</th>
+<th>已有证据</th>
+<th>主要限制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最新战斗Feedback27</td>
+<td>Editor成功、4BP/AnimBP内存编译、27原生、66自然渲染PIE</td>
+<td>不是完整存档矩阵/全玩法/新包验收</td>
+</tr>
+<tr>
+<td>UI C03/C04</td>
+<td>各自Editor；C03材料文件存读36/36、Standalone过场24/24；C04设置1249/1249、最终布局71/71等</td>
+<td>不覆盖武器文件往返、旧Demo跨图、设置写盘、全DPI或打包</td>
+</tr>
+<tr>
+<td>UI C05</td>
+<td>Editor Build03、存档布局55/55、采集188/188、菜单HUD43/43、定点截图</td>
+<td>采集含隔离夹具；过场为通道模拟，纯鼠标Hover仍待用户</td>
+</tr>
+<tr>
+<td>资源采集</td>
+<td>Editor Build04、97PIE原生、真实短按F/点击砍树/Use选镐/瓶装水制作</td>
+<td>26自动化是较早Build01；长按/改键、完整徒步、独立运行/打包未验</td>
+</tr>
+<tr>
+<td>Storm白盒/高度图/中央岛材质</td>
+<td>各自地图检查、定点碰撞/导航/雕刻刷笔与保存重载</td>
+<td>不代表正式玩法、全部岛屿或所有材质通道验收</td>
+</tr>
+</tbody>
+</table>
+<p>上传前只读核对：C05源码11/11、C04按C05覆盖的联合版本23/23、采集源码36/36、C01导入包155/155与各自最新回执匹配。变化文本366份可读，3份JSON描述可解析，指定常见凭据格式扫描未发现匹配。每项变化保留路径/尺寸/SHA256清单，暂存后再次比对，LFS包与远程提交/标签另做上传核验。</p>
+<p>本次不关闭、保存、导入、编译、运行或重启UE，不读写正式存档；没有重新打包。最新全部改动的干净构建、实际组员电脑、完整独立/包内运行、Shipping、GPU性能和最终用户验收仍待完成。</p>
+<h2 id="section-7">已知待办与同步时注意</h2>
+<ul>
+<li>新四敌/安全点正式投放、完整17组存档与异常恢复、跨地图冻结组合仍待完成或验证；旧档可能被新结构校验拒绝。不要以删档处理上传。</li>
+<li>采集残骸谜题/奖励、工具耐久、19个未定义用途物品效果、最终美术/物品图标/音效和资源持久化未完成。新Suno声音仅外部计划，未导入。</li>
+<li>UI还可能显示固定“Stack limit 40 - 24 slots”，与采集Profile实际1/10上限不符；建筑通知可能写加入背包而实际生成在世界；通用F文字、提示重叠、工作台缺失说明、水塘/建造专页待处理。</li>
+<li>全部输入组合、持续长按跨菜单、改键、纯鼠标Hover及最终手感/视觉未代用户验收。当前Alpha快照用于共同开发和定点试玩。</li>
+<li>插件旧教学控制器有可选 <code>/Game/DesertPrototype</code> 示例回退引用；本工程不含该旧示例图，不把该控制器当默认游戏入口。插件当前自有样式资源保留。</li>
+</ul>
+<h2 id="github-desktop">组员更新步骤（GitHub Desktop）</h2>
+<ol>
+<li>UE停止Play，保存自己的修改并关闭编辑器。GitHub Desktop的Changes如有个人修改，先妥善提交/备份，<strong>不要Discard all changes</strong>。</li>
+<li>左上Current repository选 <strong>Art-TechGroupWork</strong>，Current branch选 <strong>main</strong>。点顶部 <strong>Fetch origin</strong>；出现 <strong>Pull origin</strong> 后点击，等待源码及Git LFS资产全部下载。首次克隆仍用 <strong>File → Clone repository… → URL</strong>，填私有仓库地址并选择新的空目录。</li>
+<li>History确认本版标题和 <code>v0.4.0-alpha.1</code>。本版含C++与项目插件变更，旧本机DLL不能代替新编译。</li>
+<li>使用匹配UE5.8.2与VS2022 C++工具/Windows SDK；右键本机 <code>GDATtest.uproject</code> → <strong>显示更多选项 → Generate Visual Studio project files</strong>。打开生成的解决方案。</li>
+<li>Visual Studio顶部选 <strong>Development Editor / Win64</strong>，在解决方案资源管理器中右键 <strong>GDATtest → 生成</strong>；其Editor目标（GDATtestEditor）与DesertBuildingLab的Runtime/Editor模块随之编译。等待生成成功后打开工程。无需删除Content、Saved或个人存档。</li>
+<li>默认标题地图是 <code>DoughWorld/Maps/Gameplay/Levels/L_DWMainMenu_Showcase</code>；旧Map1和新增测试图均保留。采集测试先打开上文GatheringTest再Play，停止后重置。</li>
+<li>引擎插件 <strong>ModelContextProtocol、MCPClientToolset、AllToolsets</strong> 仍为既有依赖，不随仓库复制；若缺失先核对匹配安装，不自行禁用。内置ProceduralMeshComponent也必须可用。遇到LFS指针未落盘或编译错误，保留现场并反馈，不通过清空资源解决。</li>
+</ol>
+<p>本次使用既有Desktop界面入口，不新增虚构的游戏UI。旧版教程截图只是入口示例，当前桌面同步结果以本次上传验收记录为准；各专题实际游戏截图保存在作者外部交付，不随本工程仓库打包。</p>
+<hr />
+<h1 id="v0.3.0-alpha.2">v0.3.0-alpha.2 · 编译与稳定性修复版</h1>
 <ul>
 <li>日期：2026-10-10。</li>
 <li>阶段：Alpha；延续 0.3.0 的同一里程碑，本次只修复已有问题，没有新增功能，因此 Alpha 序号从 1 递增为 2。</li>
@@ -9,7 +159,7 @@
 <li>固定版本：<a href="https://github.com/djwcb2333/Art-TechGroupWork/tree/v0.3.0-alpha.2">v0.3.0-alpha.2</a>。</li>
 <li>工程入口仍为 GDATtest.uproject，沿用 UE 5.8.2、Source、Content 和 Config 的完整工程。</li>
 </ul>
-<h2 id="section">修复了哪些问题</h2>
+<h2 id="section-8">修复了哪些问题</h2>
 <table>
 <thead>
 <tr>
@@ -48,11 +198,11 @@
 </tr>
 </tbody>
 </table>
-<h2 id="section-1">修改范围</h2>
+<h2 id="section-9">修改范围</h2>
 <p>本批已有修复涉及 6 个现有 cpp 和 README；发布另外局部更新版本记录与命名指南的 md/html，合计 11 个文件变化。</p>
 <p>源码文件位于 Source/GDATtest/Gameplay：DWGameInstance.cpp、DWPlayerCharacter.cpp、DWTextRevealDemo.cpp、DWUIAuthoringLibrary.cpp、DWUserSettings.cpp、GameplayUXRuntimeTests.cpp。</p>
 <p>没有新增地图、玩法系统、UI页面或美术资产。Content、Config、GDATtest.uproject 和存档格式继续使用上一版；旧版本标签固定保留。个人存档、测试输出、缓存、旧备份和可运行包不纳入此次提交。</p>
-<h2 id="section-2">已有验收结果</h2>
+<h2 id="section-10">已有验收结果</h2>
 <p>以下来自 <strong>2026-10-09 修复任务的最终验收</strong>；本次上传核对实时源码与该验收文件哈希，没有再次编译、启动 UE、保存资源或重跑测试。</p>
 <ul>
 <li>Editor 与 Game Development 强制 Unity 构建成功，关闭 Adaptive 排除后同样通过；不是通过禁用 Unity 或屏蔽警告绕过编译错误。</li>
@@ -62,13 +212,13 @@
 <li>目标槽字节保护、普通加载后保存、关闭动画切图后保存均有回归验证；修复任务 21 项定点保护文件哈希保持不变。</li>
 </ul>
 <p>较早的 UnityFix 阶段仅做了 184 项检查、仍留 float 警告、未重新打包；这些是历史阶段，不代替上述 ProjectAudit 最终状态。</p>
-<h2 id="section-3">尚未解决或未验证</h2>
+<h2 id="section-11">尚未解决或未验证</h2>
 <ul>
 <li>UE 实验工具插件在 UnrealEditor.exe -game 路径仍有 Python 初始化错误；普通 Editor 命令行测试及最终打包程序没有该错误。本版没有修改引擎或禁用插件。</li>
 <li>Shipping、组员电脑实际构建/运行、GPU性能、硬件输入和所有地图逐项人工验收仍待各自测试。作者本机成功不等于组员机器已经成功。</li>
 <li>这次 Git 上传的是可编辑源码工程的修复快照；没有新建 GitHub 网页 Release，也不包含新的可下载 exe。</li>
 </ul>
-<h2 id="section-4">组员如何同步并让修复生效</h2>
+<h2 id="section-12">组员如何同步并让修复生效</h2>
 <ol>
 <li>在 UE 保存需要保留的工作，并关闭编辑器。先保护自己的未提交修改，避免拉取时冲突。</li>
 <li>GitHub Desktop 选择 Art-TechGroupWork → main → <strong>Fetch origin → Pull origin</strong>。使用最新版 main；旧 v0.3.0-alpha.1 标签不会自动变化。</li>
@@ -91,7 +241,7 @@
 <li>工程：GDATtest.uproject；Unreal Engine 5.8.2，完整 Source / Content / Config 一起获取。</li>
 <li>内容范围：累计纳入 2026-09-22 存档/打包修复，以及 2026-10-04～05 小地图、设置、背包、镜头、合成开关和对白跳句改动。</li>
 </ul>
-<h2 id="section-5">新增：可复用小地图及目标导航</h2>
+<h2 id="section-13">新增：可复用小地图及目标导航</h2>
 <ol>
 <li>右下增加圆形小地图，宽度与右上 BrewingCard 对齐；暖白几何体块、纯白圆框、玩家青色、资源/点位金黄、敌人珊瑚红，标记带白色细描边。</li>
 <li>底图来自当前关卡实际几何的深度捕获，不使用固定 Map1 图片。玩家移动和场景模型变化会更新底图；默认 Capture Interval=0.2 秒，Capture Resolution=1024，View Radius=5000 cm（50 米）。</li>
@@ -103,7 +253,7 @@
 <p><strong>编辑入口：</strong> 内容抽屉 → DoughWorld/Characters/Hero/Blueprints/BP_DWTopDownCharacter → 双击 → Components（组件）选 MinimapController → Details 搜索 Follow Camera Yaw。组件蓝图位于 DoughWorld/Gameplay/BPC_DWMinimap；改以后新组件的默认值时使用 Class Defaults（类默认值），既有实例覆盖值仍优先。North Yaw 定义世界北方，Capture Pitch 默认 −70°，不会跟随主镜头上下拖动。</p>
 <p><img src="Docs/Release_v0.3.0-alpha.1/MinimapBefore.png" alt="最新 Development 包：镜头转动前的小地图" /></p>
 <p><img src="Docs/Release_v0.3.0-alpha.1/MinimapAfter.png" alt="最新 Development 包：镜头转动后，地形、箭头与方位同步" /></p>
-<h2 id="section-6">改动：设置界面、音量与操作说明</h2>
+<h2 id="section-14">改动：设置界面、音量与操作说明</h2>
 <ol>
 <li>设置重排为图像 Graphics、声音 Audio、按键 Keys、控制器 Controls、常规 General 五个固定书签，使用暖奶油纸页、焦糖圆角和深棕文字。</li>
 <li>新增 Master Volume 主音量总控，覆盖游戏全部声音输出；音乐、旁白、音效保留独立比例。主音量和分类音量即时生效并保存，本次没有新增音频素材。</li>
@@ -115,7 +265,7 @@
 <p><strong>编辑入口：</strong> DoughWorld/UI/WBP_DWGameplay、DoughWorld/UI/Frontend/WBP_DWFrontend、DoughWorld/UI/WBP_DWSettingsPanel。滑条参数在 Class Defaults → UI → Sliders；布局在 Designer（设计器）→ Hierarchy（层级）。动态书签、改键行和浮窗颜色由现有原生类刷新，单改 Designer 状态色不一定覆盖运行结果。</p>
 <p><img src="Docs/Release_v0.3.0-alpha.1/SettingsBook.png" alt="实际独立运行：五个暖色书签设置页" /></p>
 <p><img src="Docs/Release_v0.3.0-alpha.1/MasterVolume.png" alt="实际独立运行：主音量及分类音量；图中数值为测试值" /></p>
-<h2 id="section-7">改动：镜头中键拖拽和滚轮远近</h2>
+<h2 id="section-15">改动：镜头中键拖拽和滚轮远近</h2>
 <ul>
 <li>默认 Key Camera Drag 从鼠标右键改为 Middle Mouse Button（鼠标中键）；按住中键拖拽改变镜头。</li>
 <li>设置 → Controls 可调玩家灵敏度倍率，范围 25%～300%，默认 100%；倍率作为本机设置保存。</li>
@@ -123,7 +273,7 @@
 <li>当前 Hero 初始 Camera Distance=1800 cm；最近 Min Camera Distance=600 cm，最远 Max Camera Distance=3000 cm；Camera Zoom Step=150 cm，Camera Zoom Interp Speed=10。滚轮距离属于当前角色会话状态，本版未增加跨存档恢复字段。</li>
 </ul>
 <p><strong>编辑入口：</strong> BP_DWTopDownCharacter → Class Defaults → 搜索 Camera，调基础灵敏度、最近/最远距离、步长与插值速度。默认拖拽按键在 DoughWorld/Core/Controllers/BP_DWPlayerController → Class Defaults → DoughWorld → Input → Camera → Key Camera Drag。已有玩家保存的个人按键可能优先于蓝图默认；游戏设置中的恢复默认采用当前蓝图绑定。</p>
-<h2 id="section-8">新增：背包分堆、合并与丢弃确认</h2>
+<h2 id="section-16">新增：背包分堆、合并与丢弃确认</h2>
 <p>按 B 打开背包，制作页的背包区域也支持以下操作：</p>
 <table>
 <thead>
@@ -174,13 +324,13 @@
 <p>确认窗为 260×128 逻辑尺寸，仅显示“是否丢弃？是/否”，靠近屏幕边缘自动向内调整。是/Enter 确认；否/Esc/点击小窗外取消。取消不扣物品；拆分失败不改数量。确认丢弃后不会生成地面可捡拾物品，之后正常保存会记录库存删除结果。</p>
 <p><strong>编辑入口：</strong> WBP_DWGameplay → Class Defaults → Inventory → Input，可改 Drag Button、Discard Key、Discard Click、Quick Stack Click、Split One Click、Split Half Click。各组合严格区分修饰键，不应配置成相同组合。背包容量与单堆上限仍由既有物品配置控制。</p>
 <p><img src="Docs/Release_v0.3.0-alpha.1/InventoryDiscard.png" alt="实际独立运行：鼠标松手处的小丢弃确认窗；尚未确认时不扣物品" /></p>
-<h2 id="section-9">新增：合成变身要求总开关</h2>
+<h2 id="section-17">新增：合成变身要求总开关</h2>
 <p>DA_DoughWorldGameplay → Crafting 新增 <strong>Require Transformation For Crafting / 合成是否需要变身</strong>。当前默认关闭，普通形态也可合成；开启后，配方原有 Requires Yeast 规则重新生效。材料和背包容量检查始终保留，不会因为关闭变身限制而免费合成。最新包已验证未变身实际合成成功及开关两种状态。</p>
 <p><strong>编辑入口：</strong> 内容抽屉 → DoughWorld/Core/Data/DA_DoughWorldGameplay → Details → Crafting；保存当前 Data Asset 后重新运行。</p>
-<h2 id="section-10">新增：对白左键直接下一句</h2>
+<h2 id="section-18">新增：对白左键直接下一句</h2>
 <p>保留自动逐字播放、逐句停留和自动换句，增加每次左键直接下一句。最后一句点击后跳过额外字幕展示等待；若断桥等场景事件仍在执行，继续等待事件完成，再恢复镜头、HUD 和玩家操作。跳句不等于取消整个场景事件。</p>
 <p><strong>编辑入口：</strong> 地图中选中过场 Actor → Details → Cinematic → Subtitle → <strong>Allow Click to Next Line</strong>，默认开启。关闭后保持自动流程。蓝图可调用 Skip Dialogue Line / Skip Subtitle Line；原 Advance Dialogue 接口保留。</p>
-<h2 id="section-11">修复：重复资源点导致保存失败与文档存档目录</h2>
+<h2 id="section-19">修复：重复资源点导致保存失败与文档存档目录</h2>
 <ol>
 <li>修复两个面粉资源点共用 Prototype_Flour 产生重复场景记录，导致提示“invalid or duplicate world object records”的问题。复制物件现在用对象路径分别保存和恢复，现有地图及原 ID 保留。</li>
 <li>存档格式由上版 3 升为 4，增加 ActorPath / OwnerPath；读取接受 1～4。旧记录 ID 唯一时可以匹配；后来改地图/对象身份或令旧 ID 变得重复的历史档，仍需单独迁移验证，不能保证任意地图变更兼容。</li>
@@ -199,11 +349,11 @@
 <li>启动沿用原主菜单，玩法地图仍为 /Game/DoughWorld/Maps/Gameplay/Levels/L_DoughWorld_Map1。</li>
 <li>本版 Git 上传的是完整可编辑工程和必要说明。试玩包须另外共享整个 Windows 输出目录，不能只发 exe；未把备份、QA 存档或整套打包产物放入工程 Git。</li>
 </ul>
-<h2 id="section-12">工程变化与保护</h2>
+<h2 id="section-20">工程变化与保护</h2>
 <p>相对 v0.2.0-alpha.1，本轮发布检查时工程功能变化为 <strong>57 文件</strong>：45 个源码/构建规则、11 个 UE 资产（含 Map1）及 1 个 Config。另纳入本次版本说明、README/命名指南更新、截图和针对两项生成日志的 Git 忽略规则。两份 Build/Windows/FileOpenOrder 日志属于生成数据，仅忽略该目录下 .log，保留 Build 的其他必要资源。</p>
 <p>11 个 UE 资产包括：Hero、PlayerController、DA_DoughWorldGameplay、Map1、WBP_DWFrontend、WBP_DWGameplay、WBP_DWSettingsPanel，以及新增 BPC_DWMinimap、BPC_DWMinimapMarker、WBP_DWMinimap、M_DWMinimapClay。Map1 等用户已保存的资产按当前磁盘快照纳入；Git 二进制差异不用于推断具体美术布局变化。</p>
 <p>本次发布操作不重新保存/重建蓝图或地图，不改名/移动工程，不改存档文件。已发布旧标签固定保留。本页截图来自相应任务的实际 UE/独立运行/打包验收；其中测试物品、百分比和场景状态不是新的默认玩法参数。</p>
-<h2 id="section-13">验证记录与尚未覆盖的范围</h2>
+<h2 id="section-21">验证记录与尚未覆盖的范围</h2>
 <p>以下是已有功能任务的验收记录，本次发布另外核对当前文件与最终验收副本，不把上传成功当作新增游戏测试：</p>
 <table>
 <thead>
@@ -232,7 +382,7 @@
 </tbody>
 </table>
 <p>最新已验收试玩包是 Windows_Development_CameraFollow，包含对白跳句源码。测试以引擎合成输入为主，对白跳句另做真实鼠标点击；本版未完成 Shipping、异机编译/运行、所有地图与玩法、GPU 性能、全部历史存档兼容、实体长按或手柄输入验收。小地图暂未提供楼层切换、路径规划、完整大地图 UI 或跨存档手动标点；仅材质区分的道路/水面不自动分类。</p>
-<h2 id="section-14">队员获取本版</h2>
+<h2 id="section-22">队员获取本版</h2>
 <ol>
 <li>接受私有仓库邀请，在 GitHub Desktop 登录受邀账号。</li>
 <li>第一次使用 File → Clone repository → URL，填 <code>https://github.com/djwcb2333/Art-TechGroupWork.git</code>，选择新的空目录；已有克隆先保护自己的修改，再 Fetch/Pull。</li>
@@ -242,7 +392,7 @@
 </ol>
 <p>以下保留上一版本的原始发布记录；其中旧仓库名称和验证边界描述当时状态。</p>
 <hr />
-<h1 id="section-15">期中验收版本（暂定）</h1>
+<h1 id="section-23">期中验收版本（暂定）</h1>
 <ul>
 <li>版本：<strong>v0.2.0-alpha.1</strong></li>
 <li>日期：2026-09-20</li>
@@ -251,7 +401,7 @@
 <li>工程入口：<code>GDATtest.uproject</code>，沿用 UE 5.8.2。</li>
 <li>演示地图：<code>/Game/DoughWorld/Maps/Gameplay/Levels/L_DoughWorld_Map1</code>。</li>
 </ul>
-<h2 id="section-16">本次内容</h2>
+<h2 id="section-24">本次内容</h2>
 <ol>
 <li>过场展示：水井引导、触发器、镜头往返、HUD 离返场、字幕与一次性完成进度；包含过场和正常游玩的独立镜头晃动配置。</li>
 <li>路标方向提示：多方向、可变数量、中英文文本、世界目标与屏幕方向投影。</li>
@@ -259,9 +409,9 @@
 <li>本阶段的音乐、音效、Logo、图标、物品与交互显示调整；采集成功、失败和停止音分别支持五槽候选。</li>
 </ol>
 <p>过场触发器和路标基础已包含于此前提交 <code>882fa25</code>。本次继续保存其后的全部 238 个工程文件变化：229 个资产、1 张地图、8 个源码文件，总文件大小约 80.3 MB；实际网络增量可能不同。</p>
-<h2 id="section-17">版本命名理由</h2>
+<h2 id="section-25">版本命名理由</h2>
 <p>相较 v0.1.0-alpha.2，这批新增功能和地图形成新的演示里程碑，次版本提升至 0.2.0，Alpha 序号从 1 开始。本版本没有被标为正式发行或课程最终验收通过；已发布旧标签保持原位。</p>
-<h2 id="section-18">验证与边界</h2>
+<h2 id="section-26">验证与边界</h2>
 <ul>
 <li>之前功能任务记录：过场/路标 Editor 与 Game Development 编译通过，Map1 PIE 26/26、方向数量与视角 4/4、保存后场景审计 8/8；镜头晃动 PIE 40/40；采集音配置/选择检查 116 项通过。</li>
 <li>本次发布核对：8 个变动源码文件 SHA256 与此前验收清单全部一致。以上是已有功能验收证据，不代表本次重新运行了所有测试。</li>
@@ -269,7 +419,7 @@
 <li>采集成功音已有用户确认；失败/停止音的最终听感未新增验收。既有 GameFeatureData 资产规则提示仍是已知问题。</li>
 <li>本次不修改存档结构、不删除或覆盖存档；发布前记录 15 份本机存档哈希，Saved 不纳入 Git。旧存档的完整游玩兼容性未在此次上传重新验证。</li>
 </ul>
-<h2 id="section-19">获取与后续迭代</h2>
+<h2 id="section-27">获取与后续迭代</h2>
 <p>有权限的队员使用 GitHub Desktop 克隆完整仓库，确保 Source、Content、Config 和 <code>.uproject</code> 一起取得，等待 LFS 下载完成；环境步骤见 README_GDATtest.md。不要只下载 Content。</p>
 <p>后续在同一里程碑内修正问题，可使用 v0.2.0-alpha.2；不要移动本次已发布标签。日常先在 UE 保存，再 Commit，最后 Push origin。</p>
 </main></body></html>

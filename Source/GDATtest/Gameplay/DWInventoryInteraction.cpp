@@ -1,5 +1,7 @@
 #include "DWInventoryInteraction.h"
 #include "DWGameplayWidget.h"
+#include "DWC01UIStyle.h"
+#include "DWHandbookButton.h"
 #include "DWGameplayConfig.h"
 #include "DWUIEntryWidgets.h"
 #include "DWLocalizationLibrary.h"
@@ -21,6 +23,8 @@
 
 namespace
 {
+    constexpr float InventoryDiscardPopupWidth=260.f;
+    constexpr float InventoryDiscardPopupHeight=144.f;
     bool DWChordMatches(const FInputChord& Chord,const FKey& Key,const FInputEvent& Event)
     {
         return Chord.Key.IsValid()&&Chord.Key==Key&&Chord.bShift==Event.IsShiftDown()&&
@@ -79,7 +83,7 @@ void UDWGameplayWidget::EnsureInventoryInteractionUI()
         UVerticalBox* Column=Cast<UVerticalBox>(Entry.Key->GetContent());
         if(!Column)continue;
         UTextBlock* Help=WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(),Entry.Value);
-        DWInventoryTextStyle(Help,13);Help->SetText(GetInventoryControlHelp());Help->SetVisibility(ESlateVisibility::HitTestInvisible);
+        DWInventoryTextStyle(Help,13);Help->SetVisibility(ESlateVisibility::Collapsed);
         UVerticalBoxSlot* HelpSlot=Column->AddChildToVerticalBox(Help);HelpSlot->SetPadding(FMargin(0,10,0,0));
     }
     // Prefer Designer-authored additions when present. Bind only the existing named controls.
@@ -102,16 +106,18 @@ void UDWGameplayWidget::EnsureInventoryInteractionUI()
     InventoryDiscardModal=WidgetTree->ConstructWidget<UBorder>(UBorder::StaticClass(),TEXT("InventoryDiscardModal"));
     InventoryDiscardModal->SetHorizontalAlignment(HAlign_Fill);InventoryDiscardModal->SetVerticalAlignment(VAlign_Fill);
     UCanvasPanelSlot* ModalSlot=Root->AddChildToCanvas(InventoryDiscardModal);
-    ModalSlot->SetAnchors(FAnchors(0));ModalSlot->SetAlignment(FVector2D::ZeroVector);ModalSlot->SetAutoSize(false);ModalSlot->SetSize(FVector2D(260,128));ModalSlot->SetZOrder(10000);
+    ModalSlot->SetAnchors(FAnchors(0));ModalSlot->SetAlignment(FVector2D::ZeroVector);ModalSlot->SetAutoSize(false);ModalSlot->SetSize(FVector2D(InventoryDiscardPopupWidth,InventoryDiscardPopupHeight));ModalSlot->SetZOrder(10000);
     UVerticalBox* Column=WidgetTree->ConstructWidget<UVerticalBox>();InventoryDiscardModal->SetContent(Column);
     UTextBlock* Title=WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(),TEXT("InventoryDiscardTitle"));
     DWInventoryTextStyle(Title,22,true);Column->AddChildToVerticalBox(Title)->SetPadding(FMargin(0,0,0,10));
     InventoryDiscardMessage=WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(),TEXT("InventoryDiscardMessage"));DWInventoryTextStyle(InventoryDiscardMessage,18);
     Column->AddChildToVerticalBox(InventoryDiscardMessage);InventoryDiscardMessage->SetVisibility(ESlateVisibility::Collapsed);
-    UHorizontalBox* Actions=WidgetTree->ConstructWidget<UHorizontalBox>();Column->AddChildToVerticalBox(Actions);
+    UHorizontalBox* Actions=WidgetTree->ConstructWidget<UHorizontalBox>(UHorizontalBox::StaticClass(),TEXT("InventoryDiscardActions"));Column->AddChildToVerticalBox(Actions);
     UButton* Confirm=WidgetTree->ConstructWidget<UButton>(UButton::StaticClass(),TEXT("InventoryDiscardConfirmButton"));UButton* Cancel=WidgetTree->ConstructWidget<UButton>(UButton::StaticClass(),TEXT("InventoryDiscardCancelButton"));
     for(UButton* Button:{Confirm,Cancel})
     {
+        // Runtime fallback buttons must receive their wrapper before AddChild can cache Slate.
+        if(bUseC01HUD)DWC01UI::AttachMotion(Button,false);
         Button->SetBackgroundColor(FLinearColor(.35f,.25f,.14f));
         UHorizontalBoxSlot* S=Actions->AddChildToHorizontalBox(Button);S->SetSize(FSlateChildSize(ESlateSizeRule::Fill));S->SetPadding(FMargin(5));
     }
@@ -129,37 +135,72 @@ void UDWGameplayWidget::ConfigureInventoryDiscardPopup()
 {
     if(!WidgetTree||!InventoryDiscardModal)return;
     // The former full-screen modal becomes one compact card; the input blocker below has no paint.
-    InventoryDiscardModal->SetBrush(FSlateRoundedBoxBrush(FLinearColor(.95f,.86f,.69f),12.f,FLinearColor(.45f,.24f,.10f),1.5f));
+    if(bUseC01HUD)InventoryDiscardModal->SetBrush(DWC01UI::Surface(DWC01UI::Paper(),FVector2D(InventoryDiscardPopupWidth,InventoryDiscardPopupHeight)));
+    else InventoryDiscardModal->SetBrush(FSlateRoundedBoxBrush(FLinearColor(.95f,.86f,.69f),12.f,FLinearColor(.45f,.24f,.10f),1.5f));
     InventoryDiscardModal->SetBrushColor(FLinearColor::White);
     InventoryDiscardModal->SetPadding(FMargin(16));
     InventoryDiscardModal->SetHorizontalAlignment(HAlign_Fill);InventoryDiscardModal->SetVerticalAlignment(VAlign_Fill);
     if(UCanvasPanelSlot* PopupLayoutSlot=Cast<UCanvasPanelSlot>(InventoryDiscardModal->Slot))
-    {PopupLayoutSlot->SetAnchors(FAnchors(0));PopupLayoutSlot->SetAlignment(FVector2D::ZeroVector);PopupLayoutSlot->SetAutoSize(false);PopupLayoutSlot->SetSize(FVector2D(260,128));PopupLayoutSlot->SetZOrder(10000);}
+    {PopupLayoutSlot->SetAnchors(FAnchors(0));PopupLayoutSlot->SetAlignment(FVector2D::ZeroVector);PopupLayoutSlot->SetAutoSize(false);PopupLayoutSlot->SetSize(FVector2D(InventoryDiscardPopupWidth,InventoryDiscardPopupHeight));PopupLayoutSlot->SetZOrder(10000);}
     if(InventoryDiscardMessage){InventoryDiscardMessage->SetText(FText::GetEmpty());InventoryDiscardMessage->SetVisibility(ESlateVisibility::Collapsed);}
     // Retain existing authored wrappers, but remove their old 460-wide centered dialog constraints.
     if(USizeBox* Width=Cast<USizeBox>(GetWidgetFromName(TEXT("InventoryDiscardWidth")))){Width->ClearWidthOverride();Width->ClearHeightOverride();}
     if(UBorder* Card=Cast<UBorder>(GetWidgetFromName(TEXT("InventoryDiscardCard")))){Card->SetBrushColor(FLinearColor::Transparent);Card->SetPadding(FMargin(0));}
     if(UWidget* Actions=GetWidgetFromName(TEXT("InventoryDiscardActions")))
-        if(UVerticalBoxSlot* PopupLayoutSlot=Cast<UVerticalBoxSlot>(Actions->Slot))PopupLayoutSlot->SetPadding(FMargin(0));
+        if(UVerticalBoxSlot* PopupLayoutSlot=Cast<UVerticalBoxSlot>(Actions->Slot))
+        {
+            PopupLayoutSlot->SetPadding(FMargin(0));
+            // The title keeps its natural line height; the buttons share the remaining
+            // card height so their labels center within the actual painted hit area.
+            PopupLayoutSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+            PopupLayoutSlot->SetVerticalAlignment(VAlign_Fill);
+        }
     if(UTextBlock* Title=Cast<UTextBlock>(GetWidgetFromName(TEXT("InventoryDiscardTitle"))))
     {
         Title->SetJustification(ETextJustify::Center);Title->SetAutoWrapText(false);
-        FSlateFontInfo Font=Title->GetFont();Font.Size=22;Title->SetFont(Font);Title->SetColorAndOpacity(FSlateColor(FLinearColor(.22f,.10f,.045f)));
+        FSlateFontInfo Font=Title->GetFont();Font.Size=22;if(bUseC01HUD)Font.OutlineSettings.OutlineSize=0;Title->SetFont(Font);
+        Title->SetColorAndOpacity(FSlateColor(bUseC01HUD?DWC01UI::Ink():FLinearColor(.22f,.10f,.045f)));
+        if(bUseC01HUD){Title->SetShadowColorAndOpacity(FLinearColor::Transparent);Title->SetShadowOffset(FVector2D::ZeroVector);}
         if(UVerticalBoxSlot* PopupLayoutSlot=Cast<UVerticalBoxSlot>(Title->Slot))PopupLayoutSlot->SetPadding(FMargin(0,0,0,10));
     }
     for(const FName Name:{FName(TEXT("InventoryDiscardConfirmLabel")),FName(TEXT("InventoryDiscardCancelLabel"))})
         if(UTextBlock* Label=Cast<UTextBlock>(GetWidgetFromName(Name)))
-        {FSlateFontInfo Font=Label->GetFont();Font.Size=18;Label->SetFont(Font);Label->SetAutoWrapText(false);Label->SetColorAndOpacity(FSlateColor(FLinearColor(.22f,.10f,.045f)));}
+        {
+            FSlateFontInfo Font=Label->GetFont();Font.Size=18;if(bUseC01HUD)Font.OutlineSettings.OutlineSize=0;Label->SetFont(Font);Label->SetAutoWrapText(false);
+            Label->SetWrapTextAt(0.f);Label->SetJustification(ETextJustify::Center);
+            Label->SetColorAndOpacity(FSlateColor(bUseC01HUD?(Name==TEXT("InventoryDiscardConfirmLabel")?FLinearColor::White:DWC01UI::Ink()):FLinearColor(.22f,.10f,.045f)));
+            if(bUseC01HUD){Label->SetShadowColorAndOpacity(FLinearColor::Transparent);Label->SetShadowOffset(FVector2D::ZeroVector);}
+        }
     for(const FName Name:{FName(TEXT("InventoryDiscardConfirmButton")),FName(TEXT("InventoryDiscardCancelButton"))})
         if(UButton* Button=Cast<UButton>(GetWidgetFromName(Name)))
         {
             FButtonStyle Style=Button->GetStyle();
-            Style.Normal=FSlateRoundedBoxBrush(FLinearColor(.77f,.57f,.32f),7.f);
-            Style.Hovered=FSlateRoundedBoxBrush(FLinearColor(.86f,.67f,.42f),7.f);
-            Style.Pressed=FSlateRoundedBoxBrush(FLinearColor(.64f,.43f,.22f),7.f);
-            Style.NormalPadding=FMargin(8,6);Style.PressedPadding=FMargin(8,7,8,5);
-            Button->SetStyle(Style);Button->SetBackgroundColor(FLinearColor::White);
-            if(UWidget* Label=Button->GetContent())if(UButtonSlot* PopupLayoutSlot=Cast<UButtonSlot>(Label->Slot))PopupLayoutSlot->SetPadding(FMargin(8,5));
+            if(bUseC01HUD)
+            {
+                // Configure may run again after registration: restore the neutral brush every time,
+                // then leave state colors and timing to the shared C01 tween.
+                Style.Normal=Style.Hovered=Style.Pressed=Style.Disabled=DWC01UI::Surface(FLinearColor::White);
+                // SButton adds style padding to the UButtonSlot content padding.
+                // Use the content slot only; two vertical padding layers squeezed this card.
+                Style.NormalPadding=FMargin(0);Style.PressedPadding=Style.NormalPadding;
+                Button->SetStyle(Style);
+                StyleC01Button(Button,Name==TEXT("InventoryDiscardConfirmButton")?DWC01UI::Danger():DWC01UI::Paper());
+                Button->SetBackgroundColor(C01Buttons.FindChecked(Button).Current);
+            }
+            else
+            {
+                Style.Normal=FSlateRoundedBoxBrush(FLinearColor(.77f,.57f,.32f),7.f);
+                Style.Hovered=FSlateRoundedBoxBrush(FLinearColor(.86f,.67f,.42f),7.f);
+                Style.Pressed=FSlateRoundedBoxBrush(FLinearColor(.64f,.43f,.22f),7.f);
+                Style.NormalPadding=FMargin(8,6);Style.PressedPadding=FMargin(8,7,8,5);
+                Button->SetStyle(Style);Button->SetBackgroundColor(FLinearColor::White);
+            }
+            if(UWidget* Label=Button->GetContent())if(UButtonSlot* PopupLayoutSlot=Cast<UButtonSlot>(Label->Slot))
+            {
+                PopupLayoutSlot->SetPadding(bUseC01HUD?FMargin(12,0):FMargin(8,5));
+                PopupLayoutSlot->SetHorizontalAlignment(HAlign_Center);PopupLayoutSlot->SetVerticalAlignment(VAlign_Center);
+            }
+            if(bUseC01HUD)DWC01UI::CenterButtonLabel(Button);
         }
     UCanvasPanel* Root=Cast<UCanvasPanel>(WidgetTree->RootWidget);
     if(Root&&!GetWidgetFromName(TEXT("InventoryDiscardHitBlocker")))
@@ -180,7 +221,7 @@ bool UDWGameplayWidget::PositionInventoryDiscardPopup(const FVector2D& ScreenPos
     if(RootSize.GetMin()<32.f||!FMath::IsFinite(ScreenPosition.X)||!FMath::IsFinite(ScreenPosition.Y))return false;
     // AbsoluteToLocal already removes window offset and DPI scaling. Never divide by DPI again.
     const FVector2D Requested=Geometry.AbsoluteToLocal(ScreenPosition)+FVector2D(8,8);
-    const FVector2D Size(FMath::Min(260.,RootSize.X-16.),FMath::Min(128.,RootSize.Y-16.));
+    const FVector2D Size(FMath::Min(double(InventoryDiscardPopupWidth),RootSize.X-16.),FMath::Min(double(InventoryDiscardPopupHeight),RootSize.Y-16.));
     const FVector2D Position(FMath::Clamp(Requested.X,8.,FMath::Max(8.,RootSize.X-Size.X-8.)),FMath::Clamp(Requested.Y,8.,FMath::Max(8.,RootSize.Y-Size.Y-8.)));
     PopupLayoutSlot->SetPosition(Position);PopupLayoutSlot->SetSize(Size);
     PopupLayoutSlot->SetAnchors(FAnchors(0));PopupLayoutSlot->SetAlignment(FVector2D::ZeroVector);PopupLayoutSlot->SetAutoSize(false);
@@ -198,10 +239,10 @@ bool UDWGameplayWidget::HandleInventoryDiscardPointer(const FPointerEvent& Event
 void UDWGameplayWidget::RefreshInventoryInteractionUI()
 {
     EnsureInventoryInteractionUI();
-    if(UWidget* Footer=GetWidgetFromName(TEXT("InventoryControlsFooter")))Footer->SetVisibility(CurrentPage==EDWMenuPage::Inventory?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
-    if(UWidget* Footer=GetWidgetFromName(TEXT("CraftingControlsFooter")))Footer->SetVisibility(CurrentPage==EDWMenuPage::Crafting?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
+    if(UWidget* Footer=GetWidgetFromName(TEXT("InventoryControlsFooter")))Footer->SetVisibility(ESlateVisibility::Collapsed);
+    if(UWidget* Footer=GetWidgetFromName(TEXT("CraftingControlsFooter")))Footer->SetVisibility(ESlateVisibility::Collapsed);
     for(const FName Name:{FName(TEXT("InventoryControlsHelpText")),FName(TEXT("CraftingControlsHelpText"))})
-        if(UTextBlock* Help=Cast<UTextBlock>(GetWidgetFromName(Name)))Help->SetText(GetInventoryControlHelp());
+        if(UTextBlock* Help=Cast<UTextBlock>(GetWidgetFromName(Name)))Help->SetVisibility(ESlateVisibility::Collapsed);
     if(UTextBlock* Title=Cast<UTextBlock>(GetWidgetFromName(TEXT("InventoryDiscardTitle"))))Title->SetText(DWText(this,TEXT("是否丢弃？"),TEXT("Discard?")));
     if(UTextBlock* Label=Cast<UTextBlock>(GetWidgetFromName(TEXT("InventoryDiscardConfirmLabel"))))Label->SetText(DWText(this,TEXT("是"),TEXT("Yes")));
     if(UTextBlock* Label=Cast<UTextBlock>(GetWidgetFromName(TEXT("InventoryDiscardCancelLabel"))))Label->SetText(DWText(this,TEXT("否"),TEXT("No")));
@@ -285,12 +326,12 @@ bool UDWGameplayWidget::NativeOnDrop(const FGeometry& Geometry,const FDragDropEv
     UDWInventoryDragOperation* Drag=Cast<UDWInventoryDragOperation>(Operation);
     if(!Drag)return Super::NativeOnDrop(Geometry,Event,Operation);
     if(!IsInventoryInteractionPage()||bInventoryDiscardPending||Drag->SourceScreen.Get()!=this||Drag->SourceInventory.Get()!=GetInventory())return true;
-    UBorder* ActiveCard=CurrentPage==EDWMenuPage::Inventory?InventoryCard.Get():CraftingCard.Get();
+    UWidget* ActiveCard=HandbookFrame?static_cast<UWidget*>(HandbookFrame.Get()):static_cast<UWidget*>(CurrentPage==EDWMenuPage::Inventory?InventoryCard.Get():CraftingCard.Get());
     const FVector2D Position=Event.GetScreenSpacePosition();
     // Only the in-game backdrop outside the panel counts. The OS desktop, Alt-Tab and cancelled drags do not.
     if(!ActiveCard||!Geometry.IsUnderLocation(Position))return true;
     const FName FooterName=CurrentPage==EDWMenuPage::Inventory?TEXT("InventoryControlsFooter"):TEXT("CraftingControlsFooter");
-    if(UWidget* Footer=GetWidgetFromName(FooterName))if(Footer->GetTickSpaceGeometry().IsUnderLocation(Position))return true;
+    if(UWidget* Footer=GetWidgetFromName(FooterName))if(Footer->IsVisible()&&Footer->GetTickSpaceGeometry().IsUnderLocation(Position))return true;
     const FGeometry& CardGeometry=ActiveCard->GetTickSpaceGeometry();
     if(CardGeometry.GetLocalSize().GetMin()<=1.f||CardGeometry.IsUnderLocation(Position))return true;
     RequestInventoryDiscardAtScreenPosition(Drag->Snapshot,Position);

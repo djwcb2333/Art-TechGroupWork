@@ -19,6 +19,7 @@ public:
  SLATE_BEGIN_ARGS(SDWSignpostArrow){} SLATE_END_ARGS()
  void Construct(const FArguments&){}
  float Degrees=0;
+ bool bPlainWhite=false;
  FLinearColor Color=FLinearColor(1,.94f,.77f,1);
  virtual FVector2D ComputeDesiredSize(float)const override{return FVector2D(42,42);}
  virtual int32 OnPaint(const FPaintArgs&,const FGeometry& G,const FSlateRect&,FSlateWindowElementList& Out,int32 Layer,const FWidgetStyle& WS,bool)const override
@@ -27,13 +28,13 @@ public:
   const auto P=[&](float X,float Y){return FVector2D(Center.X+X*FMath::Cos(A)-Y*FMath::Sin(A),Center.Y+X*FMath::Sin(A)+Y*FMath::Cos(A));};
   TArray<FVector2D> Stem={P(-13,0),P(13,0)},Head={P(3,-10),P(13,0),P(3,10)};
   auto Draw=[&](int32 L,FLinearColor C,float Width){FSlateDrawElement::MakeLines(Out,L,G.ToPaintGeometry(),Stem,ESlateDrawEffect::None,C*WS.GetColorAndOpacityTint(),true,Width);FSlateDrawElement::MakeLines(Out,L,G.ToPaintGeometry(),Head,ESlateDrawEffect::None,C*WS.GetColorAndOpacityTint(),true,Width);};
-  Draw(Layer,FLinearColor(.07f,.035f,.018f,1),8);Draw(Layer+1,Color,4);return Layer+1;
+  if(!bPlainWhite)Draw(Layer,FLinearColor(.07f,.035f,.018f,1),8);Draw(Layer+1,Color,4);return Layer+1;
  }
 };
 TSharedRef<SWidget> UDWSignpostArrow::RebuildWidget(){return SAssignNew(Arrow,SDWSignpostArrow);}
 void UDWSignpostArrow::ReleaseSlateResources(bool B){Super::ReleaseSlateResources(B);Arrow.Reset();}
-void UDWSignpostArrow::SetDirection(float D,FLinearColor C){if(Arrow){Arrow->Degrees=D;Arrow->Color=C;Arrow->Invalidate(EInvalidateWidgetReason::Paint);}}
-void UDWSignpostPromptWidget::SetDirection(float D){if(DirectionArrow)DirectionArrow->SetDirection(D,Style?Style->TextColor:FLinearColor::White);}
+void UDWSignpostArrow::SetDirection(float D,FLinearColor C){if(Arrow){Arrow->Degrees=D;Arrow->Color=C;Arrow->bPlainWhite=C.Equals(FLinearColor::White,.0001f);Arrow->Invalidate(EInvalidateWidgetReason::Paint);}}
+void UDWSignpostPromptWidget::SetDirection(float D){if(DirectionArrow)DirectionArrow->SetDirection(D,bUseC01Presentation?FLinearColor::White:(Style?Style->TextColor:FLinearColor::White));}
 
 UDWSignpostComponent::UDWSignpostComponent()
 {PrimaryComponentTick.bCanEverTick=true;PrimaryComponentTick.bTickEvenWhenPaused=true;PrimaryComponentTick.TickGroup=TG_PostUpdateWork;bAutoActivate=true;}

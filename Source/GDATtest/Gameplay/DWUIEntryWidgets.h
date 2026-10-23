@@ -16,7 +16,10 @@ public:
     UPROPERTY(BlueprintReadOnly,Category="Inventory UI") FDWItemStack Item;
     UFUNCTION(BlueprintImplementableEvent,Category="Inventory UI") void OnItemPresentationUpdated(bool bSelected);
 protected:
+    virtual void NativeOnInitialized() override;
     virtual void NativeConstruct() override;
+    virtual int32 NativePaint(const FPaintArgs& Args,const FGeometry& Geometry,const FSlateRect& Cull,
+        FSlateWindowElementList& Elements,int32 Layer,const FWidgetStyle& Style,bool bParentEnabled) const override;
     virtual FReply NativeOnPreviewMouseButtonDown(const FGeometry& Geometry,const FPointerEvent& Event) override;
     virtual void NativeOnDragDetected(const FGeometry& Geometry,const FPointerEvent& Event,UDragDropOperation*& OutOperation) override;
     virtual bool NativeOnDrop(const FGeometry& Geometry,const FDragDropEvent& Event,UDragDropOperation* Operation) override;
@@ -38,6 +41,7 @@ public:
     UPROPERTY(BlueprintReadOnly,Category="Crafting UI") FName RecipeId;
     UFUNCTION(BlueprintImplementableEvent,Category="Crafting UI") void OnRecipePresentationUpdated(bool bCanCraft);
 protected:
+    virtual void NativeOnInitialized() override;
     virtual void NativeConstruct() override;
     UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UTextBlock> RecipeNameText;
     UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UTextBlock> IngredientsText;
@@ -56,8 +60,15 @@ class GDATTEST_API UDWSaveSlotWidget : public UUserWidget
 public:
     UFUNCTION(BlueprintCallable,Category="Save UI") void ApplySaveData(UDWGameplayWidget* OwnerScreen,const FDWSlotSummary& InSummary);
     UPROPERTY(BlueprintReadOnly,Category="Save UI") FDWSlotSummary Summary;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Save UI|Appearance",meta=(ClampMin="0",Units="s")) float CardHoverSeconds=.18f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Save UI|Appearance",meta=(ClampMin="0",ClampMax="1")) float CardHoverBrightness=.12f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Save UI|Appearance",meta=(ClampMin="0",ClampMax="48")) float CardCornerRadius=20.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Save UI|Appearance") FMargin CardContentPadding=FMargin(28,18);
+    UFUNCTION(BlueprintPure,Category="Save UI|Diagnostics") float GetCardHoverAlpha()const{return CardHoverAlpha;}
+    void ApplyCardLayout();
     UFUNCTION(BlueprintImplementableEvent,Category="Save UI") void OnSavePresentationUpdated(bool bConfirmingDelete);
 protected:
+    virtual void NativeOnInitialized() override;
     virtual void NativeConstruct() override;
     UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UTextBlock> SlotNameText;
     UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UTextBlock> SlotDateText;
@@ -68,6 +79,10 @@ protected:
     UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> CancelDeleteButton;
     UPROPERTY(Transient) TObjectPtr<UDWGameplayWidget> Screen;
     bool bConfirmDelete=false;
+    virtual void NativeTick(const FGeometry& MyGeometry,float InDeltaTime) override;
+    virtual void NativeDestruct() override;
+    float CardHoverAlpha=0.f;
+    double CardLastTickTime=0.;
     UFUNCTION() void ClickLoad(); UFUNCTION() void ClickNew(); UFUNCTION() void ClickDelete(); UFUNCTION() void ClickCancelDelete();
     void RefreshDeleteState();
 };

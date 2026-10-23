@@ -1,4 +1,5 @@
 #include "DWMinimapWidget.h"
+#include "DWC01UIStyle.h"
 #include "DWMinimap.h"
 #include "DWLocalizationLibrary.h"
 #include "Blueprint/WidgetTree.h"
@@ -15,7 +16,7 @@
 namespace DWMinimapSlate
 {
     constexpr float ReferenceDiameter=220.f;
-    constexpr float ReferenceRingWidth=10.f;
+    constexpr float ReferenceRingWidth=220.f*(6.f/180.f); // C01 6 units at 180 diameter.
 
     // A solid-color polygon uses Slate's white resource; it creates no texture or UE asset.
     static void Polygon(FSlateWindowElementList& Elements,int32 Layer,const FGeometry& Geometry,
@@ -224,7 +225,7 @@ public:
     virtual FVector2D ComputeDesiredSize(float) const override
     {
         const float Diameter=GetDesiredDiameter();
-        return FVector2D(Diameter,Diameter+(bDrawFooter?44.f:0.f));
+        return FVector2D(Diameter,Diameter+GetFooterHeight());
     }
 
     virtual int32 OnPaint(const FPaintArgs& Args,const FGeometry& Geometry,const FSlateRect& Culling,
@@ -234,7 +235,7 @@ public:
         if(Map && !Map->IsMinimapVisible()) return Layer;
         if(!Map && !PreviewOwner.IsValid()) return Layer;
         // A surface is always a true circle, including when a Designer slot stretches its allocated size.
-        const float AvailableHeight=float(Geometry.GetLocalSize().Y)-(bDrawFooter?44.f:0.f);
+        const float AvailableHeight=float(Geometry.GetLocalSize().Y)-GetFooterHeight();
         const float Diameter=FMath::Min3(GetDesiredDiameter(),float(Geometry.GetLocalSize().X),AvailableHeight);
         if(Diameter<1.f) return Layer;
         const float Scale=Diameter/DWMinimapSlate::ReferenceDiameter;
@@ -262,6 +263,12 @@ public:
                 DWMinimapSlate::CirclePoints(Center,InnerRadius,96),FLinearColor(.64f,.60f,.53f,1.f));
         }
 
+        const bool C01=!Host.IsValid()||Host->bUseC01Appearance;
+        if(C01)
+        {
+            const FSlateBrush Rim=DWC01UI::Texture(TEXT("T_DW_C01_Minimap_WhiteRim"),FVector2D(Diameter,Diameter));
+            FSlateDrawElement::MakeBox(Elements,Layer+1,MapGeometry.ToPaintGeometry(),&Rim);
+        }
         int32 DrawLayer=Layer+2;
         if(!Map)
         {
@@ -314,7 +321,7 @@ public:
                 DWMinimapSlate::Marker(Elements,DrawLayer,Geometry,Center+Offset,SelectedRadius,Target.Shape,Target.Color,Scale);
             DrawLayer+=2;
 
-            if(bDrawFooter)
+            if(GetFooterHeight()>0.f)
             {
                 // Native fallback retains the same values as the optional Designer-authored TextBlocks.
                 const FText Suffix=DWMinimapSlate::NavigationSuffix(Map,Target);
@@ -339,6 +346,12 @@ private:
     {
         if(const UDWMinimapWidget* Widget=Host.Get()) return Widget->GetMinimapComponent();
         return Component.Get();
+    }
+    float GetFooterHeight()const
+    {
+        if(!bDrawFooter)return 0.f;
+        if(const auto* Widget=Host.Get())return Widget->GetFooterHeight();
+        return 0.f;
     }
     float GetDesiredDiameter() const
     {
@@ -386,6 +399,8 @@ void UDWMinimapWidget::InitializeMinimap(UDWMinimapComponent* InComponent)
 {
     MinimapComponent=InComponent;
     SetVisibility(ESlateVisibility::HitTestInvisible);
+    if(auto* Footer=GetWidgetFromName(TEXT("NavigationFooter")))
+        Footer->SetVisibility(bUseC01Appearance?ESlateVisibility::Collapsed:ESlateVisibility::HitTestInvisible);
     UWorld* World=InComponent?InComponent->GetWorld():nullptr;
     UDWMinimapNavigationSubsystem* TaskNavigation=World?World->GetSubsystem<UDWMinimapNavigationSubsystem>():nullptr;
     if(NavigationSubsystem.Get()!=TaskNavigation)
@@ -399,7 +414,7 @@ void UDWMinimapWidget::InitializeMinimap(UDWMinimapComponent* InComponent)
     }
     const float Diameter=InComponent?FMath::Clamp(InComponent->Diameter,160.f,400.f):DWMinimapSlate::ReferenceDiameter;
     // The widget includes a 44-unit footer; keep the map circle's center fixed during uniform scaling.
-    SetRenderTransformPivot(FVector2D(.5f,Diameter/(2.f*(Diameter+44.f))));
+    SetRenderTransformPivot(FVector2D(.5f,Diameter/(2.f*(Diameter+GetFooterHeight()))));
     UpdateNavigationText(InComponent && InComponent->IsMinimapVisible());
     InvalidateLayoutAndVolatility();
 }
@@ -413,13 +428,14 @@ void UDWMinimapWidget::HandleNavigationChanged()
         return;
     }
     // The shared subsystem signals selection/invalidation, never each actor movement update.
-    NavigationPulseElapsed=0.f;
+    bNavigationPulseActive=true;NavigationPulseElapsed=0.f;
     SetRenderScale(FVector2D(1.f,1.f));
 }
 
 void UDWMinimapWidget::FinishNavigationFeedback()
 {
-    NavigationPulseElapsed=.34f;
+    bNavigationPulseActive=false;
+    NavigationPulseElapsed=FMath::IsFinite(NavigationPulseSeconds)?FMath::Max(0.f,NavigationPulseSeconds):.34f;
     SetRenderScale(FVector2D(1.f,1.f));
 }
 
@@ -435,15 +451,16 @@ void UDWMinimapWidget::UpdateNavigationFeedback(float DeltaSeconds,bool bVisible
 {
     const UDWMinimapComponent* Map=MinimapComponent.Get();
     const float Diameter=Map?FMath::Clamp(Map->Diameter,160.f,400.f):DWMinimapSlate::ReferenceDiameter;
-    SetRenderTransformPivot(FVector2D(.5f,Diameter/(2.f*(Diameter+44.f))));
+    SetRenderTransformPivot(FVector2D(.5f,Diameter/(2.f*(Diameter+GetFooterHeight()))));
     UpdateNavigationText(bVisible);
     if(!bVisible || !bAnimateNavigationChanges || !Map)
     {
         FinishNavigationFeedback();
         return;
     }
-    constexpr float Duration=.34f;
-    if(NavigationPulseElapsed>=Duration) return;
+    const float Duration=FMath::IsFinite(NavigationPulseSeconds)?FMath::Max(0.f,NavigationPulseSeconds):.34f;
+    if(!bNavigationPulseActive)return;
+    if(Duration<=SMALL_NUMBER||NavigationPulseElapsed>=Duration){FinishNavigationFeedback();return;}
     if(FMath::IsFinite(DeltaSeconds))
         NavigationPulseElapsed=FMath::Min(Duration,NavigationPulseElapsed+FMath::Max(0.f,DeltaSeconds));
     if(NavigationPulseElapsed>=Duration)

@@ -217,7 +217,7 @@ namespace
         D.V(Settings,D.Text(TEXT("ResolutionLabel"),TEXT("分辨率"),18));D.V(Settings,D.Make<UComboBoxString>(TEXT("ResolutionCombo")));D.V(Settings,D.Text(TEXT("WindowModeLabel"),TEXT("显示模式"),18));D.V(Settings,D.Make<UComboBoxString>(TEXT("WindowModeCombo")));D.V(Settings,D.Text(TEXT("QualityLabel"),TEXT("画质"),18));D.V(Settings,D.Make<UComboBoxString>(TEXT("QualityCombo")));
         auto* VSync=D.Make<UCheckBox>(TEXT("VSyncCheck"));VSync->SetContent(D.Text(TEXT("VSyncLabel"),TEXT("垂直同步"),18));D.V(Settings,VSync);D.V(Settings,D.Button(TEXT("ApplySettingsButton"),TEXT("应用并保存")));D.V(Settings,D.Button(TEXT("SettingsBackButton"),TEXT("返回")));AddPage(Switch,SettingsPage);
 
-        UVerticalBox* Death=nullptr;auto* DeathPage=D.Page(TEXT("DefeatPage"),Death,660);D.Heading(Death,TEXT("Defeat"),TEXT("面团暂时失去了活力"),TEXT("加载上次保存的进度，或返回标题。"));D.V(Death,D.Button(TEXT("DeathLoadButton"),TEXT("加载当前存档")));D.V(Death,D.Button(TEXT("DeathTitleButton"),TEXT("返回标题")));AddPage(Switch,DeathPage);
+        UVerticalBox* Death=nullptr;auto* DeathPage=D.Page(TEXT("DefeatPage"),Death,660);D.Heading(Death,TEXT("Defeat"),TEXT("面团暂时失去了活力"),TEXT("返回已激活的安全点复活，再找回死亡袋中的掉落物品。"));D.V(Death,D.Button(TEXT("DeathLoadButton"),TEXT("加载当前存档")));D.V(Death,D.Button(TEXT("DeathTitleButton"),TEXT("返回标题")));AddPage(Switch,DeathPage);
 
         auto* Toast=D.Text(TEXT("ToastText"),TEXT("操作反馈提示"),19);Toast->SetJustification(ETextJustify::Center);D.Canvas(Root,D.Card(TEXT("ToastContainer"),Toast),FAnchors(.5f,1),FMargin(0,-170,670,60),FVector2D(.5f,1));
     }

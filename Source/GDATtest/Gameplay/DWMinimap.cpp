@@ -4,6 +4,7 @@
 #include "DWPlayerCharacter.h"
 #include "DWGameplayHUD.h"
 #include "DWGameplayWidget.h"
+#include "DWC01HUDAnchor.h"
 #include "DWGameInstance.h"
 #include "DWLoadingTransition.h"
 #include "DWWorldEvent.h"
@@ -87,7 +88,7 @@ rgb/=Grid*Grid;
 float radius=length(UV-.5);
 float aa=max(fwidth(radius),.0001);
 float alpha=1-smoothstep(.5-aa,.5,radius);
-float ring=smoothstep(.5-10.0/220.0-aa,.5-10.0/220.0+aa,radius);
+float ring=smoothstep(.5-6.0/180.0-aa,.5-6.0/180.0+aa,radius);
 rgb=lerp(rgb,float3(1,1,1),ring);
 return float4(rgb,alpha);
 )");
@@ -320,7 +321,7 @@ struct FRun
             const FVector2D SurfaceSize=ArrangedSize(Surface,Sample,TEXT("surface"));
             const FVector2D RootSize=ArrangedSize(Root,Sample,TEXT("root"));
             Check(TEXT("Painted surface is square at the configured diameter"),SurfaceSize.Equals(FVector2D(Component->Diameter,Component->Diameter),.25));
-            Check(TEXT("Painted root reserves the 44-unit navigation footer"),RootSize.Equals(FVector2D(Component->Diameter,Component->Diameter+44.f),.25));
+            Check(TEXT("Painted root reserves the 44-unit navigation footer"),RootSize.Equals(FVector2D(Component->Diameter,Component->Diameter+Widget->GetFooterHeight()),.25));
             Sample->SetNumberField(TEXT("surfaceWidth"),SurfaceSize.X);Sample->SetNumberField(TEXT("surfaceHeight"),SurfaceSize.Y);
             Sample->SetNumberField(TEXT("rootWidth"),RootSize.X);Sample->SetNumberField(TEXT("rootHeight"),RootSize.Y);
         }
@@ -666,13 +667,15 @@ void UDWMinimapComponent::BeginPlay()
     DWStartMinimapVerification(this);
     CaptureElapsed=ScanElapsed=100.f;
 }
-bool UDWMinimapComponent::CanShow(bool bIgnoreCinematic) const
+bool UDWMinimapComponent::CanShow(bool bIgnoreCinematic,bool bIgnoreMenu) const
 {
     const UWorld* World=GetWorld();
     const APawn* Pawn=Cast<APawn>(GetOwner());
     const APlayerController* PC=Pawn?Cast<APlayerController>(Pawn->GetController()):nullptr;
+    const ADWGameplayHUD* HUD=PC?Cast<ADWGameplayHUD>(PC->GetHUD()):nullptr;
+    const bool bPresentationMenu=bIgnoreMenu&&HUD&&HUD->GetMenuPage()!=EDWMenuPage::None;
     if(!bMinimapEnabled||!IsActive()||!World||!World->IsGameWorld()||World->bIsTearingDown||!PC||!PC->IsLocalController()
-        ||PC->IsPaused()||(!bIgnoreCinematic&&PC->GetViewTarget()!=Pawn))return false;
+        ||(PC->IsPaused()&&!bPresentationMenu)||(!bIgnoreCinematic&&PC->GetViewTarget()!=Pawn))return false;
     // An inherited native component and a manually added component must not create two maps.
     TArray<UDWMinimapComponent*> Maps;
     Pawn->GetComponents<UDWMinimapComponent>(Maps);
@@ -684,8 +687,7 @@ bool UDWMinimapComponent::CanShow(bool bIgnoreCinematic) const
     }
     const ADWPlayerCharacter* Hero=Cast<ADWPlayerCharacter>(Pawn);
     if(Hero&&Hero->IsDead())return false;
-    const ADWGameplayHUD* HUD=Cast<ADWGameplayHUD>(PC->GetHUD());
-    if(!HUD||!HUD->IsSessionStarted()||HUD->IsBlockingGameplay()||(!bIgnoreCinematic&&UDWWorldEventSubsystem::IsPlaying(this)))return false;
+    if(!HUD||!HUD->IsSessionStarted()||(!bPresentationMenu&&HUD->IsBlockingGameplay())||(!bIgnoreCinematic&&UDWWorldEventSubsystem::IsPlaying(this)))return false;
     const UDWGameInstance* GI=World->GetGameInstance<UDWGameInstance>();
     const UDWLoadingTransitionSubsystem* Loading=GI?GI->GetSubsystem<UDWLoadingTransitionSubsystem>():nullptr;
     return !GI||(!GI->IsPlayerRestorePending()&&(!Loading||!Loading->IsTransitionActive()));
@@ -755,7 +757,7 @@ bool UDWMinimapComponent::EnsureCapture()
     Widget->InitializeMinimap(this);
     Widget->SetVisibility(ESlateVisibility::HitTestInvisible);
     if(!Widget->IsInViewport())Widget->AddToPlayerScreen(55);
-    Widget->SetDesiredSizeInViewport(FVector2D(Diameter,Diameter+44.f));
+    Widget->SetDesiredSizeInViewport(FVector2D(Diameter,Diameter+Widget->GetFooterHeight()));
     Widget->SetPositionInViewport(-BottomRightMargin,false);
     // UE viewport size/position setters reset anchors to top-left. Restore bottom-right last.
     Widget->SetAnchorsInViewport(FAnchors(1.f,1.f));
@@ -765,6 +767,16 @@ bool UDWMinimapComponent::EnsureCapture()
 void UDWMinimapComponent::TickComponent(float Dt,ELevelTick Type,FActorComponentTickFunction* F)
 {
     Super::TickComponent(Dt,Type,F);
+    const APawn* C01Pawn=Cast<APawn>(GetOwner());
+    const APlayerController* C01PC=C01Pawn?Cast<APlayerController>(C01Pawn->GetController()):nullptr;
+    const ADWGameplayHUD* C01HUD=C01PC?Cast<ADWGameplayHUD>(C01PC->GetHUD()):nullptr;
+    const UDWGameplayWidget* C01Screen=C01HUD?C01HUD->GetGameplayWidget():nullptr;
+    if(C01Screen&&C01Screen->bUseC01HUD)
+    {
+        bMatchBrewingCardWidth=false;
+        Diameter=FMath::IsFinite(C01Screen->C01HUDDiameter)?FMath::Clamp(C01Screen->C01HUDDiameter,160.f,400.f):248.f;
+        BottomRightMargin=C01Screen->C01HUDMargin.ContainsNaN()?FVector2D(72,30):C01Screen->C01HUDMargin;
+    }
     if(bMatchBrewingCardWidth)
     {
         const APawn* Pawn=Cast<APawn>(GetOwner());
@@ -774,6 +786,33 @@ void UDWMinimapComponent::TickComponent(float Dt,ELevelTick Type,FActorComponent
         const UWidget* Card=Gameplay?Gameplay->GetWidgetFromName(TEXT("BrewingCard")):nullptr;
         const float Width=Card?float(Card->GetPaintSpaceGeometry().GetLocalSize().X):0.f;
         if(Width>=160.f&&Width<=400.f)Diameter=Width;
+    }
+    // C01 menu motion shares the HUD's real-time menu channel. Preserve the
+    // minimap's original cinematic wrapper and compensate its offset instead of
+    // applying two full slide distances when both reasons are active.
+    const auto* C01Anchor=C01Screen&&C01Screen->bUseC01HUD?
+        Cast<UDWC01HUDAnchor>(C01Screen->GetWidgetFromName(TEXT("C01HUDCinematicAnchor"))):nullptr;
+    if(IsValid(Widget)&&C01Anchor)
+    {
+        auto* Extension=Widget->GetExtension<UUIComponentUserWidgetExtension>();
+        auto* Cinematic=Extension?Cast<UDWUIOffscreenComponent>(Extension->GetComponent(UDWUIOffscreenComponent::StaticClass(),TEXT("MinimapRoot"))):nullptr;
+        const FVector2D OriginalOffset=Cinematic?Cinematic->GetCurrentOffset():FVector2D::ZeroVector;
+        const FVector2D Composed=UDWC01HUDAnchor::ComposePresentationOffsets(OriginalOffset,C01Anchor->GetMenuOffset());
+        Widget->SetPositionInViewport(-BottomRightMargin+Composed-OriginalOffset,false);
+        Widget->SetAnchorsInViewport(FAnchors(1.f,1.f));
+        Widget->SetAlignmentInViewport(FVector2D(1.f,1.f));
+        const bool bMenuMotion=(C01HUD&&C01HUD->GetMenuPage()!=EDWMenuPage::None)||C01Anchor->IsMenuMotionActive();
+        if(bMenuMotion&&CanShow(true,true))
+        {
+            bVisible=(!C01Anchor->MenuOffscreen||!C01Anchor->MenuOffscreen->IsOffscreen())&&
+                (!Cinematic||!Cinematic->IsOffscreen());
+            // Keep only the last captured scene while the game is paused or the
+            // menu channel returns; do not scan actors or issue scene captures.
+            Widget->SetVisibility(ESlateVisibility::HitTestInvisible);
+            Widget->UpdateNavigationFeedback(Dt,false);
+            CaptureElapsed=100.f;
+            return;
+        }
     }
     // The existing cinematic system drives DW UI Offscreen. Keep its content alive until slide-out ends.
     if(IsValid(Widget)&&UDWWorldEventSubsystem::IsPlaying(this)&&CanShow(true))
@@ -800,11 +839,11 @@ void UDWMinimapComponent::TickComponent(float Dt,ELevelTick Type,FActorComponent
     }
     if(!EnsureCapture()){bVisible=false;return;}
     Widget->SetVisibility(ESlateVisibility::HitTestInvisible);
-    Widget->SetDesiredSizeInViewport(FVector2D(FMath::Clamp(Diameter,160.f,400.f),FMath::Clamp(Diameter,160.f,400.f)+44.f));
+    Widget->SetDesiredSizeInViewport(FVector2D(FMath::Clamp(Diameter,160.f,400.f),FMath::Clamp(Diameter,160.f,400.f)+Widget->GetFooterHeight()));
     Widget->SetPositionInViewport(-BottomRightMargin,false);
     Widget->SetAnchorsInViewport(FAnchors(1.f,1.f));
     Widget->SetAlignmentInViewport(FVector2D(1.f,1.f));
-    Widget->SetRenderTransformPivot(FVector2D(.5f,Diameter/(2.f*(Diameter+44.f))));
+    Widget->SetRenderTransformPivot(FVector2D(.5f,Diameter/(2.f*(Diameter+Widget->GetFooterHeight()))));
     Widget->UpdateNavigationFeedback(Dt,true);
     ScanElapsed+=Dt;CaptureElapsed+=Dt;
     if(ScanElapsed>=2.f||!WasVisible){ScanActors();ScanElapsed=0.f;}

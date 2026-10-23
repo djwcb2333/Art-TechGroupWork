@@ -6,6 +6,7 @@
 
 class UDWInteractionPromptStyle;
 class UDWInteractionPromptWidget;
+class APawn;
 
 /** Presentation only. Resource owners use the player's harvest focus; other actors use proximity.
  * Adding this component to a generic actor does not bind F or implement an interaction action. */
@@ -41,6 +42,8 @@ public:
     UFUNCTION(BlueprintCallable, Category="Interaction Prompt") void SetPromptEnabled(bool bEnabled);
     UFUNCTION(BlueprintCallable, Category="Interaction Prompt|Placement") void RefreshWorldPlacement();
     UFUNCTION(BlueprintPure, Category="Interaction Prompt") UDWInteractionPromptWidget* GetPromptWidget() const;
+    /** Called only by ResourceNode after an accepted inventory harvest has consumed stock. */
+    void NotifyHarvestCommitted(int32 ActualAmount);
     UFUNCTION(BlueprintImplementableEvent, Category="Interaction Prompt|Events") void OnPromptShown();
     UFUNCTION(BlueprintImplementableEvent, Category="Interaction Prompt|Events") void OnPromptHidden();
 
@@ -65,6 +68,8 @@ private:
     TWeakObjectPtr<UDWInteractionPromptStyle> AppliedStyle;
     double NextLocalSoundTime = 0.0;
     bool bChangingVisibility = false;
+    double C04CompletionDeadline = 0.;
+    TWeakObjectPtr<APawn> C04CompletionPawn;
     void PrepareWidget();
     void ChangePromptVisibility(bool bVisible, bool bImmediate = false);
     void TryPlayAppearSound();

@@ -96,7 +96,7 @@
 {TEXT("应用并保存"), TEXT("Apply and save")},
 {TEXT("返回"), TEXT("Back")},
 {TEXT("面团暂时失去了活力"), TEXT("Your dough has lost its vitality")},
-{TEXT("加载上次保存的进度，或返回标题。"), TEXT("Load your last saved progress or return to the title screen.")},
+{TEXT("返回已激活的安全点复活，再找回死亡袋中的掉落物品。"), TEXT("Respawn at your activated safe point, then recover dropped items from your death bag.")},
 {TEXT("加载当前存档"), TEXT("Load current save")},
 {TEXT("操作反馈提示"), TEXT("Action feedback")},
 {TEXT("（拥有 %d）"), TEXT(" (owned: %d)")},

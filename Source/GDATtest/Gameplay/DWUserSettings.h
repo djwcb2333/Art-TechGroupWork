@@ -28,6 +28,8 @@ public:
  UFUNCTION(BlueprintCallable,Category="DoughWorld|Audio") void RouteAudio(UAudioComponent* Audio,EDWSoundCategory Category);
  UFUNCTION(BlueprintPure,Category="DoughWorld|Audio") USoundClass* GetSoundClass(EDWSoundCategory Category);
  UFUNCTION(BlueprintCallable,Category="DoughWorld|Audio",meta=(WorldContext="Context")) static UAudioComponent* PlayFeedback(const UObject* Context,USoundBase* Sound,float Volume=1.f,float Pitch=1.f);
+ UFUNCTION(BlueprintPure,Category="DoughWorld|Settings") bool GetShowEnemyHealth()const{return bShowEnemyHealth;}
+ UFUNCTION(BlueprintCallable,Category="DoughWorld|Settings") void SetShowEnemyHealth(bool bShow,bool bSave=true);
  static UDWUserSettings* Resolve(const UObject* Context);
 private:
  UPROPERTY(Transient) TArray<TObjectPtr<USoundClass>> Classes;
@@ -35,6 +37,7 @@ private:
  float Volumes[3]={1.f,1.f,1.f};
  float MasterVolume=1.f;
  float CameraSensitivityMultiplier=1.f;
+ bool bShowEnemyHealth=true;
  FAudioDeviceHandle AppliedAudioDevice;
  FDelegateHandle WorldLoadedHandle;
  bool bPushed=false;
