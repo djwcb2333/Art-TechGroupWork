@@ -1,6 +1,373 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bread of the Wild · v0.3.0-alpha.2 更新说明</title><style>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bread of the Wild · 版本记录 / 8c054d7改造前快照</title><style>
 :root{color-scheme:light;--ink:#243246;--accent:#176858;--line:#d7e2df}*{box-sizing:border-box}body{margin:0;background:#edf3f1;color:var(--ink);font:16px/1.85 "Microsoft YaHei","Segoe UI",sans-serif}header{background:#173d34;color:#fff;padding:22px max(24px,calc((100vw - 1060px)/2));font-size:14px;letter-spacing:.05em}main{max-width:1060px;margin:28px auto 70px;padding:44px 52px;background:white;border-radius:16px;box-shadow:0 8px 36px #183e3410}h1{font-size:32px;line-height:1.4;margin:0 0 24px}h2{font-size:23px;line-height:1.5;margin-top:44px;padding-top:18px;border-top:1px solid var(--line)}p{margin:14px 0}a{color:#146e66;overflow-wrap:anywhere}code{background:#f0f3f6;padding:2px 5px;border-radius:4px;font:14px/1.7 Consolas,monospace;overflow-wrap:anywhere}pre{white-space:pre-wrap}blockquote{margin:20px 0;padding:16px 20px;background:#fff4db;border-left:5px solid #c18a24}blockquote p{margin:0}table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}th{background:#eaf3ef;text-align:left}td,th{padding:12px 14px;border:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}th:first-child{width:31%}li{margin:10px 0}img{display:block;max-width:100%;height:auto;border:1px solid var(--line);border-radius:9px;margin:22px auto}strong{color:#153e35}blockquote strong{color:#715013}@media(max-width:720px){main{margin:0;border-radius:0;padding:26px 19px}h1{font-size:26px}h2{font-size:21px}table{font-size:12px}td,th{padding:8px}}@media print{body{background:white}header{background:white;color:black;padding:0}main{box-shadow:none;max-width:none;padding:10px;margin:0}h2{break-after:avoid}tr,img{break-inside:avoid}a{color:#163e34}blockquote{background:#f3f3f3}}
-</style></head><body><header>BREAD OF THE WILD / DOUGH WORLD · v0.3.0-alpha.2 · 编译与稳定性修复版</header><main><h1 id="v0.3.0-alpha.2">v0.3.0-alpha.2 · 编译与稳定性修复版</h1>
+</style></head><body><header>BREAD OF THE WILD / DOUGH WORLD - CHANGELOG - CHECKPOINT 8c054d7</header><main>
+<section id="checkpoint-8c054d7-detailed-changes">
+<h1 id="c054d7">2026-10-30 · 改造前快照 8c054d7：完整更新说明</h1>
+<p>本节只说明 <strong>v0.4.0-alpha.1 / 4760cc5 → 8c054d7</strong> 之间实际保存并上传的改动。快照提交全名为 <code>8c054d793a64758e59c6b31d11912dae7fab180c</code>；它是生物系统与下一轮A01改造前的恢复点，<strong>没有新增发行版号、没有移动旧标签</strong>。</p>
+<p><a href="https://github.com/djwcb2333/Art-TechGroupWork/tree/8c054d793a64758e59c6b31d11912dae7fab180c">查看固定工程快照</a> · <a href="https://github.com/djwcb2333/Art-TechGroupWork/compare/4760cc5f9a866b6114a75951cb961f63a2ec493a...8c054d793a64758e59c6b31d11912dae7fab180c">查看相对上次上传的全部文件差异</a></p>
+<p>工程入口仍为 <code>GDATtest.uproject</code>，匹配UE5.8.2。以下“已接入”表示代码/资产进入这个提交；编译、纯代码检查、非运行数据读回、打包与用户试玩分别记录。10月24日的Alpha.1说明保留为历史，本节不把其已有八武器等功能重复计作新增。</p>
+<h2 id="section">一、快照范围与原提交说明补充</h2>
+<p>原提交标题是 <code>chore: checkpoint before creature systems and A01 changes (2026-10-30)</code>，正文只概括完整工程、实际删除和备份边界，<strong>不足以说明这六天新增的功能</strong>；本节补齐该提交的阅读说明。补充通过后应另建正常文档提交，不改已推送提交，不amend/force，不夹带后续源代码。</p>
+<table>
+<thead>
+<tr>
+<th>范围</th>
+<th>相对4760cc5的实际变化</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全部</td>
+<td>1081路径：318修改、15原有删除、748新增；Git原始文本统计49924行增加、10705行删除，含规则/文档，不当作纯C++行数</td>
+</tr>
+<tr>
+<td>Source</td>
+<td>327路径：109修改、218新增；包括游戏逻辑、纯代码检查与建筑/资源编辑器模块</td>
+</tr>
+<tr>
+<td>Content</td>
+<td>750路径：205修改、15删除、530新增；含地图、材质、动画、图标、掉落模型及规则JSON</td>
+</tr>
+<tr>
+<td>其他</td>
+<td>Config两份、GDATtest.uproject一份、既有版本记录HTML一份</td>
+</tr>
+<tr>
+<td>LFS</td>
+<td>733份现存变化资产，320085725字节；15已删LFS路径另计。正常推送显示733/733完成</td>
+</tr>
+<tr>
+<td>保护</td>
+<td>快照前后纳入清单的文件SHA与既有删除状态保持；HEAD、origin/main与直接远程main核验一致，工作区当时干净</td>
+</tr>
+</tbody>
+</table>
+<p>现有源码插件与完整工程继续随仓库；个人Saved/游戏存档、生成Binaries/Intermediate/DDC及外部制作/打包目录没有混入。原15删除为旧菜单音乐4项、House1旧包3项及旧Whitebox路径8项；其他本阶段新增后撤销的美术不一定表现为“相对上次提交的删除”。历史外部备份和打包容器不属于Git源快照。</p>
+<h2 id="section-1">二、角色资源、两形态与天赋基础</h2>
+<h3 id="a01">1. A01资源运行时与已接入能力</h3>
+<ul>
+<li>已有A01模型进入受控语言/正式新档链：管理当前生命、有效健康上限损失与恢复、饱食/水分独立时钟、酵母储气和霉菌腐化；伤害继续交原战斗权威结算，避免资源镜像覆盖真实生命。</li>
+<li>使用对应精华后进入形态，运行时记形态剩余时间与进入时长；天赋配置变化重新派生数值，不凭空治疗/补满，不改写已经进入的形态时长。保存仅记录持续事实，不恢复未完成输入、攻击或无敌动作。</li>
+<li>快照已有酵母短按松开冲刺、长按并移动疾跑的能力计划与储气付款/耗尽取消，腐化针对合法工具动作的首次命中收益/扣费。此处记录已有机制；<strong>下一轮按用户最新PDF重新对齐能力、保留扎根并新增具体配置，不属于8c054d7</strong>。</li>
+<li>入口：角色组件 <code>CharacterA01</code>、<code>DWA01AbilityPlan</code>；运行数据在 <code>Content/DoughWorld/Gameplay/Combat/DWA01TrialDefaults.json</code>。文件名含Trial不表示可以绕过正式会话校验，也不是最终平衡数值已获用户认可。</li>
+<li>证据：新增A01运行时/能力计划/保存桥与相关纯代码测试、各阶段Editor/Game记录；完整三态、食水、持按输入与真实文件往返按对应批次仍待用户验收。</li>
+</ul>
+<h3 id="section-2">2. 角色页、动态图像与装备入口</h3>
+<ul>
+<li>角色页按两列属性、装备和天赋重新排版；四维采用同系列心形/水滴/肠胃/闪电图标，提供悬浮真实数值入口，快捷格白框坐标同步修正。没有用背包拥有量冒充当前已装备身份。</li>
+<li>右侧3D预览与背景框分离，新增透明合成材质处理黑底，按实际渲染目标比例显示；优先读取游戏主角当前IdleAnimation，无有效序列时使用CharacterPreviewIdle回退，并保留骨架检查。</li>
+<li>主角及角色页待机已沿用新增 <code>AN_Hero_PreviewIdle_Breathe_v04_24fps</code>，旧动作保留；角色/武器预览不是新NPC资产。新空手动作也已绑定现武器动画组件，按原判伤阶段映射完整片段，动画不重复提交伤害。</li>
+<li>入口：手册角色页；<code>BP_DWTopDownCharacter</code>、<code>DWGameplayBook</code>、<code>DWCharacterPreview</code>。角色页常驻天赋入口Action40显示真实装备及可用性。</li>
+<li>验证：相关Editor/Game及分阶段包成功；历史有限隔离观察不等于本快照全分辨率、连续预览、英文标题和所有交互通过。<strong>当前新增需求“四维及天赋字/图全部白色”不计入此快照</strong>。</li>
+</ul>
+<h3 id="section-3">3. 天赋树与成长事务</h3>
+<ul>
+<li>从角色页进入既有 <code>SDWTalentPanel</code>，真实显示节点、点数、学习/遗忘和返回链；统一走语言子系统事务，不在UI自行扣点或重复发放效果。</li>
+<li>残骸首次解出发天赋点；第三只手等已定义天赋可改变对应能力，例如第四快捷格资格；前3格仍为基础，不能写成所有档案默认4格。</li>
+<li>a5/a6等未定义节点保持不可用/占位边界，不填假数值；会话未准备好、旧档未接入时诚实拒绝，不能用试玩初始化补假进度。</li>
+<li>入口：角色页“天赋·学习与遗忘”，规则定义及 <code>DWTalentPanel</code>、<code>DWLanguageSubsystem.Transactions</code>。相关构建与代表性早期交易有记录；全部节点效果、遗忘依赖、暂停/读档恢复仍由用户手测。</li>
+</ul>
+<h2 id="section-4">三、语言图鉴、残骸、投物、交换与独立试玩</h2>
+<h3 id="section-5">4. 可编辑图鉴与真实线索</h3>
+<ul>
+<li>铭文/载体通过实际交互收录，单纯靠近不会发现。图鉴区分未发现、未记录、已记录；可按字/词与记录顺序筛选，关联组成字、相关词、地点和线索。</li>
+<li>玩家输入中英文猜测并保存，每条当前上限40字符；“已记录”只表示笔记存在，不判断答案正确。清空后保存可移除猜测，组合词与组成字分别保存。</li>
+<li>默认F执行主要交互、G查看文字、I或反引号键打开图鉴，重绑定以设置为准；查看文字与取水/投物是两条动作，避免一次按键做两次事务。</li>
+<li>入口：<code>DWLanguageCarrier</code>及<code>DWLanguageSubsystem</code>、<code>DWLanguageJournalPanel</code>，字形在 <code>UI/Image/T_Luwa_&lt;ID&gt;</code>，运行定义为 <code>Gameplay/Combat/DWLanguageDefinitions.json</code>。</li>
+</ul>
+<h3 id="section-6">5. 残骸解谜、候选词与一次性奖励</h3>
+<ul>
+<li>残骸以真实DefinitionId组织题面和完成状态；支持点选/拖入候选、双击或Delete/Backspace清答案槽、提交和重填。未填满给提示，答错不扣物品/点数；正确后展示双语剧情，首次完成才奖励。</li>
+<li>独立试玩记录10条残骸定义、每处15候选，候选由周目和定义ID决定。同DefinitionId的两个场景实例共享谜题状态；仅改StableId不会变成两道独立谜题。</li>
+<li>入口：<code>DWLanguagePuzzlePanel</code>及 <code>DWLanguageDefinitions.json → relics</code>，载体Kind=Relic。不能把独立测试题库和题面固定表现当作所有正式地图已铺满谜题。</li>
+</ul>
+<h3 id="section-7">6. 投物机关、交换与训练隔离</h3>
+<ul>
+<li>投物按定义提交指定物品并累计进度，已提交物不可取回；完成后驱动明确关联的门。交换提供双侧物品、选择/撤回、条件检查和确认，合法提交一次扣/发，页面支持滚动及单一稳定提示。</li>
+<li>井/水源普通补给与文字查看分离；多个载体的StableId、DefinitionId、EntryId和ClueId各有职责，不通过复制Actor自动产生独立经济配置。</li>
+<li>独立语言试玩含训练进入/退出及恢复入场状态的隔离机制，训练掉落不带出；这不是新增中立NPC巡逻或正式商人AI。</li>
+<li>入口：<code>L_DoughWorld_LanguagePlaytest</code>、<code>DWLanguageExchangePanel</code>、<code>DWLanguageCombatArena</code>、运行JSON。早期阶段有成功投物/学习/正确交换等有限记录，但其后界面与正式桥接经过修改；完整最终包流程、真实中文IME和存读仍待用户。</li>
+</ul>
+<h3 id="section-8">7. 公共界面桥与语言页稳定性</h3>
+<ul>
+<li>普通本地 <code>DWPlayerController::BeginPlay</code> 在缺失时创建唯一瞬态LanguageUIBridge，修复Map1日志 <code>ready=1 bridge=0</code> 对应缺桥接入口；试玩原桥继续查重，避免双实例。</li>
+<li>图鉴以同级页挂载，语言页使用填充宿主，未就绪时显示空态并允许重试；修复制作/快捷栏提示与“需要”区域周期替换闪烁、交换外滚和英文长标题布局。</li>
+<li>Combo4下拉项保留真实项生命周期；语言子页返回回到外层交互，不能把所有页面都称“无滚动条”。制作分类当前只有“全部”实际启用，其他分类仍占位。</li>
+<li>验证：UI与语言批次Editor/Game、独立包有记录；Map1真实会话、草稿/复杂嵌套返回、最终透明预览与各DPI均不是本次补文档已重新验证。Figma云同步保持原暂停/未同步状态。</li>
+</ul>
+<h2 id="section-9">四、背包、制作、建筑与工具</h2>
+<h3 id="section-10">8. 物品、武器、提示与配方的整合</h3>
+<ul>
+<li>背包提供单一物品格及已拥有武器的装备入口；悬浮显示真实数量/上限/用途、材料拥有量、产物、工位或环境需求及拒绝原因，“需要”区挂对应图标。</li>
+<li>永久武器制作把库存结果与永久拥有合并提交，满包/已拥有/材料或工位不足时整体拒绝；已有发酵与瓶装酒精到战斗Alcohol的身份桥接维护消耗一致。</li>
+<li>以最新正式配置为准：<strong>40物品、33配方、3建筑</strong>；历史59/21、59/34、试玩27等是不同阶段，不能同时当作当前计数。糖矛与包子长枪共用武器身份，简易糖矛仍独立。</li>
+<li>入口：<code>DA_DoughWorldGameplay</code>的Items/Recipes/Tools/BuildingDefinitions、<code>DWInventoryComponent</code>及相关事务源码。制作仍按快照已有工位/环境门槛检查；<strong>下一轮“附近多个工作台自动集合、角色蓝图半径可调”不属于8c054d7新增交付</strong>。</li>
+</ul>
+<h3 id="section-11">9. 建筑入包、跟随鼠标放置与编辑器制作工具</h3>
+<ul>
+<li>建筑制作先入背包，“使用”立即进入跟鼠标的绿色/红色预览；20cm网格，Q/E每次15°，长按首延迟0.35秒、重复0.10秒，双键中和。新左键有效确认才扣1件并生1个Actor；右键/Esc取消不扣，Use那次点击不提交。</li>
+<li>位置检查覆盖支撑点、坡度、落差、角色/建筑碰撞和水塘；预览隔离攻击/采集等动作，原移动保持。右侧卡其按键图标与功能提示随实际状态显示。</li>
+<li><code>工具 → 建筑制作工具</code>支持现有模型/FBX、分件变换、玩家比例参照、站点/材料定义与新ID发布；不隐式覆盖同名资源或保存不相关dirty依赖。</li>
+<li>路径：<code>Gameplay/Buildings</code>、Core/Data的三建筑定义、新增 <code>Source/DWBuildingAuthoringEditor</code> 模块。分批Editor/Game、原生检查和早期真实操作有证据；后续完整发布第四建筑、所有地形/连续按键与存档由用户验收。</li>
+</ul>
+<h3 id="section-12">10. 建造回弹、实体云、泛光和描边</h3>
+<ul>
+<li>只在成功库存/建造事务后播放一次回弹、短泛光及向外扩散后消散的实体云；预放建筑不因BeginPlay自动演一遍。近距原交互范围控制白描边，遮挡淡出时处理相关显示。</li>
+<li>默认回弹0.65秒、泛光0.26秒，云团数9、半径后续增至32cm，可调数量0–32；0只关闭云。三建筑材质接入并保留熔炉4个分区，不用错换材质掩盖拓扑。</li>
+<li>入口：BuildingEffects组件；<code>VFX/Buildings</code>及<code>Gameplay/Buildings/Materials</code>。组件测试、历史定点GPU截图与Editor/Game有记录，不等于所有建筑风格、重叠压力和帧率验收。</li>
+</ul>
+<h3 id="section-13">11. 升级工具2倍效率与持续锤拆除</h3>
+<ul>
+<li>Tools的 <code>Gathering Speed Multiplier</code>：简易为1、升级为2，通过有效工作周期缩短提升效率；不翻倍掉落，也不改战斗伤害。当前示例Sharpness25、UseInterval1秒、Reach250cm。</li>
+<li>用锤对准允许拆的建筑持续默认F；完成前松键、离开、换目标/工具、受击、暂停/书页或存读均取消并归零。拆除时显示红色柔边进度，工位左键仍开制作。</li>
+<li>完成才一次移除建筑并把完整材料返还到原地，背包满不吞材料；缺安全落点或不能完整暂存奖励时保留建筑。预放建筑要显式 <code>Allow Authored Demolition</code>；无历史成本记录的旧合法建筑只在受支持范围按当前唯一合法配方估算，不伪称原付款精确退款。</li>
+<li>入口：主角GatheringComponent的 <code>Demolition Work Seconds</code>（当前4秒简易锤），建筑实例拆除属性及 <code>DWBuildingDemolition*</code>。Editor/Game、3项定点代码及该阶段五图包通过；真实工作、中断、返还与旧档由用户验收。</li>
+</ul>
+<h3 id="v07">12. 斧镐v07动作与统一命中时钟</h3>
+<ul>
+<li>最终采用用户批准SourceFaithful v07：斧/镐两段原地24fps、2秒/49键序列已挂当前主角；锤继续原SharedTwoHandMotion/Gather_Clean。先前R10暂停、仅预览是历史，不能覆盖最终v07状态。</li>
+<li>动作、工具握持和命中共用SwingClock；有效周期=<code>max(MinimumSwingSeconds,UseIntervalSeconds)/GatheringSpeedMultiplier</code>。当前简易1秒/升级0.5秒，完整2秒动作对应2x/4x播放，不独立漂移。</li>
+<li>入口：<code>BP_DWTopDownCharacter → GatheringComponent → AxeMotion/PickaxeMotion</code>，分别引用 <code>DA_DWGatheringMotion_Axe_SourceV07</code>、<code>...Pickaxe_SourceV07</code>；独立命中比例.22/.3125，锤原17/35。</li>
+<li>Editor/Game、7272条时钟断言、非运行资源读回与UE RAW/实际LOD0蒙皮数值对照有证据；不是7272场试玩，也不代表压缩/GPU、双手握持和连续进出手感通过。此阶段未打包，旧包不含v07。</li>
+</ul>
+<h3 id="section-14">13. 撤销19项物品及专属美术</h3>
+<ul>
+<li>果冻、软糖、华夫饼、拐杖糖、棉花糖、甘草糖、姜饼人、豆腐、可可、蜜蜡、盐、酸、C/H/O/N/P/K/S共19项退出当前物品、配方、掉落、使用和交易；对应19图标+19模型已在本阶段清理，现40ID/39造型。</li>
+<li>旧档在内存副本中停用这些项，不自动改原sav；用户之后正常保存会发生有损停用。历史语言回执仍可识别，未知ID/异常历史数量不强行放行。</li>
+<li>路径：<code>DWRetiredItemPolicy</code>、<code>DWRetiredSaveProjection</code>与最新物品/掉落目录。38美术删除、外部专属文件清理与15个Git基线删除不是同一统计；未把保留的历史ZIP/容器/受控备份说成全盘抹除。</li>
+</ul>
+<h2 id="section-15">五、采集表现、资源摆放、水塘与地形</h2>
+<h3 id="section-16">14. 采集动作、物理碎裂与拾取反馈</h3>
+<ul>
+<li>糖树分树桩/上段真实倒伏，结块面粉使用8个预切碎片刚体；唯一耗尽奖励、落地检测、各碎片实际触地后2秒消散，树根/切面与烟尘接入。后续调树倒伏速度并处理连根完整消散。</li>
+<li>部分拾取/容量不足保留世界数量；约30cm拾取视觉与成功入包反馈沿原事务，图标从无图变有图时恢复Image显示的缺陷已修。</li>
+<li>8片物理不是运行时任意Chaos破碎；外部10块Fracture样件仍不在正式快照。历史96项PIE与随后两树21项验证不相加成最后全回归；广泛随机物理稳定性与性能仍待验。</li>
+</ul>
+<h3 id="pcgvolume">15. PCGVolume范围批量摆放与安全微调</h3>
+<ul>
+<li><code>工具 → 资源批量摆放</code>以现有PCG Volume提供范围，不需PCG Graph；双选一范围+一真实地面读取高度草稿，支持糖树/面粉/糖块配方、二维预览、确认落地与批次选择。</li>
+<li>新三份 <code>DA_DWPlacementSugarTree/Flour/SugarChunk</code> 直接带美术、树根/碎片/消散和采集配置，旧占位蓝图保留；不再默认生成只有圆柱的资源。失败按未命中/挡住/坡度/间距/无效命中分项诊断，找不全不偷偷只放一部分。</li>
+<li>显式所选工具批次可升级配方、仅重贴Z、只更新距离/阴影；保留身份和变换的具体范围写在确认提示。配方改动不自动重建所有旧资源；已存档对象不被当新对象随意重编号。</li>
+<li>数量1–500是逻辑上限，非500个必然流畅。新资源提示/拾取描边预算、0.1秒远距检查及邻域网格改善部分开销，不把既有无Tick重复算新优化，不声称HISM重写或有帧率实测。</li>
+<li>入口：<code>DWResourcePlacementTool/Settings/Recipe</code>及 <code>Gameplay/Resources</code>三配方。Editor/Game、配方/预设独立读回通过；实际摆放、撤销、升级旧资源和存读由用户验收。</li>
+</ul>
+<h3 id="spline">16. 原生Spline水塘、深度及边界一致</h3>
+<ul>
+<li>既有Pond Boundary闭合Spline统一水面、局部盆底/岸体、水域判定及命中过滤，支持凹形、正非均匀缩放和旋转边界；Radius不再覆盖手工轮廓，Reset Boundary To Circle才重置。</li>
+<li>选控制点 → Selected Points位置X/Y可编辑；<code>Rebuild Pond Geometry</code>重建当前形状。批量工具的“读取选中水塘/应用水深”使用世界厘米，只调盆底，不挖Landscape；水深和剩余可采水量分别维护。</li>
+<li>使用效果仍是有水补给/减速、容量耗尽和恢复边界，源水量与角色水量按原事务变化。地形盖住盆底、负/零缩放、水平条件和不支持的样条均需明确处理，不承诺任意地形自动开洞。</li>
+<li>证据：早期水塘阶段Editor/Game、6项原生、44项隔离PIE及保存重开；后续深度工具与水花版本是非运行检查，不能拿早期44项代签所有最新功能。鼠标拖点/撤销、双塘和寻路仍按原待办由用户测试。</li>
+</ul>
+<h3 id="rvt">17. RVT草色、水岸取色、水花和白水线</h3>
+<ul>
+<li>StormLandscape_Test_v03补齐SoStylized草所需Landscape RVT输出与覆盖体积；草三LOD与水岸读取同一地形色，原涂层保留。岸体仍有自身明暗及无覆盖时的Bank Material回退，不承诺逐像素无缝。</li>
+<li>角色进入/离开/移动触发现有SoStylized Niagara岸边涟漪和小水花，站定停止移动水花；每塘最多4临时组件，0.1秒采样、默认1.5秒硬生命周期等预算约束保留。</li>
+<li>独立白色水线沿真实凹形闭合轮廓裁剪，用 <code>MI_WaterWaves</code> 每塘MID时间动画；当前白色、宽25cm、Opacity .85、Speed -.4，可调。无碰撞/导航/阴影，不每帧CPU重建，限额超出仅停展示层。</li>
+<li>入口：Pond Details搜索 <code>Match Landscape Bank / Enable Pond VFX / Ripple Scale / Movement Splash</code>；白线按专题水线属性。Editor/Game、定点纯代码、60115条几何断言和实际包非运行读回有记录；不是60115个独立运行用例，黑草消失、接岸观感、水花尺寸与帧率由用户验收。</li>
+<li><strong>快照实际SC水坑已由用户自行删除</strong>；早期“教学新增水坑保留”是前阶段回执，当前不恢复、不补建。Storm原件与复制件保持各自身份；源码能力存在不代表SC当前仍摆有该Actor。</li>
+</ul>
+<h2 id="section-17">六、掉落物、地图、敌人和受击反馈</h2>
+<h3 id="d">18. 掉落3D目录、图标与预算光柱</h3>
+<ul>
+<li>掉落视觉目录按物品ID映射模型、局部变换、材质和Use Beacon；最初58造型/59ID，19项撤销后是40ID/39造型。糖矛/包子长枪共外观，糖棒复用缩小横放糖木段，不当成专制新糖棒模型。</li>
+<li>共享2米光柱无动态灯/碰撞/阴影，默认最多32个、玩家水平3000cm、每.25秒刷新；拾取/隐藏/销毁撤掉，奖励仍由原事务一次提交。</li>
+<li>入口：<code>Core/Data/DA_DWLootVisualCatalog</code>、<code>Gameplay/Resources/Art/LootWorld_R01</code>及拾取组件；显式自定义模型与DWLootKeepAuthored标签保持优先。图标Flat面粉、拾取条可见性及当前目录已接，模型对应/遮挡/性能待用户。</li>
+</ul>
+<h3 id="m">19. M全屏地图、标记、目标指示与性能修订</h3>
+<ul>
+<li>M或小地图上方Map入口展开/收起；左拖平移、滚轮指针中心缩放、空白右键新增标记、标记右键删除。地图暂停世界，与书页互斥，设置可覆盖后返回原地图状态；加载/死亡/过场等阻断不抢输入。</li>
+<li>从当前已加载地形/几何捕获灰白俯视图，标记存世界坐标、按地图/槽隔离，随正常保存写盘，不是每次右键立即存盘。WorldMapBounds可显式限定范围，未加载WorldPartition/流送区不凭空出现。</li>
+<li>目标新增蓝白弹性菱形、屏外箭头及贴地白圈。最终白圈半径250cm、偏移4cm，按有效地形命中法线平面绘制；不是深度贴花，没有有效地面时隐藏，不伪造落点。</li>
+<li>最终地图过渡由双捕获/双层绘制减至单捕获/单层，默认TransitionResolution512，保留双缓冲/GPU fence；大地图不收集敌人/资源标记，小地图本身显示策略沿原逻辑。</li>
+<li>入口：<code>DWWorldMapScreen/Subsystem</code>、<code>DWWorldTargetIndicator</code>、<code>DWMinimapNavigation</code>；TransitionResolution当前原生创建，不能写成已有蓝图面板。数组自引用追加导致两次崩溃的局部修复已纳入。</li>
+<li>Editor/Game、地图3项无画面回归及五图阶段包成功；实际M动画、DPI、标记存读、地形覆盖和帧率提升未由本次备份验收。</li>
+</ul>
+<h3 id="giant">20. 馊团、Giant材质和死亡消散</h3>
+<ul>
+<li>教学三敌经原入口切换馊团，馊团具备真实吃食/攻击等阶段桥和R06平滑动作；14骨Skeleton与Morph保持，团块42组反向面修复使用独立新网格，不覆盖原资源。</li>
+<li>死亡等真实运行死亡动作末帧后再启动内外双材质消散及烟尘，处理暂停/离屏时钟与保存清理；糖树根/切面也完整消散。不是仅播放一个定时器就宣称所有死亡已验。</li>
+<li>Giant已接风格化及后续用户贴图/实例；精英占位回退仅对严格匹配的默认Sphere与无自定义材质条件启用，不能给所有敌人强换材质。</li>
+<li>入口：Sour BP、<code>DWSourDoughEnemy/AnimInstance</code>、<code>DWSourDeathPresentationComponent</code>、Giant材质及现有Enemy Presentation。Editor/Game、独立资产/面序读回、死亡时钟代码及阶段包通过，GPU/动作/贴图和实际受击/消散由用户验收。</li>
+<li><strong>新霉菌混混、酵母混混、两种中立NPC及巡逻/新生物接口统一属于8c之后的新任务，不能算进本节。</strong></li>
+</ul>
+<h3 id="section-18">21. 敌人亮闪、玩家红边与独立受击震屏</h3>
+<ul>
+<li>只在已提交战斗伤害后触发敌人本体亮闪、玩家红边和轻微震屏；完美格挡/免疫、饥渴扣血不伪触发。连续伤害有独立最小间隔，死亡/加载/菜单等阶段处理残留，原攻击/格挡震动保留。</li>
+<li>设置常规页新增 <code>Damage camera shake / 受击震屏</code>，只关本类震屏，红边可继续。组件 <code>Committed Hit Feedback</code> 默认持续.20秒，震屏.14秒；WBP_DWGameplay类默认值Damage Edge可调颜色/不透明度等。</li>
+<li>源码门控与Editor/Game通过，最终整合包收录。设置引擎自动化曾被自动审批拒绝而未执行；设置持久性、画面强度与全部战斗组合仍待用户手测，不能称“设置写盘已验”。</li>
+</ul>
+<h2 id="section-19">七、教学三段、音乐、正式路由与存档</h2>
+<h3 id="section-20">22. 正式新档与苏醒/发现生命/尝试沟通三段教学</h3>
+<ul>
+<li>新正式档使用SC0101开场安全检查点，起始武器/补给只发一次，长矛自动装备缺陷已修；死亡/中断回安全起点，不重复发物，不让教学中途不完整快照覆盖有效起点。</li>
+<li>苏醒、发现生命、尝试沟通沿原分镜/音效时点接共享过场：镜头、2.39画幅、输入锁、自动字幕和左键下一句、加载恢复前遮黑、结束安全交接。</li>
+<li>教学每步按镜头/对白/玩家动作完成推进，九项时长和快衔参数可调；章节英文、地点双行和Chapter Title Gap40已接。新教学档饱食/水分满上限，已运行档读回不重复补满。</li>
+<li>入口：<code>OpeningPrototype/L_SC0101_Awakening</code>、<code>DWOpeningPrototype</code>导演Timing属性、<code>DWGameInstance.Opening</code>。存在旧隔离新建/一次发物等定点记录；最新完整教学、三敌战斗、转场/存读由用户验收，不把阶段编译当通关。</li>
+</ul>
+<h3 id="box-volume">23. 真实出口Box Volume</h3>
+<ul>
+<li>SC0101显式绑定 <code>DWOpeningExitVolume_0</code>，世界大纲“教学出口触发区 / Opening Exit Volume”。默认位置(4450,0,180)、BoxExtent半尺寸(140,140,180)，完整280×280×360cm；W/E/R或半尺寸可调，正缩放。</li>
+<li>导演只在战斗后的Exit阶段且离开独白已启动时，对本关玩家Capsule和同一Box实时查询；关闭/缺引用/无效配置明确拒绝，不悄悄回旧2D半径。<code>Exit Trigger Status</code>区分具体原因。</li>
+<li>Editor/Game、配置几何代码与独立SC非运行读回通过；真实走入、高度边界、过场控制和完整正式转场由用户验收。该阶段未打包，旧EXE不能验此入口。</li>
+</ul>
+<h3 id="section-21">24. 战斗音乐续播与声音登记</h3>
+<ul>
+<li>普通关卡进入战斗时暂停原BGM并播战斗曲，最后敌人脱战/死亡后渐隐并从原位置续播原曲；渐隐中重入战斗可恢复战斗曲。教学前段静音，战斗用开场曲，清场后渐隐并保持静音至离图。</li>
+<li>Combat BGM及Fade Out Seconds可调（当前1.5秒，0立即，范围0–30），原Music/Master音量有效；教学Opening BGM在导演。当前正式主DA统一后，正式参数以 <code>DA_DoughWorldGameplay</code> 为准，不沿历史测试DA入口误改正式流程。</li>
+<li>声音专题已整理1520个使用点/空槽/引用线索、539登记声音资源及教学17事件；这些是登记覆盖，不是1520种声音、也不证明每个槽已播放/听审。</li>
+<li>Editor/Game、DA默认非运行读回和过场整合阶段包有证据；循环接缝、续播定位、多敌清场、暂停死亡与音量由用户听验。旧4份菜单音乐删除按实际快照记录，不把引用扫描当声音全验收。</li>
+</ul>
+<h3 id="dastorm">25. 单一正式DA、教学到Storm与测试分流</h3>
+<ul>
+<li>正式配置回归原路径 <code>Core/Data/DA_DoughWorldGameplay</code>，保留原类和非目录参数，合并40物品/33配方/3建筑及采集规则；旧DT资源保留但不再覆盖当前数据。</li>
+<li>Showcase标题、SC教学、Storm及已注册历史正式地图解析主配置，仅两个独立测试图按明确override使用自己的Profile。正式从标题新建→教学→主DA的GameplayMap（现Storm），旧槽按原记录地图加载，不自动迁往Storm。</li>
+<li>基类显式提供采集能力，旧测试子类/序列化字段保留；打包地图登记与准确水坑白名单更新，未泛开任意新图保存能力。</li>
+<li>入口：主DA的Maps/GameplayMap/NewGameOpeningMap/AdditionalGameplayMaps/MapConfigOverrides；UDWGatheringPersistenceOptIn的项目设置。Editor/Game、配置能力纯代码与七图路由非运行检查通过；正式新建→Storm、旧槽/返回标题/实际存读仍待用户。</li>
+</ul>
+<h3 id="v5v4trial">26. 正式v5、旧v4与独立Trial分开</h3>
+<ul>
+<li>新正式档升级v5，绑定冒险所有者、槽位、地图、生命/阶段、Formal2语言/A01载荷；沿完整战斗聚合，新增语言/天赋、地图标记及受支持采集子块。存档显示列表、命名/猜测输入与鼠标操作的各自门控保留。</li>
+<li>旧v1–v4按既有路径分类，不因打开图鉴或切图自动升级；缺字段/混合Trial与Formal/错误槽归属/未知版本明确拒绝，保留原文件。严格字节来源与原子提交、防重复世界恢复、失败后诚实返回等保护维持。</li>
+<li>独立LanguagePlaytest使用专属owner、前缀/位置及精准入口，不可把StartPlaytest或试验GameMode复制到任意正式图“解锁”进度。旧正式档没有语言会话时显示不可用，不生成假字典。</li>
+<li>入口：<code>DWSaveGame</code>（CurrentVersion5）、<code>DWFormalSaveVersionPolicy</code>、<code>DWFormalLanguagePersistence</code>、<code>DWGameInstance.SaveSource</code>、<code>DWCombatWorldPersistence</code>。代码边界/有限隔离文件记录与用户实际完整17组存档矩阵分开；不承诺任意旧档全兼容。</li>
+</ul>
+<h3 id="section-22">27. 显式常驻单图采集/水量保存与教学单向出口</h3>
+<ul>
+<li>新采集/水塘/建筑完整聚合经审查地图、Profile、准确类和稳定ID显式启用；支持常驻单Level且非分区/非流送的已登记地图。水量、耗尽、建筑/掉落等不能用仅背包保存冒充完整世界状态。</li>
+<li>schema2水塘事实严格绑定源地图/身份；SC0101教学完整检查点可沿精确单向出口到正式目的地图，源塘和目的地塘不互拷。没有因此实现任意A→B→A资源世界冻结或未知类通用持久化。</li>
+<li>Storm复制水坑冲突已仅修副本_C_0的PersistentId，原件_C_1保留 <code>Storm_v03_Pond_001</code>，其他位置/样条/材质容量保持；已删除SC水坑现状保留。</li>
+<li>入口：项目设置的Gathering Persistence Opt-In、Pond Authored Persistence/Identity及 <code>DWGatheringWorldPersistence/PondPersistence</code>。代码源/目的边界与非运行两图读回通过；真实新档、死亡、切图、多个资源组合和读取失败处理仍由用户验收。</li>
+</ul>
+<h3 id="pie">28. PIE独立测试轮次及复制身份保护</h3>
+<ul>
+<li>默认启用Editor Map Iteration Saves：相同标题入口+有限作者版本复用当前3槽，地图/相关规则保存变更后下次PIE新轮空槽，旧轮与正式档保留，A→B→A也新开轮。</li>
+<li>同一局从教学到正式图固定存储上下文，结束释放租约；运行中改图后阻止继续写档并提示重开，不悄悄退回正式目录。字节、槽/版本/地图/owner/阶段及轮次身份都参与准入，损坏索引明确拒绝。</li>
+<li>Pond在已登记地图/准确类中新放、非PIE复制/粘贴才生成新唯一ID；普通加载、PIE副本、重实例不乱编号，复制保留作者持久化选择。不是对所有Actor和任意地图自动修身份。</li>
+<li>入口：<code>DWSaveSettings → Editor Map Iteration Saves</code>及 <code>DWEditorMapIterationSession/AuthoringSignature/IterationRoundStore</code>；从Showcase PIE开始完整流程。Standalone/打包游戏继续正常玩家存档，不套用编辑器新轮逻辑。</li>
+<li>最新Editor/Game、3项定点纯代码、三入口真实作者签名及Pond独立数据读回完成；签名耗时约.073–.077秒只是无画面采集耗时，不是整体启动/游戏性能。<strong>本阶段无PIE、游戏或新包，全部实际新轮/存读/复制交互待用户</strong>。</li>
+</ul>
+<h2 id="section-23">八、目录、依赖、构建与用户验收说明</h2>
+<h3 id="section-24">29. 保持的资源边界与已完成清理</h3>
+<ul>
+<li>旧34项白盒资源此前经用户授权移至 <code>Environment/Whitebox/Materials</code> 与 <code>Meshes</code>，两张Storm地图仍在原Levels；保留26个旧位置redirector，8个旧路径当时由UE资产工具清理。此处只是记录这次Git增量里的既有结果，不重新整理Content。</li>
+<li>Building/House1误导出清理、旧标题/Storm副本中的House1移除、音乐与19项撤销清理按各自批准范围记录，保留必要历史备份；插件DesertBuildingLab仍完整存在，不因移除个别房子就删插件。</li>
+<li><code>.uproject</code>及Build规则纳入新增编辑器建筑/资源工具与运行依赖，完整Source/Config/Content/项目插件/运行JSON必须一起取。作者本机DLL与个人Saved不随Git分发；实际UE新图和原用户保存按冻结清单恢复。</li>
+</ul>
+<h3 id="section-25">30. 这份源码快照与旧包的区别</h3>
+<ul>
+<li>10月24–25的建筑/采集与10月26–28的语言/角色/UI分批有各自Editor/Game、部分代码或隔离操作记录；较早全量355检查中有5旧夹具失败等结果保留，不跨批拼成“全部测试通过”。</li>
+<li>10月29教学、馊团、掉落地图，以及10月30地图性能/拆除阶段分别有四/五图Cook/Stage/Archive、资源清单和EXE哈希证据；只证明当批包，不覆盖后来修改。</li>
+<li>v07动作、草/RVT水岸水花、正式DA统一、白水线/新出口Volume及PIE轮次等后续改动没有统一重新打包。<strong>现存任一旧包都不能代表8c054d7全部源码与资源</strong>；本次Git备份没有再构建或试玩。</li>
+<li>仍有13条历史启动Condition failed未逐条归因，部分Cook有工位FText警告，Figma未同步；不写成“日志全干净/全功能全平台验收”。队员仅有could not be compiled总提示，实际UE/提交/第一条UBT错误仍待日志，上传校验不等于异机首次构建成功。</li>
+</ul>
+<h3 id="section-26">31. 队员同步和本快照手测</h3>
+<ol>
+<li>保存自己的工作并关闭UE，在GitHub Desktop选择Art-TechGroupWork/main，Fetch→Pull等待LFS，History确认 <code>8c054d7</code>。先保留个人未提交改动，不Discard；需要固定恢复请参照此完整提交，不移动旧Alpha标签。</li>
+<li>用UE5.8.2和仓库.vsconfig对应C++工具/SDK，生成项目文件；VS选Development Editor/Win64，右键GDATtest生成。项目插件和新增编辑器模块一并编译，缺引擎工具插件时保留实际错误，不能靠作者DLL证明可重建。</li>
+<li>本轮更新说明的最小手测：标题新档→三段教学及出口→Storm；角色/天赋/语言字典、背包制作/工位/建筑/工具；M地图标记、受击及死亡；采集/水塘和正式存读。使用用户自己选择的隔离数据，各项结果单独记录。</li>
+<li>编辑器另测“未改图同轮继续→保存改图新轮→旧轮保留→教学切图同槽”，以及受支持水坑复制/粘贴身份；不要用Standalone或旧EXE验证PIE轮次。</li>
+<li>视觉、画面/交互、实际存读/听感/帧率均由用户验收。本说明只汇总已存在的实现/构建证据，不代替试玩，也不授权清空旧存档。</li>
+</ol>
+<h2 id="section-27">九、这次快照明确不包含的新任务</h2>
+<p>8c之后的新生物窄接口统一、霉菌/酵母混混、中立NPC巡逻与新二维形象、11个用户模型正式挂载、最新PDF能力重对齐/保留扎根共池的新接线、角色页四维/天赋全白、PolygonParticleFX五类新事件挂载、近距多个工位自动集合及其角色蓝图半径，均为下一阶段需求。本节中已存在的A01/工具动作/既有敌人等不应被误解为该新批次已完成。</p>
+<h2 id="section-28">十、证据索引与可追溯入口</h2>
+<p>本节依据冻结1081路径、两提交真实diff、快照内源码和各专题回执综合；后续实时工程可能继续变化，<strong>复现以8c054d7固定快照为准</strong>。对应源码名均在 <code>Source/GDATtest/Gameplay</code>，建筑/资源编辑器工具在 <code>Source/DWBuildingAuthoringEditor</code>。</p>
+<p>作者工作区外部证据不随Git源仓库上传。下列相对路径统一基于 <code>E:/GDAT/第一学期/AP6402 Art-Tech Collaboration/Codex Mission/UE_Whitebox_Delivery/</code>，用于作者本机查证/交接；队员可按上文准确UE入口使用，或向负责人索取相应教程，不能把这些路径当作已发布Git文件。</p>
+<table>
+<thead>
+<tr>
+<th>领域</th>
+<th>外部回执/教程入口</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>角色/天赋/公共桥</td>
+<td>LanguageIntegration_20261026/UI/Feedback_20261027/CharacterTalent_20261028/交付记录.md</td>
+</tr>
+<tr>
+<td>语言载体与正式/Trial区别</td>
+<td>LanguageIntegration_20261026/BookIntegration_20261027/在自己新地图接入语言玩法_教程.md</td>
+</tr>
+<tr>
+<td>建筑/材质/QE</td>
+<td>BuildingPlacement_20261025/建筑背包放置与制作工具_使用指南.html</td>
+</tr>
+<tr>
+<td>采集物理</td>
+<td>GatheringPresentation_20261025/采集表现与场景美术_使用指南.html</td>
+</tr>
+<tr>
+<td>PCG配方/微调</td>
+<td>ResourcePlacement_20261029/PlacementReady_R02/R02_开始使用与微调.html</td>
+</tr>
+<tr>
+<td>水深/存档范围</td>
+<td>ResourcePlacement_20261029/资源摆放与水塘_新手手册.html</td>
+</tr>
+<tr>
+<td>草/RVT/水花</td>
+<td>SoStylizedGrassFix_20261030/本轮交付与待验.md</td>
+</tr>
+<tr>
+<td>工具/拆除/撤销</td>
+<td>ToolGatheringRetarget_20261030/交付与用户手测.md</td>
+</tr>
+<tr>
+<td>斧镐最终v07</td>
+<td>ToolGatheringRetarget_20261030/AnimationCandidate/SourceV07_接入与调时.md</td>
+</tr>
+<tr>
+<td>掉落/地图</td>
+<td>LootWorldMap_20261029/开始使用与待验.html</td>
+</tr>
+<tr>
+<td>地图性能</td>
+<td>MapPerformance_20261030/地图优化与验收.md</td>
+</tr>
+<tr>
+<td>馊团死亡/教学调时</td>
+<td>DeathDissolve_20261029/最终交付记录.md</td>
+</tr>
+<tr>
+<td>受击</td>
+<td>CombatDamageFeedback_20261029/战斗受击反馈_交付与手测.md</td>
+</tr>
+<tr>
+<td>音乐续播</td>
+<td>MusicIntegration_20261028/CombatResume_20261028/交付与后续接力.md</td>
+</tr>
+<tr>
+<td>过场双语</td>
+<td>OpeningFlow_UI_20261027/OpeningCinematic_Localization_Candidate_R02_20261028/验收与交接.md</td>
+</tr>
+<tr>
+<td>正式DA/七图路由</td>
+<td>FormalConfigUnification_20261030/最终交付与待验.md</td>
+</tr>
+<tr>
+<td>白线与教学源/目的地</td>
+<td>SaveRestart_20261030/最终交付与待验.md</td>
+</tr>
+<tr>
+<td>真实出口</td>
+<td>OpeningExitVolume_20261030/最终交付与待验.md</td>
+</tr>
+<tr>
+<td>PIE轮次/最终身份</td>
+<td>MapIterationSaves_20261030/最终交付与待验.md</td>
+</tr>
+<tr>
+<td>本次Git快照</td>
+<td>CreatureSystems_20261030/GitCheckpoint/FrozenManifest.json、CompletedCheckpoint.json、Push.log</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>以下为此前各版本历史记录。</p>
+
+</section>
+<h1 id="v0.3.0-alpha.2">v0.3.0-alpha.2 · 编译与稳定性修复版</h1>
 <ul>
 <li>日期：2026-10-10。</li>
 <li>阶段：Alpha；延续 0.3.0 的同一里程碑，本次只修复已有问题，没有新增功能，因此 Alpha 序号从 1 递增为 2。</li>
