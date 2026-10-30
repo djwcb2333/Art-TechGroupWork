@@ -22,6 +22,13 @@ class GDATTEST_API UDWFrontendWidget : public UDWGameplayWidget
 {
     GENERATED_BODY()
 public:
+    /** Applies only to title/intro text owned by this frontend. Text tint and layout stay authored. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Frontend|Title Text Shadow") bool bTitleTextShadow = true;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Frontend|Title Text Shadow") FLinearColor TitleTextShadowColor = FLinearColor(.06f,.035f,.015f,1.f);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Frontend|Title Text Shadow",meta=(ClampMin="0",ClampMax="1")) float TitleTextShadowOpacity = .4f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Frontend|Title Text Shadow") FVector2D TitleTextShadowOffset = FVector2D(1.5,2.);
+    UFUNCTION(BlueprintCallable,Category="Frontend|Title Text Shadow") void RefreshTitleTextShadow();
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Frontend|Intro")
     bool bPlayIntroOnConstruct = true;
 

@@ -171,12 +171,23 @@ bool FDWHUDWidgetTest::RunTest(const FString&)
     auto* General=Cast<UVerticalBox>(Widget->GetWidgetFromName(TEXT("SettingsBookGeneralPage")));
     if(!TestNotNull(TEXT("Actual existing General container"),General))return false;
     const int32 Before=General->GetChildrenCount();Widget->InitializeCombatSettings();
-    TestEqual(TEXT("Only one row appended"),General->GetChildrenCount(),Before+1);Widget->InitializeCombatSettings();
-    TestEqual(TEXT("Second initialization is idempotent"),General->GetChildrenCount(),Before+1);
+    TestEqual(TEXT("Two local preference rows appended"),General->GetChildrenCount(),Before+2);Widget->InitializeCombatSettings();
+    TestEqual(TEXT("Second initialization is idempotent"),General->GetChildrenCount(),Before+2);
     auto* Check=Cast<UCheckBox>(Widget->GetWidgetFromName(TEXT("CombatEnemyHealthCheck")));
-    if(!TestNotNull(TEXT("Real runtime checkbox entry"),Check))return false;
+    auto* Shake=Cast<UCheckBox>(Widget->GetWidgetFromName(TEXT("DamageShakeCheck")));
+    auto* Settings=UDWUserSettings::Resolve(F.Player);
+    if(!TestNotNull(TEXT("Real enemy health checkbox"),Check)||!TestNotNull(TEXT("Real damage shake checkbox"),Shake)||
+       !TestNotNull(TEXT("Isolated settings subsystem"),Settings))return false;
+    TestTrue(TEXT("Damage shake initially enabled"),Settings->GetDamageShakeEnabled());
     Check->OnCheckStateChanged.Broadcast(false);
-    TestFalse(TEXT("Real checkbox delegate updates independent preference"),UDWUserSettings::Resolve(F.Player)->GetShowEnemyHealth());
+    TestFalse(TEXT("Enemy health delegate updates its own preference"),Settings->GetShowEnemyHealth());
+    TestTrue(TEXT("Enemy health change leaves damage shake enabled"),Settings->GetDamageShakeEnabled());
+    Shake->OnCheckStateChanged.Broadcast(false);
+    TestFalse(TEXT("Damage shake delegate updates its own preference"),Settings->GetDamageShakeEnabled());
+    TestFalse(TEXT("Damage shake change leaves enemy health off"),Settings->GetShowEnemyHealth());
+    FConfigFile Disk;Disk.Read(Ini.Path);bool SavedShake=true;
+    TestTrue(TEXT("Damage shake saved to isolated INI"),Disk.GetBool(TEXT("DoughWorld.Camera"),TEXT("DamageShakeEnabled"),SavedShake));
+    TestFalse(TEXT("Isolated INI stores disabled damage shake"),SavedShake);
     return true;
 }
 

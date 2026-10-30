@@ -59,6 +59,11 @@ public:
     bool ActivateHold(const FDWCombatInputPress& Press);
     bool HasObservedReleaseAfter(const FDWCombatInputPress& Press) const;
     void ForgetHolds(FName Action);
+    /** Reserve one physical key for a same-world presentation owner. Never fabricates Up or calls gameplay from Slate. */
+    bool AcquirePresentationKey(UObject* InOwner, FKey Key);
+    void ReleasePresentationKey(UObject* InOwner);
+    bool IsPresentationKeyReserved(FKey Key) const { return IsPresentationKey(Key); }
+    bool HasObservedPresentationKeyRelease(const UObject* InOwner) const;
     void FinishInputBatch();
     void BeginSuspension();
     bool IsSuspended() const { return Ledger.IsSuspended(); }
@@ -80,6 +85,10 @@ private:
     TWeakObjectPtr<APlayerController> Owner;
     TWeakObjectPtr<UWorld> OwnerWorld;
     TWeakObjectPtr<APawn> OwnerPawn;
+    TWeakObjectPtr<UObject> PresentationOwner;
+    FKey PresentationKey;
+    bool bPresentationReleaseObserved=false;
+    bool IsPresentationKey(FKey Key) const;
     FDWCombatInputLedger Ledger;
     TSet<FName> MonitoredKeys;
     TSet<FName> ObservedDownKeys;

@@ -1,6 +1,10 @@
 #include "DWCombatPlayerPersistence.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWCombatPlayerSave.h"
+#include "DWCharacterA01SaveBridge.h"
+#include "DWLanguageSubsystem.h"
+#include "DWFormalLanguagePersistence.h"
+#include "DWFormalLanguageProjection.h"
 #include "DWCombatEquipment.h"
 #include "DWCombatRules.h"
 #include "DWGameInstance.h"
@@ -33,6 +37,7 @@ struct FDWCombatPlayerRestoreState
     DWCombatCommit::FEntityLife OldLife,NewLife;
     FDWPreparedInventoryChange PreparedInventory;
     FDWCombatPlayerVitalsRuntime Vitals;
+    bool bA01=false,bFormalA01=false;FDWA01AbilityPlan A01Ability;FDWCharacterA01Runtime A01Runtime;double A01Cooldown=0.;
     FDWCombatWeaponResourceState WeaponState;
     FDWShieldAxeDefense Defense;
     FDWYeastDashPlan Dash;
@@ -72,9 +77,12 @@ bool FDWCombatPlayerPersistence::Fingerprint(ADWPlayerCharacter& P,TArray<uint64
         P.bGameplayActionInProgress||P.bAdvancingGameplayClocks||W->bAdvancingCombatClock||
         W->CombatWeaponResources.Revision==MAX_int64||W->CombatWeaponResources.RestoreEpoch==MAX_uint64||P.CombatKnockbackRevision==MAX_uint64)
     {Error=TEXT("Player snapshot requires a stable native boundary.");return false;}
-    const auto V=P.CombatVitals.Capture(P.Health);const auto D=W->ShieldDefense.Capture(P.GetWorld()->GetTimeSeconds());
+    auto V=P.CombatVitals.Capture(P.Health);
+    if(P.CharacterA01&&P.CharacterA01->IsEnabled())
+    {auto Candidate=P.CharacterA01->GetRuntime();Candidate.SyncCurrentHealth(P.Health);FDWCombatPlayerVitalsConfig MirrorConfig;if(!P.CharacterA01->BuildLegacyMirror(Candidate,MirrorConfig,V,Error))return false;}
+    const auto D=W->ShieldDefense.Capture(P.GetWorld()->GetTimeSeconds());
     const auto L=A->FindRegisteredActorLife(&P);if(!L.Entity||!L.Life){Error=TEXT("Player has no registered life.");return false;}
-    Ids={L.Entity,L.Life,P.CombatVitals.GetMutationRevision(),P.CombatDamageRevision,P.CombatKnockbackRevision,
+    Ids={L.Entity,L.Life,(P.CharacterA01&&P.CharacterA01->IsEnabled()?P.CharacterA01->GetResourceRevision():P.CombatVitals.GetMutationRevision()),P.CombatDamageRevision,P.CombatKnockbackRevision,
         static_cast<uint64>(I->GetInventoryRevision()),static_cast<uint64>(W->CombatWeaponResources.Revision),W->CombatWeaponResources.RestoreEpoch,
         W->CombatBoundaryRevision,static_cast<uint64>(W->ActionSerial),P.FormalRoot.GetSerial(),P.FormalDash.Serial(),
         P.CoreInjection.Plan.GetSerial(),static_cast<uint64>(P.CoreInjection.Plan.GetPhase()),static_cast<uint64>(W->SelectedWeapon),
@@ -93,7 +101,16 @@ bool FDWCombatPlayerPersistence::Fingerprint(ADWPlayerCharacter& P,TArray<uint64
         P.CombatKnockback.bActive,P.bIsRolling,P.bCombatRollRestorePending};
     auto Origin=[&](const TOptional<FDWCombatInputPress>& O)
     {Ids.Add(O.IsSet()?O->Edge.Context.WorldEpoch:0);Ids.Add(O.IsSet()?O->Edge.Context.LifeEpoch:0);Ids.Add(O.IsSet()?O->Edge.Context.BindingGeneration:0);Ids.Add(O.IsSet()?O->Edge.Sequence:0);};
-    Origin(W->PrimaryInputOrigin);Origin(W->SecondaryInputOrigin);Error.Reset();return true;
+    Origin(W->PrimaryInputOrigin);Origin(W->SecondaryInputOrigin);
+    if(P.CharacterA01&&P.CharacterA01->IsEnabled())
+    {
+        const auto& A01=P.CharacterA01->GetRuntime().GetState();const auto& Ability=P.CharacterA01->GetAbility().GetState();
+        Numbers.Append({A01.RecordedCapLoss,A01.Gas,A01.Corruption,A01.EntryDurationSeconds,A01.CapLossElapsedSeconds,A01.CapRecoveryElapsedSeconds,A01.NormalRegenElapsedSeconds,
+            Ability.PhaseElapsedSeconds,Ability.CooldownRemainingSeconds,Ability.DashDirectionX,Ability.DashDirectionY,Ability.DashDistanceCm});
+        Ids.Add(static_cast<uint64>(Ability.Phase));Ids.Add(static_cast<uint64>(Ability.StartRequest));
+        Flags.Append({A01.bCorruptionInitialized,Ability.bPhysicalDown,Ability.bReleaseRequired,P.CharacterA01->IsAbilityActive()});
+    }
+    Error.Reset();return true;
 }
 
 bool FDWCombatPlayerPersistence::CaptureBase(ADWPlayerCharacter& P,UDWSaveGame& Save,FString& Error)
@@ -106,10 +123,21 @@ bool FDWCombatPlayerPersistence::CaptureBase(ADWPlayerCharacter& P,UDWSaveGame& 
     Save.Inventory=P.Inventory->GetSlots();Save.SprintAlcoholElapsed=Save.TransformationDecayElapsed=0.f;
     auto& Block=Save.CombatPlayerResources;Block={};Block.SubblockSchema=DWCombatPlayerSave::SubblockSchema;
     Block.Vitals=P.CombatVitals.Capture(P.Health);
+    if(P.CharacterA01&&P.CharacterA01->IsEnabled())
+    {
+        auto* Language=P.GetGameInstance()->GetSubsystem<UDWLanguageSubsystem>();auto Candidate=P.CharacterA01->GetRuntime();Candidate.SyncCurrentHealth(P.Health);FDWCombatPlayerVitalsConfig Mirror;
+        if(!Language||!P.CharacterA01->BuildLegacyMirror(Candidate,Mirror,Block.Vitals,Error))return false;
+        if(Language->IsTrialWorld())
+        {
+            if(!Language->CaptureProgressJson(Save.LanguageProgressJson,Error)||!P.CharacterA01->CaptureTrialStateJson(Save.A01StateJson,Error))return false;
+            Save.LanguageTrialSchema=1;Save.MapPackage=TEXT("/Game/DoughWorld/Maps/Gameplay/Levels/L_DoughWorld_LanguagePlaytest");
+        }
+        else if(!FDWFormalLanguagePersistence::IsCurrent(*Language,true)){Error=TEXT("Enabled formal A01 lacks its current slot owner.");return false;}
+    }
     const auto& W=P.WeaponAnimationComponent->CombatWeaponResources.Snapshot;
     Block.OwnedPermanentWeaponIds=W.OwnedPermanentWeaponIds.Array();Block.OwnedPermanentWeaponIds.Sort(FNameLexicalLess());
     Block.CurrentEquipmentId=W.CurrentEquipmentId;Block.LoadedShotgunShells=W.LoadedShotgunShells;
-    Save.Transformation=static_cast<float>(P.CombatVitals.GetSpecial());Save.bYeastForm=P.GetCombatBaseForm()==EDWCombatBaseForm::Yeast;
+    Save.Transformation=static_cast<float>(Block.Vitals.Special-Block.Vitals.SpecialGrowthCarry);Save.bYeastForm=P.GetCombatBaseForm()==EDWCombatBaseForm::Yeast;
     if(const auto* Events=P.GetWorld()->GetSubsystem<UDWWorldEventSubsystem>())Save.CompletedWorldEvents=Events->ExportCompleted();
     Save.CombatWorld.Schema=Rules->GetCombatSchema();Save.CombatWorld.bNewAdventure=false;
     // The three old incomplete-block flags are false only in this complete-aggregate candidate.
@@ -124,6 +152,7 @@ bool FDWCombatPlayerPersistence::Capture(ADWPlayerCharacter& P,const TArray<FDWC
     FDWCombatPlayerExtendedSave S;S.Schema=1;S.WeaponLockRemaining=FMath::Max(0.,P.WeaponAnimationComponent->NextAttackTime-Now);
     S.LegacyMeleeLockRemaining=FMath::Max(0.,double(P.NextMeleeTime)-Now);S.LegacyThrowLockRemaining=FMath::Max(0.,double(P.NextThrowTime)-Now);
     auto Dash=P.FormalDash;if(Dash.IsActive())Dash.End(EDWYeastDashEnd::Cancelled);S.DashCooldownRemaining=Dash.CooldownSeconds();
+    if(P.CharacterA01&&P.CharacterA01->IsEnabled())S.DashCooldownRemaining=P.GetFormalDashCooldown();
     S.CombatDamageRevision=P.CombatDamageRevision;S.Defense=Shield(P.WeaponAnimationComponent->ShieldDefense.Capture(Now));
     const auto Life=A->FindRegisteredActorLife(&P);S.PlayerEntity=Life.Entity;S.PlayerLife=Life.Life;
     if(!A->CaptureShieldPackets(P,Bindings,S.ShieldPackets,Error))return false;
@@ -146,11 +175,19 @@ bool FDWCombatPlayerPersistence::Validate(const FDWCombatRules& Rules,const UDWS
     if(S.LegacyMeleeLockRemaining>MAX_flt||S.LegacyThrowLockRemaining>MAX_flt)
     {Error=TEXT("Legacy cooldown cannot be represented.");return false;}
     FDWYeastDashConfig DC;FDWShieldAxeTuning SC;FDWMoldRootConfig RC;FDWShieldAxeDefense Defense;FDWCombatPlayerVitalsConfig VC;
-    if(!FDWYeastDashConfig::Build(Rules,DC,Error)||S.DashCooldownRemaining>DC.CooldownSeconds||
+    if(!DWCombatPlayerSave::BuildDashConfigForSave(Rules,Save,DC,Error)||S.DashCooldownRemaining>DC.CooldownSeconds||
         !FDWShieldAxeTuning::Build(Rules,SC,Error)||!Defense.Configure(SC)||!Defense.Restore(Shield(S.Defense),0.)||
-        !FDWMoldRootConfig::Build(Rules,RC,Error)||!FDWCombatPlayerVitalsConfig::Build(Rules,VC,Error)||
+        !FDWMoldRootConfig::Build(Rules,RC,Error)||!DWCombatPlayerSave::BuildConfigForSave(Rules,Save,VC,Error)||
         !FDWMoldRootPlan::ValidateSnapshot(RC,{S.bRooted,S.RootAnchor},V.BaseForm,V.Special-V.SpecialGrowthCarry,V.FormRemainingSeconds-V.FormTimeCarry))
     {if(Error.IsEmpty())Error=TEXT("Invalid shield, dash or rooted resource snapshot.");return false;}
+    if(DWCharacterA01SaveBridge::HasTrialFields(Save)||Save.FormalLanguage.Schema==2)
+    {FDWA01SavedProjection Projection;if(!DWCharacterA01SaveBridge::ValidateProjection(Rules,Save,Projection,Error)||FMath::Abs(Projection.CooldownRemaining-S.DashCooldownRemaining)>1.e-8||S.bRooted)
+        {Error=TEXT("A01 saved cooldown/root state disagrees with its independent state block.");return false;}}
+    if(Save.FormalLanguage.Schema==2)
+    {
+        FDWA01SavedProjection Projection;uint64 Resolved=0;if(!DWCharacterA01SaveBridge::ValidateProjection(Rules,Save,Projection,Error)||
+            !DWCharacterA01SaveBridge::ResolveStarvationOrdinal(Effects.Authority.Ledger,{S.PlayerEntity,S.PlayerLife},true,Projection.Runtime.GetState().StarvationOrdinal,Resolved,Error))return false;
+    }
     const bool Dead=Save.Health<=DWCombatPlayerSave::HealthFloor(VC);
     if((S.bRooted&&Dead)||(S.Defense.CounterCharges>0&&S.Defense.BaseForm!=static_cast<uint8>(V.BaseForm))||
         (S.Defense.CounterCharges>0&&!Save.CombatPlayerResources.OwnedPermanentWeaponIds.Contains(TEXT("DWWeapon_ShieldAxe")))||
@@ -188,13 +225,34 @@ bool FDWCombatPlayerPersistence::Prepare(ADWPlayerCharacter& P,const UDWSaveGame
     if(Identity.FindActor(S.PlayerEntity)!=&P||!SameLife(C.NewLife,{S.PlayerEntity,S.PlayerLife}))
     {Error=TEXT("Player cannot bind to the prepared authority identity.");return false;}
     FDWCombatPlayerVitalsConfig VC;FDWShieldAxeTuning SC;FDWYeastDashConfig DC;FDWMoldRootConfig RC;
-    if(!FDWCombatPlayerVitalsConfig::Build(*Rules,VC,Error)||!C.Vitals.Restore(VC,Save.CombatPlayerResources.Vitals)||
+    if(!DWCombatPlayerSave::BuildConfigForSave(*Rules,Save,VC,Error)||!C.Vitals.Restore(VC,Save.CombatPlayerResources.Vitals)||
         !DWCombatPlayerSave::BuildWeaponCandidate(*Rules,Save.CombatPlayerResources,C.WeaponState,Error)||
         !DWCombatEquipment::ToPresentation(C.WeaponState.Snapshot.CurrentEquipmentId,C.Selection)||!DWCombatEquipment::BuildSwitchLock(*Rules,C.SwitchLock,Error)||
         !FDWShieldAxeTuning::Build(*Rules,SC,Error)||!C.Defense.Configure(SC)||!C.Defense.Restore(Shield(S.Defense),C.At)||
-        !FDWYeastDashConfig::Build(*Rules,DC,Error)||!C.Dash.RestoreCooldown(DC,S.DashCooldownRemaining)||
+        !DWCombatPlayerSave::BuildDashConfigForSave(*Rules,Save,DC,Error)||!C.Dash.RestoreCooldown(DC,S.DashCooldownRemaining)||
         !FDWMoldRootConfig::Build(*Rules,RC,Error)||!C.Root.Restore(RC,{S.bRooted,S.RootAnchor},C.Vitals.GetForm(),C.Vitals.GetSpecial(),C.Vitals.GetFormRemaining()))
     {if(Error.IsEmpty())Error=TEXT("Player native restore candidate was rejected.");return false;}
+    if(DWCharacterA01SaveBridge::HasTrialFields(Save))
+    {
+        if(!P.CharacterA01||!P.CharacterA01->IsEnabled()){Error=TEXT("LANG-01 state cannot restore into an ordinary-map player.");return false;}
+        FDWA01SavedProjection Projection;if(!DWCharacterA01SaveBridge::ValidateProjection(*Rules,Save,Projection,Error))return false;
+        C.bA01=true;C.A01Runtime=MoveTemp(Projection.Runtime);C.A01Cooldown=Projection.CooldownRemaining;
+    }
+    else if(Save.FormalLanguage.Schema==2)
+    {
+        auto* Language=GI->GetSubsystem<UDWLanguageSubsystem>();FDWA01SavedProjection Projection;
+        if(!P.CharacterA01||!Language||!DWFormalLanguageProjection::PrepareStored(Save,GI->GetActiveSlot(),Language->GetNativeModel()->GetCatalog(),Language->GetTrialConfig(),*Rules,Projection,Error)||
+            !P.CharacterA01->PrepareFormalAbility(C.A01Ability,Error))return false;
+        C.bA01=C.bFormalA01=true;C.A01Runtime=MoveTemp(Projection.Runtime);C.A01Cooldown=Projection.CooldownRemaining;
+    }
+    else if(P.CharacterA01&&P.CharacterA01->IsEnabled()){Error=TEXT("Ordinary saves cannot bypass the explicit LANG-01 aggregate.");return false;}
+    if(C.bA01)
+    {
+        auto State=C.A01Runtime.Capture();uint64 Resolved=0;
+        if(!DWCharacterA01SaveBridge::ResolveStarvationOrdinal(Effects.Authority.Ledger,{S.PlayerEntity,S.PlayerLife},C.bFormalA01,
+            C.bFormalA01?State.StarvationOrdinal:Save.CombatPlayerResources.Vitals.StarvationOrdinal,Resolved,Error))return false;
+        State.StarvationOrdinal=Resolved;if(!C.A01Runtime.Restore(C.A01Runtime.GetConfig(),State))return false;
+    }
     if(S.bRooted)
     {
         C.RootIdentity={{C.NewEpoch,S.RootAction},{C.NewEpoch,S.RootReceipt},C.NewLife,C.NewEpoch,C.Root.GetSerial(),S.RootAnchor};
@@ -209,7 +267,12 @@ bool FDWCombatPlayerPersistence::Prepare(ADWPlayerCharacter& P,const UDWSaveGame
     C.WeaponState.Revision=C.Weapon->CombatWeaponResources.Revision+1;C.WeaponState.RestoreEpoch=C.Weapon->CombatWeaponResources.RestoreEpoch+1;
     C.AdoptedWeaponRestoreEpoch=C.WeaponState.RestoreEpoch;C.bSavedDead=Save.Health<=DWCombatPlayerSave::HealthFloor(VC);
     C.Health=Save.Health;C.SavedDamageRevision=S.CombatDamageRevision;C.bPlace=Save.bHasPlayerTransform;C.Destination=Save.PlayerTransform;
-    C.WeaponLock=C.At+S.WeaponLockRemaining;C.MeleeLock=C.At+S.LegacyMeleeLockRemaining;C.ThrowLock=C.At+S.LegacyThrowLockRemaining;
+    C.WeaponLock=C.At+S.WeaponLockRemaining;
+    // Zero means already expired. Rounding the current double world clock upward
+    // into a legacy float deadline would otherwise invent a future cooldown.
+    // Positive saved locks retain the existing conservative ceiling conversion.
+    C.MeleeLock=S.LegacyMeleeLockRemaining>0.?C.At+S.LegacyMeleeLockRemaining:0.;
+    C.ThrowLock=S.LegacyThrowLockRemaining>0.?C.At+S.LegacyThrowLockRemaining:0.;
     if(!FMath::IsFinite(C.WeaponLock)||!FMath::IsFinite(C.MeleeLock)||!FMath::IsFinite(C.ThrowLock)||C.MeleeLock>MAX_flt||C.ThrowLock>MAX_flt)
     {Error=TEXT("Saved deadlines overflow this world clock.");return false;}
     if(!Plan.CanCommit(Error))return false;Out=MoveTemp(Plan);return true;
@@ -250,7 +313,10 @@ void FDWCombatPlayerPersistence::AdoptNativeFacts(FDWCombatPlayerRestorePlan& Pl
     W.SelectedWeapon=C.Selection;W.EquipmentSwitchLockSeconds=C.SwitchLock;W.bEquipmentRulesReady=true;
     W.AmmoInMagazine=C.Selection==EDWAnimatedWeapon::Shotgun?W.CombatWeaponResources.Snapshot.LoadedShotgunShells:0;W.LastWeaponResourceReceipt={};
     W.NextAttackTime=C.WeaponLock;P.NextMeleeTime=LegacyDeadline(C.MeleeLock);P.NextThrowTime=LegacyDeadline(C.ThrowLock);
-    P.CombatVitals=MoveTemp(C.Vitals);P.Health=C.Health;P.CombatDamageRevision=C.SavedDamageRevision;P.LastCombatDamageWorldTime=-1.;
+    P.CombatVitals=MoveTemp(C.Vitals);P.Health=C.Health;
+    if(C.bFormalA01)P.CharacterA01->AdoptFormalStateUnchecked(MoveTemp(C.A01Runtime),MoveTemp(C.A01Ability),C.A01Cooldown);
+    else if(C.bA01)P.CharacterA01->AdoptTrialStateUnchecked(MoveTemp(C.A01Runtime),C.A01Cooldown);
+    P.CombatDamageRevision=C.SavedDamageRevision;P.LastCombatDamageWorldTime=-1.;
     P.FormalDash=MoveTemp(C.Dash);P.DashInputOrigin={};P.FormalDashLife={};P.FormalDashWorld.Reset();P.FormalDashEpoch=0;
     P.LastFormalDashEdge={};P.LastFormalDashRequestOrdinal=P.LastPublishedFormalDashSerial=0;
     P.AdoptFormalRootRestoreUnchecked(MoveTemp(C.Root),C.RootIdentity);

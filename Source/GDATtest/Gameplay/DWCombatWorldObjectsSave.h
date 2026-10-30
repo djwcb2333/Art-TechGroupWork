@@ -53,9 +53,9 @@ struct FDWCombatWorldObjectsSave
 };
 namespace DWCombatWorldObjectsSave
 {
-    bool Validate(const FDWCombatWorldObjectsSave&,FString& Error);
-    bool Encode(const FDWCombatWorldObjectsSave&,TArray<uint8>& Out,FString& Error);
-    bool Decode(const TArray<uint8>&,FDWCombatWorldObjectsSave& Out,FString& Error);
+    bool Validate(const FDWCombatWorldObjectsSave&,FString& Error,bool bValidatedFormalSession=false);
+    bool Encode(const FDWCombatWorldObjectsSave&,TArray<uint8>& Out,FString& Error,bool bValidatedFormalSession=false);
+    bool Decode(const TArray<uint8>&,FDWCombatWorldObjectsSave& Out,FString& Error,bool bValidatedFormalSession=false);
     // Legacy Resource/Nest structure remains in the outer SaveGame, but is validated without Blueprint queries.
     bool ValidateLegacy(const TArray<FDWPersistedActorState>&,FString& Error);
 }

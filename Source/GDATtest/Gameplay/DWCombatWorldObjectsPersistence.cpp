@@ -7,6 +7,9 @@
 #include "DWCombatRules.h"
 #include "DWGameInstance.h"
 #include "DWEnemyCharacter.h"
+#include "DWLanguageCombatArena.h"
+#include "DWLanguageSubsystem.h"
+#include "DWFormalLanguagePersistence.h"
 #include "DWEnemyNest.h"
 #include "DWPlayerCharacter.h"
 #include "DWResourceNode.h"
@@ -38,6 +41,7 @@ struct FDWCombatWorldObjectsRestoreState
     TArray<uint8> BeforeBytes;TArray<FDWCombatObjectBinding> Live,Restored;
     TArray<uint64> Keep;TArray<FDWWorldEnemyPrepared> Enemies;
     TArray<TWeakObjectPtr<AActor>> Staged,Retire;
+    TArray<TPair<TWeakObjectPtr<ADWEnemyCharacter>,TWeakObjectPtr<ADWLanguageCombatArena>>> ArenaRetire;
     TArray<TWeakObjectPtr<AController>> StagedControllers;
     TSet<TWeakObjectPtr<AActor>> Ignored;
     double At=0.;uint64 Epoch=0,NewEpoch=0;DWCombatCommit::FEntityLife PlayerLife;
@@ -46,6 +50,8 @@ struct FDWCombatWorldObjectsRestoreState
 };
 namespace
 {
+bool FormalEssences(const UWorld* W)
+{const auto* L=W&&W->GetGameInstance()?W->GetGameInstance()->GetSubsystem<UDWLanguageSubsystem>():nullptr;return L&&FDWFormalLanguagePersistence::IsCurrent(*L,true);}
 bool Same(DWCombatCommit::FEntityLife A,DWCombatCommit::FEntityLife B){return A.Entity==B.Entity&&A.Life==B.Life;}
 AActor* Find(const TArray<FDWCombatObjectBinding>& B,const FString& Id)
 {for(const auto& V:B)if(V.StableId.Equals(Id,ESearchCase::CaseSensitive))return V.Actor.Get();return nullptr;}
@@ -80,6 +86,12 @@ bool FDWCombatWorldObjectsRestorePlan::IsStagingIntact(FString& Error)const
     {auto* E=Cast<ADWEnemyCharacter>(Weak.Get());if(!ActorCurrent(E,State->World.Get())||!E->bCombatWorldStaged||!E->IsHidden()||E->GetActorEnableCollision()||E->IsActorTickEnabled())
         {Error=TEXT("Prepared enemy no longer inert/current");return false;}}
     for(const auto& V:State->Restored)if(!ActorCurrent(V.Actor.Get(),State->World.Get())){Error=TEXT("Prepared object binding ended");return false;}
+    for(const auto& Pair:State->ArenaRetire)
+    {
+        const auto* E=Pair.Key.Get();const auto* Arena=Pair.Value.Get();
+        if(!E||!Arena||!Arena->CanRetireRoundEnemy(*E,*State->Player.Get(),State->Saved))
+        {Error=TEXT("Isolated training round retirement permission changed");return false;}
+    }
     Error.Reset();return true;
 }
 bool FDWCombatWorldObjectsRestorePlan::CanCommit(FString& Error)const
@@ -87,20 +99,20 @@ bool FDWCombatWorldObjectsRestorePlan::CanCommit(FString& Error)const
     if(!IsStagingIntact(Error)||!State->bPrepared){if(Error.IsEmpty())Error=TEXT("World facts are not prepared");return false;}
     FDWCombatWorldObjectsSave Live;TArray<FDWPersistedActorState> Legacy;TArray<FDWCombatObjectBinding>B;TArray<uint8>Bytes;
     if(!FDWCombatWorldObjectsPersistence::CaptureInternal(*State->World.Get(),*State->Player.Get(),Live,Legacy,B,Error,State->Ignored)||
-        !DWCombatWorldObjectsSave::Encode(Live,Bytes,Error)||Bytes!=State->BeforeBytes||!LegacyEqual(Legacy,State->BeforeLegacy))
+        !DWCombatWorldObjectsSave::Encode(Live,Bytes,Error,FormalEssences(State->World.Get()))||Bytes!=State->BeforeBytes||!LegacyEqual(Legacy,State->BeforeLegacy))
     {Error=TEXT("Live world facts changed while preparing restore; candidate rejected");return false;}
     return true;
 }
 bool FDWCombatWorldObjectsPersistence::PrepareWorldObjects(UWorld& W,ADWPlayerCharacter& P,const FDWCombatWorldObjectsSave& S,
-    const TArray<FDWPersistedActorState>& L,FDWCombatWorldObjectsRestorePlan& Out,FString& Error)
+    const TArray<FDWPersistedActorState>& L,FDWCombatWorldObjectsRestorePlan& Out,FString& Error,bool bValidatedFormalSession)
 {
-    if(!DWCombatWorldObjectsSave::Validate(S,Error)||!DWCombatWorldObjectsSave::ValidateLegacy(L,Error))return false;
+    if(!DWCombatWorldObjectsSave::Validate(S,Error,bValidatedFormalSession)||!DWCombatWorldObjectsSave::ValidateLegacy(L,Error))return false;
     if(!S.MapPackage.Equals(UDWCombatRecoverySubsystem::MapPackage(&W),ESearchCase::CaseSensitive)){Error=TEXT("World object map mismatch");return false;}
     auto* GI=P.GetGameInstance<UDWGameInstance>();const auto Rules=GI?GI->GetCombatRules():nullptr;
     if(!Rules){Error=TEXT("Missing formal rules");return false;}
     FDWCombatWorldObjectsRestorePlan Plan;Plan.State.Reset(new FDWCombatWorldObjectsRestoreState);auto& C=*Plan.State;
     C.World=&W;C.Player=&P;C.Authority=UDWCombatAuthoritySubsystem::Get(&W);C.Drops=UDWCombatCoreDropSubsystem::Get(&W);C.Recovery=UDWCombatRecoverySubsystem::Get(&W);C.Registry=W.GetSubsystem<UDWCombatWorldObjectsRegistry>();C.At=W.GetTimeSeconds();
-    FDWCombatWorldObjectsSave Before;if(!Capture(W,P,Before,C.BeforeLegacy,C.Live,Error)||!DWCombatWorldObjectsSave::Encode(Before,C.BeforeBytes,Error))return false;
+    FDWCombatWorldObjectsSave Before;if(!Capture(W,P,Before,C.BeforeLegacy,C.Live,Error)||!DWCombatWorldObjectsSave::Encode(Before,C.BeforeBytes,Error,FormalEssences(&W)))return false;
     C.Epoch=C.Authority->GetWorldEpoch();C.PlayerLife=C.Authority->CaptureActorLife(&P);C.Saved=S;C.Legacy=L;
     if(!DWEnemyFormal::BuildCoreDropConfig(*Rules,C.DropConfig,Error))return false;
     C.Restored.Add({TEXT("player:0"),&P});if(P.GetController())C.Restored.Add({TEXT("controller:0"),P.GetController()});
@@ -158,11 +170,23 @@ bool FDWCombatWorldObjectsPersistence::PrepareWorldObjects(UWorld& W,ADWPlayerCh
         if(V.MeleeAction.Id)C.Keep.AddUnique(V.MeleeAction.Id);
     }
     for(TActorIterator<ADWEnemyCharacter> It(&W);It;++It)if(!It->IsActorBeingDestroyed()&&!It->bCombatWorldStaged&&!Used.Contains(*It))
-    {if(It->SourceNest)C.Retire.Add(*It);else{Error=TEXT("Unrepresented placed enemy; refusing to erase authored scene facts");return false;}}
+    {
+        if(It->SourceNest)C.Retire.Add(*It);
+        else
+        {
+            // A possessed Pawn's Owner is its AIController, not its spawning arena.
+            // Only the arena's private exact round identity can authorize this retirement.
+            ADWLanguageCombatArena* Arena=nullptr;
+            for(TActorIterator<ADWLanguageCombatArena> AIt(&W);AIt;++AIt)if(AIt->CanRetireRoundEnemy(**It,P,S))
+            {if(Arena){Error=TEXT("Ambiguous isolated training round owner");return false;}Arena=*AIt;}
+            if(!Arena){Error=TEXT("Unrepresented placed enemy; refusing to erase authored scene facts");return false;}
+            C.Retire.Add(*It);C.ArenaRetire.Add({*It,Arena});
+        }
+    }
     if(!Plan.IsStagingIntact(Error))return false;
     // FinishSpawning callbacks must not mutate the already-playing scene.
     FDWCombatWorldObjectsSave After;TArray<FDWPersistedActorState> AL;TArray<FDWCombatObjectBinding> AB;TArray<uint8>Bytes;
-    if(!CaptureInternal(W,P,After,AL,AB,Error,C.Ignored)||!DWCombatWorldObjectsSave::Encode(After,Bytes,Error)||Bytes!=C.BeforeBytes||!LegacyEqual(AL,C.BeforeLegacy))
+    if(!CaptureInternal(W,P,After,AL,AB,Error,C.Ignored)||!DWCombatWorldObjectsSave::Encode(After,Bytes,Error,FormalEssences(&W))||Bytes!=C.BeforeBytes||!LegacyEqual(AL,C.BeforeLegacy))
     {Error=TEXT("Enemy construction changed the live scene; restore rejected");return false;}
     // Include staged registrations in the live identity table only; they are not live gameplay facts.
     for(auto Weak:C.Staged)if(auto* E=Cast<ADWEnemyCharacter>(Weak.Get()))
@@ -287,18 +311,45 @@ bool FDWCombatWorldObjectsPersistence::Publish(FDWCombatWorldObjectsRestorePlan&
     for(auto& Row:C.Enemies)
     {
         auto* E=Row.Actor.Get();const auto& S=Row.Saved;const auto Here=[&](){return Current()&&ActorCurrent(E,C.World.Get())&&Same(C.Authority->FindRegisteredActorLife(E),S.Life);};
-        if(!Here())return Fail();E->StopAIMovement();if(!Here())return Fail();
+        if(!Here())return Fail();E->CancelSpecializedDeathPresentation();if(!Here())return Fail();E->StopAIMovement();if(!Here())return Fail();
         E->GetWorldTimerManager().ClearTimer(E->DeathCleanupTimer);E->SetLifeSpan(0.f);E->SetActorEnableCollision(false);if(!Here())return Fail();
         if(!E->SetActorTransform(S.Transform,false,nullptr,ETeleportType::TeleportPhysics)||!Here())return Fail();
         E->GetCharacterMovement()->SetMovementMode(static_cast<EMovementMode>(S.MovementMode),S.CustomMovementMode);if(!Here())return Fail();
         E->GetCharacterMovement()->Velocity=S.Velocity;
         if(E->DetectionRange)E->DetectionRange->SetSphereRadius(E->DetectionRadius,false);if(!Here())return Fail();
-        E->SetActorHiddenInGame(S.bHidden);if(!Here())return Fail();E->SetActorEnableCollision(S.bCollision);if(!Here())return Fail();E->SetActorTickEnabled(S.bActorTick);if(!Here())return Fail();
-        if(E->GetMesh())E->GetMesh()->SetComponentTickEnabled(S.bMeshTick);if(!Here())return Fail();
-        E->bCombatWorldStaged=false;E->RefreshCombatGroundAreaSlow();if(!Here())return Fail();E->UpdatePlaceholderPresentation();if(!Here())return Fail();
-        if(S.bDeathCleanupScheduled)
-        {if(S.DeathCleanupRemaining>0.)E->GetWorldTimerManager().SetTimer(E->DeathCleanupTimer,E,&ADWEnemyCharacter::FinishPersistentDeath,static_cast<float>(S.DeathCleanupRemaining),false);else E->FinishPersistentDeath();if(!Here())return Fail();}
-        if(S.LifeSpanRemaining>0.)E->SetLifeSpan(static_cast<float>(S.LifeSpanRemaining));if(!Here())return Fail();
+        const bool bSuppressRestoredDeath=S.Health<=0.f&&E->HideRestoredDeadWithoutPresentation();
+        E->SetActorHiddenInGame(bSuppressRestoredDeath||S.bHidden);if(!Here())return Fail();E->SetActorEnableCollision(!bSuppressRestoredDeath&&S.bCollision);if(!Here())return Fail();E->SetActorTickEnabled(!bSuppressRestoredDeath&&S.bActorTick);if(!Here())return Fail();
+        if(E->GetMesh())E->GetMesh()->SetComponentTickEnabled(!bSuppressRestoredDeath&&S.bMeshTick);if(!Here())return Fail();
+        E->bCombatWorldStaged=false;E->RefreshCombatGroundAreaSlow();if(!Here())return Fail();E->ApplyElitePlaceholderFallback();if(!Here())return Fail();E->UpdatePlaceholderPresentation();if(!Here())return Fail();
+        // Opt-in restored deaths stay dead without replaying old visuals or their old cleanup clock.
+        if(bSuppressRestoredDeath)
+        {
+            E->FinishPersistentDeath();if(!Here())return Fail();
+            if(E->PersistentId.IsNone())
+            {
+                // Normal nonpersistent corpses are destroyed; defer until the restore
+                // publication has finished and reject a later restore/revival.
+                const TWeakObjectPtr<ADWEnemyCharacter> WeakEnemy(E);
+                const TWeakObjectPtr<UDWCombatAuthoritySubsystem> WeakAuthority(C.Authority.Get());
+                const TWeakObjectPtr<UWorld> WeakWorld(C.World.Get());
+                const auto ExpectedLife=S.Life;const uint64 ExpectedEpoch=C.NewEpoch;
+                E->GetWorldTimerManager().SetTimerForNextTick([WeakEnemy,WeakAuthority,WeakWorld,ExpectedLife,ExpectedEpoch]()
+                {
+                    auto* Enemy=WeakEnemy.Get();auto* Authority=WeakAuthority.Get();auto* World=WeakWorld.Get();
+                    if(!IsValid(Enemy)||Enemy->IsActorBeingDestroyed()||!IsValid(Authority)||!World||World->bIsTearingDown||
+                       Enemy->GetWorld()!=World||Authority->GetWorldEpoch()!=ExpectedEpoch||Enemy->IsAlive()||
+                       !Enemy->PersistentId.IsNone()||!Same(Authority->FindRegisteredActorLife(Enemy),ExpectedLife))return;
+                    Enemy->Destroy(); // Existing EndPlay/authority path records the tombstone where applicable.
+                });
+                if(!Here())return Fail();
+            }
+        }
+        else
+        {
+            if(S.bDeathCleanupScheduled)
+            {if(S.DeathCleanupRemaining>0.)E->GetWorldTimerManager().SetTimer(E->DeathCleanupTimer,E,&ADWEnemyCharacter::FinishPersistentDeath,static_cast<float>(S.DeathCleanupRemaining),false);else E->FinishPersistentDeath();if(!Here())return Fail();}
+            if(S.LifeSpanRemaining>0.)E->SetLifeSpan(static_cast<float>(S.LifeSpanRemaining));if(!Here())return Fail();
+        }
     }
     for(const auto& V:C.Legacy)
     {

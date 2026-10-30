@@ -1,7 +1,11 @@
 #include "DWGameplayWidget.h"
+#include "DWLanguageItemTooltipFactory.h"
+#include "DWLanguageSubsystem.h"
+#include "DWCharacterA01Component.h"
 #include "Engine/Font.h"
 #include "DWC01UIStyle.h"
 #include "DWC01HUDAnchor.h"
+#include "DWBuildingPlacementHints.h"
 #include "DWUIOffscreenComponent.h"
 #include "DWHandbookButton.h"
 #include "DWPlayerCharacter.h"
@@ -141,7 +145,16 @@ void UDWGameplayWidget::TickC01Buttons()
 
 void UDWGameplayWidget::InitializeC01Display()
 {
- if(!bUseC01HUD||!WidgetTree)return;
+ if(!WidgetTree)return;
+ if(!bUseC01HUD){if(PlacementHints)PlacementHints->RefreshPresentation(this);return;}
+ if(HUDLayer&&!PlacementHints)
+ {
+  PlacementHints=WidgetTree->ConstructWidget<UDWBuildingPlacementHints>(UDWBuildingPlacementHints::StaticClass(),TEXT("BuildingPlacementHints"));
+  auto* HintsSlot=HUDLayer->AddChildToCanvas(PlacementHints);
+  HintsSlot->SetAnchors(FAnchors(1,1));HintsSlot->SetAlignment(FVector2D(1,1));
+  HintsSlot->SetPosition(FVector2D(-72,-302));HintsSlot->SetSize(FVector2D(248,222));HintsSlot->SetZOrder(30);
+ }
+ if(PlacementHints)PlacementHints->RefreshPresentation(this);
  const float DialDiameter=C01Safe(C01HUDDiameter,248.f,160.f,400.f);
  const FVector2D HUDMargin=C01HUDMargin.ContainsNaN()?FVector2D(72,30):C01HUDMargin;
  if(HUDLayer&&!C01HUDAnchor)
@@ -164,7 +177,7 @@ void UDWGameplayWidget::InitializeC01Display()
    T->SetColorAndOpacity(DWC01UI::Ink());T->SetVisibility(ESlateVisibility::HitTestInvisible);
    FSlateFontInfo Font=T->GetFont();Font.Size=PointSize;Font.OutlineSettings.OutlineSize=0;if(HUD&&HUD->GameUIFont)Font.FontObject=HUD->GameUIFont;T->SetFont(Font);return T;
   };
-  for(int32 I=0;I<3;++I)
+  for(int32 I=0;I<4;++I)
   {
    const FName ButtonName(*FString::Printf(TEXT("C01QuickInventory_%d"),I+1));auto* Button=WidgetTree->ConstructWidget<UDWHandbookButton>(UDWHandbookButton::StaticClass(),ButtonName);
    Button->Configure(this,300+I,true);Button->C01BaseColor=DWC01UI::Paper();StyleC01Button(Button,DWC01UI::Paper(),false,false,true);
@@ -183,8 +196,8 @@ void UDWGameplayWidget::InitializeC01Display()
    // Outline is a sibling above the tinted button, so color/disabled tweens cannot color its white rim.
    auto* Frame=WidgetTree->ConstructWidget<UOverlay>();auto* ButtonLayout=Frame->AddChildToOverlay(Button);ButtonLayout->SetHorizontalAlignment(HAlign_Fill);ButtonLayout->SetVerticalAlignment(VAlign_Fill);
    auto* Outline=WidgetTree->ConstructWidget<UImage>(UImage::StaticClass(),FName(*FString::Printf(TEXT("C01QuickOutline_%d"),I+1)));Outline->SetBrush(DWC01UI::QuickSlotOutline(FVector2D(CellSize,CellSize),C01QuickSlotOutlineThickness));Outline->SetVisibility(ESlateVisibility::HitTestInvisible);auto* OutlineLayout=Frame->AddChildToOverlay(Outline);OutlineLayout->SetHorizontalAlignment(HAlign_Fill);OutlineLayout->SetVerticalAlignment(VAlign_Fill);
-   auto* Size=WidgetTree->ConstructWidget<USizeBox>();Size->SetWidthOverride(CellSize);Size->SetHeightOverride(CellSize);Size->SetContent(Frame);auto* Cell=Row->AddChildToHorizontalBox(Size);Cell->SetPadding(FMargin(0,0,I<2?CellGap:0,0));
-   C01QuickButtons.Add(Button);C01QuickIcons.Add(Icon);C01QuickOutlines.Add(Outline);C01QuickNames.Add(Name);C01QuickQuantities.Add(Quantity);C01QuickKeys.Add(Key);
+   auto* Size=WidgetTree->ConstructWidget<USizeBox>();Size->SetWidthOverride(CellSize);Size->SetHeightOverride(CellSize);Size->SetContent(Frame);auto* Cell=Row->AddChildToHorizontalBox(Size);Cell->SetPadding(FMargin(0,0,I<3?CellGap:0,0));
+   C01QuickCells.Add(Size);C01QuickButtons.Add(Button);C01QuickIcons.Add(Icon);C01QuickOutlines.Add(Outline);C01QuickNames.Add(Name);C01QuickQuantities.Add(Quantity);C01QuickKeys.Add(Key);
   }
   C01QuickDock->SetVisibility(ESlateVisibility::Collapsed);
  }
@@ -227,21 +240,26 @@ void UDWGameplayWidget::TickC01QuickDock()
  const FVector2D Offset=GetC01CinematicOffset();const bool Transition=HUD->GetMenuPage()!=EDWMenuPage::None||UDWWorldEventSubsystem::IsPlaying(this)||!Offset.IsNearlyZero(.5);
  C01QuickDock->SetVisibility(Transition?ESlateVisibility::HitTestInvisible:ESlateVisibility::Visible);
  const FVector2D HUDMargin=C01HUDMargin.ContainsNaN()?FVector2D(72,30):C01HUDMargin;
- if(auto* DockCanvas=Cast<UCanvasPanelSlot>(C01QuickDock->Slot))DockCanvas->SetPosition(FVector2D(Offset.X,-HUDMargin.Y+Offset.Y));
+ const int32 QuickCount=GetUnlockedQuickInventorySlotCount();const float QuickSize=C01Safe(C01QuickSlotSize,92.f,64.f,128.f),QuickGap=C01Safe(C01QuickSlotGap,16.f,0.f,32.f);
+ if(auto* DockCanvas=Cast<UCanvasPanelSlot>(C01QuickDock->Slot)){DockCanvas->SetPosition(FVector2D(Offset.X,-HUDMargin.Y+Offset.Y));DockCanvas->SetSize(FVector2D(QuickCount*QuickSize+(QuickCount-1)*QuickGap,QuickSize));}
  const auto* Config=GetGameplayConfig();const auto* Bag=P->GetInventory();const auto* Controller=Cast<ADWPlayerController>(GetOwningPlayer());
- for(int32 I=0;I<C01QuickButtons.Num()&&I<3;++I)if(auto* Button=C01QuickButtons[I].Get())
+ for(int32 I=0;I<C01QuickButtons.Num()&&I<4;++I)if(auto* Button=C01QuickButtons[I].Get())
  {
+  if(C01QuickCells.IsValidIndex(I))if(auto* Cell=C01QuickCells[I].Get())
+  {Cell->SetVisibility(I<QuickCount?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
+   if(auto* Layout=Cast<UHorizontalBoxSlot>(Cell->Slot))Layout->SetPadding(FMargin(0,0,I<QuickCount-1?QuickGap:0,0));}
   const FDWItemStack Item=Bag&&Bag->GetSlots().IsValidIndex(I)?Bag->GetSlots()[I]:FDWItemStack();
   const bool Occupied=!Item.ItemId.IsNone()&&Item.Quantity>0;const auto* Definition=Occupied&&Config?Config->GetItemDefinition(Item.ItemId):nullptr;
   const FText Name=Occupied?(Definition?UDWLocalizationLibrary::GetItemDisplayName(this,*Definition):FText::FromName(Item.ItemId)):FText::GetEmpty();
-  const bool HasIcon=Occupied&&Definition&&Definition->Icon;const bool Selected=Occupied&&CombatHUD.EquipmentId==Item.ItemId;
+  const bool HasIcon=Occupied&&Definition&&Definition->Icon;const bool Selected=Occupied&&(CombatHUD.EquipmentId==Item.ItemId||FDWCombatItemRegistry::SamePermanentWeapon(CombatHUD.EquipmentId,Item.ItemId));
   Button->SetIsEnabled(!Transition&&CanActivateQuickInventorySlot(I));Button->SetRenderOpacity(Occupied?1.f:.45f);Button->UpdateSelection(Selected);
   if(C01QuickIcons.IsValidIndex(I))if(auto* Icon=C01QuickIcons[I].Get()){Icon->SetBrushFromTexture(HasIcon?Definition->Icon.Get():nullptr,false);Icon->SetColorAndOpacity(FLinearColor::White);Icon->SetVisibility(HasIcon?ESlateVisibility::HitTestInvisible:ESlateVisibility::Collapsed);}
   if(C01QuickNames.IsValidIndex(I))if(auto* Text=C01QuickNames[I].Get()){Text->SetText(Name);Text->SetVisibility(Occupied&&!HasIcon?ESlateVisibility::HitTestInvisible:ESlateVisibility::Collapsed);}
   if(C01QuickQuantities.IsValidIndex(I))if(auto* Text=C01QuickQuantities[I].Get())Text->SetText(Occupied?FText::AsNumber(Item.Quantity):FText::GetEmpty());
-  if(C01QuickKeys.IsValidIndex(I))if(auto* Text=C01QuickKeys[I].Get())Text->SetText(Controller?Controller->GetActionKeyLabel(static_cast<EDWInputAction>(int32(EDWInputAction::SelectWeapon1)+I)):FText::AsNumber(I+1));
+  if(C01QuickKeys.IsValidIndex(I))if(auto* Text=C01QuickKeys[I].Get())Text->SetText(Controller?Controller->GetActionKeyLabel(I==3?EDWInputAction::Shortcut4:static_cast<EDWInputAction>(int32(EDWInputAction::SelectWeapon1)+I)):FText::AsNumber(I+1));
   if(C01QuickOutlines.IsValidIndex(I))if(auto* Outline=C01QuickOutlines[I].Get())Outline->SetBrush(DWC01UI::QuickSlotOutline(FVector2D(C01Safe(C01QuickSlotSize,92.f,64.f,128.f),C01Safe(C01QuickSlotSize,92.f,64.f,128.f)),C01QuickSlotOutlineThickness));
-  Button->SetToolTipText(Occupied?FText::Format(DWText(this,TEXT("{0} × {1}"),TEXT("{0} x {1}")),Name,Item.Quantity):DWText(this,TEXT("空快捷栏"),TEXT("Empty quick slot")));
+  const FText Fallback=Occupied?FText::Format(DWText(this,TEXT("{0} × {1}"),TEXT("{0} x {1}")),Name,Item.Quantity):DWText(this,TEXT("空快捷栏"),TEXT("Empty quick slot"));
+  DWLanguageItemTooltip::AttachItem(Button,this,Item,Fallback);
  }
 }
 bool UDWGameplayWidget::IsC01QuickDockPointer(FVector2D ScreenPosition)const

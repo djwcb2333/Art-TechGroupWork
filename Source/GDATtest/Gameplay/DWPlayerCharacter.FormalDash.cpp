@@ -15,6 +15,7 @@
 
 bool ADWPlayerCharacter::TryStartFormalDash(const FDWCombatInputPress& Press,FVector Move,FVector Aim)
 {
+    if(IsBuildingPlacementBlockingAttack())return false;
     const auto& NewContext=Press.Edge.Context;const auto& OldContext=LastFormalDashEdge.Context;
     const bool LaterContext=!OldContext.IsValid()||
         (NewContext.WorldEpoch!=OldContext.WorldEpoch?NewContext.WorldEpoch>OldContext.WorldEpoch:
@@ -24,6 +25,7 @@ bool ADWPlayerCharacter::TryStartFormalDash(const FDWCombatInputPress& Press,FVe
         !Press.Edge.Sequence||LastFormalDashRequestOrdinal==MAX_uint64||
         (!LaterContext&&(NewContext!=OldContext||Press.Edge.Sequence<=LastFormalDashEdge.Sequence)))return false;
     LastFormalDashEdge=Press.Edge;++LastFormalDashRequestOrdinal; // Failed physical requests never queue themselves.
+    if(CharacterA01&&CharacterA01->IsEnabled())return CharacterA01->HandleSpacePressed(Press);
     if(WeaponAnimationComponent&&!WeaponAnimationComponent->AllowsFormalSwordDashInterruption())return false;
     if(!IsCombatActionAllowed()||bGameplayActionInProgress||bAdvancingGameplayClocks||CombatKnockback.bActive||
         GetCombatBaseForm()!=EDWCombatBaseForm::Yeast||Move.ContainsNaN()||Aim.ContainsNaN())return false;
@@ -72,12 +74,14 @@ void ADWPlayerCharacter::PublishFormalDashStartEffects()
 }
 bool ADWPlayerCharacter::ApplyFormalDashRelease(const FDWCombatInputPress& Press)
 {
+    if(CharacterA01&&CharacterA01->IsEnabled())return CharacterA01->HandleSpaceReleased(Press);
     if(!IsFormalDashing()||Press.Action!=TEXT("Dash")||Press.Edge.Context!=DashInputOrigin.Edge.Context||
         Press.Edge.Sequence!=DashInputOrigin.Edge.Sequence)return false;
     return FormalDash.Release(FormalDash.OriginPress());
 }
 void ADWPlayerCharacter::CancelFormalDashInput(const FDWCombatInputPress& Press)
 {
+    if(CharacterA01&&CharacterA01->IsEnabled()){CharacterA01->CancelAbility(true);return;}
     if(Press.Edge.Context==DashInputOrigin.Edge.Context&&Press.Edge.Sequence==DashInputOrigin.Edge.Sequence)
         EndFormalDashFacts(EDWYeastDashEnd::Cancelled);
 }
@@ -90,6 +94,7 @@ bool ADWPlayerCharacter::IsFormalDashCurrent()const
 }
 void ADWPlayerCharacter::EndFormalDashFacts(EDWYeastDashEnd Reason)
 {
+    if(CharacterA01&&CharacterA01->IsEnabled())CharacterA01->CancelAbility(Reason==EDWYeastDashEnd::Control||Reason==EDWYeastDashEnd::Death);
     if(!FormalDash.End(Reason))return;
     if(auto* A=UDWCombatAuthoritySubsystem::Get(this))A->EndAction(DashCommitAction);
     DashCommitAction={};bDashCombatActive=false;DashHitActors.Reset();PaidFormalDashSlice={};

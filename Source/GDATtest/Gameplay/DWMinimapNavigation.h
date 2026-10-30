@@ -149,6 +149,9 @@ public:
     UFUNCTION(BlueprintPure, Category="Minimap|Navigation")
     UDWMinimapMarkerComponent* GetTargetMarker();
 
+    /** Native sequence for detecting navigation changes during synchronous callbacks. */
+    uint64 GetNavigationRevision() const {return NavigationRevision;}
+
     /** Selection, replacement or invalidation signal. Actor movement is resolved by GetNavigationTarget. */
     UPROPERTY(BlueprintAssignable, Category="Minimap|Navigation")
     FDWMinimapNavigationChanged OnNavigationTargetChanged;
@@ -173,6 +176,7 @@ private:
     FDWMinimapNavigationTarget StaticTarget;
 
     bool bHasActorTarget = false;
+    uint64 NavigationRevision = 0;
 };
 
 /** Shared centimeter/compass conventions. NorthYaw=0 means +X north and +Y east. */

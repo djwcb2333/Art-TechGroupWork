@@ -3,11 +3,15 @@
 #include "DWInteractionPromptStyle.h"
 #include "DWInteractionPromptWidget.h"
 #include "DWGameplayConfig.h"
+#include "DWGameInstance.h"
 #include "DWGameplayHUD.h"
 #include "DWLocalizationLibrary.h"
 #include "DWPlayerCharacter.h"
 #include "DWPlayerController.h"
+#include "DWLanguageCarrier.h"
+#include "DWLanguageUIBridgeComponent.h"
 #include "DWResourceNode.h"
+#include "DWGatheringWorld.h"
 #include "Engine/World.h"
 #include "GameFramework/Pawn.h"
 #include "HAL/PlatformTime.h"
@@ -16,6 +20,7 @@
 
 namespace
 {
+    DWDemolitionPromptLease::Id DemolitionId(FGuid Id){return {Id.A,Id.B,Id.C,Id.D};}
     // Different nearby prompts cannot chorus on the same entry frame. Weak world keys keep PIE
     // sessions independent and never retain a world after it is closed.
     TMap<TWeakObjectPtr<UWorld>, double> NextWorldPromptSoundTime;
@@ -47,6 +52,57 @@ void UDWInteractionPromptComponent::OnRegister()
     RefreshWorldPlacement();
 }
 
+bool UDWInteractionPromptComponent::UsesGatheringPromptBudget() const
+{
+    const UWorld* World=GetWorld();
+    return bBudgetGatheringResourcePrompt && World && World->IsGameWorld() && Cast<ADWGatheringResource>(GetOwner());
+}
+
+void UDWInteractionPromptComponent::InitWidget()
+{
+    // UWidgetComponent::BeginPlay calls this virtual function. Keep the authored
+    // WidgetClass intact, but defer the instance for opted-in gathering resources.
+    if(UsesGatheringPromptBudget() && !bAllowBudgetedWidgetInit && !GetUserWidgetObject())return;
+    Super::InitWidget();
+}
+
+bool UDWInteractionPromptComponent::IsGatheringPromptNearLocalPawn() const
+{
+    const UWorld* World=GetWorld();const AActor* Owner=GetOwner();
+    if(!World||World->bIsTearingDown||World->IsPaused()||!bPromptEnabled||!IsActive()||!IsVisible()
+        ||!IsValid(Owner)||Owner->IsActorBeingDestroyed()||Owner->IsHidden())return false;
+    const APlayerController* PC=UGameplayStatics::GetPlayerController(this,0);
+    const APawn* Pawn=PC?PC->GetPawn():nullptr;
+    if(!PC||!PC->IsLocalPlayerController()||!IsValid(Pawn))return false;
+    const FVector Delta=Pawn->GetActorLocation()-Owner->GetActorLocation();
+    return FMath::Abs(Delta.Z)<=FMath::Max(0.f,HeightTolerance)
+        &&Delta.SizeSquared2D()<=FMath::Square(FMath::Max(1.f,GenericDetectionRadius));
+}
+
+void UDWInteractionPromptComponent::WakeGatheringPromptBudget()
+{
+    if(!bBudgetOwnsTickInterval)return;
+    // A caller may have changed the tick interval after this component set it.
+    if(FMath::IsNearlyEqual(GetComponentTickInterval(),BudgetTickInterval))
+        SetComponentTickIntervalAndCooldown(0.f);
+    bBudgetOwnsTickInterval=false;
+}
+
+void UDWInteractionPromptComponent::UpdateGatheringPromptBudget(bool bIdle)
+{
+    if(!UsesGatheringPromptBudget()){WakeGatheringPromptBudget();return;}
+    const float Current=GetComponentTickInterval();
+    if(bBudgetOwnsTickInterval&&!FMath::IsNearlyEqual(Current,BudgetTickInterval))
+    {bBudgetOwnsTickInterval=false;return;} // Preserve externally configured intervals.
+    const float Interval=FMath::IsFinite(GatheringHiddenPollSeconds)?FMath::Clamp(GatheringHiddenPollSeconds,0.f,.5f):0.f;
+    if(!bIdle||Interval<=KINDA_SMALL_NUMBER){WakeGatheringPromptBudget();return;}
+    if(!bBudgetOwnsTickInterval&&!FMath::IsNearlyZero(Current))return; // Honor an authored interval.
+    if(!bBudgetOwnsTickInterval||!FMath::IsNearlyEqual(Current,Interval))
+    {
+        SetComponentTickInterval(Interval);BudgetTickInterval=Interval;bBudgetOwnsTickInterval=true;
+    }
+}
+
 void UDWInteractionPromptComponent::BeginPlay()
 {
     // These assets are created after the native class is compiled. Never load them on the CDO.
@@ -72,7 +128,7 @@ void UDWInteractionPromptComponent::BeginPlay()
     PrimaryComponentTick.bTickEvenWhenPaused = true;
     Super::BeginPlay();
     RefreshWorldPlacement();
-    PrepareWidget();
+    if(!UsesGatheringPromptBudget())PrepareWidget();
 }
 
 void UDWInteractionPromptComponent::RefreshWorldPlacement()
@@ -88,7 +144,11 @@ void UDWInteractionPromptComponent::RefreshWorldPlacement()
 
 void UDWInteractionPromptComponent::PrepareWidget()
 {
-    if (!GetUserWidgetObject() && GetWidgetClass()) InitWidget();
+    if (!GetUserWidgetObject() && GetWidgetClass())
+    {
+        TGuardValue<bool> AllowInit(bAllowBudgetedWidgetInit,true);
+        InitWidget();
+    }
     UDWInteractionPromptWidget* Prompt = GetPromptWidget();
     if (!Prompt) return;
     if (InitializedWidget.Get() != Prompt)
@@ -140,38 +200,154 @@ void UDWInteractionPromptComponent::NotifyHarvestCommitted(int32 ActualAmount)
     }
 }
 
+bool UDWInteractionPromptComponent::NotifyGatheringHitCommitted(ADWPlayerCharacter* User,float PreviousProgress,float CurrentProgress)
+{
+    UWorld* World=GetWorld();
+    ADWGatheringResource* Resource=Cast<ADWGatheringResource>(GetOwner());
+    if(!FMath::IsFinite(PreviousProgress)||!FMath::IsFinite(CurrentProgress)
+        ||PreviousProgress<0.f||CurrentProgress>1.f||CurrentProgress<=PreviousProgress
+        ||!World||!World->IsGameWorld()||World->bIsTearingDown||World->IsPaused()
+        ||!bPromptEnabled||!IsActive()||!IsVisible()||!IsValid(Resource)||Resource->IsActorBeingDestroyed()
+        ||Resource->IsHidden()||Resource->IsStaged()||!IsValid(User)||User->IsDead()||User->IsActorBeingDestroyed()
+        ||!Resource->IsWithinReach(User))return false;
+    APlayerController* PC=UGameplayStatics::GetPlayerController(this,0);
+    const ADWPlayerController* DWPC=Cast<ADWPlayerController>(PC);
+    const ADWGameplayHUD* HUD=PC?Cast<ADWGameplayHUD>(PC->GetHUD()):nullptr;
+    if(!PC||!PC->IsLocalPlayerController()||PC->GetPawn()!=User
+        ||(DWPC&&DWPC->IsGameplayBlocked())||(HUD&&(!HUD->IsSessionStarted()||HUD->IsBlockingGameplay())))return false;
+    // Reject stale/fabricated progress and repeated calls for the same accepted step.
+    // Explicit node restore calls ResetGatheringHitFeedback; Tick also notices a rewind.
+    if(!FMath::IsNearlyEqual(Resource->GetGatheringProgress(),CurrentProgress,UE_SMALL_NUMBER)
+        ||CurrentProgress<=C06LastNotifiedGatheringProgress)return false;
+    PrepareWidget();
+    UDWInteractionPromptWidget* Prompt=GetPromptWidget();
+    if(!Prompt||!Prompt->bUseC01Presentation)return false;
+    WakeGatheringPromptBudget();
+    C06LastNotifiedGatheringProgress=CurrentProgress; // record before any UI event can re-enter
+    C06GatheringFeedbackPawn=User;
+    C06GatheringFeedbackDeadline=FPlatformTime::Seconds()+double(Prompt->GetCompletionDisplaySeconds());
+    // Supply current title/action on a hit even if this is the first component tick.
+    const bool bEnglish=UDWLocalizationLibrary::GetLanguage(this)==EDWGameLanguage::English;
+    Prompt->SetPickupIcon(nullptr,false);
+    Prompt->SetPromptText(bEnglish&&!GenericEnglishPromptTitle.IsEmpty()?GenericEnglishPromptTitle:GenericPromptTitle,
+        bEnglish&&!GenericEnglishAction.IsEmpty()?GenericEnglishAction:GenericPromptAction,
+        DWPC?DWPC->GetActionKeyLabel(EDWInputAction::Harvest):GenericPromptKey);
+    Prompt->SetPromptInputKey(DWPC?DWPC->GetAppliedActionKey(EDWInputAction::Harvest):FKey());
+    Prompt->NotifyGatheringProgressCommitted(PreviousProgress,CurrentProgress);
+    return true;
+}
+bool UDWInteractionPromptComponent::HasPendingGatheringHitFeedback() const
+{
+    const UWorld* World=GetWorld();
+    const ADWPlayerCharacter* Player=Cast<ADWPlayerCharacter>(C06GatheringFeedbackPawn.Get());
+    const ADWGatheringResource* Resource=Cast<ADWGatheringResource>(GetOwner());
+    return C06GatheringFeedbackDeadline>FPlatformTime::Seconds()&&World&&!World->bIsTearingDown&&!World->IsPaused()
+        &&IsValid(Player)&&!Player->IsDead()&&IsValid(Resource)&&!Resource->IsActorBeingDestroyed()
+        &&!Resource->IsStaged()&&Resource->IsWithinReach(Player);
+}
+void UDWInteractionPromptComponent::ResetGatheringHitFeedback()
+{
+    C06GatheringFeedbackDeadline=0.;C06LastNotifiedGatheringProgress=-1.f;C06GatheringFeedbackPawn.Reset();
+    if(auto* Prompt=GetPromptWidget())
+    {
+        const auto* Resource=Cast<ADWGatheringResource>(GetOwner());
+        Prompt->ResetHarvestFeedback(IsValid(Resource)?Resource->GetGatheringProgress():0.f);
+    }
+}
+
+bool UDWInteractionPromptComponent::BeginDemolitionSession(APawn* User,FGuid Session,FKey AppliedKey)
+{
+    UWorld* World=GetWorld();const double Now=FPlatformTime::Seconds();
+    if(!Session.IsValid()||!AppliedKey.IsValid()||!IsValid(User)||User->GetWorld()!=World||
+       !World||!World->IsGameWorld()||World->bIsTearingDown||World->IsPaused()||!IsActive()||
+       !IsValid(GetOwner())||GetOwner()->IsActorBeingDestroyed()||!Cast<ADWGatheringStation>(GetOwner()))return false;
+    APlayerController* PC=UGameplayStatics::GetPlayerController(this,0);
+    if(!IsValid(PC)||!PC->IsLocalPlayerController()||PC->GetPawn()!=User)return false;
+    const float Timeout=FMath::IsFinite(DemolitionStaleSeconds)?FMath::Clamp(DemolitionStaleSeconds,.1f,2.f):.5f;
+    if(!DemolitionLease.Current(Now,Timeout))ResetDemolitionPresentation();
+    if(!DemolitionLease.Begin(DemolitionId(Session),Now))return false;
+    DemolitionPawn=User;DemolitionKey=AppliedKey;WakeGatheringPromptBudget();return true;
+}
+bool UDWInteractionPromptComponent::UpdateDemolitionSession(FGuid Session,float AuthoritativeProgress)
+{
+    const auto Id=DemolitionId(Session);
+    if(!DemolitionLease.Matches(Id))return false;
+    UWorld* World=GetWorld();
+    if(!World||World->bIsTearingDown||World->IsPaused()||!IsValid(DemolitionPawn.Get())||
+       !IsValid(GetOwner())||GetOwner()->IsActorBeingDestroyed()){ResetDemolitionPresentation();return false;}
+    const float Timeout=FMath::IsFinite(DemolitionStaleSeconds)?FMath::Clamp(DemolitionStaleSeconds,.1f,2.f):.5f;
+    const double Now=FPlatformTime::Seconds();
+    if(!DemolitionLease.Current(Now,Timeout)){ResetDemolitionPresentation();return false;}
+    return DemolitionLease.Update(Id,AuthoritativeProgress,Now,Timeout);
+}
+void UDWInteractionPromptComponent::EndDemolitionSession(FGuid Session)
+{
+    if(DemolitionLease.End(DemolitionId(Session)))ResetDemolitionPresentation();
+}
+void UDWInteractionPromptComponent::ResetDemolitionPresentation()
+{
+    DemolitionLease.Reset();DemolitionPawn.Reset();DemolitionKey=FKey();
+    if(auto* Prompt=GetPromptWidget())Prompt->SetDemolitionPresentation(false,0.f);
+}
+
 void UDWInteractionPromptComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
+    const bool bWasBudgetIdle=bBudgetOwnsTickInterval;
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
     UWorld* World = GetWorld();
     if (!World || !World->IsGameWorld() || World->bIsTearingDown) return;
+    if(UsesGatheringPromptBudget()&&!GetUserWidgetObject()&&!IsGatheringPromptNearLocalPawn())
+    {
+        UpdateGatheringPromptBudget(true);
+        return; // No widget exists, so no visual transition or feedback can be in progress.
+    }
     RefreshWorldPlacement();
     PrepareWidget();
     UDWInteractionPromptWidget* Prompt = GetPromptWidget();
     if (!Prompt) return;
 
     AActor* Owner = GetOwner();
+    if(!Cast<ADWGatheringPickup>(Owner))Prompt->SetPickupIcon(nullptr,false);
+    if(const auto* Node=Cast<ADWGatheringResource>(Owner))
+        if(Node->GetGatheringProgress()<C06LastNotifiedGatheringProgress)ResetGatheringHitFeedback();
     APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
     APawn* Pawn = PC ? PC->GetPawn() : nullptr;
     const ADWPlayerCharacter* Player = Cast<ADWPlayerCharacter>(Pawn);
     const ADWPlayerController* DWPC = Cast<ADWPlayerController>(PC);
     const ADWGameplayHUD* HUD = PC ? Cast<ADWGameplayHUD>(PC->GetHUD()) : nullptr;
-    const bool bBlocked = !bPromptEnabled || !IsActive() || !IsVisible() || !IsValid(Owner) || Owner->IsHidden()
+    const float DemolitionTimeout=FMath::IsFinite(DemolitionStaleSeconds)?FMath::Clamp(DemolitionStaleSeconds,.1f,2.f):.5f;
+    const bool bDemolition=DemolitionLease.Current(FPlatformTime::Seconds(),DemolitionTimeout)&&DemolitionPawn.Get()==Pawn&&IsValid(Pawn)&&IsValid(Owner)
+        &&FMath::Abs(Pawn->GetActorLocation().Z-Owner->GetActorLocation().Z)<=FMath::Max(0.f,HeightTolerance)
+        &&FVector::DistSquared2D(Pawn->GetActorLocation(),Owner->GetActorLocation())<=FMath::Square(FMath::Max(1.f,GenericDetectionRadius));
+    const bool bBlocked = (!bPromptEnabled&&!bDemolition) || !IsActive() || !IsVisible() || !IsValid(Owner) || Owner->IsHidden()
         || !IsValid(PC) || !IsValid(Pawn) || !PC->IsLocalPlayerController() || World->IsPaused()
         || (Player && Player->IsDead()) || (DWPC && DWPC->IsGameplayBlocked())
         || (HUD && (!HUD->IsSessionStarted() || HUD->IsBlockingGameplay()));
+    if(bBlocked||!bDemolition)ResetDemolitionPresentation();
+    else Prompt->SetDemolitionPresentation(true,float(DemolitionLease.DisplayProgress()));
+    if(!IsValid(this)||!IsValid(Prompt))return;
+    if(bDemolition&&(!DemolitionLease.Current(FPlatformTime::Seconds(),DemolitionTimeout)||DemolitionPawn.Get()!=Pawn||!IsValid(Pawn)||!IsValid(Owner)))return;
     if(bBlocked||C04CompletionPawn.Get()!=Pawn)
     {
         C04CompletionDeadline=0.;
         C04CompletionPawn.Reset();
     }
 
+    if(bBlocked||C06GatheringFeedbackPawn.Get()!=Pawn)
+    {C06GatheringFeedbackDeadline=0.;C06GatheringFeedbackPawn.Reset();}
     bool bShouldShow = false;
     if (!bBlocked)
     {
         const FVector Delta = Pawn->GetActorLocation() - Owner->GetActorLocation();
         const bool bWithinHeight = FMath::Abs(Delta.Z) <= FMath::Max(0.f, HeightTolerance);
-        if (const ADWResourceNode* Resource = Cast<ADWResourceNode>(Owner))
+        if(bDemolition)
+        {
+            bShouldShow=true;
+            const bool bEnglish=UDWLocalizationLibrary::GetLanguage(this)==EDWGameLanguage::English;
+            const FText Title=bEnglish&&!GenericEnglishPromptTitle.IsEmpty()?GenericEnglishPromptTitle:GenericPromptTitle;
+            Prompt->SetPromptText(Title,DWText(this,TEXT("长按拆除"),TEXT("Hold to dismantle")),FText::GetEmpty());
+        }
+        else if (const ADWResourceNode* Resource = Cast<ADWResourceNode>(Owner))
         {
             const bool bFocused=bWithinHeight&&Player&&Player->GetFocusedResource()==Resource;
             const bool bRetainCompletion=bWithinHeight&&C04CompletionDeadline>FPlatformTime::Seconds()
@@ -193,6 +369,38 @@ void UDWInteractionPromptComponent::TickComponent(float DeltaTime, ELevelTick Ti
                 Prompt->SetProgress(1.f,true);
             }
         }
+        else if(const ADWGatheringResource* GatheringResource=Cast<ADWGatheringResource>(Owner))
+        {
+            const bool bInRange=bWithinHeight&&Delta.SizeSquared2D()<=FMath::Square(FMath::Max(1.f,GenericDetectionRadius));
+            const bool bRetainHit=bInRange&&HasPendingGatheringHitFeedback();
+            bShouldShow=bInRange&&(GatheringResource->IsInteractionAvailable()||bRetainHit);
+            if(bShouldShow)
+            {
+                const bool bEnglish=UDWLocalizationLibrary::GetLanguage(this)==EDWGameLanguage::English;
+                const FText Title=bEnglish&&!GenericEnglishPromptTitle.IsEmpty()?GenericEnglishPromptTitle:GenericPromptTitle;
+                const FText Action=bEnglish&&!GenericEnglishAction.IsEmpty()?GenericEnglishAction:GenericPromptAction;
+                const FText Key=DWPC?DWPC->GetActionKeyLabel(EDWInputAction::Harvest):GenericPromptKey;
+                Prompt->SetPromptText(Title,Action,Key);
+                // Read node health, not a per-player hold timer. Walking away never resets progress.
+                Prompt->SetProgress(GatheringResource->GetGatheringProgress(),true);
+            }
+        }
+        else if(const ADWGatheringPickup* Pickup=Cast<ADWGatheringPickup>(Owner))
+        {
+            bShouldShow=bWithinHeight&&Pickup->IsInteractionAvailable()
+                &&Delta.SizeSquared2D()<=FMath::Square(FMath::Max(1.f,GenericDetectionRadius));
+            if(bShouldShow)
+            {
+                const UDWGameplayConfig* Config=Player?Player->GetGameplayConfig():nullptr;
+                if(!Config)if(auto* GI=World->GetGameInstance<UDWGameInstance>())Config=GI->GetConfig();
+                const FDWItemDefinition* Item=Config?Config->GetItemDefinition(Pickup->ItemId):nullptr;
+                const bool bEnglish=UDWLocalizationLibrary::GetLanguage(this)==EDWGameLanguage::English;
+                Prompt->SetPickupIcon(Item?Item->Icon.Get():nullptr,true);
+                Prompt->SetPromptText(Item?UDWLocalizationLibrary::GetItemDisplayName(this,*Item):FText::FromName(Pickup->ItemId),
+                    bEnglish&&!GenericEnglishAction.IsEmpty()?GenericEnglishAction:GenericPromptAction,GenericPromptKey);
+                Prompt->SetProgress(0.f,false);
+            }
+        }
         else
         {
             bShouldShow = bWithinHeight && Delta.SizeSquared2D() <= FMath::Square(FMath::Max(1.f, GenericDetectionRadius));
@@ -206,15 +414,33 @@ void UDWInteractionPromptComponent::TickComponent(float DeltaTime, ELevelTick Ti
             }
         }
     }
+    // Presentation only. Read the applied keys each tick, not the editable pending fields.
+    // Resource/pickup use the real Harvest action; unrelated authored generic actors keep text.
+    bool bApplied=Cast<ADWResourceNode>(Owner)||Cast<ADWGatheringResource>(Owner)||Cast<ADWGatheringPickup>(Owner);
+    FKey Primary=DWPC?DWPC->GetAppliedActionKey(EDWInputAction::Harvest):FKey(),ReadKey;
+    if(bDemolition&&!bBlocked){bApplied=true;Primary=DemolitionKey;}
+    bool bSecondary=false;
+    if(const auto* Carrier=Cast<ADWLanguageCarrier>(Owner))
+    {
+        const auto* Bridge=UDWLanguageUIBridgeComponent::Find(PC);
+        bApplied=true;Primary=FKey();
+        const bool bBridgeReady=Bridge&&Bridge->GetWorldPromptKeys(Primary,ReadKey);
+        bSecondary=bBridgeReady&&Carrier->Kind==EDWLanguageCarrierKind::WaterSource;
+    }
+    Prompt->SetPromptInputKey(Primary,bApplied);
+    Prompt->SetSecondaryPrompt(bSecondary?DWText(this,TEXT("查看文字"),TEXT("Read inscription")):FText::GetEmpty(),ReadKey,bSecondary);
     // Menus, death and explicit disabling hide immediately even if the world is paused.
     // Range/focus changes retain the reversible exit animation.
+    const bool bBeginningAppear=bShouldShow&&!bPromptDesiredVisible;
     ChangePromptVisibility(bShouldShow, bBlocked);
     if (!IsValid(this) || !IsValid(Prompt)) return;
-    Prompt->AdvancePresentation(FMath::Max(0.f, DeltaTime));
+    // The accumulated idle polling interval occurred before entering range, not during the animation.
+    Prompt->AdvancePresentation(bWasBudgetIdle&&bBeginningAppear?0.f:FMath::Max(0.f, DeltaTime));
     const FVector2D RequiredDrawSize=Prompt->GetMinimumDrawSize(),PromptDrawSize=GetDrawSize();
     const FVector2D SafeDrawSize(FMath::Max(PromptDrawSize.X,RequiredDrawSize.X),FMath::Max(PromptDrawSize.Y,RequiredDrawSize.Y));
     if(!SafeDrawSize.Equals(PromptDrawSize,.1))SetDrawSize(SafeDrawSize);
     RefreshDebugVisibility();
+    UpdateGatheringPromptBudget(!bPromptDesiredVisible&&!bPromptVisible&&!HasPendingGatheringHitFeedback());
 }
 
 void UDWInteractionPromptComponent::ChangePromptVisibility(bool bNewVisible, bool bImmediate)
@@ -266,12 +492,15 @@ void UDWInteractionPromptComponent::RefreshDebugVisibility()
 
 void UDWInteractionPromptComponent::SetPromptEnabled(bool bEnabled)
 {
+    if(bEnabled&&!bPromptEnabled)WakeGatheringPromptBudget();
     bPromptEnabled = bEnabled;
-    if (!bEnabled){C04CompletionDeadline=0.;C04CompletionPawn.Reset();ChangePromptVisibility(false, true);}
+    if (!bEnabled){ResetDemolitionPresentation();C04CompletionDeadline=0.;C04CompletionPawn.Reset();C06GatheringFeedbackDeadline=0.;C06GatheringFeedbackPawn.Reset();ChangePromptVisibility(false, true);}
 }
 
 void UDWInteractionPromptComponent::Deactivate()
 {
+    ResetDemolitionPresentation();
+    ResetGatheringHitFeedback();
     C04CompletionDeadline=0.;C04CompletionPawn.Reset();
     ChangePromptVisibility(false, true);
     Super::Deactivate();
@@ -279,6 +508,8 @@ void UDWInteractionPromptComponent::Deactivate()
 
 void UDWInteractionPromptComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+    ResetDemolitionPresentation();
+    ResetGatheringHitFeedback();
     C04CompletionDeadline=0.;C04CompletionPawn.Reset();
     ChangePromptVisibility(false, true);
     InitializedWidget.Reset();

@@ -29,6 +29,7 @@ class GDATTEST_API ADWCombatDeathBag : public AActor
     GENERATED_BODY()
 public:
     ADWCombatDeathBag();
+    virtual void EndPlay(const EEndPlayReason::Type Reason) override;
     virtual void Tick(float DeltaTime) override;
     bool TryCollect(ADWPlayerCharacter*);
     FGuid GetBagId()const{return BagId;}

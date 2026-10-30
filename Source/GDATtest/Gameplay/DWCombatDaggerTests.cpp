@@ -258,4 +258,27 @@ bool FDWDaggerWholeGroupRuntimeTest::RunTest(const FString&)
     TestFalse(TEXT("Four supplied groups stop without a fifth synthetic input"),F.W()->IsBusy());return true;
 }
 
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDWDaggerPausedEquipmentFactsTest,"DoughWorld.Combat.Dagger.PausedEquipmentChangeClearsGraceWithoutSimulation",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FDWDaggerPausedEquipmentFactsTest::RunTest(const FString&)
+{
+    DWDaggerTests::FFixture F;if(!TestTrue(TEXT("Isolated real grant/equip fixture"),F.Ready()&&F.Equip()))return false;
+    auto* E=F.Enemy(FVector(200,0,0));if(!E)return false;
+    FDWDaggerAwarenessSave Saved;Saved.bInitialized=Saved.bInside=Saved.bEquipped=true;Saved.GraceRemainingSeconds=2.;
+    if(!TestTrue(TEXT("Validated enemy awareness restore establishes existing grace"),E->RestoreDaggerAwarenessSave(Saved,F.P)))return false;
+    auto* Pauser=F.Spawn<APlayerState>(FVector::ZeroVector);if(!Pauser)return false;
+    F.World->GetWorldSettings()->SetPauserPlayerState(Pauser);const double Time=F.World->GetTimeSeconds();
+    TestTrue(TEXT("The fixture is really paused"),F.World->IsPaused());
+    E->SyncDaggerAwareness(F.P,false);
+    TestEqual(TEXT("Ordinary paused observation does not alter grace"),E->CaptureDaggerAwarenessSave().GraceRemainingSeconds,2.);
+    // This is the same public fact notification used by committed equipment changes.
+    E->SyncDaggerAwareness(F.P,true);const auto Changed=E->CaptureDaggerAwarenessSave();
+    TestEqual(TEXT("Paused committed equipment change clears old grace"),Changed.GraceRemainingSeconds,0.);
+    TestTrue(TEXT("Equipped/inside facts synchronized without an artificial crossing"),Changed.bEquipped&&Changed.bInside);
+    TestEqual(TEXT("No world time advanced"),F.World->GetTimeSeconds(),Time);
+    F.World->GetWorldSettings()->SetPauserPlayerState(nullptr);E->SyncDaggerAwareness(F.P,false);
+    TestEqual(TEXT("Resume inside does not recreate cleared grace"),E->CaptureDaggerAwarenessSave().GraceRemainingSeconds,0.);
+    return true;
+}
+
 #endif

@@ -20,6 +20,7 @@ enum class EDWInputAction : uint8
     Melee,
     Character, Building, LanguageJournal, PreviousBookTab, NextBookTab,
     Reload, SelectUnarmed, SelectWeapon1, SelectWeapon2, SelectWeapon3, SelectWeapon4, SelectWeapon5, SelectWeapon6, SelectWeapon7, SelectWeapon8,
+    ReadGlyph, LanguageJournalAlternate, Shortcut4,
     Count UMETA(Hidden)
 };
 
@@ -33,11 +34,28 @@ public:
     virtual void GetPlayerViewPoint(FVector& Location,FRotator& Rotation)const override;
     ADWPlayerController();
     virtual void PlayerTick(float DeltaSeconds) override;
+    virtual bool SetPause(bool bPause,FCanUnpause CanUnpauseDelegate=FCanUnpause()) override;
+    virtual void SetInputMode(const FInputModeDataBase& InData) override;
+    // Explicit native HUD policy tracking; unknown external modes close the modal first.
+    void ApplyDWGameAndUI(const FInputModeGameAndUI& Mode,TSharedPtr<SWidget> Focus=TSharedPtr<SWidget>());
+    bool GetDWTrackedGameAndUI(FInputModeGameAndUI& OutMode,TWeakPtr<SWidget>& OutFocus) const;
+    void ApplyLanguageUIOnly(TSharedPtr<SWidget> Focus);
+    bool ApplyLanguagePause(bool bPause,FCanUnpause Delegate=FCanUnpause());
     bool IsGameplayBlocked() const;
+    bool BeginWorldMapPause();
+    void EndWorldMapPause();
+    bool OwnsWorldMapPause() const {return bWorldMapPauseOwned;}
+    bool MustPreserveWorldMapExternalInput() const {return bWorldMapExternalInput||bWorldMapUnderlyingPaused;}
+    bool CanOpenWorldMap() const;
+    bool CanReleaseWorldMapPause() const {return !bWorldMapPauseOwned;}
     // Native lifecycle/pause adapter. None of these invents a physical input edge.
     void BeginCombatMenuSuspension();
     void PrepareCombatInputForSimulation();
     void InvalidateCombatInputLife();
+    /** Presentation consumes the real key ticket before gameplay bindings. Same owner releases its own lease. */
+    bool AcquirePresentationKey(UObject* InOwner,FKey Key);
+    void ReleasePresentationKey(UObject* InOwner);
+    bool HasObservedPresentationKeyRelease(const UObject* InOwner) const;
     bool IsCombatInputSuspended() const;
     UFUNCTION(BlueprintPure,Category="DoughWorld|Input|Debug") FString GetCombatInputDebugState() const;
     UFUNCTION(BlueprintPure,Category="DoughWorld|Camera") bool IsCameraInputAllowed() const;
@@ -74,6 +92,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DoughWorld|Input|UI") FKey KeyLanguageJournal=EKeys::I;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DoughWorld|Input|UI") FKey KeyPreviousBookTab=EKeys::Q;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DoughWorld|Input|UI") FKey KeyNextBookTab=EKeys::E;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Input|Interaction") FKey KeyReadGlyph=EKeys::G;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Input|UI") FKey KeyLanguageJournalAlternate=EKeys::Tilde;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Input|Weapons") FKey KeyShortcut4=EKeys::Four;
     /** Runtime combat shortcuts. New identifiers append after the original21 entries. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DoughWorld|Input|Weapons") FKey KeyReload = EKeys::R;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="DoughWorld|Input|Weapons") FKey KeySelectUnarmed = EKeys::Zero;
@@ -107,9 +128,10 @@ protected:
 private:
     ADWPlayerCharacter* Player() const;
     void Dash(); void SprintDown(); void SprintUp(); void HarvestDown(); void HarvestUp();
-    void Transform(); void Throw(); void Melee(); void Inventory(); void Crafting(); void PauseMenu();
+    void Transform(); void Throw(); void Melee(); void Inventory(); void Crafting(); void PauseMenu(); void WorldMap();
     void WeaponPrimaryReleased(); void WeaponSecondaryReleased();
-    void Character();void Building();void LanguageJournal();void PreviousBookTab();void NextBookTab();
+    void Character();void Building();void LanguageJournal();void PreviousBookTab();void NextBookTab();void ReadGlyph();
+    bool CanOpenGameplayMenus()const;bool CanUseGameplayShortcuts()const;
     bool IsActionDown(EDWInputAction Action) const;
 
     void RefreshCombatInputKeys();
@@ -128,6 +150,10 @@ private:
     void CommitQueuedBindings();
     void RemoveOwnedKeyBindings();
     void AddOwnedBinding(FKey Key, EInputEvent Event, void(ADWPlayerController::*Method)(), bool bWhenPaused = false);
+    FInputModeGameAndUI DWTrackedGameAndUI;
+    TWeakPtr<SWidget> DWTrackedFocus;
+    bool bDWTrackedMode=false,bApplyingLanguageMode=false,bApplyingLanguagePause=false;
+    bool bWorldMapPauseOwned=false,bWorldMapUnderlyingPaused=false,bWorldMapExternalInput=false,bWorldMapClearingOwnGate=false;
     TArray<FKey> AppliedKeys;
     TArray<FKey> PendingKeys;
     TArray<TSharedPtr<FDWInputBindingRelay>> OwnedKeyRelays;

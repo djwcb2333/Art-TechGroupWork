@@ -3,6 +3,8 @@
 #include "DWGameInstance.h"
 #include "DWGameplayConfig.h"
 #include "DWPlayerCharacter.h"
+#include "DWCharacterA01Component.h"
+#include "DWLanguageSubsystem.h"
 #include "DWEnemyCharacter.h"
 #include "DWWeaponAnimationComponent.h"
 #include "DWCombatMineSubsystem.h"
@@ -61,11 +63,31 @@ bool DWCombatHUD::Build(const ADWPlayerCharacter* P,const FDWCombatHUDConfig& C,
     S.Health=Resource(P->GetHealth(),V.HealthFloor,V.HealthMax);S.Water=Resource(P->GetCombatWater(),V.WaterFloor,V.WaterMax);
     S.Satiety=Resource(P->GetCombatSatiety(),V.SatietyFloor,V.SatietyMax);S.Special=Resource(P->GetCombatSpecial(),V.SpecialFloor,V.SpecialMax);
     S.Form=P->GetCombatBaseForm();S.FormRemaining=P->GetCombatFormRemaining();
+    S.HealthyHealthMax=V.HealthMax;S.FormDurationSeconds=C.Player.FormDurationSeconds;
+    if(const auto* A01=P->CharacterA01.Get();A01&&A01->IsEnabled())
+    {
+        const auto& Runtime=A01->GetRuntime();const auto& State=Runtime.GetState();const auto& K=Runtime.GetConfig();
+        S.bUsesA01Resources=true;S.HealthyHealthMax=K.HealthyMax;
+        S.EffectiveHealthCapLoss=Runtime.EffectiveLoss();S.RecordedHealthCapLoss=State.RecordedCapLoss;
+        S.Health=Resource(P->GetHealth(),0.,Runtime.EffectiveMaxHealth());
+        S.Water=Resource(State.Water,0.,K.WaterMax);S.Satiety=Resource(State.Satiety,0.,K.SatietyMax);
+        S.Gas=Resource(State.Gas,0.,K.GasMax);S.Corruption=Resource(State.Corruption,0.,K.CorruptionMax);
+        S.Special=S.Form==EDWCombatBaseForm::Yeast?S.Gas:S.Form==EDWCombatBaseForm::Mold?S.Corruption:Resource(0.,0.,K.GasMax);
+        S.FormDurationSeconds=State.EntryDurationSeconds;
+    }
     S.bFormWarning=S.Form!=EDWCombatBaseForm::Normal&&S.FormRemaining<=C.FormWarningSeconds;
     S.bRooted=P->IsFormallyRooted();S.bDashing=P->IsFormalDashing();S.DashCooldown=P->GetFormalDashCooldown();
     S.DashReason=DashResourceReason(C.Dash,S.Form,S.Special.Value,S.FormRemaining,S.DashCooldown);
     const auto* Move=P->GetCharacterMovement();
     S.RootReason=RootResourceReason(C.Root,S.Form,S.Special.Value,Move&&Move->IsMovingOnGround()&&Move->CurrentFloor.IsWalkableFloor());
+    if(S.bUsesA01Resources)
+    {
+        const auto* GI=P->GetGameInstance<UDWGameInstance>();const auto* Language=GI?GI->GetSubsystem<UDWLanguageSubsystem>():nullptr;
+        S.DashReason=!Language?EDWCombatHUDReason::NotReady:S.Form!=EDWCombatBaseForm::Yeast?EDWCombatHUDReason::WrongDashForm:
+            S.Gas.Value<Language->Parameter(TEXT("yeast.dash.gas_cost"),TNumericLimits<double>::Max())?EDWCombatHUDReason::SpecialForDash:
+            S.DashCooldown>0.?EDWCombatHUDReason::Cooldown:EDWCombatHUDReason::None;
+        S.RootReason=EDWCombatHUDReason::Unavailable; // Retired root/mine ability is absent in A01.
+    }
     if(P->IsCombatKnockedBack())S.DashReason=EDWCombatHUDReason::Controlled;
     if(const auto* W=P->WeaponAnimationComponent.Get())
     {
@@ -158,9 +180,20 @@ void DWCombatHUD::NotifyRejected(ADWPlayerCharacter* P,EDWCombatHUDRequest Reque
         Reason=P->WeaponAnimationComponent&&(P->WeaponAnimationComponent->IsBusy()||P->WeaponAnimationComponent->GetRemainingAttackLockSeconds()>0.)
             ?EDWCombatHUDReason::ActionLocked:EDWCombatHUDReason::Unavailable;
     FText Message=ReasonText(P,Reason);
-    if(Reason==EDWCombatHUDReason::SpecialForDash)Message=FText::Format(
-        DWText(P,TEXT("冲刺需要至少 {0} 特殊值（当前 {1}）"),TEXT("Dash needs at least {0} special (current {1})")),
-        FText::AsNumber(C.Dash.SpecialFloor+C.Dash.MinimumBudget()),FText::FromString(FString::Printf(TEXT("%.1f"),S.Special.Value)));
+    if(Reason==EDWCombatHUDReason::SpecialForDash)
+    {
+        if(S.bUsesA01Resources)
+        {
+            const auto* Language=GI->GetSubsystem<UDWLanguageSubsystem>();
+            const double GasCost=Language?Language->Parameter(TEXT("yeast.dash.gas_cost"),-1.):-1.;
+            Message=FMath::IsFinite(GasCost)&&GasCost>=0.?FText::Format(
+                DWText(P,TEXT("冲刺需要 {0} 储气（当前 {1}）"),TEXT("Dash costs {0} gas (current {1})")),
+                FText::AsNumber(GasCost),FText::FromString(FString::Printf(TEXT("%.1f"),S.Gas.Value))):ReasonText(P,EDWCombatHUDReason::NotReady);
+        }
+        else Message=FText::Format(
+            DWText(P,TEXT("冲刺需要至少 {0} 特殊值（当前 {1}）"),TEXT("Dash needs at least {0} special (current {1})")),
+            FText::AsNumber(C.Dash.SpecialFloor+C.Dash.MinimumBudget()),FText::FromString(FString::Printf(TEXT("%.1f"),S.Special.Value)));
+    }
     if(Reason==EDWCombatHUDReason::SpecialForRoot)Message=FText::Format(
         DWText(P,TEXT("扎根特殊值须严格高于 {0}（当前 {1}）"),TEXT("Root special must be strictly above {0} (current {1})")),
         FText::AsNumber(C.Root.StartCost+C.Root.SpecialFloor),FText::FromString(FString::Printf(TEXT("%.1f"),S.Special.Value)));

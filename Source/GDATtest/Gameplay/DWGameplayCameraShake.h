@@ -131,6 +131,7 @@ protected:
  virtual void EndPlay(const EEndPlayReason::Type Reason)override;
 private:
  friend class UDWGameplayCameraHoldPattern;
+ friend class UDWCommittedHitFeedbackComponent; // Reuse the existing gameplay/view/restore gate.
  bool ShouldPlaySwordReadyHold()const;
  void UpdateSwordReadyHold();
  void StopSwordReadyHold();

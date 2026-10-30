@@ -39,6 +39,13 @@ struct GDATTEST_API FDWCombatHUDSnapshot
     UPROPERTY(BlueprintReadOnly) FDWCombatHUDResource Water;
     UPROPERTY(BlueprintReadOnly) FDWCombatHUDResource Satiety;
     UPROPERTY(BlueprintReadOnly) FDWCombatHUDResource Special;
+    UPROPERTY(BlueprintReadOnly) bool bUsesA01Resources=false;
+    UPROPERTY(BlueprintReadOnly) double HealthyHealthMax=0.;
+    UPROPERTY(BlueprintReadOnly) double EffectiveHealthCapLoss=0.;
+    UPROPERTY(BlueprintReadOnly) double RecordedHealthCapLoss=0.;
+    UPROPERTY(BlueprintReadOnly) FDWCombatHUDResource Gas;
+    UPROPERTY(BlueprintReadOnly) FDWCombatHUDResource Corruption;
+    UPROPERTY(BlueprintReadOnly) double FormDurationSeconds=0.;
     UPROPERTY(BlueprintReadOnly) EDWCombatBaseForm Form=EDWCombatBaseForm::Normal;
     UPROPERTY(BlueprintReadOnly) double FormRemaining=0.;
     UPROPERTY(BlueprintReadOnly) bool bFormWarning=false;

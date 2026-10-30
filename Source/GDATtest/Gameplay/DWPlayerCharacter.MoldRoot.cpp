@@ -11,6 +11,7 @@
 
 bool ADWPlayerCharacter::PrepareFormalRootEntry(FDWMoldRootConfig& Out) const
 {
+    if(CharacterA01&&CharacterA01->IsEnabled())return false;
     if(!HasCombatVitalsReady()||!IsCombatActionAllowed()||IsFormallyRooted()||
         GetCombatBaseForm()!=EDWCombatBaseForm::Mold)return false;
     const auto* GI=GetGameInstance<UDWGameInstance>();FString Error;
@@ -22,6 +23,7 @@ bool ADWPlayerCharacter::PrepareFormalRootEntry(FDWMoldRootConfig& Out) const
 }
 bool ADWPlayerCharacter::TryToggleFormalRoot()
 {
+    if(CharacterA01&&CharacterA01->IsEnabled())return false; // A01 replaces rooted fortress/mines.
     if(!IsCombatActionAllowed()||bGameplayActionInProgress||!HasCombatVitalsReady())return false;
     auto* A=UDWCombatAuthoritySubsystem::Get(this);if(!A)return false;
     const auto Life=A->CaptureActorLife(this);const uint64 Epoch=A->GetWorldEpoch();

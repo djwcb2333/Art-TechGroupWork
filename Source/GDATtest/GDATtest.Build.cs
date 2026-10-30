@@ -27,15 +27,17 @@ public class GDATtest : ModuleRules
             "SlateCore"
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "DeveloperSettings", "Json", "MoviePlayer", "RenderCore", "RHI" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "DeveloperSettings", "Json", "MoviePlayer", "RenderCore", "RHI", "PhysicsCore" });
 
         // Generated from the authoritative combat parameter table; one packaged UFS file.
         RuntimeDependencies.Add("$(ProjectDir)/Content/DoughWorld/Gameplay/Combat/DWCombatRules.json", StagedFileType.UFS);
+        RuntimeDependencies.Add("$(ProjectDir)/Content/DoughWorld/Gameplay/Combat/DWLanguageDefinitions.json", StagedFileType.UFS);
+        RuntimeDependencies.Add("$(ProjectDir)/Content/DoughWorld/Gameplay/Combat/DWA01TrialDefaults.json", StagedFileType.UFS);
 
         // DoughWorld UMG authoring is editor-only; runtime widgets use UMG.
         if (Target.bBuildEditor)
         {
-            PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd", "UMGEditor", "AnimGraph", "BlueprintGraph", "Kismet", "KismetCompiler", "AssetRegistry", "AssetTools", "MovieScene", "MovieSceneTracks" });
+            PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd", "JsonUtilities", "UMGEditor", "AnimGraph", "BlueprintGraph", "Kismet", "KismetCompiler", "AssetRegistry", "AssetTools", "MovieScene", "MovieSceneTracks" });
         }
 
 		PublicIncludePaths.AddRange(new string[] {

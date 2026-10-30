@@ -1,4 +1,6 @@
 #include "CameraOccluderFadeComponent.h"
+#include "Gameplay/DWBuildingEffectsComponent.h"
+#include "Engine/Level.h"
 #include "Camera/CameraTypes.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Components/CapsuleComponent.h"
@@ -211,7 +213,11 @@ int32 UCameraOccluderFadeComponent::ScanOcclusion(double Now)
     for (FCameraOccluderMeshState& State : States)
     {
         UStaticMeshComponent* Mesh = State.Mesh.Get();
-        if (!IsValid(Mesh) || !Mesh->IsVisible() || Mesh->GetOwner()->IsHidden() || Mesh->GetOwner() == Pawn) continue;
+        if (!IsValid(Mesh) || Mesh->GetOwner()->IsHidden() || Mesh->GetOwner() == Pawn) continue;
+        const UDWBuildingEffectsComponent* Effects = Mesh->GetOwner()->FindComponentByClass<UDWBuildingEffectsComponent>();
+        const bool bConstructionVisual = Effects && Effects->IsTemporarilyHiddenSource(Mesh) && Mesh->GetVisibleFlag()
+            && Mesh->GetOwner()->GetLevel() && Mesh->GetOwner()->GetLevel()->bIsVisible;
+        if (!Mesh->IsVisible() && !bConstructionVisual) continue;
         // Independent visual AABB tests do not stop at the first collision blocker.
         // Large irregular meshes should be split into local canopy/roof/upper-wall pieces.
         const FBox Box = Mesh->Bounds.GetBox().ExpandBy(FMath::Max(0.f, BoundsPaddingCm));

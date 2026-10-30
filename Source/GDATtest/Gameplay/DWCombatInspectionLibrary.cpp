@@ -1,4 +1,7 @@
 #include "DWCombatInspectionLibrary.h"
+#include "DWEditorAuthoringSignature.h"
+#include "DWGameplayConfig.h"
+#include "Serialization/JsonReader.h"
 #include "Dom/JsonObject.h"
 #include "Serialization/JsonSerializer.h"
 #include "Engine/Blueprint.h"
@@ -96,4 +99,24 @@ FString UDWCombatInspectionLibrary::InspectObjectDelegates(UObject* Object)
     }
     Root->SetArrayField(TEXT("multicast_delegates"),Delegates);
     FString Json;const auto Writer=TJsonWriterFactory<>::Create(&Json);FJsonSerializer::Serialize(Root,Writer);return Json;
+}
+
+FString UDWCombatInspectionLibrary::InspectEditorAuthoringSignature(const FString& EntryPackage,UDWGameplayConfig* Config)
+{
+    auto Report=MakeShared<FJsonObject>();Report->SetBoolField(TEXT("read_only"),true);
+    Report->SetBoolField(TEXT("session_created"),false);Report->SetStringField(TEXT("entry_package"),EntryPackage);
+#if WITH_EDITOR
+    FDWEditorAuthoringSignature Signature;FString Error;
+    if(Config&&FDWEditorAuthoringSignature::Capture(EntryPackage,*Config,Signature,Error))
+    {
+        TSharedPtr<FJsonObject> Manifest;
+        if(FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Signature.ManifestJson),Manifest)&&Manifest.IsValid())
+        {Report->SetStringField(TEXT("status"),TEXT("signature_read_only_pass"));Report->SetObjectField(TEXT("manifest"),Manifest);}
+        else{Report->SetStringField(TEXT("status"),TEXT("rejected"));Report->SetStringField(TEXT("error"),TEXT("Manifest JSON could not be parsed."));}
+    }
+    else{Report->SetStringField(TEXT("status"),TEXT("rejected"));Report->SetStringField(TEXT("error"),Config?Error:TEXT("Null authoring configuration."));}
+#else
+    Report->SetStringField(TEXT("status"),TEXT("editor_probe_unavailable"));
+#endif
+    FString Json;FJsonSerializer::Serialize(Report,TJsonWriterFactory<>::Create(&Json));return Json;
 }

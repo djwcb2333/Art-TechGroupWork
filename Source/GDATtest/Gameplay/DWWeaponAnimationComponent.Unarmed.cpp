@@ -5,6 +5,11 @@
 #include "DWGameInstance.h"
 #include "DWPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Animation/AnimSequenceBase.h"
+#include "Animation/AnimMontage.h"
+#include "Animation/Skeleton.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Engine/SkeletalMesh.h"
 #include "Engine/World.h"
 
 void UDWWeaponAnimationComponent::InitializeUnarmedRules()
@@ -32,6 +37,18 @@ bool UDWWeaponAnimationComponent::BeginFormalUnarmed(FVector Target)
     UnarmedAction=Action;UnarmedPlan=Candidate;bFormalUnarmedActive=bActive=true;
     bPrimaryHeld=true;bSecondaryHeld=bCharging=bChargeReady=bReloading=false;
     ActiveSet=nullptr;ActiveClip={};ActiveClip.Role=TEXT("Attack");ActiveClip.DurationSeconds=static_cast<float>(UnarmedTuning.Attack.IntervalSeconds);
+    // Presentation only; validate before both graph and SingleNode paths consume this asset.
+    if (UAnimSequenceBase* Punch=UnarmedAttackAnimation.Get(); IsValid(Punch) && !Punch->IsA<UAnimMontage>() && Punch->GetAdditiveAnimType()==AAT_None && FMath::IsFinite(Punch->GetPlayLength()) && Punch->GetPlayLength()>0.f)
+    {
+        const USkeletalMesh* TargetMesh=P->GetMesh()?P->GetMesh()->GetSkeletalMeshAsset():nullptr;
+        const USkeleton* Target=TargetMesh?TargetMesh->GetSkeleton():nullptr;
+        const USkeleton* Source=Punch->GetSkeleton();
+        bool bCompatible=Target && Source && Target==Source;
+        if(Target && Source && !bCompatible)
+            for(const TSoftObjectPtr<USkeleton>& Compatible:Target->GetCompatibleSkeletons())
+                if(Compatible.ToSoftObjectPath()==FSoftObjectPath(Source)){bCompatible=true;break;}
+        if(bCompatible)ActiveClip.Animation=Punch;
+    }
     ElapsedSeconds=0.;FiredEvents.Reset();++ActionSerial;
     UnarmedForward=(Target-P->GetActorLocation()).GetSafeNormal2D();if(UnarmedForward.IsNearlyZero())UnarmedForward=P->GetActorForwardVector().GetSafeNormal2D();
     bOldOrient=P->GetCharacterMovement()->bOrientRotationToMovement;

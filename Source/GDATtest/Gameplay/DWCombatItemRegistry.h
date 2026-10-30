@@ -23,6 +23,11 @@ public:
     static const TArray<FDWCombatWeaponBinding>& GetWeaponBindings();
     static const FDWCombatWeaponBinding* FindWeapon(FName DesignId);
     static const FDWCombatWeaponBinding* FindPresentation(EDWAnimatedWeapon Weapon);
+    /** Inventory aliases resolve to one existing mechanics binding; source tables and inventory IDs stay intact. */
+    static const FDWCombatWeaponBinding* FindItem(FName InventoryItemId);
+    static FName CanonicalWeaponItemId(FName InventoryItemId);
+    static FName PreferredInventoryItemId(FName MechanicsOrInventoryItemId);
+    static bool SamePermanentWeapon(FName A,FName B);
     static EDWCombatItemRole GetItemRole(FName ItemId);
     static FName MoldCoreId();
     static FName YeastCoreId();

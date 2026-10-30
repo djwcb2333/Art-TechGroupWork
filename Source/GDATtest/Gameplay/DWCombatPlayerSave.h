@@ -6,6 +6,7 @@
 
 class FDWCombatRules;
 class UDWSaveGame;
+struct FDWYeastDashConfig;
 
 /** Only resource/form clock and existing owned/loaded facts. Remaining D22 groups are not implied. */
 USTRUCT()
@@ -28,6 +29,10 @@ namespace DWCombatPlayerSave
 {
     constexpr int32 SubblockSchema=2;
     bool MakeNew(const FDWCombatRules& Rules,UDWSaveGame& Save,FString& Error);
+    // Formal new adventure only. The original MakeNew remains the legacy baseline.
+    bool MakeNewFullSurvival(const FDWCombatRules& Rules,UDWSaveGame& Save,FString& Error);
+    bool BuildConfigForSave(const FDWCombatRules&,const UDWSaveGame&,FDWCombatPlayerVitalsConfig&,FString&);
+    bool BuildDashConfigForSave(const FDWCombatRules&,const UDWSaveGame&,FDWYeastDashConfig&,FString&);
     bool Validate(const FDWCombatRules& Rules,const UDWSaveGame& Save,FString& Error);
     bool BuildWeaponCandidate(const FDWCombatRules& Rules,const FDWCombatPlayerResourceSave& Saved,
         FDWCombatWeaponResourceState& Out,FString& Error);

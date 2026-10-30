@@ -1,4 +1,5 @@
 #include "DWCombatRecoverySubsystem.h"
+#include "DWLootBeaconSubsystem.h"
 #include "DWCombatRecoveryActors.h"
 #include "DWCombatRecoveryTransaction.h"
 #include "DWCombatAuthoritySubsystem.h"
@@ -97,6 +98,7 @@ void UDWCombatRecoverySubsystem::Materialize(FGuid Id)
     if(!Operational()||!FindBag(Id,Current)||Current.bClaimed||FindPhysicalBag(Id)||!IsValid(P)||P->IsActorBeingDestroyed())
     {if(IsValid(P)&&P->GetWorld()&&!P->GetWorld()->bIsTearingDown)P->Destroy();return;}
     P->BagId=Id;P->bBound=true;Physical.Add(Id,P);
+    if(auto* V=GetWorld()->GetSubsystem<UDWLootBeaconSubsystem>())V->PublishDeathBag(P,P->Placeholder);
 }
 void UDWCombatRecoverySubsystem::Tick(float Dt)
 {

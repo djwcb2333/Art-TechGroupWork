@@ -1,4 +1,7 @@
 #include "DWCombatWorldObjectsPersistence.h"
+#include "DWLanguageSubsystem.h"
+#include "DWFormalLanguagePersistence.h"
+#include "Engine/GameInstance.h"
 #include "DWCombatWorldObjectsRegistry.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWCombatRecoverySubsystem.h"
@@ -16,7 +19,7 @@ namespace
 {
 FString Path(const AActor* A){return UWorld::RemovePIEPrefix(A->GetPathName());}
 FString Of(const TArray<FDWCombatObjectBinding>& B,const AActor* A){if(!A)return {};for(const auto& X:B)if(X.Actor.Get()==A)return X.StableId;return {};}
-bool Same(DWCombatCommit::FEntityLife A,DWCombatCommit::FEntityLife B){return A.Entity==B.Entity&&A.Life==B.Life;}
+bool SameCapturedWorldObjectLife(DWCombatCommit::FEntityLife A,DWCombatCommit::FEntityLife B){return A.Entity==B.Entity&&A.Life==B.Life;}
 }
 bool FDWCombatWorldObjectsPersistence::CaptureEnemy(ADWEnemyCharacter& E,const TArray<FDWCombatObjectBinding>& B,FDWCombatEnemyObjectSave& S,FString& Error)
 {
@@ -97,7 +100,7 @@ bool FDWCombatWorldObjectsPersistence::CaptureInternal(UWorld& W,ADWPlayerCharac
     S.NestClocks.Sort([](const auto& X,const auto& Y){return X.StableId.Compare(Y.StableId,ESearchCase::CaseSensitive)<0;});
     S.CoreDrops.Sort([](const auto& X,const auto& Y){return X.DeathId.ToString()<Y.DeathId.ToString();});
     L.Sort([](const auto& X,const auto& Y){return X.ActorId.Compare(Y.ActorId,ESearchCase::CaseSensitive)<0;});
-    if(A->GetWorldEpoch()!=Epoch||!Same(A->CaptureActorLife(&P),PLife)||!DWCombatWorldObjectsSave::Validate(S,Error)||!DWCombatWorldObjectsSave::ValidateLegacy(L,Error))return false;
+    if(A->GetWorldEpoch()!=Epoch||!SameCapturedWorldObjectLife(A->CaptureActorLife(&P),PLife)||!DWCombatWorldObjectsSave::Validate(S,Error,W.GetGameInstance()&&W.GetGameInstance()->GetSubsystem<UDWLanguageSubsystem>()&&FDWFormalLanguagePersistence::IsCurrent(*W.GetGameInstance()->GetSubsystem<UDWLanguageSubsystem>(),true))||!DWCombatWorldObjectsSave::ValidateLegacy(L,Error))return false;
     Out=MoveTemp(S);OutLegacy=MoveTemp(L);OutBindings=MoveTemp(B);return true;
 }
 void FDWCombatWorldObjectsPersistence::RecordDestroyedEnemy(ADWEnemyCharacter& E)

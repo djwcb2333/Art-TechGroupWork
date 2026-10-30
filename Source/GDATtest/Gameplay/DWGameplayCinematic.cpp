@@ -9,6 +9,7 @@
 #include "DWLoadingTransition.h"
 #include "DWGameplayHUD.h"
 #include "DWPlayerCharacter.h"
+#include "DWPlayerController.h"
 #include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
 #include "Camera/PlayerCameraManager.h"
@@ -29,6 +30,74 @@ void UDWCinematicComponent::BeginPlay()
  Super::BeginPlay();
  if(bViewOnly){ViewEvent=NewObject<UDWWorldEventComponent>(GetOwner(),NAME_None,RF_Transient);ViewEvent->EventId=ViewEventId;ViewEvent->RegisterComponent();}
 }
+bool UDWCinematicComponent::BeginExternalControl(ADWPlayerController* Controller,APawn* ControlledPawn)
+{
+ if(bExternalControlOwned)return !bExternalCompletionPending&&ExternalController.Get()==Controller;
+ if(IsPlaying()||!IsValid(Controller)||!IsValid(ControlledPawn)||Controller->GetPawn()!=ControlledPawn||!GetWorld())return false;
+ auto* Events=GetWorld()->GetSubsystem<UDWWorldEventSubsystem>();
+ if(!Events||!Events->Acquire(this))return false;
+ ExternalEvents=Events;ExternalController=Controller;bExternalControlOwned=true;
+ bExternalCompletionPending=false;bExternalCompletionSuccessful=true;bExternalDeferToDirector=false;bExternalResourcesReleased=false;
+ bExternalCursor=Controller->bShowMouseCursor;Controller->bShowMouseCursor=false;
+ Controller->SetIgnoreMoveInput(true);Controller->SetIgnoreLookInput(true);
+ SetComponentTickEnabled(false);SetPhase(EDWCinematicPhase::External);++PlaybackCount;LastError.Empty();
+ return true;
+}
+void UDWCinematicComponent::EndExternalControl(bool bSuccessful)
+{
+ if(!bExternalControlOwned)return;
+ bExternalCompletionPending=true;bExternalCompletionSuccessful&=bSuccessful;
+}
+void UDWCinematicComponent::ReleaseExternalResources()
+{
+ if(!bExternalControlOwned||bExternalResourcesReleased)return;
+ bExternalResourcesReleased=true;
+ if(ExternalEvents.IsValid())ExternalEvents->Release(this);
+ if(ExternalController.IsValid()){
+  ExternalController->SetIgnoreMoveInput(false);ExternalController->SetIgnoreLookInput(false);
+  ExternalController->bShowMouseCursor=bExternalCursor;ExternalController->InvalidateCombatInputLife();
+ }
+}
+void UDWCinematicComponent::FlushExternalCompletion()
+{
+ if(!bExternalControlOwned||!bExternalCompletionPending)return;
+ const bool bSuccessful=bExternalCompletionSuccessful;
+ ReleaseExternalResources();
+ bExternalControlOwned=false;bExternalCompletionPending=false;bExternalDeferToDirector=false;ExternalEvents.Reset();ExternalController.Reset();SetPhase(EDWCinematicPhase::Idle);
+ OnFinished.Broadcast(bSuccessful);
+}
+void UDWCinematicComponent::RequestExternalAspect(ACameraActor* Camera,float TargetAspect)
+{
+ if(!IsValid(Camera)||!Camera->GetCameraComponent())return;
+ auto* Cam=Camera->GetCameraComponent();ExternalAspectFrom=Cam->AspectRatio;
+ ExternalAspectTo=TargetAspect;ExternalAspectAge=0.f;Cam->SetConstraintAspectRatio(true);
+}
+void UDWCinematicComponent::AdvanceExternalAspect(ACameraActor* Camera,float DeltaSeconds)
+{
+ if(!IsValid(Camera)||!Camera->GetCameraComponent())return;
+ ExternalAspectAge+=FMath::Max(0.f,DeltaSeconds);
+ const float T=FMath::SmoothStep(0.f,1.f,ExternalAspectAge/FMath::Max(.001f,AspectTransitionSeconds));
+ Camera->GetCameraComponent()->SetAspectRatio(FMath::Lerp(ExternalAspectFrom,ExternalAspectTo,T));
+}
+void UDWCinematicComponent::ApplyAuthoredCameraPose(ACameraActor* Camera,const FVector& Location,const FQuat& Rotation,float FieldOfView)
+{
+ if(!IsValid(Camera)||!Camera->GetCameraComponent())return;
+ Camera->SetActorLocationAndRotation(Location,Rotation);Camera->GetCameraComponent()->SetFieldOfView(FieldOfView);
+}
+UDWCinematicSubtitleWidget* UDWCinematicComponent::CreateAuthoredSubtitle(APlayerController* Controller,int32 ZOrder)
+{
+ if(!IsValid(Controller)||!SubtitleWidgetClass)return nullptr;
+ auto* Widget=CreateWidget<UDWCinematicSubtitleWidget>(Controller,SubtitleWidgetClass);
+ if(Widget)Widget->AddToViewport(ZOrder);
+ return Widget;
+}
+UDWDialogueSequenceComponent* UDWCinematicComponent::CreateAuthoredDialogue()
+{
+ if(!IsValid(GetOwner()))return nullptr;
+ auto* Queue=NewObject<UDWDialogueSequenceComponent>(GetOwner(),NAME_None,RF_Transient);
+ if(Queue)Queue->RegisterComponent();
+ return Queue;
+}
 void UDWCinematicComponent::SetPhase(EDWCinematicPhase P)
 {Phase=P;PhaseSeconds=0;if(P==EDWCinematicPhase::TravelBack&&bStopShakeWhenReturning)StopCinematicShake(false);}
 void UDWCinematicComponent::StartCinematicShake()
@@ -47,7 +116,7 @@ bool UDWCinematicComponent::PlayCinematic(APlayerController* C)
 {
  LastError.Empty();
  auto Fail=[this](const TCHAR* M){LastError=M;return false;};
- if(IsPlaying())return Fail(TEXT("Already playing"));
+ if(IsPlaying()||bExternalControlOwned)return Fail(TEXT("Already playing"));
  if(!IsValid(C)||!C->IsLocalController()||!C->GetPawn()||C->IsPaused())return Fail(TEXT("Player is not ready"));
  if(!IsValid(TargetCamera)||(!bViewOnly&&!IsValid(EventActor)))return Fail(TEXT("Assign Target Camera and either View Only + View Event ID, or Event Actor"));
  if(!SubtitleLines.IsEmpty()){bool HasText=false;for(const auto& Line:SubtitleLines)HasText|=!Line.Resolve(this).IsEmptyOrWhitespace();if(!HasText||!SubtitleWidgetClass)return Fail(TEXT("Subtitle Lines needs a non-empty line and a Subtitle Widget Class"));}
@@ -112,14 +181,14 @@ void UDWCinematicComponent::UpdateCamera(float T,bool Back)
  if(!PlaybackCamera)return;
  const float A=FMath::InterpEaseInOut(0.f,1.f,FMath::Clamp(T,0.f,1.f),FMath::Clamp(EaseExponent,1.f,8.f));
  const auto& From=Back?TargetPOV:OriginalPOV;const auto& To=Back?OriginalPOV:TargetPOV;
- PlaybackCamera->SetActorLocationAndRotation(FMath::Lerp(From.Location,To.Location,A),FQuat::Slerp(From.Rotation.Quaternion(),To.Rotation.Quaternion(),A));
- auto* Cam=PlaybackCamera->GetCameraComponent();Cam->SetFieldOfView(FMath::Lerp(From.FOV,To.FOV,A));
+ ApplyAuthoredCameraPose(PlaybackCamera,FMath::Lerp(From.Location,To.Location,A),FQuat::Slerp(From.Rotation.Quaternion(),To.Rotation.Quaternion(),A),FMath::Lerp(From.FOV,To.FOV,A));
+ auto* Cam=PlaybackCamera->GetCameraComponent();
  const float B=FMath::SmoothStep(0.f,1.f,PhaseSeconds/FMath::Max(.001f,AspectTransitionSeconds));
  const float Movie=FMath::Clamp(MovieAspectRatio,.5f,4.f);Cam->SetAspectRatio(Back?FMath::Lerp(Movie,InitialAspect,B):FMath::Lerp(InitialAspect,Movie,B));
 }
 void UDWCinematicComponent::TickComponent(float Dt,ELevelTick Type,FActorComponentTickFunction* F)
 {
- Super::TickComponent(Dt,Type,F);if(!IsPlaying())return;
+ Super::TickComponent(Dt,Type,F);if(!IsPlaying()||Phase==EDWCinematicPhase::External)return;
  if(ActiveCinematicShake&&(!ActiveCinematicShake->IsActive()||ActiveCinematicShake->IsFinished()))ActiveCinematicShake=nullptr;
  if(!PC.IsValid()||!Pawn.IsValid()||!PlaybackCamera||!Event.IsValid()||!PreviousViewTarget.IsValid()){LastError=TEXT("A cinematic participant was removed");Cleanup(false);return;}
  if(Dialogue&&!Dialogue->IsPlaying()&&!Dialogue->bCompleted){LastError=Dialogue->LastError;Cleanup(false);return;}
@@ -132,11 +201,10 @@ void UDWCinematicComponent::TickComponent(float Dt,ELevelTick Type,FActorCompone
    SetPhase(EDWCinematicPhase::SceneEvent);
    const FText Text=DWText(this,*ChineseSubtitle.ToString(),*EnglishSubtitle.ToString());
    if(!SubtitleLines.IsEmpty()){
-    Subtitle=CreateWidget<UDWCinematicSubtitleWidget>(PC.Get(),SubtitleWidgetClass);
+    Subtitle=CreateAuthoredSubtitle(PC.Get(),100);
     if(!Subtitle){LastError=TEXT("Unable to create dialogue widget");Cleanup(false);break;}
-    Subtitle->AddToViewport(100);
     if(auto* R=UDWTextRevealLibrary::GetTextRevealComponent(Subtitle->GetDialogueTextBlock())){if(VoiceProfile)R->VoiceProfile=VoiceProfile;}
-    Dialogue=NewObject<UDWDialogueSequenceComponent>(GetOwner(),NAME_None,RF_Transient);Dialogue->RegisterComponent();Dialogue->Lines=SubtitleLines;
+    Dialogue=CreateAuthoredDialogue();if(!Dialogue){LastError=TEXT("Unable to create dialogue queue");Cleanup(false);break;}Dialogue->Lines=SubtitleLines;
     if(!Dialogue->PlayDialogue(Subtitle->GetDialogueTextBlock())){LastError=Dialogue->LastError;Cleanup(false);break;}
    }else if(!Text.IsEmpty()&&SubtitleWidgetClass){Subtitle=CreateWidget<UDWCinematicSubtitleWidget>(PC.Get(),SubtitleWidgetClass);if(Subtitle){Subtitle->AddToViewport(100);Subtitle->ShowCue(Text,VoiceProfile);}}
    if(!Event->RequestEvent()){LastError=TEXT("Scene event could not start");Cleanup(false);break;}
@@ -161,7 +229,15 @@ void UDWCinematicComponent::TickComponent(float Dt,ELevelTick Type,FActorCompone
  }
 }
 void UDWCinematicComponent::SceneCompleted(){if(Phase==EDWCinematicPhase::SceneEvent)SetPhase(EDWCinematicPhase::Hold);}
-void UDWCinematicComponent::CancelCinematic(){if(IsPlaying()){LastError=TEXT("Cancelled");Cleanup(false);}}
+void UDWCinematicComponent::CancelCinematic()
+{
+ if(Phase==EDWCinematicPhase::External){
+  if(bExternalCancelInFlight)return;
+  TGuardValue<bool> Guard(bExternalCancelInFlight,true);LastError=TEXT("Cancelled");
+  OnExternalCancelRequested.Broadcast();if(bExternalControlOwned){EndExternalControl(false);if(!bExternalDeferToDirector)FlushExternalCompletion();}return;
+ }
+ if(IsPlaying()){LastError=TEXT("Cancelled");Cleanup(false);}
+}
 void UDWCinematicComponent::Cleanup(bool Success)
 {
  if(SubtitleInput){if(PC.IsValid())PC->PopInputComponent(SubtitleInput);SubtitleInput->DestroyComponent();SubtitleInput=nullptr;}
@@ -184,7 +260,7 @@ void UDWCinematicComponent::Cleanup(bool Success)
  if(auto* W=GetWorld())W->GetSubsystem<UDWWorldEventSubsystem>()->Release(this);
  SetPhase(EDWCinematicPhase::Idle);SetComponentTickEnabled(false);Event.Reset();OnFinished.Broadcast(Success);
 }
-void UDWCinematicComponent::EndPlay(const EEndPlayReason::Type R){if(IsPlaying())Cleanup(false);if(ViewEvent){ViewEvent->DestroyComponent();ViewEvent=nullptr;}Super::EndPlay(R);}
+void UDWCinematicComponent::EndPlay(const EEndPlayReason::Type R){EndExternalControl(false);FlushExternalCompletion();if(IsPlaying())Cleanup(false);if(ViewEvent){ViewEvent->DestroyComponent();ViewEvent=nullptr;}Super::EndPlay(R);}
 ADWCinematicTrigger::ADWCinematicTrigger()
 {
  TriggerBox=CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));RootComponent=TriggerBox;TriggerBox->SetBoxExtent(FVector(160,300,150));TriggerBox->SetCollisionProfileName(TEXT("Trigger"));TriggerBox->SetGenerateOverlapEvents(true);

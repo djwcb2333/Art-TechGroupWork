@@ -27,11 +27,26 @@ const FDWCombatWeaponBinding* FDWCombatItemRegistry::FindWeapon(FName Id)
 { return GetWeaponBindings().FindByPredicate([Id](const auto& Binding){return Binding.DesignId==Id;}); }
 const FDWCombatWeaponBinding* FDWCombatItemRegistry::FindPresentation(EDWAnimatedWeapon Weapon)
 { return GetWeaponBindings().FindByPredicate([Weapon](const auto& Binding){return Binding.Presentation==Weapon;}); }
+FName FDWCombatItemRegistry::CanonicalWeaponItemId(FName Id)
+{return Id==TEXT("SugarSpear")?FName(TEXT("DWWeapon_Spear")):Id;}
+FName FDWCombatItemRegistry::PreferredInventoryItemId(FName Id)
+{return CanonicalWeaponItemId(Id)==TEXT("DWWeapon_Spear")?FName(TEXT("SugarSpear")):Id;}
+const FDWCombatWeaponBinding* FDWCombatItemRegistry::FindItem(FName Id)
+{
+    const FName Canonical=CanonicalWeaponItemId(Id);
+    return GetWeaponBindings().FindByPredicate([Canonical](const auto& B){return B.ItemId==Canonical;});
+}
+bool FDWCombatItemRegistry::SamePermanentWeapon(FName A,FName B)
+{
+    return GetItemRole(A)==EDWCombatItemRole::PermanentWeapon&&GetItemRole(B)==EDWCombatItemRole::PermanentWeapon&&
+        CanonicalWeaponItemId(A)==CanonicalWeaponItemId(B);
+}
 EDWCombatItemRole FDWCombatItemRegistry::GetItemRole(FName Id)
 {
     if(Id.IsNone())return EDWCombatItemRole::Unrelated;
     if(Id==MoldCoreId())return EDWCombatItemRole::MoldCore;
     if(Id==YeastCoreId())return EDWCombatItemRole::YeastCore;
+    Id=CanonicalWeaponItemId(Id);
     for(const auto& Binding:GetWeaponBindings())if(Binding.ItemId==Id)return Binding.ItemRole;
     for(const auto& Binding:GetWeaponBindings())if(Binding.AmmoItemId==Id)return EDWCombatItemRole::ReserveAmmo;
     return EDWCombatItemRole::Unrelated;

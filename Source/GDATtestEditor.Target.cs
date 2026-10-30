@@ -11,6 +11,7 @@ public class GDATtestEditorTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V7;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_8;
 		ExtraModuleNames.Add("GDATtest");
+		ExtraModuleNames.Add("DWBuildingAuthoringEditor");
 		ExtraModuleNames.Add("ArtTechCollaboration");
 	}
 }

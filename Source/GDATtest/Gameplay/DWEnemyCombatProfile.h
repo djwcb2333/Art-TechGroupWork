@@ -4,6 +4,7 @@
 #include "DWEnemyCombatProfile.generated.h"
 
 class FDWCombatRules;
+class FJsonObject;
 enum class EDWCombatBaseForm : uint8;
 
 /** Appended opt-in identities. Existing placed enemies and Blueprint defaults remain Legacy. */
@@ -30,6 +31,8 @@ struct FDWEnemyCoreDropConfig
 {
     double MoldProbability=0.,YeastProbability=0.,PickupRadiusCm=0.;
     int32 Count=0,StackLimit=0;
+    // Native-only projection. Exact LANG fatal preparation may select the two fixed essence IDs.
+    bool bLanguageEssenceIds=false;
 };
 
 /** Per-enemy state. No shared aggro group and no dependency on the old bYeastForm mirror. */
@@ -97,6 +100,12 @@ namespace DWEnemyFormal
 {
     bool BuildConfig(const FDWCombatRules& Rules,EDWEnemyCombatProfile Profile,FDWEnemyCombatConfig& Out,FString& Error);
     bool BuildCoreDropConfig(const FDWCombatRules& Rules,FDWEnemyCoreDropConfig& Out,FString& Error);
+    /** Legacy config first; only the exact LANG map consumes the two new essence numeric keys. */
+    bool ApplyLanguageEssenceDropOverrides(const FString& MapPackage,const TSharedPtr<FJsonObject>& Trial,
+        FDWEnemyCoreDropConfig& InOut,FString& Error,bool bValidatedFormalSession=false);
+    bool IsLanguageEssenceDropMap(const FString& MapPackage);
+    /** Saved legacy IDs remain legal. New IDs require exact map AND the matching formal profile. */
+    bool IsSavedCoreDropItemAllowed(EDWEnemyCombatProfile Profile,FName ItemId,const FString& MapPackage,bool bValidatedFormalSession=false);
     bool IsHostile(EDWEnemyCombatProfile Profile,EDWCombatBaseForm PlayerForm,bool bRememberedCombat);
     /** Exact box intersection with a vertical circular sector, including tilted/nonuniformly scaled hurtboxes. */
     bool BoxIntersectsSector(const FTransform& BoxTransform,FVector BoxExtent,FVector Origin,FVector Facing,

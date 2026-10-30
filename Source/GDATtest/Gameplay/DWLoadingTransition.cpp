@@ -1,5 +1,7 @@
 #include "DWLoadingTransition.h"
 #include "DWPlayerCharacter.h"
+#include "DWOpeningPrototype.h"
+#include "EngineUtils.h"
 #include "DWUserSettings.h"
 #include "DWGameInstance.h"
 #include "DWLocalizationLibrary.h"
@@ -343,11 +345,29 @@ void UDWLoadingTransitionSubsystem::FailTransition(const FString& Message)
  LastError=DWText(this,TEXT("过渡失败，已恢复界面。请检查目标关卡与日志。"),TEXT("Transition failed. Check the destination level and log."));
  UE_LOG(LogTemp,Error,TEXT("DW Iris failure: %s"),*Message);bFailed=true;++RequestSerial;PreloadedPackage=nullptr;PreloadedWorld=nullptr;
  if(bOwnsMovie&&IsMoviePlayerEnabled()){GetMoviePlayer()->StopMovie();bOwnsMovie=false;}
+ if(auto* VisibleWorld=ArrivedWorld.IsValid()?ArrivedWorld.Get():GetWorld())for(TActorIterator<ADWOpeningPrototype> It(VisibleWorld);It;++It)It->CancelArrivalCover();
  SetPhase(EDWLoadingPhase::Opening);OnFailed.Broadcast(LastError);
  if(auto* PC=GetGameInstance()->GetFirstLocalPlayerController())if(auto* H=Cast<ADWGameplayHUD>(PC->GetHUD()))H->Notify(LastError);
 }
 void UDWLoadingTransitionSubsystem::Finish()
 {
+ TWeakObjectPtr<ADWOpeningPrototype> HandoffDirector;
+ // Restore must finish first. Keep the loader input lease until the opening owns its lease.
+ if(!bFailed&&Mode==EMode::Travel)
+ {
+  auto* GI=Cast<UDWGameInstance>(GetGameInstance());
+  if(GI&&GI->IsOpeningPending())
+  {
+   auto* W=ArrivedWorld.Get();auto* PC=GI->GetFirstLocalPlayerController();bool bHandoff=false;
+   if(W&&!GI->IsPlayerRestorePending()&&!GI->HasPlayerRestoreFailure())
+    for(TActorIterator<ADWOpeningPrototype> It(W);It;++It)if(!It->IsActorBeingDestroyed()){HandoffDirector=*It;bHandoff|=It->PrepareArrivalControl(PC);}
+   if(!bHandoff){
+    const FText Reason=DWText(this,TEXT("开场交接失败；安全起点已保留，请读取当前槽重试。"),TEXT("Opening handoff failed. The safe checkpoint is preserved; reload the current slot."));
+    if(!RevealCombatRestoreFailure(W,Reason)){LastError=Reason;bFailed=true;}
+    if(PC)if(auto* H=Cast<ADWGameplayHUD>(PC->GetHUD()))H->Notify(Reason);
+   }
+  }
+ }
  UnbindDrawEvents();
  const bool WasActive=IsTransitionActive();Phase=EDWLoadingPhase::Idle;Publish();
  if(Overlay)if(auto* V=GetGameInstance()->GetGameViewportClient())V->RemoveViewportWidgetContent(Overlay.ToSharedRef());
@@ -363,14 +383,21 @@ void UDWLoadingTransitionSubsystem::Finish()
   if(auto* PC=GetGameInstance()->GetFirstLocalPlayerController())if(auto* H=Cast<ADWGameplayHUD>(PC->GetHUD()))H->ShowMenu(H->GetMenuPage());
   OnFinished.Broadcast();
  }
+ if(HandoffDirector.IsValid())HandoffDirector->FlushCinematicHandoff();
 }
 bool UDWLoadingTransitionSubsystem::RevealCombatRestoreFailure(UWorld* FailedWorld,const FText& Reason)
 {
  if(!bAlive||Mode!=EMode::Travel||!FailedWorld||FailedWorld->bIsTearingDown||!FailedWorld->HasBegunPlay()||
     ArrivedWorld.Get()!=FailedWorld||GetWorld()!=FailedWorld)return false;
- if(Phase==EDWLoadingPhase::Opening)return true; // Do not restart the opening timer on each UI tick.
+ if(Phase==EDWLoadingPhase::Opening)
+ {
+  LastError=Reason;bFailed=true;
+  for(TActorIterator<ADWOpeningPrototype> It(FailedWorld);It;++It)It->CancelArrivalCover();
+  return true; // Clear the arrival cover, but never restart the opening timer on each UI tick.
+ }
  if(Phase!=EDWLoadingPhase::Travelling&&Phase!=EDWLoadingPhase::Complete)return false;
  LastError=Reason;bFailed=true;
+ for(TActorIterator<ADWOpeningPrototype> It(FailedWorld);It;++It)It->CancelArrivalCover();
  // This is a failed data restore in an already-loaded world, not a map-load failure.
  // No OnFailed rollback of ActiveSlot/Pending, and no OnLoadingComplete success notification.
  SetPhase(EDWLoadingPhase::Opening);return true;
@@ -385,7 +412,15 @@ bool UDWLoadingTransitionSubsystem::PrimeDestinationCamera()
   auto* P=Cast<ADWPlayerCharacter>(PC->GetPawn());if(!P||!P->HasActorBegunPlay())return false;
   P->PrepareCameraForReveal();if(PC->GetViewTarget()!=P)PC->SetViewTarget(P);
  }
- PC->UpdateCameraManager(0.f);PC->PlayerCameraManager->SetGameCameraCutThisFrame();return PC->GetViewTarget()!=PC;
+ PC->UpdateCameraManager(0.f);PC->PlayerCameraManager->SetGameCameraCutThisFrame();
+ // Before the iris reveals a pending SC0101 world, its presentation-only cover must already paint opaque.
+ // The gameplay director still waits for normal restore admission and the loader to release pause.
+ if(GI&&GI->IsOpeningPending()&&!bFailed)
+ {
+  bool Covered=false;for(TActorIterator<ADWOpeningPrototype> It(W);It;++It)if(!It->IsActorBeingDestroyed())Covered|=It->PrepareArrivalCover(PC);
+  if(!Covered)return false;
+ }
+ return PC->GetViewTarget()!=PC;
 }
 void UDWLoadingTransitionSubsystem::BeforeDestinationDraw(){if(IsTransitionActive())PrimeDestinationCamera();}
 void UDWLoadingTransitionSubsystem::AfterDestinationDraw(){if(Phase==EDWLoadingPhase::Travelling){if(bReadyToDraw&&PrimeDestinationCamera())++ReadyFrames;else ReadyFrames=0;}}

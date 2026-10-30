@@ -110,7 +110,15 @@ void UDWUIGlowPulseComponent::RefreshPaint()
   Widget->Invalidate(EInvalidateWidgetReason::Paint);
  }
 }
-void UDWUIGlowPulseComponent::ResetPulse(){StopTicker();bPulsing=false;Envelope=0.f;StartedAt=0.;RefreshPaint();}
+void UDWUIGlowPulseComponent::ResetPulse(){StopTicker();bPulsing=false;bSustained=false;Envelope=0.f;StartedAt=0.;RefreshPaint();}
+void UDWUIGlowPulseComponent::SetSustainedGlow(bool bEnabled,float Strength)
+{
+ if(!bEnabled){if(bSustained)ResetPulse();return;}
+ const float SafeStrength=SafeRange(Strength,4.f);
+ if(!bRuntime||!GetOwner().IsValid()||SafeStrength<=0.f){ResetPulse();return;}
+ if(bSustained&&FMath::IsNearlyEqual(PulseStrength,SafeStrength))return;
+ StopTicker();bPulsing=false;bSustained=true;PulseStrength=SafeStrength;Envelope=1.f;RefreshPaint();
+}
 float UDWUIGlowPulseComponent::GetPulseOpacity() const{return FMath::Clamp(Envelope*SafeRange(PeakOpacity,1.f)*PulseStrength,0.f,1.f);}
 float UDWUIGlowPulseComponent::GetTotalSeconds() const{return SafeRange(RiseSeconds,5.f)+SafeRange(HoldSeconds,5.f)+SafeRange(FadeSeconds,5.f);}
 void UDWUIGlowPulseComponent::Pulse(float Strength)

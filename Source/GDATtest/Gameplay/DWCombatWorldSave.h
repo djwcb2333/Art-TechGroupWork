@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "DWCombatMines.h"
+#include "DWGatheringSave.h"
 #include "DWCombatWorldSave.generated.h"
 
 // Aggregate marker is intentionally absent on old files. Only the complete writer sets it.
@@ -88,4 +89,5 @@ struct FDWCombatWorldSave
     UPROPERTY(SaveGame) FDWCombatPlayerExtendedSave Player;
     UPROPERTY(SaveGame) TArray<uint8> Objects;
     UPROPERTY(SaveGame) TArray<uint8> Effects;
+    UPROPERTY(SaveGame) FDWGatheringWorldSave Gathering;
 };

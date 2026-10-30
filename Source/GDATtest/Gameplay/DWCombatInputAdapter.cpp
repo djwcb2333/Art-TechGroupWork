@@ -149,7 +149,7 @@ void FDWCombatInputAdapter::RefreshMonitoredKeys(const TArray<FKey>& InKeys)
 bool FDWCombatInputAdapter::TryConsumePress(FKey Key, FName Action, FDWCombatInputPress& OutPress)
 {
     OutPress = FDWCombatInputPress();
-    if (!IsCapturing() || !bApplicationActive || !MonitoredKeys.Contains(Key.GetFName())) return false;
+    if (!IsCapturing() || !bApplicationActive || IsPresentationKey(Key) || !MonitoredKeys.Contains(Key.GetFName())) return false;
     return Ledger.TryConsumeNextPress(Key.GetFName(), Action, OutPress);
 }
 
@@ -162,6 +162,38 @@ bool FDWCombatInputAdapter::HasObservedReleaseAfter(const FDWCombatInputPress& P
         && !Released->bDown && Released->Sequence > Press.Edge.Sequence;
 }
 void FDWCombatInputAdapter::ForgetHolds(FName Action) { Ledger.ForgetHolds(Action); }
+bool FDWCombatInputAdapter::IsPresentationKey(FKey Key) const
+{
+    const auto* Presentation=PresentationOwner.Get();
+    const auto* Controller=Owner.Get();
+    return IsValid(Presentation)&&IsValid(Controller)&&OwnerIsValid()
+        && Presentation->GetWorld()==Controller->GetWorld()&&PresentationKey==Key;
+}
+bool FDWCombatInputAdapter::AcquirePresentationKey(UObject* InOwner,FKey Key)
+{
+    SynchronizeOwnerLifecycle();
+    const auto* Controller=Owner.Get();
+    if(!IsValid(InOwner)||!Key.IsValid()||!IsValid(Controller)||!OwnerIsValid()
+        ||InOwner->GetWorld()!=Controller->GetWorld())return false;
+    if(PresentationOwner.IsValid()&&PresentationOwner.Get()!=InOwner
+        &&PresentationOwner->GetWorld()==Controller->GetWorld())return false;
+    if(PresentationOwner.Get()!=InOwner||PresentationKey!=Key)bPresentationReleaseObserved=false;
+    PresentationOwner=InOwner;PresentationKey=Key;
+    // A press observed earlier in this same input batch must not leak when the lease later ends.
+    FDWCombatInputPress Ignored;
+    while(Ledger.TryConsumeNextPress(Key.GetFName(),TEXT("Presentation"),Ignored)){}
+    return true;
+}
+bool FDWCombatInputAdapter::HasObservedPresentationKeyRelease(const UObject* InOwner) const
+{
+    return InOwner&&PresentationOwner.Get()==InOwner&&IsPresentationKey(PresentationKey)&&bPresentationReleaseObserved;
+}
+void FDWCombatInputAdapter::ReleasePresentationKey(UObject* InOwner)
+{
+    if(PresentationOwner.Get()!=InOwner)return;
+    PresentationOwner.Reset();PresentationKey=FKey();bPresentationReleaseObserved=false;
+    // Physical state and any pre-existing accepted hold survive until their real observed Up.
+}
 void FDWCombatInputAdapter::FinishInputBatch() { Ledger.FinishInputBatch(); }
 void FDWCombatInputAdapter::BeginSuspension() { Ledger.BeginSuspension(); }
 TArray<FDWCombatInputRelease> FDWCombatInputAdapter::ResumeAndDrainReleases() { return Ledger.ResumeAndDrainReleases(); }
@@ -235,10 +267,20 @@ void FDWCombatInputAdapter::Observe(FKey Key, bool bDown, bool bRepeat, uint32 U
     if (!Route.Allows(bDown)) return;
     if (bDown && bRepeat) return;
     if (bDown) ObservedDownKeys.Add(Name); else ObservedDownKeys.Remove(Name);
-    if (!MonitoredKeys.Contains(Name) && !Ledger.IsPhysicallyDown(Name)) return;
+    // The route already admitted this genuine Slate edge, including tracked Up outside owned UI.
+    // FlushPressedKeys/native release relays never enter this observer and cannot claim a real Up.
+    if(IsPresentationKey(Key))bPresentationReleaseObserved=!bDown;
+    if (!MonitoredKeys.Contains(Name) && !IsPresentationKey(Key) && !Ledger.IsPhysicallyDown(Name)) return;
     FDWCombatInputEdge Edge;
-    if (Ledger.ObserveKey(Ledger.GetContext(), Name, bDown, bRepeat, Edge) && !bDown)
-        LastObservedReleases.Add(Name, Edge);
+    if (Ledger.ObserveKey(Ledger.GetContext(), Name, bDown, bRepeat, Edge))
+    {
+        if(!bDown)LastObservedReleases.Add(Name,Edge);
+        else if(IsPresentationKey(Key))
+        {
+            FDWCombatInputPress Ignored;
+            Ledger.TryConsumePress(Edge,TEXT("Presentation"),Ignored);
+        }
+    }
 }
 
 void FDWCombatInputAdapter::Tick(float DeltaTime, FSlateApplication& SlateApp, TSharedRef<ICursor> Cursor)

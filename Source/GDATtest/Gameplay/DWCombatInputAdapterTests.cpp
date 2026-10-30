@@ -90,4 +90,27 @@ bool FDWCombatInputOriginTest::RunTest(const FString& Parameters)
     TestFalse(TEXT("Two empty origins never authorize release"), DWCombatInputOriginsMatch(FDWCombatInputPress(), FDWCombatInputPress()));
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDWPresentationPressBoundaryTest,
+    "DoughWorld.CombatInputAdapter.PresentationPressCannotBecomeAttack", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FDWPresentationPressBoundaryTest::RunTest(const FString& Parameters)
+{
+    FDWCombatInputLedger Ledger;
+    const FDWCombatInputContext Context{31,1,1};
+    const FName Key(TEXT("LeftMouseButton"));
+    FDWCombatInputEdge Down,Up;
+    FDWCombatInputPress Presentation,Attack;
+    TestTrue(TEXT("Create context"),Ledger.ResetContext(Context));
+    TestTrue(TEXT("Physical subtitle click"),Ledger.ObserveKey(Context,Key,true,false,Down));
+    TestTrue(TEXT("Presentation owns physical ticket before gameplay bindings"),Ledger.TryConsumePress(Down,TEXT("Presentation"),Presentation));
+    TestFalse(TEXT("Ending a subtitle lease within this frame cannot re-use its click as an attack"),Ledger.TryConsumeNextPress(Key,TEXT("Primary"),Attack));
+    TestEqual(TEXT("No gameplay hold or invented release"),Ledger.DrainReleasedHolds().Num(),0);
+    TestTrue(TEXT("Observed actual Up"),Ledger.ObserveKey(Context,Key,false,false,Up));
+    Ledger.FinishInputBatch();
+    TestTrue(TEXT("A fresh physical click after presentation"),Ledger.ObserveKey(Context,Key,true,false,Down));
+    TestTrue(TEXT("Fresh gameplay click works"),Ledger.TryConsumeNextPress(Key,TEXT("Primary"),Attack));
+    TestTrue(TEXT("Only the accepted fresh press may create a hold"),Ledger.ActivateHold(Attack));
+    TestTrue(TEXT("Actual held release"),Ledger.ObserveKey(Context,Key,false,false,Up));
+    TestEqual(TEXT("Existing gameplay hold still receives its real release"),Ledger.DrainReleasedHolds().Num(),1);
+    return true;
+}
 #endif

@@ -4,6 +4,7 @@
 	"Category": "",
 	"Description": "",
 	"Modules": [
+        {"Name": "DWBuildingAuthoringEditor", "Type": "Editor", "LoadingPhase": "PostEngineInit"},
 		{
 			"Name": "GDATtest",
 			"Type": "Runtime",

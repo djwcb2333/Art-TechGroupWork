@@ -11,6 +11,7 @@
 #include "DWUIOffscreenComponent.h"
 #include "Extensions/UIComponentUserWidgetExtension.h"
 #include "DWResourceNode.h"
+#include "DWGatheringWorld.h"
 #include "DWEnemyCharacter.h"
 #include "DWEnemyNest.h"
 #include "Components/SceneCaptureComponent2D.h"
@@ -873,7 +874,7 @@ void UDWMinimapComponent::ScanActors()
     {
         AActor* Actor=*It;
         if(Actor==CaptureActor||!IsValid(Actor))continue;
-        if(Actor->FindComponentByClass<UDWMinimapMarkerComponent>()||Actor->IsA<ADWResourceNode>()
+        if(Actor->FindComponentByClass<UDWMinimapMarkerComponent>()||Actor->IsA<ADWResourceNode>()||Actor->IsA<ADWGatheringResource>()
             ||Actor->IsA<ADWEnemyCharacter>()||Actor->IsA<ADWEnemyNest>())CachedActors.Add(Actor);
         // Exclude moving character geometry from this capture only. Original visibility never changes.
         if(Capture&&Actor->IsA<APawn>())Capture->HiddenActors.Add(Actor);
@@ -912,6 +913,8 @@ void UDWMinimapComponent::CaptureNow()
     Capture->CaptureScene();
     ++CaptureRequestCount;
 }
+const USceneCaptureComponent2D* UDWMinimapComponent::GetMotionCaptureComponent() const
+{return IsValid(CaptureActor)?CaptureActor->GetCaptureComponent2D():nullptr;}
 FVector UDWMinimapComponent::GetPlayerLocation() const {return GetOwner()?GetOwner()->GetActorLocation():FVector::ZeroVector;}
 FVector2D UDWMinimapComponent::GetPlayerForwardOnMap() const
 {
@@ -945,6 +948,8 @@ void UDWMinimapComponent::GatherDisplayMarkers(TArray<FDWMinimapDisplayMarker>& 
         {if(bShowExistingEnemies&&Nest->IsAlive())Out.Add({Actor->GetActorLocation(),DWMinimapMath::CategoryColor(EDWMinimapMarkerKind::Enemy),EDWMinimapMarkerShape::Diamond,140});}
         else if(const auto* Resource=Cast<ADWResourceNode>(Actor))
         {if(bShowExistingResources&&Resource->IsAvailable())Out.Add({Actor->GetActorLocation(),DWMinimapMath::CategoryColor(EDWMinimapMarkerKind::Resource),EDWMinimapMarkerShape::Diamond,50});}
+        else if(const auto* MinimapGatheringResource=Cast<ADWGatheringResource>(Actor))
+        {if(bShowExistingResources&&MinimapGatheringResource->IsInteractionAvailable())Out.Add({Actor->GetActorLocation(),DWMinimapMath::CategoryColor(EDWMinimapMarkerKind::Resource),EDWMinimapMarkerShape::Diamond,50});}
     }
     Out.Sort([](const auto& A,const auto& B){return A.Priority<B.Priority;});
 }

@@ -1,4 +1,5 @@
 #include "DWCombatCorePickup.h"
+#include "DWLootBeaconSubsystem.h"
 #include "DWCombatCoreDropSubsystem.h"
 #include "DWCombatCorePickupTransaction.h"
 #include "DWPlayerCharacter.h"
@@ -41,6 +42,7 @@ bool ADWCombatCorePickup::TryCollect(ADWPlayerCharacter* Player)
 {return IsValid(Player)&&FDWCombatCorePickupTransaction::Commit(*this,*Player);}
 void ADWCombatCorePickup::EndPlay(EEndPlayReason::Type Reason)
 {
+    if(auto* W=GetWorld())if(auto* V=W->GetSubsystem<UDWLootBeaconSubsystem>())V->WithdrawBeacon(this);
     bBound=false;
     if(auto* Drops=UDWCombatCoreDropSubsystem::Get(this))Drops->PhysicalEnded(*this);
     Super::EndPlay(Reason);

@@ -1,4 +1,5 @@
 #include "DWResourceNode.h"
+#include "DWRetiredItemPolicy.h"
 #include "DWInteractionPromptComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -46,7 +47,7 @@ void ADWResourceNode::BeginPlay()
 
 bool ADWResourceNode::IsAvailable() const
 {
-    return !ItemId.IsNone() && HarvestAmount > 0 && (bInfinite || RemainingAmount > 0) && CanHarvest();
+    return !ItemId.IsNone() && !DWRetiredItemPolicy::IsRetired(ItemId) && HarvestAmount > 0 && (bInfinite || RemainingAmount > 0) && CanHarvest();
 }
 
 bool ADWResourceNode::CanHarvest_Implementation() const

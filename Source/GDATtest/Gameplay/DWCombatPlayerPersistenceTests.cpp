@@ -183,4 +183,35 @@ bool FDWD22PlayerKnockbackRestoreTest::RunTest(const FString&)
     TestTrue(TEXT("Old remaining movement never resumes"),F.P->GetActorLocation().Equals(SavedPosition,.01));
     TestEqual(TEXT("No second health settlement after restore"),F.P->Health,SavedHealth);return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDWD22ExpiredLegacyLockTest,"DoughWorld.Combat.Persistence.Player.ExpiredLegacyLocksStayExpiredAtFractionalClock",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FDWD22ExpiredLegacyLockTest::RunTest(const FString&)
+{
+    using namespace DWPlayerPersistenceTests;
+    for(bool Positive:{false,true})
+    {
+        FFixture F;if(!F.World||!F.P||!F.A)return false;
+        // Isolated native fixture only: deliberately not float-representable.
+        F.World->TimeSeconds=7.0000001;
+        if(!TestTrue(TEXT("Capture idle native fixture"),F.Capture())){AddError(F.Error);return false;}
+        const double SavedLock=Positive?.075:0.;
+        F.Save->CombatWorld.Player.LegacyMeleeLockRemaining=SavedLock;
+        F.Save->CombatWorld.Player.LegacyThrowLockRemaining=SavedLock;
+        if(!TestTrue(TEXT("Restore through the real prepare/barrier/publish path"),F.Prepare()&&F.Commit()&&
+            FDWCombatPlayerPersistence::Publish(F.PlayerPlan,F.Error)&&FDWCombatPlayerPersistence::FinishPublish(F.PlayerPlan,F.Error)))
+        {AddError(F.Error);return false;}
+        if(!TestTrue(TEXT("Recapture actual restored clocks"),F.Capture())){AddError(F.Error);return false;}
+        const auto& S=F.Save->CombatWorld.Player;
+        if(Positive)
+        {
+            TestTrue(TEXT("Positive melee lock is never shortened"),S.LegacyMeleeLockRemaining>=SavedLock&&S.LegacyMeleeLockRemaining<SavedLock+1.e-6);
+            TestTrue(TEXT("Positive throw lock is never shortened"),S.LegacyThrowLockRemaining>=SavedLock&&S.LegacyThrowLockRemaining<SavedLock+1.e-6);
+        }
+        else
+        {
+            TestEqual(TEXT("Expired melee lock remains exactly zero"),S.LegacyMeleeLockRemaining,0.);
+            TestEqual(TEXT("Expired throw lock remains exactly zero"),S.LegacyThrowLockRemaining,0.);
+        }
+    }
+    return true;
+}
 #endif

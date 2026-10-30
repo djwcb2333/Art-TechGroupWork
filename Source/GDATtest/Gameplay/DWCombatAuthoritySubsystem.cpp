@@ -1,4 +1,5 @@
 #include "DWCombatAuthoritySubsystem.h"
+#include "DWFormalLanguagePersistence.h"
 #include "DWCombatPlayerPersistence.h"
 #include "DWCombatWorldPersistence.h"
 #include "DWCombatEffectsPersistence.h"
@@ -24,7 +25,10 @@
 #include "DWEnemyCharacter.h"
 #include "DWEnemyNest.h"
 #include "DWPlayerCharacter.h"
+#include "DWLanguageSubsystem.h"
+#include "DWGameInstance.h"
 #include "DWCombatFeedbackComponent.h"
+#include "DWCommittedHitFeedbackComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Engine/World.h"
@@ -96,6 +100,7 @@ struct FDamageSnapshot
     bool bEngineNotifications = false;
     bool bFatal = false;
     bool bPurePush = false;
+    bool bVitalsDamage = false;
     bool bForcedFallDropPoint=false;
     FReceiptId ForcedFallReceipt;
     FVector ForcedFallDropPoint=FVector::ZeroVector;
@@ -196,6 +201,7 @@ DWCombatCommit::FActionId UDWCombatAuthoritySubsystem::BeginAction(AActor* Owner
 void UDWCombatAuthoritySubsystem::EndAction(DWCombatCommit::FActionId Action)
 {
     if (!IsOperational() || Action.Epoch != State->Epoch) return;
+    if(const auto* Owner=State->Actions.Find(Action.Id))if(auto* P=Cast<ADWPlayerCharacter>(Owner->Actor.Get());P&&P->CharacterA01&&P->CharacterA01->IsEnabled())P->CharacterA01->EndToolAction(Action.Id);
     State->Ledger.EndAction(Action);
     State->Actions.Remove(Action.Id);
 }
@@ -280,7 +286,12 @@ void UDWCombatAuthoritySubsystem::PruneFinalDamageSnapshots()
         if (!Receipt || Receipt->State != DWCombatCommit::EReceiptState::Pending) It.RemoveCurrent();
     }
 }
-void UDWCombatAuthoritySubsystem::NotifyActorDeath(AActor* Actor) { InvalidateActor(Actor, false, false); }
+void UDWCombatAuthoritySubsystem::NotifyActorDeath(AActor* Actor)
+{
+ auto* Player=Cast<ADWPlayerCharacter>(Actor);const auto Formal=FDWFormalLanguagePersistence::PrepareDeathBinding(Player);
+ InvalidateActor(Actor,false,false);
+ FDWFormalLanguagePersistence::AdoptCommittedDeathBinding(Player,Formal);
+}
 double UDWCombatAuthoritySubsystem::GetNextShieldDamageBoundary(const ADWPlayerCharacter* Player,double Start)const
 {
     double Result=std::numeric_limits<double>::infinity();
@@ -324,7 +335,7 @@ void UDWCombatAuthoritySubsystem::ParryEligibleShieldDamage(ADWPlayerCharacter* 
     }
     // Parry facts have no damage/knockback/death notifications to roll back.
 }
-void UDWCombatAuthoritySubsystem::ResolveShieldDamageAt(ADWPlayerCharacter* Player,double Now)
+void UDWCombatAuthoritySubsystem::ResolveShieldDamageAt(ADWPlayerCharacter* Player,double Now,bool bDrainNotices)
 {
     if(!IsOperational()||!Player||!Player->CanReceiveCombatDamage()||!FMath::IsFinite(Now))return;
     TArray<DWCombatCommit::FReceiptId> Due;
@@ -336,7 +347,7 @@ void UDWCombatAuthoritySubsystem::ResolveShieldDamageAt(ADWPlayerCharacter* Play
         auto* Snapshot=State->Damage.Find(Receipt.Id);if(!Snapshot||!Snapshot->bShieldDeferred)continue;
         Snapshot->bShieldDeferred=false;CommitPending(Receipt,DWCombatCommit::EOutcome::Committed);++State->ShieldDamageRevision;
     }
-    DrainNotifications(); // Same due boundary native facts finish before the first callback.
+    if(bDrainNotices)DrainNotifications(); // A01 groups same-instant damage/cap/regen before the first callback.
 }
 
 void UDWCombatAuthoritySubsystem::NotifyActorRestored(AActor* Actor) { InvalidateActor(Actor, true, false); }
@@ -374,6 +385,7 @@ FDWCombatDamageResult UDWCombatAuthoritySubsystem::AdmitPrepared(const FDWCombat
         !FMath::IsFinite(Command.KnockbackSeconds) || Command.KnockbackSeconds <= 0.f || Command.KnockbackDirection.ContainsNaN()) return Result;
     if (!bLegacy && (!Target->CanBeDamaged() || !Target->GetActorEnableCollision())) return Result;
     if(const auto* Player=Cast<ADWPlayerCharacter>(Target);Player&&!Player->CanReceiveCombatDamage())return Result;
+    if(const auto* P=Cast<ADWPlayerCharacter>(Target);P&&P->CharacterA01&&P->CharacterA01->IsDashInvulnerable()&&(!bLegacy||Cast<ADWEnemyCharacter>(Command.Source.Get())))return Result; // Only combat/legacy damage admission; typed hunger bypasses this path.
     const auto Life = CaptureActorLife(Target);
     if (!Life.Entity || !Same(Life, Command.TargetLife)) { Result.Admission = EAdmission::Stale; return Result; }
     FEventSnapshot EventCopy;
@@ -528,6 +540,18 @@ FDWCombatDamageResult UDWCombatAuthoritySubsystem::CommitPending(DWCombatCommit:
         if (const auto R = State->Ledger.FindReceipt(Receipt)) Result.Receipt = *R;
         return Result;
     }
+    FDWCharacterA01Runtime CorruptionCandidate;UDWCharacterA01Component* CorruptionOwner=nullptr;uint64 CorruptionRevision=0;
+    if(!Snapshot->bDaggerBackstab&&Snapshot->Command.Identity.Kind==EActionDamageKind::Melee)
+        if(auto* Source=Cast<ADWPlayerCharacter>(Snapshot->Command.Source.Get());Source&&Source->CharacterA01&&Source->CharacterA01->IsEnabled()&&Source->WeaponAnimationComponent)
+        {
+            FDWA01CorruptionResult Enhancement;auto* C=Source->CharacterA01.Get();CorruptionRevision=C->GetResourceRevision();
+            if(C->PrepareCorruption(Snapshot->Command.Identity.Action.Id,Source->WeaponAnimationComponent->GetCombatWeaponStateSnapshot().CurrentEquipmentId,false,CorruptionCandidate,Enhancement))
+            {
+                const double Amount=Snapshot->PreparedDamageAmount*Enhancement.DamageMultiplier;
+                if(!FMath::IsFinite(Amount)||Amount>MAX_flt)return Result;
+                Snapshot->PreparedDamageAmount=static_cast<float>(Amount);Snapshot->NotificationAmount=static_cast<float>(Amount);CorruptionOwner=C;
+            }
+        }
     const float After=FMath::Max(HealthFloor,*Health-Snapshot->PreparedDamageAmount);
     const float Applied=*Health-After;
     FDWEnemyFormalKnockback EnemyKnockback;FDWPlayerCombatKnockback PlayerKnockback;
@@ -554,12 +578,19 @@ FDWCombatDamageResult UDWCombatAuthoritySubsystem::CommitPending(DWCombatCommit:
         if(!FDWCombatRecoveryTransaction::PrepareFatal(*Player,RecoveryDeath))
         {State->Ledger.Resolve(Receipt,EOutcome::Rejected);State->Damage.Remove(Receipt.Id);
          Result.Receipt=*State->Ledger.FindReceipt(Receipt);return Result;}
+    FDWPlayerCombatKnockback A01Rebound;ADWPlayerCharacter* A01DashSource=nullptr;
+    if(Applied>0.f&&Snapshot->Command.Identity.Kind==EActionDamageKind::Dash)
+        if(auto* Source=Cast<ADWPlayerCharacter>(Snapshot->Command.Source.Get());Source&&Source->CharacterA01&&Source->CharacterA01->IsEnabled())
+        {auto* SourceGI=Source->GetGameInstance<UDWGameInstance>();auto* Lang=SourceGI?SourceGI->GetSubsystem<UDWLanguageSubsystem>():nullptr;if(Lang){A01DashSource=Source;A01Rebound=Source->PrepareCombatKnockback(-Snapshot->Command.KnockbackDirection,static_cast<float>(Lang->Parameter(TEXT("yeast.dash.self_rebound_m"),.8)*100.),Snapshot->Command.KnockbackSeconds,CaptureActorLife(Source));}}
+    if(CorruptionOwner&&CorruptionOwner->GetResourceRevision()!=CorruptionRevision)return Result;
     auto Notice = *Snapshot;
     State->Notices.Reserve(State->Notices.Num() + (RecoveryDeath.bValid?2:1));
     // No external/overridable calls, Blueprint hooks or delegates between Resolve and these assignments.
     // Validated damage facts and the fixed fatal inventory/bag transaction commit in this callback-free interval.
     if (State->Ledger.Resolve(Receipt, EOutcome::Committed) != EResolve::Resolved) return Result;
     *Health = After;
+    if(CorruptionOwner)CorruptionOwner->AdoptRuntimeUnchecked(MoveTemp(CorruptionCandidate));
+    if(A01DashSource&&A01Rebound.bValid){A01DashSource->CommitCombatKnockbackFacts(A01Rebound);A01DashSource->CharacterA01->BeginRebound(A01Rebound.DurationSeconds);}
     const bool HasRecoveryDeath=RecoveryDeath.bValid;
     if(HasRecoveryDeath)FDWCombatRecoveryTransaction::CommitFatalUnchecked(MoveTemp(RecoveryDeath));
     if(auto* Player=Cast<ADWPlayerCharacter>(Target))
@@ -653,7 +684,7 @@ FDWCombatDamageResult UDWCombatAuthoritySubsystem::SubmitEnemyEnvironmentFatal(
     DrainNotifications();return Result;
 }
 
-void UDWCombatAuthoritySubsystem::SubmitVitalsDamagePair(const FDWCombatVitalsDamagePair& Pair)
+void UDWCombatAuthoritySubsystem::SubmitVitalsDamagePair(const FDWCombatVitalsDamagePair& Pair,double A01Regen,double A01CeilingBeforeRecovery,double A01FinalCeiling,double A01ClockTime)
 {
     using namespace DWCombatCommit;using namespace DWCombatAuthority;
     auto* Player=Pair.Target.Get();
@@ -674,12 +705,23 @@ void UDWCombatAuthoritySubsystem::SubmitVitalsDamagePair(const FDWCombatVitalsDa
         Snapshot.Command.Source=Player;Snapshot.Command.Target=Player;Snapshot.Command.TargetLife=Pair.SourceLife;
         Snapshot.Command.Amount=Snapshot.PreparedDamageAmount=Snapshot.NotificationAmount=Amounts[Index];
         Snapshot.TargetRevision=State->Actors.FindChecked(Player).RestoreRevision;
-        Snapshot.bPrepared=true;Snapshot.bEngineNotifications=true;
+        Snapshot.bPrepared=true;Snapshot.bEngineNotifications=true;Snapshot.bVitalsDamage=true;
         FDamageEvent Event(UDamageType::StaticClass());Snapshot.Event.Capture(Event);
         Pending[Index]=Snapshot.Receipt;State->Damage.Add(Snapshot.Receipt.Id,MoveTemp(Snapshot));
     }
     // No external call between the two commits. Death invalidates a still-pending second packet.
     for(const auto Receipt:Pending)if(Receipt.Id)CommitPending(Receipt,EOutcome::Committed);
+    if(Player->CharacterA01&&Player->CharacterA01->IsEnabled())
+    {
+        if(FMath::IsFinite(A01ClockTime)&&A01ClockTime>=0.)ResolveShieldDamageAt(Player,A01ClockTime,false);
+        if(!Player->IsDead()&&FMath::IsFinite(A01FinalCeiling)&&A01FinalCeiling>0.&&FMath::IsFinite(A01CeilingBeforeRecovery)&&A01CeilingBeforeRecovery>0.&&FMath::IsFinite(A01Regen)&&A01Regen>=0.)
+        {
+            Player->Health=FMath::Min(Player->Health,static_cast<float>(A01CeilingBeforeRecovery));
+            Player->Health=static_cast<float>(FMath::Min(A01CeilingBeforeRecovery,static_cast<double>(Player->Health)+A01Regen));
+            Player->Health=FMath::Min(Player->Health,static_cast<float>(A01FinalCeiling));
+        }
+        Player->CharacterA01->SyncAuthoritativeHealth();Player->SyncCombatVitalsCompatibility();
+    }
     DrainNotifications();
 }
 
@@ -718,6 +760,15 @@ void UDWCombatAuthoritySubsystem::DrainNotifications()
         AActor* Target = Notice.Command.Target.Get();
         const auto Current = [this, WeakTarget = Notice.Command.Target, Revision = Notice.TargetRevision]() { return IsNoticeRecipientCurrent(WeakTarget.Get(), Revision); };
         if (!Current()) continue;
+        // Read committed health loss, never the UE notification amount. Vitals ticks are not combat hits.
+        if(!Notice.bVitalsDamage&&!Notice.bFatal&&FMath::IsFinite(Notice.Applied)&&Notice.Applied>0.f)
+        {
+            if(auto* Player=Cast<ADWPlayerCharacter>(Target);Player&&Player->CommittedHitFeedback)
+                Player->CommittedHitFeedback->PublishCommittedDamage(Notice.Applied);
+            else if(auto* Enemy=Cast<ADWEnemyCharacter>(Target);Enemy&&Enemy->CommittedHitFeedback)
+                Enemy->CommittedHitFeedback->PublishCommittedDamage(Notice.Applied);
+            if(!Current())continue;
+        }
         if(auto* Player=Cast<ADWPlayerCharacter>(Target))
         {
             if(Notice.bOrdinaryShieldBlock&&!Notice.bFatal&&Player->CombatFeedback)Player->CombatFeedback->PlayFeedback(EDWCombatFeedbackCue::Block);

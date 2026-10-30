@@ -25,6 +25,8 @@ public:
  /** Repeated successful events restart one pulse; they do not accumulate lasting light. */
  UFUNCTION(BlueprintCallable,Category="UI|Glow Pulse") void Pulse(float Strength=1.f);
  UFUNCTION(BlueprintCallable,Category="UI|Glow Pulse") void ResetPulse();
+ /** Steady soft halo for a live action; disabling it clears the envelope. */
+ UFUNCTION(BlueprintCallable,Category="UI|Glow Pulse") void SetSustainedGlow(bool bEnabled,float Strength=1.f);
  UFUNCTION(BlueprintPure,Category="UI|Glow Pulse") float GetPulseOpacity() const;
  UFUNCTION(BlueprintPure,Category="UI|Glow Pulse") float GetTotalSeconds() const;
  UFUNCTION(BlueprintPure,Category="UI|Glow Pulse") bool IsAnimating() const{return bPulsing;}
@@ -37,7 +39,7 @@ protected:
 private:
  TWeakPtr<SWidget> Wrapper;
  FTSTicker::FDelegateHandle TickerHandle;
- bool bRuntime=false,bPulsing=false;
+ bool bRuntime=false,bPulsing=false,bSustained=false;
  float Envelope=0.f,PulseStrength=1.f;
  double StartedAt=0.;
  bool TickPulse(float DeltaSeconds);

@@ -1,4 +1,5 @@
 #include "DWCombatRecoveryActors.h"
+#include "DWLootBeaconSubsystem.h"
 #include "DWCombatRecoverySubsystem.h"
 #include "DWCombatRecoveryTransaction.h"
 #include "DWPlayerCharacter.h"
@@ -21,6 +22,11 @@ ADWCombatDeathBag::ADWCombatDeathBag()
     if(Shape.Succeeded())Placeholder->SetStaticMesh(Shape.Object);
     Placeholder->SetRelativeScale3D(FVector(.35,.35,.25));Placeholder->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     Placeholder->SetGenerateOverlapEvents(false);Placeholder->SetCanEverAffectNavigation(false);SetActorEnableCollision(false);
+}
+void ADWCombatDeathBag::EndPlay(const EEndPlayReason::Type Reason)
+{
+    if(auto* W=GetWorld())if(auto* V=W->GetSubsystem<UDWLootBeaconSubsystem>())V->WithdrawBeacon(this);
+    Super::EndPlay(Reason);
 }
 bool ADWCombatDeathBag::Touches(const ADWPlayerCharacter& P)const
 {

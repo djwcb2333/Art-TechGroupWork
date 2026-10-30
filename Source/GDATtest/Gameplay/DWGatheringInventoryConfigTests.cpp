@@ -34,7 +34,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDWGatheringIsolatedProfileLimits,"DoughWorld.G
 bool FDWGatheringIsolatedProfileLimits::RunTest(const FString&)
 {
     using namespace DWGatheringConfigTests;FFixture F;FString Error;
-    TestTrue(TEXT("Profile definitions valid"),F.Profile->ValidateGatheringDefinitions(Error));
+    TestFalse(TEXT("Retired unregistered building recipe is rejected by profile admission"),F.Profile->ValidateGatheringDefinitions(Error));
     TestEqual(TEXT("New profile flour cap"),F.Bag->GetEffectiveStackLimit(TEXT("Flour")),10);
     TestEqual(TEXT("Unrelated cap remains original"),F.Bag->GetEffectiveStackLimit(TEXT("DW_QA_Core")),40);
     TMap<FName,int32> Runtime;Runtime.Add(TEXT("DW_QA_Core"),3);
@@ -50,6 +50,16 @@ bool FDWGatheringIsolatedProfileLimits::RunTest(const FString&)
     OriginalBag->InitializeInventory(Original.Get());
     TestEqual(TEXT("Original config cap unchanged"),OriginalBag->GetEffectiveStackLimit(TEXT("Flour")),40);
     TestTrue(TEXT("Original saved flour40 still valid"),OriginalBag->SetSlots({FDWItemStack(TEXT("Flour"),40)}));
+    TStrongObjectPtr<UDWGameplayConfig> Main(NewObject<UDWGameplayConfig>());
+    TestNull(TEXT("Base config gathering remains opt-in"),UDWGameplayConfig::AsGatheringConfig(Main.Get()));
+    TestNotNull(TEXT("Legacy test subclass retains capability"),UDWGameplayConfig::AsGatheringConfig(F.Profile.Get()));
+    Main->bEnableGatheringRules=true;Main->ItemTable=nullptr;Main->RecipeTable=nullptr;
+    Main->Items=F.Profile->Items;Main->Recipes.Reset();Main->StackLimits.Add(TEXT("Flour"),10);
+    TestTrue(TEXT("Base config carries validated gathering definitions"),Main->ValidateGatheringDefinitions(Error));
+    TStrongObjectPtr<UDWInventoryComponent> MainBag(NewObject<UDWInventoryComponent>());
+    MainBag->InitializeInventory(Main.Get());
+    TestEqual(TEXT("Base config enforces gathering stack cap"),MainBag->GetEffectiveStackLimit(TEXT("Flour")),10);
+    TestFalse(TEXT("Base config rejects over-cap restore without test subclass"),MainBag->SetSlots({FDWItemStack(TEXT("Flour"),11)}));
     return true;
 }
 
@@ -101,14 +111,10 @@ bool FDWGatheringCraftContext::RunTest(const FString&)
     TestTrue(TEXT("Ordinary station craft works"),F.Bag->TryCraft(TEXT("Station"),false));
     TestEqual(TEXT("Ordinary craft output"),F.Bag->CountItem(TEXT("Dough")),1);
     FDWPreparedInventoryChange Building;
-    TestTrue(TEXT("Building material-only candidate prepared"),F.Bag->PrepareCraftRecipe(TEXT("Build"),false,Building));
-    TestEqual(TEXT("Building output identity retained"),Building.GetBuildingOutput(),FName(TEXT("Furnace")));
-    int32 CandidateFlour=0,CandidateBuildings=0;
-    for(const auto& Item:Building.GetCandidateSlots()){if(Item.ItemId==TEXT("Flour"))CandidateFlour+=Item.Quantity;if(Item.ItemId==TEXT("Furnace"))CandidateBuildings+=Item.Quantity;}
-    TestEqual(TEXT("Building candidate removes materials"),CandidateFlour,2);
-    TestEqual(TEXT("Building candidate never adds building to bag"),CandidateBuildings,0);
-    TestFalse(TEXT("Public inventory commit cannot bypass building coordinator"),F.Bag->CommitPrepared(MoveTemp(Building)));
-    TestEqual(TEXT("Rejected standalone building commit keeps materials"),F.Bag->CountItem(TEXT("Flour")),7);
+    TestFalse(TEXT("Retired material-only building candidate is never prepared"),F.Bag->PrepareCraftRecipe(TEXT("Build"),false,Building));
+    TestFalse(TEXT("Unregistered building cannot enter automatic-spawn coordinator"),F.Bag->TryCraft(TEXT("Build"),false));
+    TestFalse(TEXT("Rejected candidate cannot commit"),F.Bag->CommitPrepared(MoveTemp(Building)));
+    TestEqual(TEXT("Rejected old building flow keeps materials"),F.Bag->CountItem(TEXT("Flour")),7);
     CanPlace=false;TestFalse(TEXT("Placement invalid makes existing CanCraft false"),F.Bag->CanCraft(TEXT("Build"),false));
     F.Bag->SetCraftingContextValidator(nullptr);
     return true;
@@ -118,6 +124,8 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDWGatheringMapProfileResolution,"DoughWorld.Ga
 bool FDWGatheringMapProfileResolution::RunTest(const FString&)
 {
     using namespace DWGatheringConfigTests;FFixture F;
+    F.Profile->RecipeBuildings.Reset();
+    F.Profile->Recipes.RemoveAll([](const FDWRecipeDefinition& R){return R.RecipeId==TEXT("Build");});
     TStrongObjectPtr<UDWGameInstance> GI(NewObject<UDWGameInstance>());GI->SoftConfigPath.Reset();
     UDWGameplayConfig* Original=GI->GetConfigForMap(TEXT("/Game/DW_QA_Original"));
     if(!TestNotNull(TEXT("Transient original fallback"),Original))return false;

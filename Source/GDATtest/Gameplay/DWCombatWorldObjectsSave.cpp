@@ -67,7 +67,7 @@ void Serialize(FArchive& A,FDWCombatWorldObjectsSave& S)
     uint32 M=Magic,V=Version;A<<M<<V<<S.Schema;if(M!=Magic||V!=Version||S.Schema!=1){A.SetError();return;}
     String(A,S.MapPackage);Items(A,S.Enemies,Enemy);Items(A,S.NestClocks,[](FArchive& R,FDWCombatNestClockSave& N){String(R,N.StableId);R<<N.SampledInterval;});Items(A,S.CoreDrops,Drop);Recovery(A,S.Recovery);
 }
-bool ValidDrop(const FDWCombatCoreDropSave& S)
+bool ValidDrop(const FDWCombatCoreDropSave& S,const FString& MapPackage,bool bFormal)
 {
     if(S.Schema!=1||!S.DeathId.IsValid()||!S.StableEnemyId.IsValid()||S.Location.ContainsNaN()||!S.FatalEpoch||!S.FatalReceipt||!S.EnemyEntity||!S.EnemyLife||
         S.Profile<EDWEnemyCombatProfile::MoldGrunt||S.Profile>EDWEnemyCombatProfile::DoughElite||(S.PlayerEntity==0)!=(S.PlayerLife==0)||(S.ForcedFallReceiptEpoch==0)!=(S.ForcedFallReceiptId==0))return false;
@@ -75,16 +75,16 @@ bool ValidDrop(const FDWCombatCoreDropSave& S)
     if(S.Decision==EDWEnemyCoreDropDecision::Ineligible)return !Eligible&&!S.PickupId.IsValid()&&S.ItemId.IsNone()&&S.Count==0;
     if(S.Decision==EDWEnemyCoreDropDecision::Failed)return Eligible&&!S.PickupId.IsValid()&&S.ItemId.IsNone()&&S.Count==0;
     if(S.Decision!=EDWEnemyCoreDropDecision::SpawnPending&&S.Decision!=EDWEnemyCoreDropDecision::Spawned&&S.Decision!=EDWEnemyCoreDropDecision::Claimed)return false;
-    return Eligible&&S.PickupId.IsValid()&&S.Count>0&&S.ItemId==(S.Profile==EDWEnemyCombatProfile::MoldGrunt?FDWCombatItemRegistry::MoldCoreId():FDWCombatItemRegistry::YeastCoreId());
+    return Eligible&&S.PickupId.IsValid()&&S.Count>0&&DWEnemyFormal::IsSavedCoreDropItemAllowed(S.Profile,S.ItemId,MapPackage,bFormal);
 }
 }
-bool DWCombatWorldObjectsSave::Validate(const FDWCombatWorldObjectsSave& S,FString& Error)
+bool DWCombatWorldObjectsSave::Validate(const FDWCombatWorldObjectsSave& S,FString& Error,bool bValidatedFormalSession)
 {
     const auto Bad=[&](const TCHAR* M){Error=M;return false;};
     if(S.Schema!=1||!Text(S.MapPackage)||!FPackageName::IsValidLongPackageName(S.MapPackage)||S.Enemies.Num()>MaxCount||S.NestClocks.Num()>MaxCount||S.CoreDrops.Num()>MaxCount||!DWCombatRecovery::Validate(S.Recovery,Error))return Bad(TEXT("Invalid world object schema/map/recovery/count"));
     TSet<FString> Ids,Paths,Deaths,Receipts;TSet<uint64> Entities;TSet<FGuid> FormalIds,DeathIds,PickupIds;TMap<FGuid,const FDWCombatCoreDropSave*> Drops;
     for(const auto& D:S.CoreDrops){const FString Death=FString::Printf(TEXT("%llu/%llu/%llu"),D.FatalEpoch,D.EnemyEntity,D.EnemyLife),Receipt=FString::Printf(TEXT("%llu/%llu"),D.FatalEpoch,D.FatalReceipt);
-        if(!ValidDrop(D)||DeathIds.Contains(D.DeathId)||Deaths.Contains(Death)||Receipts.Contains(Receipt)||(D.PickupId.IsValid()&&PickupIds.Contains(D.PickupId)))return Bad(TEXT("Invalid/duplicate core death record"));DeathIds.Add(D.DeathId);Deaths.Add(Death);Receipts.Add(Receipt);if(D.PickupId.IsValid())PickupIds.Add(D.PickupId);Drops.Add(D.DeathId,&D);}
+        if(!ValidDrop(D,S.MapPackage,bValidatedFormalSession)||DeathIds.Contains(D.DeathId)||Deaths.Contains(Death)||Receipts.Contains(Receipt)||(D.PickupId.IsValid()&&PickupIds.Contains(D.PickupId)))return Bad(TEXT("Invalid/duplicate core death record"));DeathIds.Add(D.DeathId);Deaths.Add(Death);Receipts.Add(Receipt);if(D.PickupId.IsValid())PickupIds.Add(D.PickupId);Drops.Add(D.DeathId,&D);}
     for(const auto& E:S.Enemies)
     {
         if(!Text(E.StableId)||!Text(E.ActorPath)||!Text(E.ClassPath)||!FSoftClassPath(E.ClassPath).IsValid()||!Text(E.SourceNestId,true)||!Pose(E.Transform)||!Life(E.Life,false)||Ids.Contains(E.StableId)||Entities.Contains(E.Life.Entity)||(!E.bRuntimeSpawned&&Paths.Contains(E.ActorPath))||
@@ -128,7 +128,7 @@ bool DWCombatWorldObjectsSave::ValidateLegacy(const TArray<FDWPersistedActorStat
         {Error=TEXT("Invalid/duplicate legacy resource/nest record");return false;}Ids.Add(A.ActorId);}
     Error.Reset();return true;
 }
-bool DWCombatWorldObjectsSave::Encode(const FDWCombatWorldObjectsSave& S,TArray<uint8>& Out,FString& Error)
-{if(!Validate(S,Error))return false;auto C=S;TArray<uint8>B;FMemoryWriter A(B,true);Serialize(A,C);if(A.IsError()||B.Num()>MaxBytes){Error=TEXT("World object byte limit");return false;}Out=MoveTemp(B);return true;}
-bool DWCombatWorldObjectsSave::Decode(const TArray<uint8>& B,FDWCombatWorldObjectsSave& Out,FString& Error)
-{if(B.IsEmpty()||B.Num()>MaxBytes){Error=TEXT("World object blob size");return false;}FDWCombatWorldObjectsSave C;FMemoryReader A(B,true);Serialize(A,C);if(A.IsError()||A.Tell()!=A.TotalSize()){Error=TEXT("World object truncated/corrupt/trailing bytes");return false;}if(!Validate(C,Error))return false;Out=MoveTemp(C);return true;}
+bool DWCombatWorldObjectsSave::Encode(const FDWCombatWorldObjectsSave& S,TArray<uint8>& Out,FString& Error,bool bValidatedFormalSession)
+{if(!Validate(S,Error,bValidatedFormalSession))return false;auto C=S;TArray<uint8>B;FMemoryWriter A(B,true);Serialize(A,C);if(A.IsError()||B.Num()>MaxBytes){Error=TEXT("World object byte limit");return false;}Out=MoveTemp(B);return true;}
+bool DWCombatWorldObjectsSave::Decode(const TArray<uint8>& B,FDWCombatWorldObjectsSave& Out,FString& Error,bool bValidatedFormalSession)
+{if(B.IsEmpty()||B.Num()>MaxBytes){Error=TEXT("World object blob size");return false;}FDWCombatWorldObjectsSave C;FMemoryReader A(B,true);Serialize(A,C);if(A.IsError()||A.Tell()!=A.TotalSize()){Error=TEXT("World object truncated/corrupt/trailing bytes");return false;}if(!Validate(C,Error,bValidatedFormalSession))return false;Out=MoveTemp(C);return true;}

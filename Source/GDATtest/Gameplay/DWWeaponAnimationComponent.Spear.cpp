@@ -1,6 +1,7 @@
 #include "DWWeaponAnimationComponent.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWCombatItemRegistry.h"
+#include "DWCombatEquipment.h"
 #include "DWCombatPlayerVitals.h"
 #include "DWCombatRules.h"
 #include "DWPlayerCharacter.h"
@@ -72,6 +73,7 @@ bool UDWWeaponAnimationComponent::ConfigureFormalSpear(const FDWCombatRules& Rul
 EDWSpearForm UDWWeaponAnimationComponent::ReadFormalSpearForm(double FrameOffset) const
 {
     const auto* P=Player();if(!P)return EDWSpearForm::Normal;
+    if(P->CharacterA01&&P->CharacterA01->IsEnabled())return EDWSpearForm::Normal; // Keep weapon base behavior; A01 does not revive old form multipliers.
     const auto Form=FrameOffset<0.?P->GetCombatBaseForm():P->GetCombatBaseFormAtFrameOffset(FrameOffset);
     if(Form==EDWCombatBaseForm::Yeast)return EDWSpearForm::Yeast;
     // D10 committed stance and its read-only paid slice view; no visual flag inference.
@@ -85,7 +87,7 @@ bool UDWWeaponAnimationComponent::BeginFormalSpear(FVector Target)
     const auto* Clip=Set?Set->FindClip(TEXT("Attack")):nullptr;
     FString Error;
     if(!bEnabled||!bFormalSpearConfigured||bActive||!A||!P||!P->HasCombatVitalsReady()||!P->IsCombatActionAllowed()||P->IsFormalDashing()||
-        !Binding||!CombatWeaponResources.Snapshot.OwnedPermanentWeaponIds.Contains(Binding->ItemId)||
+        !Binding||!DWCombatEquipment::OwnsPermanent(CombatWeaponResources.Snapshot,Binding->ItemId)||
         Target.ContainsNaN()||SelectedWeapon!=EDWAnimatedWeapon::Spear||
         !DWSpearBinding::MatchesClip(Clip,SpearSourceSequence.Get(),SpearSourceTiming,SpearTuning,Error)||
         GetCombatActionWorldSeconds()<NextAttackTime||ActionSerial==MAX_int32)return false;

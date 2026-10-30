@@ -1,5 +1,6 @@
 #include "DWInventoryComponent.h"
 #include "DWGameplayConfig.h"
+#include "DWBuildingDefinition.h"
 #include "DWGatheringProfile.h"
 #include "DWGatheringInventoryTransaction.h"
 #include "GameFramework/Actor.h"
@@ -8,7 +9,7 @@ void FDWPreparedInventoryChange::Reset()
 {
     Owner.Reset(); CandidateSlots.Reset(); ExpectedRevision=INDEX_NONE;
     RequiredUsableItem=NAME_None; bConsumed=true;
-    RequiredCraftRecipe=RequiredBuildingOutput=NAME_None;
+    RequiredCraftRecipe=RequiredBuildingOutput=RequiredPermanentWeaponOutput=NAME_None;
 }
 
 FDWPreparedInventoryChange::FDWPreparedInventoryChange(FDWPreparedInventoryChange&& Other) noexcept
@@ -23,6 +24,7 @@ FDWPreparedInventoryChange& FDWPreparedInventoryChange::operator=(FDWPreparedInv
         Owner=Other.Owner; CandidateSlots=MoveTemp(Other.CandidateSlots);
         ExpectedRevision=Other.ExpectedRevision; RequiredUsableItem=Other.RequiredUsableItem; bConsumed=Other.bConsumed;
         RequiredCraftRecipe=Other.RequiredCraftRecipe;RequiredBuildingOutput=Other.RequiredBuildingOutput;
+        RequiredPermanentWeaponOutput=Other.RequiredPermanentWeaponOutput;
         Other.Reset(); // A moved-from token must never become an empty-inventory commit.
     }
     return *this;
@@ -80,7 +82,7 @@ bool UDWInventoryComponent::AreSlotsValidWithPolicy(const TArray<FDWItemStack>& 
     const UDWGameplayConfig* Settings,const TMap<FName,int32>& Overrides) const
 {
     if(!Settings||Settings->MaxInventorySlots<1||Settings->MaxStackSize<1||InSlots.Num()>Settings->MaxInventorySlots)return false;
-    const auto* Profile=Cast<UDWGatheringProfile>(Settings);
+    const auto* Profile=UDWGameplayConfig::AsGatheringConfig(Settings);
     if(Profile)
     {
         for(const auto& Limit:Profile->StackLimits)
@@ -93,7 +95,8 @@ bool UDWInventoryComponent::AreSlotsValidWithPolicy(const TArray<FDWItemStack>& 
         if(Stack.ItemId.IsNone()||!Settings->GetItemDefinition(Stack.ItemId)||Stack.Quantity<1)return false;
         if(Profile&&!Profile->IsInventoryItem(Stack.ItemId))return false;
         const int32* Override=Overrides.Find(Stack.ItemId);
-        const int32 Limit=Override?*Override:(Profile?Profile->GetConfiguredStackLimit(Stack.ItemId):Settings->MaxStackSize);
+        const auto* Building=Settings->GetBuildingDefinition(Stack.ItemId);
+        const int32 Limit=Building?Building->StackLimit:(Override?*Override:(Profile?Profile->GetConfiguredStackLimit(Stack.ItemId):Settings->MaxStackSize));
         if(Limit<1)return false;
         if(Stack.Quantity>Limit)return false;
     }
@@ -109,8 +112,9 @@ int32 UDWInventoryComponent::GetEffectiveStackLimit(FName ItemId) const
 {
     const UDWGameplayConfig* Settings=GetConfig();
     if(ItemId.IsNone()||!Settings->GetItemDefinition(ItemId))return 0;
-    const auto* Profile=Cast<UDWGatheringProfile>(Settings);
+    const auto* Profile=UDWGameplayConfig::AsGatheringConfig(Settings);
     if(Profile&&!Profile->IsInventoryItem(ItemId))return 0;
+    if(const auto* Building=Settings->GetBuildingDefinition(ItemId))return Building->StackLimit;
     const int32* Override=StackLimitOverrides.Find(ItemId);
     return Override?*Override:(Profile?Profile->GetConfiguredStackLimit(ItemId):Settings->MaxStackSize);
 }
@@ -216,10 +220,13 @@ bool UDWInventoryComponent::ValidatePreparedForCommit(const FDWPreparedInventory
     }
     if(!Prepared.RequiredCraftRecipe.IsNone())
     {
-        FName Building;
-        if(!CanUseCraftingContext(Prepared.RequiredCraftRecipe,Building)||Building!=Prepared.RequiredBuildingOutput)return false;
+        FName Building,Permanent;
+        if(!CanUseCraftingContext(Prepared.RequiredCraftRecipe,Building)||Building!=Prepared.RequiredBuildingOutput||
+            !GetCraftPermanentWeaponOutput(Prepared.RequiredCraftRecipe,Permanent)||Permanent!=Prepared.RequiredPermanentWeaponOutput||
+            (!Permanent.IsNone()&&!CanCraftPermanentWeapon(Permanent)))return false;
     }
-    return true;
+    // The native context hook is a query, but recheck identity/revision after it as a final boundary.
+    return CanWriteInventory()&&!Prepared.bConsumed&&Prepared.Owner.Get()==this&&Prepared.ExpectedRevision==Revision&&Revision<MAX_int64;
 }
 void UDWInventoryComponent::AdoptPreparedUnchecked(FDWPreparedInventoryChange&& Prepared)
 {
@@ -227,8 +234,8 @@ void UDWInventoryComponent::AdoptPreparedUnchecked(FDWPreparedInventoryChange&& 
 }
 bool UDWInventoryComponent::CommitPrepared(FDWPreparedInventoryChange&& Prepared)
 {
-    // Building world facts must use their typed coordinator, never an inventory-only public commit.
-    if(!Prepared.RequiredBuildingOutput.IsNone())return false;
+    // Cross-state craft facts must use their typed coordinator, never an inventory-only public commit.
+    if(!Prepared.RequiredBuildingOutput.IsNone()||!Prepared.RequiredPermanentWeaponOutput.IsNone())return false;
     if(!ValidatePreparedForCommit(Prepared))return false;
     AdoptPreparedUnchecked(MoveTemp(Prepared));
     OnChanged.Broadcast();
@@ -308,8 +315,9 @@ bool UDWInventoryComponent::MakeCraftedSlots(FName RecipeId, bool bYeast, TArray
 {
     const FDWRecipeDefinition* Recipe = GetConfig()->GetRecipeDefinition(RecipeId);
     if (!Recipe || (GetConfig()->bRequireTransformationForCrafting && Recipe->bRequiresYeast && !bYeast) || Recipe->Inputs.IsEmpty() || Recipe->Outputs.IsEmpty()) return false;
-    FName Building;
-    if(!CanUseCraftingContext(RecipeId,Building))return false;
+    FName Building,Permanent;
+    if(!CanUseCraftingContext(RecipeId,Building)||!GetCraftPermanentWeaponOutput(RecipeId,Permanent)||
+        (!Permanent.IsNone()&&!CanCraftPermanentWeapon(Permanent)))return false;
     OutSlots = Slots;
     // Inputs are removed first, so their emptied slots can hold outputs. The source never changes on failure.
     for (const FDWItemStack& Input : Recipe->Inputs)
@@ -326,19 +334,33 @@ bool UDWInventoryComponent::MakeCraftedSlots(FName RecipeId, bool bYeast, TArray
 bool UDWInventoryComponent::CanUseCraftingContext(FName RecipeId,FName& OutBuilding) const
 {
     OutBuilding=NAME_None;
-    const auto* Profile=Cast<UDWGatheringProfile>(GetConfig());
+    const auto* Settings=GetConfig();const auto* Recipe=Settings->GetRecipeDefinition(RecipeId);
+    if(!Recipe)return false;
+    // A registered building is a normal bag output. Its construction station is a craft-time requirement only.
+    for(const auto& Output:Recipe->Outputs)
+        if(const auto* Building=Settings->GetBuildingDefinition(Output.ItemId))
+        {
+            FString Error;if(!Building->ValidateDefinition(Error))return false;
+            if(!Building->RequiredCraftingStation.IsNone()&&(!CraftingContextValidator||
+               !CraftingContextValidator(RecipeId,Building->RequiredCraftingStation,NAME_None)))return false;
+        }
+    const auto* Profile=UDWGameplayConfig::AsGatheringConfig(Settings);
     if(!Profile)return true;
-    const FName Station=Profile->GetRequiredStation(RecipeId);OutBuilding=Profile->GetBuildingOutput(RecipeId);
-    if(!OutBuilding.IsNone()&&!Profile->NonInventoryItems.Contains(OutBuilding))return false;
-    if(Station.IsNone()&&OutBuilding.IsNone())return true;
-    return CraftingContextValidator&&CraftingContextValidator(RecipeId,Station,OutBuilding);
+    const FName Station=Profile->GetRequiredStation(RecipeId);
+    const FName DeclaredBuilding=Profile->GetBuildingOutput(RecipeId);
+    if(!DeclaredBuilding.IsNone()&&!Settings->GetBuildingDefinition(DeclaredBuilding))return false;
+    // All registered buildings are bag output. The retired automatic-spawn route is never admitted.
+    if(Station.IsNone())return true;
+    return CraftingContextValidator&&CraftingContextValidator(RecipeId,Station,NAME_None);
 }
 
 bool UDWInventoryComponent::PrepareCraftRecipe(FName RecipeId,bool bYeast,FDWPreparedInventoryChange& Prepared) const
 {
-    Prepared.Reset();TArray<FDWItemStack> Candidate;FName Building;
-    if(!CanUseCraftingContext(RecipeId,Building)||!MakeCraftedSlots(RecipeId,bYeast,Candidate)||!MakePrepared(MoveTemp(Candidate),Prepared))return false;
-    Prepared.RequiredCraftRecipe=RecipeId;Prepared.RequiredBuildingOutput=Building;return true;
+    Prepared.Reset();TArray<FDWItemStack> Candidate;FName Building,Permanent;
+    if(!CanUseCraftingContext(RecipeId,Building)||!GetCraftPermanentWeaponOutput(RecipeId,Permanent)||
+        !MakeCraftedSlots(RecipeId,bYeast,Candidate)||!MakePrepared(MoveTemp(Candidate),Prepared))return false;
+    Prepared.RequiredCraftRecipe=RecipeId;Prepared.RequiredBuildingOutput=Building;
+    Prepared.RequiredPermanentWeaponOutput=Permanent;return true;
 }
 
 bool UDWInventoryComponent::CanCraft(FName RecipeId, bool bYeast) const
@@ -349,9 +371,6 @@ bool UDWInventoryComponent::CanCraft(FName RecipeId, bool bYeast) const
 
 bool UDWInventoryComponent::TryCraft(FName RecipeId, bool bYeast)
 {
-    const auto* Profile=Cast<UDWGatheringProfile>(GetConfig());
-    if(Profile&&!Profile->GetBuildingOutput(RecipeId).IsNone())
-        return FDWGatheringInventoryTransaction::TryCraftBuilding(*this,RecipeId,bYeast);
     FDWPreparedInventoryChange Prepared;
     return PrepareCraftRecipe(RecipeId,bYeast,Prepared)&&CommitPrepared(MoveTemp(Prepared));
 }
@@ -389,7 +408,7 @@ bool UDWInventoryComponent::IsSlotSnapshotCurrent(const FDWInventorySlotSnapshot
 
 bool UDWInventoryComponent::TryDiscardSnapshot(const FDWInventorySlotSnapshot& Snapshot)
 {
-    if(Cast<UDWGatheringProfile>(GetConfig()))return FDWGatheringInventoryTransaction::TryDiscardToWorld(*this,Snapshot);
+    if(UDWGameplayConfig::AsGatheringConfig(GetConfig()))return FDWGatheringInventoryTransaction::TryDiscardToWorld(*this,Snapshot);
     if(!IsSlotSnapshotCurrent(Snapshot))return false;
     TArray<FDWItemStack> Candidate=Slots;
     Candidate.RemoveAt(Snapshot.SlotIndex);

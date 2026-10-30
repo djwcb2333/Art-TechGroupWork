@@ -11,8 +11,9 @@
 
 namespace DWCoreInjection
 {
-EDWCombatBaseForm FormForItem(FName Item)
+EDWCombatBaseForm FormForItem(FName Item,bool A01=false)
 {
+    if(A01)return UDWCharacterA01Component::FormForEssence(Item);
     switch(FDWCombatItemRegistry::GetItemRole(Item))
     {
     case EDWCombatItemRole::MoldCore:return EDWCombatBaseForm::Mold;
@@ -30,13 +31,17 @@ float ADWPlayerCharacter::GetCoreInjectionRemainingSeconds() const
 bool ADWPlayerCharacter::CanRequestCoreInjection(const FDWInventorySlotSnapshot& Slot,bool bAllowPausedMenu) const
 {
     const auto* World=GetWorld();const auto* GI=GetGameInstance<UDWGameInstance>();
+    const bool A01=CharacterA01&&CharacterA01->IsEnabled();
+    if(IsCoreInjecting())return false; // Repeated essence requests never restart the pending action.
     if(!World||World->bIsTearingDown||IsActorBeingDestroyed()||IsDead()||bRestoringSave||
-        !HasCombatVitalsReady()||GetCombatBaseForm()!=EDWCombatBaseForm::Normal||!Inventory||
+        !HasCombatVitalsReady()||(!A01&&GetCombatBaseForm()!=EDWCombatBaseForm::Normal)||(A01&&!CharacterA01->CanUseShortcuts())||!Inventory||
         !Inventory->IsSlotSnapshotCurrent(Slot)||!GI||!GI->GetCombatRules()||
-        DWCoreInjection::FormForItem(Slot.ItemId)==EDWCombatBaseForm::Normal)return false;
+        DWCoreInjection::FormForItem(Slot.ItemId,A01)==EDWCombatBaseForm::Normal)return false;
     if(!bAllowPausedMenu&&!IsCombatActionAllowed())return false;
     FDWCoreInjectionConfig Config;FString Error;
-    return FDWCoreInjectionConfig::Build(*GI->GetCombatRules(),Config,Error)&&Slot.Quantity>=Config.CoreCost;
+    if(!FDWCoreInjectionConfig::Build(*GI->GetCombatRules(),Config,Error))return false;
+    if(A01){Config.DurationSeconds=CharacterA01->InjectionSeconds();Config.CoreCost=CharacterA01->EssenceCount();}
+    return Config.IsValid()&&Slot.Quantity>=Config.CoreCost;
 }
 bool ADWPlayerCharacter::RequestCoreInjection(const FDWInventorySlotSnapshot& Slot)
 {
@@ -57,6 +62,7 @@ bool ADWPlayerCharacter::RequestCoreInjection(const FDWInventorySlotSnapshot& Sl
     };
     FDWCoreInjectionConfig Config;FString Error;
     if(!FDWCoreInjectionConfig::Build(*GetGameInstance<UDWGameInstance>()->GetCombatRules(),Config,Error))return false;
+    if(CharacterA01&&CharacterA01->IsEnabled()){Config.DurationSeconds=CharacterA01->InjectionSeconds();Config.CoreCost=CharacterA01->EssenceCount();if(!Config.IsValid())return false;}
     // Qualification precedes cancellation; invalid stock/form never destroys a valid action.
     CancelCombatActions();if(!Current())return false;
     SetHarvestHeld(false);if(!Current())return false;bSprinting=false;
@@ -71,7 +77,7 @@ bool ADWPlayerCharacter::RequestCoreInjection(const FDWInventorySlotSnapshot& Sl
     CoreInjection.Plan=MoveTemp(Plan);CoreInjection.Config=MoveTemp(Config);CoreInjection.Slot=Slot;
     CoreInjection.Inventory=Inventory;CoreInjection.Action=Action;CoreInjection.Life=Life;
     CoreInjection.WorldEpoch=Epoch;CoreInjection.DamageRevision=DamageRevision;
-    CoreInjection.StationaryLocation=GetActorLocation();CoreInjection.TargetForm=DWCoreInjection::FormForItem(Slot.ItemId);
+    CoreInjection.StationaryLocation=GetActorLocation();CoreInjection.TargetForm=DWCoreInjection::FormForItem(Slot.ItemId,CharacterA01&&CharacterA01->IsEnabled());
     bCoreInjectionCompletionDue=false;
     return true;
 }
@@ -86,7 +92,7 @@ bool ADWPlayerCharacter::IsCoreInjectionCurrent() const
     const auto& S=CoreInjection;auto* A=UDWCombatAuthoritySubsystem::Get(this);
     return S.Plan.IsPending()&&S.Action.Id&&S.Config.IsValid()&&A&&A->GetWorldEpoch()==S.WorldEpoch&&
         DWCoreInjection::SameLife(A->CaptureActorLife(const_cast<ADWPlayerCharacter*>(this)),S.Life)&&
-        !IsDead()&&!bRestoringSave&&!IsActorBeingDestroyed()&&GetCombatBaseForm()==EDWCombatBaseForm::Normal&&
+        !IsDead()&&!bRestoringSave&&!IsActorBeingDestroyed()&&((CharacterA01&&CharacterA01->IsEnabled())||GetCombatBaseForm()==EDWCombatBaseForm::Normal)&&
         CombatDamageRevision==S.DamageRevision&&Inventory&&S.Inventory.Get()==Inventory.Get()&&
         Inventory->IsSlotSnapshotCurrent(S.Slot)&&S.Slot.Quantity>=S.Config.CoreCost&&
         GetActorLocation().Equals(S.StationaryLocation,UE_SMALL_NUMBER);

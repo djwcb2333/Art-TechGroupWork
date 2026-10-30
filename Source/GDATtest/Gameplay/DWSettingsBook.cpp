@@ -77,7 +77,8 @@ void LayoutC04Settings(UDWGameplayWidget* Screen)
     DWC04Settings::ExistingPair(Tree,TEXT("SettingsBookQualityRow"),TEXT("QualityLabel"),TEXT("QualityCombo"));
     DWC04Settings::ExistingPair(Tree,TEXT("SettingsBookLanguageRow"),TEXT("LanguageLabel"),TEXT("LanguageCombo"));
     for(const auto& Spec:{TPair<const TCHAR*,const TCHAR*>(TEXT("VSyncCheck"),TEXT("SettingsPage_Body")),
-        TPair<const TCHAR*,const TCHAR*>(TEXT("CombatEnemyHealthCheck"),TEXT("SettingsBookGeneralPage"))})
+        TPair<const TCHAR*,const TCHAR*>(TEXT("CombatEnemyHealthCheck"),TEXT("SettingsBookGeneralPage")),
+        TPair<const TCHAR*,const TCHAR*>(TEXT("DamageShakeCheck"),TEXT("SettingsBookGeneralPage"))})
     {
         auto* Check=Cast<UCheckBox>(Tree->FindWidget(Spec.Key));auto* Column=Cast<UVerticalBox>(Tree->FindWidget(Spec.Value));
         if(Check&&Column)
@@ -90,7 +91,7 @@ void LayoutC04Settings(UDWGameplayWidget* Screen)
         DWC04Settings::Pair(Tree,Master,Cast<UTextBlock>(Tree->FindWidget(TEXT("VolumeValueText"))),
             Tree->FindWidget(TEXT("VolumeSlider")),TEXT("C04MasterVolumeRow"));
     for(const TCHAR* Name:{TEXT("ResolutionLabel"),TEXT("WindowModeLabel"),TEXT("QualityLabel"),TEXT("LanguageLabel"),
-        TEXT("VSyncLabel"),TEXT("CombatEnemyHealthLabel"),TEXT("VolumeValueText")})
+        TEXT("VSyncLabel"),TEXT("CombatEnemyHealthLabel"),TEXT("DamageShakeLabel"),TEXT("VolumeValueText")})
         DWC04Settings::Label(Cast<UTextBlock>(Tree->FindWidget(Name)));
 }
 void StyleSettingsSlider(USlider* Slider)
@@ -194,7 +195,7 @@ void UDWGameplayWidget::RefreshSettingsBook()
             StyleC01Button(Button,DWC01UI::Paper());
         }
     StyleSettingsSlider(Cast<USlider>(GetWidgetFromName(TEXT("VolumeSlider"))));
-    for(const TCHAR* Name:{TEXT("VSyncCheck"),TEXT("CombatEnemyHealthCheck")})
+    for(const TCHAR* Name:{TEXT("VSyncCheck"),TEXT("CombatEnemyHealthCheck"),TEXT("DamageShakeCheck")})
         StyleSettingsCheck(Cast<UCheckBox>(GetWidgetFromName(Name)));
     for(const TCHAR* Name:{TEXT("ResolutionCombo"),TEXT("WindowModeCombo"),TEXT("QualityCombo"),TEXT("LanguageCombo")})
         StyleSettingsCombo(Cast<UComboBoxString>(GetWidgetFromName(Name)));

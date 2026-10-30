@@ -11,7 +11,9 @@
 class USphereComponent;
 class UStaticMeshComponent;
 class USoundBase;
+class UMaterialInterface;
 class ADWEnemyNest;
+class UDWCommittedHitFeedbackComponent;
 class UAnimationAsset;
 class ADWPlayerCharacter;
 class FDWCombatRules;
@@ -56,6 +58,8 @@ public:
     bool IsReturningForPlayerDeath()const{return bPlayerDeathReturn;}
     bool InitializeFormalCombat(const FDWCombatRules& Rules,FString& Error);
     UFUNCTION(BlueprintPure,Category="Enemy|Formal Combat") bool IsFormalCombatReady()const{return bFormalCombatReady&&CombatProfile==FormalCombatConfig.Profile;}
+    /** Read-only presentation query: committed engagement with this player, not proximity or an attack input. */
+    bool IsEngagedWithPlayerForMusic(const ADWPlayerCharacter* Player) const;
     UFUNCTION(BlueprintPure,Category="Enemy|Formal Combat") bool HasRememberedPlayerCombat()const{return FormalMemory.bEngaged;}
     UFUNCTION(BlueprintPure,Category="Enemy|Formal Combat") bool IsHostileToCombatPlayer(const ADWPlayerCharacter* Player)const;
     double GetDaggerAlertRadius()const;bool IsEngagedForDagger()const;
@@ -77,6 +81,9 @@ public:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemy|Components") TObjectPtr<USphereComponent> DetectionRange;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemy|Components") TObjectPtr<UStaticMeshComponent> PlaceholderBody;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemy|Components") TObjectPtr<UDWCommittedHitFeedbackComponent> CommittedHitFeedback;
+    /** Only applied to an unmodified engine Sphere on a formal DoughElite. None disables the fallback. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Enemy|Presentation") TObjectPtr<UMaterialInterface> ElitePlaceholderFallbackMaterial;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Enemy|Save") FName PersistentId;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Enemy|Health", meta=(ClampMin="1")) float MaxHealth = 100.f;
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Enemy|Health") float Health = 100.f;
@@ -159,7 +166,13 @@ protected:
     virtual void BeginPlay() override;
     virtual void EndPlay(EEndPlayReason::Type Reason) override;
     void Die(bool bFromSave = false);
+    // Presentation-only opt-in. Gameplay death has already committed before begin.
+    virtual bool BeginSpecializedDeathPresentation(){return false;}
+    virtual void CancelSpecializedDeathPresentation(){}
+    virtual bool HideRestoredDeadWithoutPresentation()const{return false;}
+    void FinishSpecializedDeathPresentation();
 private:
+    void ApplyElitePlaceholderFallback();
     friend class FDWCombatWorldObjectsPersistence;
     friend class FDWCombatWorldObjectsRestorePlan;
     bool bCombatWorldStaged=false;

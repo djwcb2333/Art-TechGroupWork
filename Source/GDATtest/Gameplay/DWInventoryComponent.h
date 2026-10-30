@@ -39,13 +39,14 @@ public:
     bool IsConsumed() const { return bConsumed; }
     FName GetCraftRecipeId() const { return RequiredCraftRecipe; }
     FName GetBuildingOutput() const { return RequiredBuildingOutput; }
+    FName GetPermanentWeaponOutput() const { return RequiredPermanentWeaponOutput; }
 private:
     friend class UDWInventoryComponent;
     TWeakObjectPtr<const UDWInventoryComponent> Owner;
     TArray<FDWItemStack> CandidateSlots;
     int64 ExpectedRevision=INDEX_NONE;
     FName RequiredUsableItem;
-    FName RequiredCraftRecipe,RequiredBuildingOutput;
+    FName RequiredCraftRecipe,RequiredBuildingOutput,RequiredPermanentWeaponOutput;
     bool bConsumed=true;
     void Reset();
 };
@@ -66,8 +67,10 @@ public:
     bool PrepareAddItem(FName ItemId, int32 Quantity, FDWPreparedInventoryChange& OutPrepared) const;
     /** A positive partial result is prepared once; caller commits its world remainder atomically. */
     bool PrepareAddItemUpTo(FName ItemId,int32 Requested,int32& OutAccepted,FDWPreparedInventoryChange& OutPrepared) const;
-    /** Uses the same station/placement checks as CanCraft. Building candidates remove inputs only. */
+    /** Uses the same station checks as CanCraft. Registered building outputs are added to inventory. */
     bool PrepareCraftRecipe(FName RecipeId,bool bYeast,FDWPreparedInventoryChange& OutPrepared) const;
+    /** False for malformed recipes. None means ordinary craft; permanent output must be exactly one item. */
+    bool GetCraftPermanentWeaponOutput(FName RecipeId,FName& OutItemId) const;
     bool PrepareRemoveItem(FName ItemId, int32 Quantity, FDWPreparedInventoryChange& OutPrepared) const;
     bool PrepareRemoveSnapshot(const FDWInventorySlotSnapshot& Snapshot, int32 Quantity, FDWPreparedInventoryChange& OutPrepared) const;
     bool PrepareConsumeSnapshot(const FDWInventorySlotSnapshot& Snapshot, FDWPreparedInventoryChange& OutPrepared) const;
@@ -163,6 +166,9 @@ private:
     friend class FDWCombatCoreInjectionTransaction;
     friend class FDWCombatCorePickupTransaction;
     friend class FDWGatheringInventoryTransaction;
+    friend class FDWBuildingDemolitionTransaction;
+    friend class FDWLanguageInventoryTransaction;
+    friend class UDWBuildingPlacementComponent;
     int64 Revision=0;
     bool bInventoryLifecycleEnded=false;
     UPROPERTY(Transient)
@@ -185,6 +191,7 @@ private:
     bool AddToSlots(TArray<FDWItemStack>& InOutSlots, FName ItemId, int32 Quantity) const;
     bool RemoveFromSlots(TArray<FDWItemStack>& InOutSlots, FName ItemId, int32 Quantity) const;
     bool MakeCraftedSlots(FName RecipeId, bool bYeast, TArray<FDWItemStack>& OutSlots) const;
+    bool CanCraftPermanentWeapon(FName ItemId) const;
     bool CanUseCraftingContext(FName RecipeId,FName& OutBuilding) const;
     TFunction<bool(FName,FName,FName)> CraftingContextValidator;
 };

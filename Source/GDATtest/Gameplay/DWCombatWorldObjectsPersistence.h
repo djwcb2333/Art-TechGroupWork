@@ -31,7 +31,7 @@ public:
     static bool Capture(UWorld&,ADWPlayerCharacter&,FDWCombatWorldObjectsSave&,TArray<FDWPersistedActorState>& OutLegacy,
         TArray<FDWCombatObjectBinding>& OutBindings,FString& Error);
     static bool PrepareWorldObjects(UWorld&,ADWPlayerCharacter&,const FDWCombatWorldObjectsSave&,
-        const TArray<FDWPersistedActorState>& Legacy,FDWCombatWorldObjectsRestorePlan&,FString& Error);
+        const TArray<FDWPersistedActorState>& Legacy,FDWCombatWorldObjectsRestorePlan&,FString& Error,bool bValidatedFormalSession=false);
     static bool PrepareWorldFacts(FDWCombatWorldObjectsRestorePlan&,const FDWCombatAuthorityRestorePlan&,FString& Error);
     // Root's single world-restore barrier must be active. No Spawn/Destroy/transform/delegate operations here.
     static void AdoptNativeFacts(FDWCombatWorldObjectsRestorePlan&);

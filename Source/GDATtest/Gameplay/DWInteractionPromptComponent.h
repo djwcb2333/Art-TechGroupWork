@@ -2,11 +2,14 @@
 
 #include "CoreMinimal.h"
 #include "Components/WidgetComponent.h"
+#include "InputCoreTypes.h"
+#include "DWDemolitionPromptLease.h"
 #include "DWInteractionPromptComponent.generated.h"
 
 class UDWInteractionPromptStyle;
 class UDWInteractionPromptWidget;
 class APawn;
+class ADWPlayerCharacter;
 
 /** Presentation only. Resource owners use the player's harvest focus; other actors use proximity.
  * Adding this component to a generic actor does not bind F or implement an interaction action. */
@@ -17,6 +20,7 @@ class GDATTEST_API UDWInteractionPromptComponent : public UWidgetComponent
 public:
     UDWInteractionPromptComponent();
     virtual void OnRegister() override;
+    virtual void InitWidget() override;
     virtual void Deactivate() override;
     virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -32,6 +36,10 @@ public:
     /** Generic actors only. Resource owners use their existing InteractionRadius and player focus. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction Prompt|Detection", meta=(ClampMin="1", Units="cm")) float GenericDetectionRadius = 220.f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction Prompt|Detection", meta=(ClampMin="0", Units="cm")) float HeightTolerance = 300.f;
+    /** Opt-in only for new gathering-resource placements. Existing instances retain the old behavior. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction Prompt|Performance") bool bBudgetGatheringResourcePrompt = false;
+    /** Seconds between hidden-resource proximity checks; 0 keeps per-frame checks. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction Prompt|Performance", meta=(ClampMin="0", ClampMax="0.5", Units="s", EditCondition="bBudgetGatheringResourcePrompt")) float GatheringHiddenPollSeconds = .1f;
     /** Empty uses DA_DWInteractionPromptStyle, loaded on BeginPlay. Widget Class is inherited below. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction Prompt|Style") TObjectPtr<UDWInteractionPromptStyle> Style;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction Prompt|Audio") bool bPlayAppearSound = true;
@@ -44,6 +52,18 @@ public:
     UFUNCTION(BlueprintPure, Category="Interaction Prompt") UDWInteractionPromptWidget* GetPromptWidget() const;
     /** Called only by ResourceNode after an accepted inventory harvest has consumed stock. */
     void NotifyHarvestCommitted(int32 ActualAmount);
+    /** Call ONCE after a valid tool-hit durability commit, before presentation callbacks.
+     * Reads committed progress only; never damages a node, awards items or plays a swing. */
+    bool NotifyGatheringHitCommitted(ADWPlayerCharacter* User,float PreviousProgress,float CurrentProgress);
+    /** Only a short visual tail; never use this for collision or interaction availability. */
+    bool HasPendingGatheringHitFeedback() const;
+    /** Call on explicit restore/reset of this same node, before publishing its new state. */
+    void ResetGatheringHitFeedback();
+    /** Presentation lease: caller owns work validation, transaction and cancellation. */
+    bool BeginDemolitionSession(APawn* User,FGuid Session,FKey AppliedKey);
+    bool UpdateDemolitionSession(FGuid Session,float AuthoritativeProgress);
+    void EndDemolitionSession(FGuid Session);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Interaction Prompt|Demolition",meta=(ClampMin="0.1",ClampMax="2",Units="s")) float DemolitionStaleSeconds=.5f;
     UFUNCTION(BlueprintImplementableEvent, Category="Interaction Prompt|Events") void OnPromptShown();
     UFUNCTION(BlueprintImplementableEvent, Category="Interaction Prompt|Events") void OnPromptHidden();
 
@@ -68,8 +88,22 @@ private:
     TWeakObjectPtr<UDWInteractionPromptStyle> AppliedStyle;
     double NextLocalSoundTime = 0.0;
     bool bChangingVisibility = false;
+    bool bAllowBudgetedWidgetInit = false;
+    bool bBudgetOwnsTickInterval = false;
+    float BudgetTickInterval = 0.f;
+    bool UsesGatheringPromptBudget() const;
+    bool IsGatheringPromptNearLocalPawn() const;
+    void UpdateGatheringPromptBudget(bool bIdle);
+    void WakeGatheringPromptBudget();
     double C04CompletionDeadline = 0.;
+    double C06GatheringFeedbackDeadline = 0.;
+    float C06LastNotifiedGatheringProgress = -1.f;
+    TWeakObjectPtr<APawn> C06GatheringFeedbackPawn;
     TWeakObjectPtr<APawn> C04CompletionPawn;
+    TWeakObjectPtr<APawn> DemolitionPawn;
+    DWDemolitionPromptLease::Lease DemolitionLease;
+    FKey DemolitionKey;
+    void ResetDemolitionPresentation();
     void PrepareWidget();
     void ChangePromptVisibility(bool bVisible, bool bImmediate = false);
     void TryPlayAppearSound();

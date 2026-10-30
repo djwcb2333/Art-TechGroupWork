@@ -42,6 +42,7 @@ bool ADWEnemyCharacter::InitializeFormalCombat(const FDWCombatRules& Rules,FStri
     if(!IsValid(this)||IsActorBeingDestroyed()||!GetWorld()||GetWorld()->bIsTearingDown)
     {Error=TEXT("Enemy lifecycle ended while updating the query sphere.");return false;}
     GetCharacterMovement()->MaxWalkSpeed=MoveSpeed;
+    ApplyElitePlaceholderFallback();
     Error.Reset();return true;
 }
 
@@ -367,5 +368,6 @@ bool ADWEnemyCharacter::RestoreFormalCombatSave(const FDWEnemyFormalSaveData& S,
     FormalCoreDrop.FatalReceipt={S.FatalReceiptEpoch,S.FatalReceiptId};FormalCoreDrop.EnemyLife={S.DeathEntityId,S.DeathLife};
     FormalCoreDrop.PlayerLife={S.CreditedPlayerEntityId,S.CreditedPlayerLife};
     if(!CoreDrops->BindRestoredEnemy(*this,S)){Error=TEXT("Core world lifecycle changed during enemy restoration.");return false;}
+    ApplyElitePlaceholderFallback();
     Error.Reset();return true;
 }

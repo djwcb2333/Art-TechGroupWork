@@ -1,4 +1,5 @@
 #include "DWEnemyCharacter.h"
+#include "DWCommittedHitFeedbackComponent.h"
 #include "DWCombatGroundAreaSubsystem.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWGameInstance.h"
@@ -15,6 +16,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
+#include "Materials/MaterialInterface.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -57,6 +59,7 @@ namespace DWEnemyCombat
 
 ADWEnemyCharacter::ADWEnemyCharacter()
 {
+    CommittedHitFeedback=CreateDefaultSubobject<UDWCommittedHitFeedbackComponent>(TEXT("CommittedHitFeedback"));
     PrimaryActorTick.bCanEverTick = true;
     // A paused game must cancel telegraphed hits instead of resuming a hidden pending strike.
     PrimaryActorTick.bTickEvenWhenPaused = true;
@@ -73,6 +76,8 @@ ADWEnemyCharacter::ADWEnemyCharacter()
     PlaceholderBody->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     static ConstructorHelpers::FObjectFinder<UStaticMesh> BodyMeshFinder(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
     if (BodyMeshFinder.Succeeded()) PlaceholderBody->SetStaticMesh(BodyMeshFinder.Object);
+    static ConstructorHelpers::FObjectFinder<UMaterialInterface> EliteFallback(TEXT("/Game/DoughWorld/Environment/Materials/M_DW_Enemy.M_DW_Enemy"));
+    if(EliteFallback.Succeeded())ElitePlaceholderFallbackMaterial=EliteFallback.Object;
     PlaceholderBody->SetRelativeScale3D(FVector(0.75f, 0.75f, 1.35f));
     DetectionRange = CreateDefaultSubobject<USphereComponent>(TEXT("DetectionRange"));
     DetectionRange->SetupAttachment(RootComponent);
@@ -84,6 +89,16 @@ ADWEnemyCharacter::ADWEnemyCharacter()
     DetectionRange->SetVisibility(true);
     DetectionRange->ShapeColor = FColor::Red;
     Tags.AddUnique(TEXT("DoughWorldEnemy"));
+}
+
+void ADWEnemyCharacter::ApplyElitePlaceholderFallback()
+{
+    if(CombatProfile!=EDWEnemyCombatProfile::DoughElite||!IsFormalCombatReady()||!PlaceholderBody||!ElitePlaceholderFallbackMaterial)return;
+    const UStaticMesh* PlaceholderMesh=PlaceholderBody->GetStaticMesh();
+    if(!PlaceholderMesh||PlaceholderMesh->GetPathName()!=TEXT("/Engine/BasicShapes/Sphere.Sphere")||PlaceholderBody->GetNumOverrideMaterials()!=0)return;
+    const UMaterialInterface* Default=PlaceholderMesh->GetMaterial(0);
+    if(!Default||Default->GetPathName()!=TEXT("/Engine/EngineMaterials/DefaultMaterial.DefaultMaterial")||PlaceholderBody->GetMaterial(0)!=Default)return;
+    PlaceholderBody->SetMaterial(0,ElitePlaceholderFallbackMaterial);
 }
 
 void ADWEnemyCharacter::OnConstruction(const FTransform& Transform)
@@ -659,6 +674,7 @@ void ADWEnemyCharacter::SetHealthForLoad(float NewHealth)
     FormalAlertEndTime=FormalNextAttackTime=0.;bFormalNeedsChaseState=false;bFormalAttackContinuesDuringKnockback=false;
     FormalKnockbackFrame=MAX_uint64;FormalKnockbackInitialDistance=0.;FormalCoreDrop={};
     TGuardValue<bool> RestoreGuard(bCombatRestoreInProgress, true);
+    CancelSpecializedDeathPresentation();
     RestorePlaceholderPresentation();
     bHealthRestoredFromSave = true;
     CancelMeleeAttack();
@@ -756,6 +772,12 @@ void ADWEnemyCharacter::PublishCombatDeathEffects(bool bFromSave)
         OnEnemyDied();
         if (!CanContinue()) return;
     }
+    if(!bFromSave)
+    {
+        const bool bOwned=BeginSpecializedDeathPresentation();
+        if(!CanContinue())return;
+        if(bOwned){UpdatePlaceholderPresentation();return;}
+    }
     if (bFromSave && !PersistentId.IsNone()) FinishPersistentDeath();
     else if (PersistentId.IsNone()) SetLifeSpan(DWEnemyCombat::FiniteClamp(DeathDestroyDelay, 0.1f, 3600.f, 1.5f));
     else GetWorldTimerManager().SetTimer(DeathCleanupTimer, this, &ADWEnemyCharacter::FinishPersistentDeath, DWEnemyCombat::FiniteClamp(DeathDestroyDelay, 0.1f, 3600.f, 1.5f), false);
@@ -768,6 +790,13 @@ void ADWEnemyCharacter::Die(bool bFromSave)
     CommitCombatDeathFacts();
     if (auto* Authority = UDWCombatAuthoritySubsystem::Get(this)) Authority->NotifyActorDeath(this);
     PublishCombatDeathEffects(bFromSave);
+}
+
+void ADWEnemyCharacter::FinishSpecializedDeathPresentation()
+{
+    if(IsActorBeingDestroyed()||!GetWorld()||GetWorld()->bIsTearingDown||IsAlive())return;
+    if(PersistentId.IsNone())Destroy();
+    else FinishPersistentDeath();
 }
 
 void ADWEnemyCharacter::FinishPersistentDeath()

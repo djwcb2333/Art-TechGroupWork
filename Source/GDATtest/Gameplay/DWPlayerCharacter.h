@@ -5,6 +5,7 @@
 #include "DWCombatKnockback.h"
 #include "DWCombatCommitLedger.h"
 #include "DWCombatPlayerVitals.h"
+#include "DWCharacterA01Component.h"
 #include "DWCombatMoldRoot.h"
 #include "DWYeastDashPlan.h"
 #include "DWCombatInputLedger.h"
@@ -12,8 +13,10 @@
 #include "DWPlayerCharacter.generated.h"
 
 class UDWGatheringComponent;
+class UDWBuildingPlacementComponent;
 class UDWWeaponAnimationComponent;
 class UDWCombatFeedbackComponent;
+class UDWCommittedHitFeedbackComponent;
 class UDWGameplayCameraShakeComponent;
 class UDWGameplayConfig; class UDWInventoryComponent; class UDWSaveGame;
 class ADWResourceNode; class ADWAlcoholProjectile; class UAnimationAsset;
@@ -39,7 +42,7 @@ public:
     UPROPERTY(EditAnywhere,Category="DoughWorld|Combat|Testing",meta=(ClampMin="0",ClampMax="1000")) int32 CombatTestCoresPerType=10;
     UPROPERTY(EditAnywhere,Category="DoughWorld|Combat|Testing") bool GiveCombatTestAmmo=true;
     UPROPERTY(EditAnywhere,Category="DoughWorld|Combat|Testing",meta=(ClampMin="0",ClampMax="1000")) int32 CombatTestAmmoPerType=100;
-    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Root") bool IsFormallyRooted()const{return FormalRoot.IsActive();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Root") bool IsFormallyRooted()const{return !(CharacterA01&&CharacterA01->IsEnabled())&&FormalRoot.IsActive();}
     bool TryToggleFormalRoot();
     bool IsFormallyRootedAtFrameOffset(double Seconds)const;
     bool GetFormalRootIdentity(FDWMoldRootIdentity& Out)const;
@@ -48,8 +51,8 @@ public:
     double GetFormalRootRangedRateMultiplier()const{return IsFormallyRooted()?FormalRoot.GetConfig().RangedRateMultiplier:1.;}
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Root|Animation") TObjectPtr<UAnimationAsset> RootEnterAnimation;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Combat|Root|Animation") TObjectPtr<UAnimationAsset> RootExitAnimation;
-    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Dash") bool IsFormalDashing()const{return FormalDash.IsActive();}
-    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Dash") double GetFormalDashCooldown()const{return FormalDash.CooldownSeconds();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Dash") bool IsFormalDashing()const{return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->IsDashing():FormalDash.IsActive();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Dash") double GetFormalDashCooldown()const{return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetAbility().GetState().CooldownRemainingSeconds:FormalDash.CooldownSeconds();}
     float GetMovementCameraYaw()const{return CameraYaw;}
     bool TryStartFormalDash(const FDWCombatInputPress&,FVector MoveDirection,FVector AimDirection);
     void PublishFormalDashStartEffects(); // Call after D02 binds the accepted hold or observes its quick-tap release.
@@ -57,11 +60,18 @@ public:
     void CancelFormalDashInput(const FDWCombatInputPress&);
     UFUNCTION(BlueprintPure,Category="DoughWorld|Combat") bool IsCombatKnockedBack()const{return CombatKnockback.bActive;}
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Feedback") TObjectPtr<UDWCombatFeedbackComponent> CombatFeedback;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Feedback") TObjectPtr<UDWCommittedHitFeedbackComponent> CommittedHitFeedback;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Camera") TObjectPtr<UDWGameplayCameraShakeComponent> GameplayCameraShake;
     virtual void Tick(float DeltaSeconds) override;
     virtual float TakeDamage(float Amount,const FDamageEvent& Event,AController* InstigatorController,AActor* Causer) override;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Inventory") TObjectPtr<UDWInventoryComponent> Inventory;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Gathering") TObjectPtr<UDWGatheringComponent> GatheringComponent;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|A01") TObjectPtr<UDWCharacterA01Component> CharacterA01;
+    bool CanUseMainHandShortcut(int32 InventoryIndex)const;
+    bool UseMainHandShortcut(int32 InventoryIndex);
+    bool HandleTrialConsumable(const FDWInventorySlotSnapshot& Slot,bool& bHandled); // Implemented by LANG typed inventory transaction.
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Buildings") TObjectPtr<UDWBuildingPlacementComponent> BuildingPlacement;
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Buildings") bool IsBuildingPlacementBlockingAttack() const;
     bool CanPerformGatheringAction() const;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Equipment") TObjectPtr<UStaticMeshComponent> SwordPlaceholder;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Equipment") TObjectPtr<UDWWeaponAnimationComponent> WeaponAnimationComponent;
@@ -174,6 +184,8 @@ public:
     /** Material multipliers: preserve the source atlas and change only its FormTint parameter. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Transformation|Visual") FLinearColor YeastTint=FLinearColor(1.f,0.36f,0.065f,1.f);
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Transformation|Visual") FLinearColor DoughTint=FLinearColor::White;
+    /** Adjustable trial recognition tint; final art approval remains separate. Linear RGB multiplier. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Transformation|Visual",meta=(DisplayName="Mold Tint (Playtest Default)")) FLinearColor MoldTint=FLinearColor(0.16f,0.70f,0.42f,1.f);
     /** Matches the authored Transform root's final scale, but persists across all yeast animations. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Transformation|Visual",meta=(ClampMin="0.1",UIMin="1",UIMax="3")) float YeastFormScaleMultiplier=1.36446f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Transformation|Visual") bool bMatchFormEnterBlendToAnimation=true;
@@ -327,12 +339,12 @@ public:
     UFUNCTION(BlueprintCallable,Category="DoughWorld|Save") void ApplySaveData(const UDWSaveGame* Save);
     void TickGameplayClocks(float DeltaSeconds,bool bActuallySprinting);
     bool TryApplySaveData(const UDWSaveGame* Save);
-    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") bool HasCombatVitalsReady() const {return CombatVitals.IsReady();}
-    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") EDWCombatBaseForm GetCombatBaseForm() const {return CombatVitals.GetForm();}
-    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatWater() const {return CombatVitals.GetWater();}
-    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatSatiety() const {return CombatVitals.GetSatiety();}
-    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatSpecial() const {return CombatVitals.GetSpecial();}
-    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatFormRemaining() const {return CombatVitals.GetFormRemaining();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") bool HasCombatVitalsReady() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetRuntime().IsReady():CombatVitals.IsReady();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") EDWCombatBaseForm GetCombatBaseForm() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetBaseForm():CombatVitals.GetForm();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatWater() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetRuntime().GetState().Water:CombatVitals.GetWater();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatSatiety() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetRuntime().GetState().Satiety:CombatVitals.GetSatiety();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatSpecial() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetSpecial():CombatVitals.GetSpecial();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatFormRemaining() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetRuntime().GetState().FormRemainingSeconds:CombatVitals.GetFormRemaining();}
     EDWCombatBaseForm GetCombatBaseFormAtFrameOffset(double Seconds) const;
     double GetCombatFrameSliceStartWorldSeconds(double DeltaSeconds) const;
     uint64 GetCombatDamageRevision() const {return CombatDamageRevision;}
@@ -358,6 +370,7 @@ private:
     TWeakObjectPtr<UDWWeaponAnimationComponent> CombatTestWeaponGrantComponent;
     DWCombatCommit::FEntityLife CombatTestWeaponGrantLife;
     uint64 CombatTestWeaponGrantEpoch=0,CombatTestWeaponGrantRestoreEpoch=0;
+    friend class UDWCharacterA01Component;
     friend class UDWWeaponAnimationComponent;
     friend class UDWCombatAuthoritySubsystem;
     friend class FDWCombatMinePersistence;
@@ -502,6 +515,8 @@ private:
     FVector DoughMeshScale=FVector::OneVector;
     FDelegateHandle FormBoneFinalizedHandle;
     float FormBlendStartAlpha=0.f,FormBlendTargetAlpha=0.f,FormBlendElapsed=0.f,FormBlendDuration=1.f;
+    // Independent color endpoints share the existing blend clock; alpha remains yeast scale only.
+    FLinearColor CurrentFormTint=FLinearColor::White,FormBlendStartTint=FLinearColor::White,FormBlendTargetTint=FLinearColor::White;
     bool bFormVisualsInitialized=false,bApplyingFormScale=false;
     bool bGatherFeedbackActive=false,bGatherFailureLatched=false;
     bool CanPlayPlayerVFX() const;
@@ -532,6 +547,7 @@ private:
     void DamageCombatTarget(AActor* Target,float Amount,float KnockbackDistance,float KnockbackSeconds,const FVector& Direction,TSet<TWeakObjectPtr<AActor>>& HitActors,DWCombatCommit::FActionDamage Identity={});
     float ClampCameraDistance(float Distance) const;
     void StartAttackAnimation();
+    FLinearColor GetTintForCombatForm(EDWCombatBaseForm Form) const;
     void InitializeFormVisuals();
     void UpdateFormAppearance(bool bImmediate=false);
     void TickFormAppearance(float DeltaSeconds);

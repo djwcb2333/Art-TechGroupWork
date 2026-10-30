@@ -1,5 +1,9 @@
 #if WITH_DEV_AUTOMATION_TESTS
 #include "DWCombatWorldObjectsPersistence.h"
+#include "DWCombatWorldPersistence.h"
+#include "DWCombatOpeningDaggerProjection.h"
+#include "DWCombatEquipment.h"
+#include "DWWeaponAnimationComponent.h"
 #include "DWCombatEffectsPersistence.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWCombatRecoverySubsystem.h"
@@ -99,4 +103,89 @@ bool FDWWorldTombstoneTest::RunTest(const FString&)
     TestTrue(TEXT("Explicit ended tombstone"),S.Enemies[0].bEnded);TestEqual(TEXT("Same death identity"),S.Enemies[0].Formal.CoreDropDeathId,Drop.CoreDropDeathId);TestEqual(TEXT("One terminal drop fact"),S.CoreDrops.Num(),1);
     auto Bad=S;Bad.Enemies.Reset();FString Error;TestFalse(TEXT("Drop cannot omit its destroyed enemy"),DWCombatWorldObjectsSave::Validate(Bad,Error));return true;
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDWOpeningDaggerProjectionTest,"DoughWorld.Combat.Persistence.Opening.DaggerEquipmentProjection",
+ EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FDWOpeningDaggerProjectionTest::RunTest(const FString&)
+{
+ using namespace DWCombatCommit;
+ // Reuse the existing isolated world fixture. No slot/file, gameplay clock,
+ // manual ownership assignment, live target equip or awareness setter is used.
+ DWWorldSaveTests::FFixture Source;if(!TestTrue(TEXT("Source fixture"),Source.Ready))return false;
+ Source.P->SetActorLocation(FVector(9000,0,110),false,nullptr,ETeleportType::TeleportPhysics); // Fixture placement, not locomotion coverage.
+ if(!TestTrue(TEXT("Source fixture position is distinct from destination"),Source.P->GetActorLocation().X>8000.))return false;
+ auto* SW=Source.P->WeaponAnimationComponent.Get();auto* SA=UDWCombatAuthoritySubsystem::Get(Source.P);
+ const auto Action=SA->BeginAction(Source.P);
+ FDWCombatEquipmentGrantRequest Grant{Action,SA->CaptureActorLife(Source.P),1,SW->GetCombatWeaponRestoreEpoch(),TEXT("DWWeapon_DualDaggers")};
+ const auto Granted=FDWCombatEquipmentTransaction::Grant(*SW,Grant);SA->EndAction(Action);
+ if(!TestTrue(TEXT("Source ownership uses the existing real grant transaction"),Granted.bCommittedThisCall)||
+  !TestTrue(TEXT("Source really equips daggers"),SW->SelectWeapon(EDWAnimatedWeapon::DualDaggers)))return false;
+ TStrongObjectPtr<UDWSaveGame> SourceSave(NewObject<UDWSaveGame>());
+ if(!TestTrue(TEXT("Capture real source personal facts"),FDWCombatWorldPersistence::Capture(*Source.P,*SourceSave,Source.Error)))return false;
+ FDWCombatWeaponResourceState Incoming;
+ if(!DWCombatPlayerSave::BuildWeaponCandidate(*Source.GI->GetCombatRules(),SourceSave->CombatPlayerResources,Incoming,Source.Error))return false;
+ const auto CopyPersonal=[&](UDWSaveGame& S)
+ {
+  const auto Entity=S.CombatWorld.Player.PlayerEntity,Life=S.CombatWorld.Player.PlayerLife;
+  S.Inventory=SourceSave->Inventory;S.CombatPlayerResources=SourceSave->CombatPlayerResources;
+  S.Health=SourceSave->Health;S.Transformation=SourceSave->Transformation;S.bYeastForm=SourceSave->bYeastForm;
+  S.SprintAlcoholElapsed=SourceSave->SprintAlcoholElapsed;S.TransformationDecayElapsed=SourceSave->TransformationDecayElapsed;
+  S.CombatWorld.Player=SourceSave->CombatWorld.Player;S.CombatWorld.Player.PlayerEntity=Entity;S.CombatWorld.Player.PlayerLife=Life;
+ };
+ {
+  DWWorldSaveTests::FFixture Target;if(!TestTrue(TEXT("Target fixture"),Target.Ready))return false;
+  if(!TestTrue(TEXT("Target starts with its actual default equipment"),Target.P->WeaponAnimationComponent->GetCurrentEquipmentId().IsNone()))return false;
+  Target.E->SyncDaggerAwareness(Target.P);const auto Observed=Target.E->CaptureDaggerAwarenessSave();
+  if(!TestTrue(TEXT("Real target current-life observation is initialized and not dagger-equipped"),Observed.bInitialized&&!Observed.bEquipped))return false;
+  TStrongObjectPtr<UDWSaveGame> Fresh(NewObject<UDWSaveGame>());
+  if(!TestTrue(TEXT("Capture valid target before projection"),FDWCombatWorldPersistence::Capture(*Target.P,*Fresh,Target.Error)))return false;
+  TStrongObjectPtr<UDWSaveGame> Raw(DuplicateObject<UDWSaveGame>(Fresh.Get(),GetTransientPackage()));CopyPersonal(*Raw);
+  TestFalse(TEXT("The original guard rejects raw personal-copy / observation mismatch"),FDWCombatWorldPersistence::Validate(*Target.GI->GetCombatRules(),*Raw,Target.Error));
+  TestTrue(TEXT("Raw rejection is specifically the retained current-life dagger guard"),Target.Error.Contains(TEXT("Current-life dagger observation")));
+  FDWOpeningDaggerProjectionProof Proof;
+  if(!TestTrue(TEXT("Prepare target-only observation and source equipment facts"),FDWCombatWorldPersistence::PrepareOpeningDaggerProjection(*Target.P,Incoming,*Fresh,Proof,Target.Error)))return false;
+  TestTrue(TEXT("Preparing has not equipped the live target"),Target.P->WeaponAnimationComponent->GetCurrentEquipmentId().IsNone());
+  TestFalse(TEXT("Preparing has not changed the live enemy observation"),Target.E->CaptureDaggerAwarenessSave().bEquipped);
+  CopyPersonal(*Fresh);
+  if(!TestTrue(TEXT("Full original aggregate validation now succeeds"),FDWCombatWorldPersistence::Validate(*Target.GI->GetCombatRules(),*Fresh,Target.Error)))return false;
+  TestTrue(TEXT("Opening proof binds the same incoming player plan"),Proof.CanCommit(*Target.P,*Fresh,Target.Error));
+  bool Committed=false;
+  if(!TestTrue(TEXT("One existing aggregate restore commits player and enemy together"),FDWCombatWorldPersistence::RestoreImpl(*Target.P,*Fresh,Committed,Target.Error,&Proof)))return false;
+  TestTrue(TEXT("Native aggregate committed"),Committed);
+  TestEqual(TEXT("Actual target equipment is the source selection"),Target.P->WeaponAnimationComponent->GetCurrentEquipmentId(),FName(TEXT("DWWeapon_DualDaggers")));
+  const auto After=Target.E->CaptureDaggerAwarenessSave();
+  TestTrue(TEXT("Target observation really adopted with the player"),After.bEquipped&&After.bInitialized);
+  TestTrue(TEXT("Inside comes from destination geometry, not far-away source position"),After.bInside);
+  TestEqual(TEXT("Equipping while inside manufactures no entry grace"),After.GraceRemainingSeconds,0.);
+ }
+ {
+  // One radius field is deliberately changed in an isolated fixture after prepare.
+  // It is not part of the old serialized enemy blob: the proof must catch it.
+  DWWorldSaveTests::FFixture Target;if(!Target.Ready)return false;
+  FActorSpawnParameters Params;Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+  auto* Legacy=Target.W->SpawnActor<ADWEnemyCharacter>(ADWEnemyCharacter::StaticClass(),FVector(5000,0,110),FRotator::ZeroRotator,Params);
+  if(!Legacy)return false;if(!Legacy->HasActorBegunPlay())Legacy->DispatchBeginPlay();
+  const double Radius=Legacy->GetDaggerAlertRadius();Legacy->SetActorLocation(Target.P->GetActorLocation()+FVector(Radius+.5,0,0),false,nullptr,ETeleportType::TeleportPhysics);
+  Legacy->SyncDaggerAwareness(Target.P);Target.E->SyncDaggerAwareness(Target.P);
+  TStrongObjectPtr<UDWSaveGame> Fresh(NewObject<UDWSaveGame>());if(!FDWCombatWorldPersistence::Capture(*Target.P,*Fresh,Target.Error))return false;
+  FDWOpeningDaggerProjectionProof Proof;if(!FDWCombatWorldPersistence::PrepareOpeningDaggerProjection(*Target.P,Incoming,*Fresh,Proof,Target.Error))return false;
+  CopyPersonal(*Fresh);const auto KeptObjects=Fresh->CombatWorld.Objects;
+  Legacy->DetectionRadius=static_cast<float>(Radius+1.);bool Committed=false;
+  TestFalse(TEXT("Changed actual alert geometry rejects before the same aggregate barrier"),FDWCombatWorldPersistence::RestoreImpl(*Target.P,*Fresh,Committed,Target.Error,&Proof));
+  TestTrue(TEXT("The rejection identifies the opening projection witness"),Target.Error.Contains(TEXT("projection witness changed")));
+  TestFalse(TEXT("Stale projection never committed"),Committed);
+  TestTrue(TEXT("Rejected restore leaves live target equipment untouched"),Target.P->WeaponAnimationComponent->GetCurrentEquipmentId().IsNone());
+  TestFalse(TEXT("Rejected restore leaves live observation untouched"),Legacy->CaptureDaggerAwarenessSave().bEquipped);
+  TestTrue(TEXT("Rejected restore leaves its input snapshot untouched"),Fresh->CombatWorld.Objects==KeptObjects);
+ }
+ // Pure same-equipment fixture creates grace only by the existing real observation
+ // model's geometric crossing. It does not set or clear its private deadline.
+ FDWDaggerAwareness Grace;Grace.Observe(10.,false,true,false,4.25);Grace.Observe(10.25,true,true,false,4.25);
+ DWCombatOpeningDaggerProjection::FObservation In;In.Awareness=Grace.Capture(10.5);In.PlayerLife=SA->FindRegisteredActorLife(Source.P);In.bAlive=true;In.bInsideAtEquipmentCommit=true;
+ FDWDaggerAwarenessSave Preserved;FString Error;
+ TestTrue(TEXT("Unchanged incoming equipment prepares"),DWCombatOpeningDaggerProjection::PrepareAwareness(In,In.PlayerLife,Incoming,Incoming,10.5,Preserved,Error));
+ TestTrue(TEXT("Unchanged equipment preserves positive grace and all original fields exactly"),FDWDaggerAwarenessSave::StaticStruct()->CompareScriptStruct(&In.Awareness,&Preserved,PPF_None)&&Preserved.GraceRemainingSeconds>0.);
+ return true;
+}
+
 #endif

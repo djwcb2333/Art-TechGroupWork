@@ -7,7 +7,7 @@
 bool ADWPlayerCharacter::TryReceiveGatheringWater(ADWGatheringPond& Source,double RequestedAmount,double& OutAdded)
 {
     OutAdded=0.;
-    if(!HasAuthority()||!IsCombatActionAllowed()||!Cast<UDWGatheringProfile>(GetGameplayConfig())||
+    if(!HasAuthority()||!IsCombatActionAllowed()||!UDWGameplayConfig::AsGatheringConfig(GetGameplayConfig())||
         bGameplayActionInProgress||bAdvancingGameplayClocks||bApplyingCombatDamage||
         !IsValid(&Source)||Source.GetWorld()!=GetWorld()||!Source.HasAuthority()||
         !Source.IsWetAndOperational()||!Source.ContainsActor(this)||
@@ -30,7 +30,7 @@ void ADWPlayerCharacter::SetGatheringEnvironmentSlow(const AActor* Source,double
     if(!IsValid(Source)||Source->GetWorld()!=GetWorld()||!std::isfinite(Fraction)||Fraction<0.||Fraction>1.)return;
     const auto* Pond=Cast<ADWGatheringPond>(Source);
     if(!Pond||!Pond->IsWetAndOperational()||!Pond->ContainsActor(this)||
-        !Cast<UDWGatheringProfile>(GetGameplayConfig())||IsDead())return;
+        !UDWGameplayConfig::AsGatheringConfig(GetGameplayConfig())||IsDead())return;
     const TWeakObjectPtr<AActor> Key(const_cast<AActor*>(Source));
     for(auto It=GatheringEnvironmentSlowSources.CreateIterator();It;++It)if(!It.Key().IsValid())It.RemoveCurrent();
     if(const double* Existing=GatheringEnvironmentSlowSources.Find(Key);Existing&&*Existing==Fraction)return;
@@ -48,7 +48,7 @@ void ADWPlayerCharacter::RemoveGatheringEnvironmentSlow(const AActor* Source)
 
 double ADWPlayerCharacter::GetGatheringEnvironmentMovementMultiplier() const
 {
-    if(!Cast<UDWGatheringProfile>(GetGameplayConfig()))return 1.;
+    if(!UDWGameplayConfig::AsGatheringConfig(GetGameplayConfig()))return 1.;
     double Strongest=0.;
     for(const auto& Entry:GatheringEnvironmentSlowSources)
     {

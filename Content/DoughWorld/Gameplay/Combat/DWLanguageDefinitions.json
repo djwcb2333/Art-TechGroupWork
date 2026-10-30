@@ -1,0 +1,3244 @@
+{
+  "schema_version": 1,
+  "dataset_id": "DoughWorld_LanguageDemo_20261026",
+  "status": "LANG01_runtime_trial_configuration",
+  "source_precedence": [
+    "latest_user_instruction",
+    "encyclopedia_pdf",
+    "gameplay_pdf",
+    "html"
+  ],
+  "sources": [
+    {
+      "id": "html",
+      "path": "D:/新建文件夹/残骸破译试玩.html",
+      "sha256": "471911ebfe613a699f7765625c84d24e64d066ab6b91cbba72376e16533367c2",
+      "role": "interaction and exact glyph reference; PDFs override conflicts"
+    },
+    {
+      "id": "encyclopedia_pdf",
+      "path": "D:/新建文件夹/语言图鉴系统.pdf",
+      "sha256": "4e1da547dd9208c3a08bcd969fe4855fcaee94933d541edc76260135aeb06cc3",
+      "role": "current journal rules"
+    },
+    {
+      "id": "gameplay_pdf",
+      "path": "D:/新建文件夹/语言玩法部分 (1).pdf",
+      "sha256": "9ef206d2bb52d482b9f6336cbafdb487cbf0f006504f22f3be579bc7b5e45593",
+      "role": "current language gameplay and offering example"
+    }
+  ],
+  "policies": {
+    "discovery_requires_explicit_interaction": true,
+    "proximity_or_visibility_discovers": false,
+    "discovery_auto_writes_guess": false,
+    "discovery_opens_entry_journal": true,
+    "normal_object_actions_have_priority": true,
+    "alternate_language_action_key": "resolve_with_existing_project_input_bindings",
+    "discover_compound_parts": true,
+    "preserve_repeated_part_positions": true,
+    "clue_dedupe_key": [
+      "entry_id",
+      "clue_id"
+    ],
+    "clue_source": "actually_interacted_carrier_only",
+    "compound_guess": "independent_player_text",
+    "guesses_affect_conditions": false,
+    "empty_trimmed_guess": "unrecorded",
+    "note_max_characters": 40,
+    "note_limit_status": "first_version_ui_test_value_from_pdf_not_final_balance",
+    "notebook_pause_game_time": true,
+    "keyboard_focus_blocks_gameplay_actions": true,
+    "journal_toggle_default": "Backquote",
+    "escape_closes_to_outer_context": true,
+    "default_sort": [
+      "unrecorded",
+      "undiscovered",
+      "recorded"
+    ],
+    "undiscovered_tiebreak": "stable_id",
+    "save_after_note_commit": true,
+    "persistence_status": "must_use_existing_authorized_save_contract; this dataset does not enable world persistence",
+    "formal_save_reset_allowed": false
+  },
+  "entries": [
+    {
+      "id": "pu",
+      "kind": "root",
+      "parts": [
+        "pu"
+      ],
+      "order": 0,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/pu.svg",
+      "png": "../Glyphs/PNG/T_Luwa_pu.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_pu.T_Luwa_pu"
+    },
+    {
+      "id": "ta",
+      "kind": "root",
+      "parts": [
+        "ta"
+      ],
+      "order": 1,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/ta.svg",
+      "png": "../Glyphs/PNG/T_Luwa_ta.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_ta.T_Luwa_ta"
+    },
+    {
+      "id": "su",
+      "kind": "root",
+      "parts": [
+        "su"
+      ],
+      "order": 2,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/su.svg",
+      "png": "../Glyphs/PNG/T_Luwa_su.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_su.T_Luwa_su"
+    },
+    {
+      "id": "go",
+      "kind": "root",
+      "parts": [
+        "go"
+      ],
+      "order": 3,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/go.svg",
+      "png": "../Glyphs/PNG/T_Luwa_go.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_go.T_Luwa_go"
+    },
+    {
+      "id": "bu",
+      "kind": "root",
+      "parts": [
+        "bu"
+      ],
+      "order": 4,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/bu.svg",
+      "png": "../Glyphs/PNG/T_Luwa_bu.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_bu.T_Luwa_bu"
+    },
+    {
+      "id": "ka",
+      "kind": "root",
+      "parts": [
+        "ka"
+      ],
+      "order": 5,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/ka.svg",
+      "png": "../Glyphs/PNG/T_Luwa_ka.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_ka.T_Luwa_ka"
+    },
+    {
+      "id": "ma",
+      "kind": "root",
+      "parts": [
+        "ma"
+      ],
+      "order": 6,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/ma.svg",
+      "png": "../Glyphs/PNG/T_Luwa_ma.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_ma.T_Luwa_ma"
+    },
+    {
+      "id": "ha",
+      "kind": "root",
+      "parts": [
+        "ha"
+      ],
+      "order": 7,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/ha.svg",
+      "png": "../Glyphs/PNG/T_Luwa_ha.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_ha.T_Luwa_ha"
+    },
+    {
+      "id": "ba",
+      "kind": "root",
+      "parts": [
+        "ba"
+      ],
+      "order": 8,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/ba.svg",
+      "png": "../Glyphs/PNG/T_Luwa_ba.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_ba.T_Luwa_ba"
+    },
+    {
+      "id": "do",
+      "kind": "root",
+      "parts": [
+        "do"
+      ],
+      "order": 9,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/do.svg",
+      "png": "../Glyphs/PNG/T_Luwa_do.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_do.T_Luwa_do"
+    },
+    {
+      "id": "li",
+      "kind": "root",
+      "parts": [
+        "li"
+      ],
+      "order": 10,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/li.svg",
+      "png": "../Glyphs/PNG/T_Luwa_li.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_li.T_Luwa_li"
+    },
+    {
+      "id": "shi",
+      "kind": "root",
+      "parts": [
+        "shi"
+      ],
+      "order": 11,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/shi.svg",
+      "png": "../Glyphs/PNG/T_Luwa_shi.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_shi.T_Luwa_shi"
+    },
+    {
+      "id": "wa",
+      "kind": "root",
+      "parts": [
+        "wa"
+      ],
+      "order": 12,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/wa.svg",
+      "png": "../Glyphs/PNG/T_Luwa_wa.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_wa.T_Luwa_wa"
+    },
+    {
+      "id": "sha",
+      "kind": "root",
+      "parts": [
+        "sha"
+      ],
+      "order": 13,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/sha.svg",
+      "png": "../Glyphs/PNG/T_Luwa_sha.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_sha.T_Luwa_sha"
+    },
+    {
+      "id": "sa",
+      "kind": "root",
+      "parts": [
+        "sa"
+      ],
+      "order": 14,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/sa.svg",
+      "png": "../Glyphs/PNG/T_Luwa_sa.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_sa.T_Luwa_sa"
+    },
+    {
+      "id": "nu",
+      "kind": "root",
+      "parts": [
+        "nu"
+      ],
+      "order": 15,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/nu.svg",
+      "png": "../Glyphs/PNG/T_Luwa_nu.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_nu.T_Luwa_nu"
+    },
+    {
+      "id": "mi",
+      "kind": "root",
+      "parts": [
+        "mi"
+      ],
+      "order": 16,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/mi.svg",
+      "png": "../Glyphs/PNG/T_Luwa_mi.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_mi.T_Luwa_mi"
+    },
+    {
+      "id": "na",
+      "kind": "root",
+      "parts": [
+        "na"
+      ],
+      "order": 17,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/na.svg",
+      "png": "../Glyphs/PNG/T_Luwa_na.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_na.T_Luwa_na"
+    },
+    {
+      "id": "pe",
+      "kind": "root",
+      "parts": [
+        "pe"
+      ],
+      "order": 18,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/pe.svg",
+      "png": "../Glyphs/PNG/T_Luwa_pe.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_pe.T_Luwa_pe"
+    },
+    {
+      "id": "ru",
+      "kind": "root",
+      "parts": [
+        "ru"
+      ],
+      "order": 19,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/ru.svg",
+      "png": "../Glyphs/PNG/T_Luwa_ru.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_ru.T_Luwa_ru"
+    },
+    {
+      "id": "tu",
+      "kind": "root",
+      "parts": [
+        "tu"
+      ],
+      "order": 20,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/tu.svg",
+      "png": "../Glyphs/PNG/T_Luwa_tu.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_tu.T_Luwa_tu"
+    },
+    {
+      "id": "so",
+      "kind": "root",
+      "parts": [
+        "so"
+      ],
+      "order": 21,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/so.svg",
+      "png": "../Glyphs/PNG/T_Luwa_so.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_so.T_Luwa_so"
+    },
+    {
+      "id": "ki",
+      "kind": "root",
+      "parts": [
+        "ki"
+      ],
+      "order": 22,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/ki.svg",
+      "png": "../Glyphs/PNG/T_Luwa_ki.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_ki.T_Luwa_ki"
+    },
+    {
+      "id": "he",
+      "kind": "root",
+      "parts": [
+        "he"
+      ],
+      "order": 23,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/he.svg",
+      "png": "../Glyphs/PNG/T_Luwa_he.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_he.T_Luwa_he"
+    },
+    {
+      "id": "la",
+      "kind": "root",
+      "parts": [
+        "la"
+      ],
+      "order": 24,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/la.svg",
+      "png": "../Glyphs/PNG/T_Luwa_la.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_la.T_Luwa_la"
+    },
+    {
+      "id": "wi",
+      "kind": "root",
+      "parts": [
+        "wi"
+      ],
+      "order": 25,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/wi.svg",
+      "png": "../Glyphs/PNG/T_Luwa_wi.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_wi.T_Luwa_wi"
+    },
+    {
+      "id": "hu",
+      "kind": "root",
+      "parts": [
+        "hu"
+      ],
+      "order": 26,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/hu.svg",
+      "png": "../Glyphs/PNG/T_Luwa_hu.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_hu.T_Luwa_hu"
+    },
+    {
+      "id": "ho",
+      "kind": "root",
+      "parts": [
+        "ho"
+      ],
+      "order": 27,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/ho.svg",
+      "png": "../Glyphs/PNG/T_Luwa_ho.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_ho.T_Luwa_ho"
+    },
+    {
+      "id": "mu",
+      "kind": "root",
+      "parts": [
+        "mu"
+      ],
+      "order": 28,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/mu.svg",
+      "png": "../Glyphs/PNG/T_Luwa_mu.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_mu.T_Luwa_mu"
+    },
+    {
+      "id": "du",
+      "kind": "root",
+      "parts": [
+        "du"
+      ],
+      "order": 29,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/du.svg",
+      "png": "../Glyphs/PNG/T_Luwa_du.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_du.T_Luwa_du"
+    },
+    {
+      "id": "ku",
+      "kind": "root",
+      "parts": [
+        "ku"
+      ],
+      "order": 30,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/ku.svg",
+      "png": "../Glyphs/PNG/T_Luwa_ku.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_ku.T_Luwa_ku"
+    },
+    {
+      "id": "gu",
+      "kind": "root",
+      "parts": [
+        "gu"
+      ],
+      "order": 31,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/gu.svg",
+      "png": "../Glyphs/PNG/T_Luwa_gu.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_gu.T_Luwa_gu"
+    },
+    {
+      "id": "ngu",
+      "kind": "root",
+      "parts": [
+        "ngu"
+      ],
+      "order": 32,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/ngu.svg",
+      "png": "../Glyphs/PNG/T_Luwa_ngu.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_ngu.T_Luwa_ngu"
+    },
+    {
+      "id": "shu",
+      "kind": "root",
+      "parts": [
+        "shu"
+      ],
+      "order": 33,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/shu.svg",
+      "png": "../Glyphs/PNG/T_Luwa_shu.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_shu.T_Luwa_shu"
+    },
+    {
+      "id": "lu",
+      "kind": "root",
+      "parts": [
+        "lu"
+      ],
+      "order": 34,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/lu.svg",
+      "png": "../Glyphs/PNG/T_Luwa_lu.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_lu.T_Luwa_lu"
+    },
+    {
+      "id": "wu",
+      "kind": "root",
+      "parts": [
+        "wu"
+      ],
+      "order": 35,
+      "enabled": true,
+      "scope": "current_demo_entry",
+      "svg": "../Glyphs/SVG/wu.svg",
+      "png": "../Glyphs/PNG/T_Luwa_wu.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_wu.T_Luwa_wu"
+    },
+    {
+      "id": "tasu",
+      "kind": "compound",
+      "parts": [
+        "ta",
+        "su"
+      ],
+      "order": 36,
+      "enabled": true,
+      "scope": "html_scene_example",
+      "svg": "../Glyphs/SVG/tasu.svg",
+      "png": "../Glyphs/PNG/T_Luwa_tasu.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_tasu.T_Luwa_tasu"
+    },
+    {
+      "id": "busu",
+      "kind": "compound",
+      "parts": [
+        "bu",
+        "su"
+      ],
+      "order": 37,
+      "enabled": true,
+      "scope": "pdf_offering_example",
+      "svg": "../Glyphs/SVG/busu.svg",
+      "png": "../Glyphs/PNG/T_Luwa_busu.png",
+      "texture_path": "/Game/DoughWorld/UI/Image/T_Luwa_busu.T_Luwa_busu"
+    }
+  ],
+  "candidate_meanings": [
+    {
+      "id": "pu",
+      "zh": "一",
+      "en": "One",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "ta",
+      "zh": "拿取",
+      "en": "Take",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "su",
+      "zh": "水",
+      "en": "Water",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "go",
+      "zh": "前进",
+      "en": "Go",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "bu",
+      "zh": "二",
+      "en": "Two",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "ka",
+      "zh": "热",
+      "en": "Heat",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "ma",
+      "zh": "面粉",
+      "en": "Flour",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "ha",
+      "zh": "寒冷",
+      "en": "Cold",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "ba",
+      "zh": "大",
+      "en": "Large",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "do",
+      "zh": "团",
+      "en": "Body",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "li",
+      "zh": "连接",
+      "en": "Connect",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "shi",
+      "zh": "气",
+      "en": "Gas",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "wa",
+      "zh": "湿",
+      "en": "Wet",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "sha",
+      "zh": "场所",
+      "en": "Place",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "sa",
+      "zh": "伤害",
+      "en": "Harm",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "nu",
+      "zh": "活",
+      "en": "Alive",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "mi",
+      "zh": "甜",
+      "en": "Sweet",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "na",
+      "zh": "坏",
+      "en": "Bad",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "pe",
+      "zh": "等待",
+      "en": "Wait",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "ru",
+      "zh": "揉",
+      "en": "Knead",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "tu",
+      "zh": "断",
+      "en": "Break",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "so",
+      "zh": "说",
+      "en": "Speak",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "ki",
+      "zh": "小",
+      "en": "Small",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "he",
+      "zh": "好",
+      "en": "Good",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "la",
+      "zh": "与",
+      "en": "And",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "wi",
+      "zh": "我",
+      "en": "I",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "hu",
+      "zh": "你",
+      "en": "You",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "ho",
+      "zh": "无",
+      "en": "None",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "mu",
+      "zh": "三",
+      "en": "Three",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "du",
+      "zh": "四",
+      "en": "Four",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "ku",
+      "zh": "五",
+      "en": "Five",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "gu",
+      "zh": "六",
+      "en": "Six",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "ngu",
+      "zh": "七",
+      "en": "Seven",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "shu",
+      "zh": "八",
+      "en": "Eight",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "lu",
+      "zh": "九",
+      "en": "Nine",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    },
+    {
+      "id": "wu",
+      "zh": "十",
+      "en": "Ten",
+      "usage": "relic_answer_choice_only_not_journal_standard_gloss"
+    }
+  ],
+  "clues": [
+    {
+      "id": "LanguageClue_Well",
+      "carrier_id": "well",
+      "entry_id": "su",
+      "location_name": {
+        "zh": "水井旁",
+        "en": "Beside the well"
+      },
+      "carrier_name": {
+        "zh": "水井",
+        "en": "Well"
+      },
+      "description": {
+        "zh": "井里有清澈的水，井沿反复出现同一个团字。",
+        "en": "Clear water fills the well. The same glyph is repeated on its rim."
+      },
+      "html_line": 692,
+      "enabled": true,
+      "scope": "html_scene_fixture",
+      "observed_parts": [
+        "su"
+      ]
+    },
+    {
+      "id": "LanguageClue_TakeSign",
+      "carrier_id": "takeSign",
+      "entry_id": "ta",
+      "location_name": {
+        "zh": "取物标记旁",
+        "en": "Beside the taking sign"
+      },
+      "carrier_name": {
+        "zh": "取物标记",
+        "en": "Taking sign"
+      },
+      "description": {
+        "zh": "图示画着一只手从容器中拿出东西，旁边刻着一个团字。",
+        "en": "A drawing shows a hand taking something out of a container. One glyph is carved beside it."
+      },
+      "html_line": 693,
+      "enabled": true,
+      "scope": "html_scene_fixture",
+      "observed_parts": [
+        "ta"
+      ]
+    },
+    {
+      "id": "LanguageClue_Footprints",
+      "carrier_id": "footprints",
+      "entry_id": "go",
+      "location_name": {
+        "zh": "通道足迹旁",
+        "en": "Beside the passage footprints"
+      },
+      "carrier_name": {
+        "zh": "地面足迹",
+        "en": "Footprints"
+      },
+      "description": {
+        "zh": "一串足迹沿通道向前延伸，路边的箭头旁刻着一个团字。",
+        "en": "Footprints continue along the passage. A glyph is carved beside a forward-pointing arrow."
+      },
+      "html_line": 694,
+      "enabled": true,
+      "scope": "html_scene_fixture",
+      "observed_parts": [
+        "go"
+      ]
+    },
+    {
+      "id": "LanguageClue_SingleSupply",
+      "carrier_id": "single",
+      "entry_id": "pu",
+      "location_name": {
+        "zh": "单份补给托盘旁",
+        "en": "Beside the single-supply tray"
+      },
+      "carrier_name": {
+        "zh": "单份补给",
+        "en": "Single supply"
+      },
+      "description": {
+        "zh": "这个托盘里只有一袋补给，下方刻着一个数量团字。",
+        "en": "This tray holds one supply bag. A quantity glyph is carved below it."
+      },
+      "html_line": 695,
+      "enabled": true,
+      "scope": "html_scene_fixture",
+      "observed_parts": [
+        "pu"
+      ]
+    },
+    {
+      "id": "LanguageClue_DoubleSupply",
+      "carrier_id": "double",
+      "entry_id": "bu",
+      "location_name": {
+        "zh": "双份补给托盘旁",
+        "en": "Beside the double-supply tray"
+      },
+      "carrier_name": {
+        "zh": "双份补给",
+        "en": "Double supply"
+      },
+      "description": {
+        "zh": "另一个托盘里并排放着两袋补给，下方刻着不同的数量团字。",
+        "en": "The other tray holds two supply bags side by side. A different quantity glyph is carved below it."
+      },
+      "html_line": 696,
+      "enabled": true,
+      "scope": "html_scene_fixture",
+      "observed_parts": [
+        "bu"
+      ]
+    },
+    {
+      "id": "LanguageClue_WaterSign",
+      "carrier_id": "waterSign",
+      "entry_id": "tasu",
+      "location_name": {
+        "zh": "取水告示旁",
+        "en": "Beside the water-taking notice"
+      },
+      "carrier_name": {
+        "zh": "取水告示",
+        "en": "Water-taking sign"
+      },
+      "description": {
+        "zh": "木牌画着手从水井接水的动作，旁边并排刻着两个字。",
+        "en": "The board depicts a hand taking water from a well. Two glyphs are carved beside the drawing."
+      },
+      "html_line": 697,
+      "enabled": true,
+      "scope": "html_scene_fixture",
+      "observed_parts": [
+        "ta",
+        "su"
+      ]
+    },
+    {
+      "id": "LanguageClue_FibrePool",
+      "carrier_id": "puddle",
+      "entry_id": "su",
+      "location_name": {
+        "zh": "纤维浅池旁",
+        "en": "Beside the fibre pool"
+      },
+      "carrier_name": {
+        "zh": "浅池旁刻字石",
+        "en": "Inscribed stone by the pool"
+      },
+      "description": {
+        "zh": "纤维间积着一小汪水，旁边的石头上刻着与井沿相同的字。",
+        "en": "Water gathers between the fibres. A nearby stone bears the same glyph as the well rim."
+      },
+      "html_line": 698,
+      "enabled": true,
+      "scope": "html_scene_fixture",
+      "observed_parts": [
+        "su"
+      ]
+    },
+    {
+      "id": "Relic_LanguageDemo_01_pu",
+      "carrier_id": "Relic_LanguageDemo_01",
+      "entry_id": "pu",
+      "location_name": {
+        "zh": "盾构机残骸",
+        "en": "Machine wreck"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "original_standard_example",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageDemo_01_ta",
+      "carrier_id": "Relic_LanguageDemo_01",
+      "entry_id": "ta",
+      "location_name": {
+        "zh": "盾构机残骸",
+        "en": "Machine wreck"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "original_standard_example",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageDemo_01_su",
+      "carrier_id": "Relic_LanguageDemo_01",
+      "entry_id": "su",
+      "location_name": {
+        "zh": "盾构机残骸",
+        "en": "Machine wreck"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "original_standard_example",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageDemo_01_go",
+      "carrier_id": "Relic_LanguageDemo_01",
+      "entry_id": "go",
+      "location_name": {
+        "zh": "盾构机残骸",
+        "en": "Machine wreck"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "original_standard_example",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageDemo_01_bu",
+      "carrier_id": "Relic_LanguageDemo_01",
+      "entry_id": "bu",
+      "location_name": {
+        "zh": "盾构机残骸",
+        "en": "Machine wreck"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "original_standard_example",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_02_pu",
+      "carrier_id": "Relic_LanguageTrial_02",
+      "entry_id": "pu",
+      "location_name": {
+        "zh": "试玩残骸 02",
+        "en": "Trial wreck 02"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_02_ta",
+      "carrier_id": "Relic_LanguageTrial_02",
+      "entry_id": "ta",
+      "location_name": {
+        "zh": "试玩残骸 02",
+        "en": "Trial wreck 02"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_02_su",
+      "carrier_id": "Relic_LanguageTrial_02",
+      "entry_id": "su",
+      "location_name": {
+        "zh": "试玩残骸 02",
+        "en": "Trial wreck 02"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_02_go",
+      "carrier_id": "Relic_LanguageTrial_02",
+      "entry_id": "go",
+      "location_name": {
+        "zh": "试玩残骸 02",
+        "en": "Trial wreck 02"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_02_bu",
+      "carrier_id": "Relic_LanguageTrial_02",
+      "entry_id": "bu",
+      "location_name": {
+        "zh": "试玩残骸 02",
+        "en": "Trial wreck 02"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_03_pu",
+      "carrier_id": "Relic_LanguageTrial_03",
+      "entry_id": "pu",
+      "location_name": {
+        "zh": "试玩残骸 03",
+        "en": "Trial wreck 03"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_03_ta",
+      "carrier_id": "Relic_LanguageTrial_03",
+      "entry_id": "ta",
+      "location_name": {
+        "zh": "试玩残骸 03",
+        "en": "Trial wreck 03"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_03_su",
+      "carrier_id": "Relic_LanguageTrial_03",
+      "entry_id": "su",
+      "location_name": {
+        "zh": "试玩残骸 03",
+        "en": "Trial wreck 03"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_03_go",
+      "carrier_id": "Relic_LanguageTrial_03",
+      "entry_id": "go",
+      "location_name": {
+        "zh": "试玩残骸 03",
+        "en": "Trial wreck 03"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_03_bu",
+      "carrier_id": "Relic_LanguageTrial_03",
+      "entry_id": "bu",
+      "location_name": {
+        "zh": "试玩残骸 03",
+        "en": "Trial wreck 03"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_04_pu",
+      "carrier_id": "Relic_LanguageTrial_04",
+      "entry_id": "pu",
+      "location_name": {
+        "zh": "试玩残骸 04",
+        "en": "Trial wreck 04"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_04_ta",
+      "carrier_id": "Relic_LanguageTrial_04",
+      "entry_id": "ta",
+      "location_name": {
+        "zh": "试玩残骸 04",
+        "en": "Trial wreck 04"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_04_su",
+      "carrier_id": "Relic_LanguageTrial_04",
+      "entry_id": "su",
+      "location_name": {
+        "zh": "试玩残骸 04",
+        "en": "Trial wreck 04"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_04_go",
+      "carrier_id": "Relic_LanguageTrial_04",
+      "entry_id": "go",
+      "location_name": {
+        "zh": "试玩残骸 04",
+        "en": "Trial wreck 04"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_04_bu",
+      "carrier_id": "Relic_LanguageTrial_04",
+      "entry_id": "bu",
+      "location_name": {
+        "zh": "试玩残骸 04",
+        "en": "Trial wreck 04"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_05_pu",
+      "carrier_id": "Relic_LanguageTrial_05",
+      "entry_id": "pu",
+      "location_name": {
+        "zh": "试玩残骸 05",
+        "en": "Trial wreck 05"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_05_ta",
+      "carrier_id": "Relic_LanguageTrial_05",
+      "entry_id": "ta",
+      "location_name": {
+        "zh": "试玩残骸 05",
+        "en": "Trial wreck 05"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_05_su",
+      "carrier_id": "Relic_LanguageTrial_05",
+      "entry_id": "su",
+      "location_name": {
+        "zh": "试玩残骸 05",
+        "en": "Trial wreck 05"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_05_go",
+      "carrier_id": "Relic_LanguageTrial_05",
+      "entry_id": "go",
+      "location_name": {
+        "zh": "试玩残骸 05",
+        "en": "Trial wreck 05"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_05_bu",
+      "carrier_id": "Relic_LanguageTrial_05",
+      "entry_id": "bu",
+      "location_name": {
+        "zh": "试玩残骸 05",
+        "en": "Trial wreck 05"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_06_pu",
+      "carrier_id": "Relic_LanguageTrial_06",
+      "entry_id": "pu",
+      "location_name": {
+        "zh": "试玩残骸 06",
+        "en": "Trial wreck 06"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_06_ta",
+      "carrier_id": "Relic_LanguageTrial_06",
+      "entry_id": "ta",
+      "location_name": {
+        "zh": "试玩残骸 06",
+        "en": "Trial wreck 06"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_06_su",
+      "carrier_id": "Relic_LanguageTrial_06",
+      "entry_id": "su",
+      "location_name": {
+        "zh": "试玩残骸 06",
+        "en": "Trial wreck 06"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_06_go",
+      "carrier_id": "Relic_LanguageTrial_06",
+      "entry_id": "go",
+      "location_name": {
+        "zh": "试玩残骸 06",
+        "en": "Trial wreck 06"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_06_bu",
+      "carrier_id": "Relic_LanguageTrial_06",
+      "entry_id": "bu",
+      "location_name": {
+        "zh": "试玩残骸 06",
+        "en": "Trial wreck 06"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_07_pu",
+      "carrier_id": "Relic_LanguageTrial_07",
+      "entry_id": "pu",
+      "location_name": {
+        "zh": "试玩残骸 07",
+        "en": "Trial wreck 07"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_07_ta",
+      "carrier_id": "Relic_LanguageTrial_07",
+      "entry_id": "ta",
+      "location_name": {
+        "zh": "试玩残骸 07",
+        "en": "Trial wreck 07"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_07_su",
+      "carrier_id": "Relic_LanguageTrial_07",
+      "entry_id": "su",
+      "location_name": {
+        "zh": "试玩残骸 07",
+        "en": "Trial wreck 07"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_07_go",
+      "carrier_id": "Relic_LanguageTrial_07",
+      "entry_id": "go",
+      "location_name": {
+        "zh": "试玩残骸 07",
+        "en": "Trial wreck 07"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_07_bu",
+      "carrier_id": "Relic_LanguageTrial_07",
+      "entry_id": "bu",
+      "location_name": {
+        "zh": "试玩残骸 07",
+        "en": "Trial wreck 07"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_08_pu",
+      "carrier_id": "Relic_LanguageTrial_08",
+      "entry_id": "pu",
+      "location_name": {
+        "zh": "试玩残骸 08",
+        "en": "Trial wreck 08"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_08_ta",
+      "carrier_id": "Relic_LanguageTrial_08",
+      "entry_id": "ta",
+      "location_name": {
+        "zh": "试玩残骸 08",
+        "en": "Trial wreck 08"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_08_su",
+      "carrier_id": "Relic_LanguageTrial_08",
+      "entry_id": "su",
+      "location_name": {
+        "zh": "试玩残骸 08",
+        "en": "Trial wreck 08"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_08_go",
+      "carrier_id": "Relic_LanguageTrial_08",
+      "entry_id": "go",
+      "location_name": {
+        "zh": "试玩残骸 08",
+        "en": "Trial wreck 08"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_08_bu",
+      "carrier_id": "Relic_LanguageTrial_08",
+      "entry_id": "bu",
+      "location_name": {
+        "zh": "试玩残骸 08",
+        "en": "Trial wreck 08"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_09_pu",
+      "carrier_id": "Relic_LanguageTrial_09",
+      "entry_id": "pu",
+      "location_name": {
+        "zh": "试玩残骸 09",
+        "en": "Trial wreck 09"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_09_ta",
+      "carrier_id": "Relic_LanguageTrial_09",
+      "entry_id": "ta",
+      "location_name": {
+        "zh": "试玩残骸 09",
+        "en": "Trial wreck 09"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_09_su",
+      "carrier_id": "Relic_LanguageTrial_09",
+      "entry_id": "su",
+      "location_name": {
+        "zh": "试玩残骸 09",
+        "en": "Trial wreck 09"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_09_go",
+      "carrier_id": "Relic_LanguageTrial_09",
+      "entry_id": "go",
+      "location_name": {
+        "zh": "试玩残骸 09",
+        "en": "Trial wreck 09"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_09_bu",
+      "carrier_id": "Relic_LanguageTrial_09",
+      "entry_id": "bu",
+      "location_name": {
+        "zh": "试玩残骸 09",
+        "en": "Trial wreck 09"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_10_pu",
+      "carrier_id": "Relic_LanguageTrial_10",
+      "entry_id": "pu",
+      "location_name": {
+        "zh": "试玩残骸 10",
+        "en": "Trial wreck 10"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_10_ta",
+      "carrier_id": "Relic_LanguageTrial_10",
+      "entry_id": "ta",
+      "location_name": {
+        "zh": "试玩残骸 10",
+        "en": "Trial wreck 10"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_10_su",
+      "carrier_id": "Relic_LanguageTrial_10",
+      "entry_id": "su",
+      "location_name": {
+        "zh": "试玩残骸 10",
+        "en": "Trial wreck 10"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_10_go",
+      "carrier_id": "Relic_LanguageTrial_10",
+      "entry_id": "go",
+      "location_name": {
+        "zh": "试玩残骸 10",
+        "en": "Trial wreck 10"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_10_bu",
+      "carrier_id": "Relic_LanguageTrial_10",
+      "entry_id": "bu",
+      "location_name": {
+        "zh": "试玩残骸 10",
+        "en": "Trial wreck 10"
+      },
+      "carrier_name": {
+        "zh": "残骸铭文",
+        "en": "Wreck inscription"
+      },
+      "description": {
+        "zh": "残骸背板上刻着一行有序团字，周围散着旧补给容器。",
+        "en": "An ordered line of glyphs is carved into the wreck backplate beside old supply containers."
+      },
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "observed_parts": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "LANG01_Clue_OfferingPlaque",
+      "carrier_id": "lang01_offering_plaque",
+      "entry_id": "busu",
+      "location_name": {
+        "zh": "投物洞口前",
+        "en": "Offering opening"
+      },
+      "carrier_name": {
+        "zh": "洞口铭文石",
+        "en": "Inscribed offering stone"
+      },
+      "description": {
+        "zh": "洞口边刻着两个团字，石面上有两道水滴痕迹。",
+        "en": "Two glyphs are carved beside the opening, with two drip marks on the stone."
+      },
+      "enabled": true,
+      "observed_parts": [
+        "bu",
+        "su"
+      ]
+    },
+    {
+      "id": "LANG01_Trade_Water2_Flour1_bu",
+      "carrier_id": "LANG01_Trade_Water2_Flour1",
+      "entry_id": "bu",
+      "location_name": {
+        "zh": "补给交换摊位",
+        "en": "Supply trade stall"
+      },
+      "carrier_name": {
+        "zh": "补给交换摊位",
+        "en": "Supply trade stall"
+      },
+      "description": {
+        "zh": "载体上实际显示的团字；由本次明确交互记录。",
+        "en": "An inscription visibly displayed on this carrier, recorded by this explicit interaction."
+      },
+      "enabled": true,
+      "scope": "LANG01_runtime_carrier",
+      "observed_parts": [
+        "bu"
+      ]
+    },
+    {
+      "id": "LANG01_Trade_Water2_Flour1_su",
+      "carrier_id": "LANG01_Trade_Water2_Flour1",
+      "entry_id": "su",
+      "location_name": {
+        "zh": "补给交换摊位",
+        "en": "Supply trade stall"
+      },
+      "carrier_name": {
+        "zh": "补给交换摊位",
+        "en": "Supply trade stall"
+      },
+      "description": {
+        "zh": "载体上实际显示的团字；由本次明确交互记录。",
+        "en": "An inscription visibly displayed on this carrier, recorded by this explicit interaction."
+      },
+      "enabled": true,
+      "scope": "LANG01_runtime_carrier",
+      "observed_parts": [
+        "su"
+      ]
+    },
+    {
+      "id": "LANG01_Trade_Water2_Flour1_pu",
+      "carrier_id": "LANG01_Trade_Water2_Flour1",
+      "entry_id": "pu",
+      "location_name": {
+        "zh": "补给交换摊位",
+        "en": "Supply trade stall"
+      },
+      "carrier_name": {
+        "zh": "补给交换摊位",
+        "en": "Supply trade stall"
+      },
+      "description": {
+        "zh": "载体上实际显示的团字；由本次明确交互记录。",
+        "en": "An inscription visibly displayed on this carrier, recorded by this explicit interaction."
+      },
+      "enabled": true,
+      "scope": "LANG01_runtime_carrier",
+      "observed_parts": [
+        "pu"
+      ]
+    },
+    {
+      "id": "LANG01_Trade_Water2_Flour1_ma",
+      "carrier_id": "LANG01_Trade_Water2_Flour1",
+      "entry_id": "ma",
+      "location_name": {
+        "zh": "补给交换摊位",
+        "en": "Supply trade stall"
+      },
+      "carrier_name": {
+        "zh": "补给交换摊位",
+        "en": "Supply trade stall"
+      },
+      "description": {
+        "zh": "载体上实际显示的团字；由本次明确交互记录。",
+        "en": "An inscription visibly displayed on this carrier, recorded by this explicit interaction."
+      },
+      "enabled": true,
+      "scope": "LANG01_runtime_carrier",
+      "observed_parts": [
+        "ma"
+      ]
+    },
+    {
+      "id": "LanguageOffering_Water2_busu",
+      "carrier_id": "LanguageOffering_Water2",
+      "entry_id": "busu",
+      "location_name": {
+        "zh": "铭文投物洞口",
+        "en": "Inscribed offering"
+      },
+      "carrier_name": {
+        "zh": "铭文投物洞口",
+        "en": "Inscribed offering"
+      },
+      "description": {
+        "zh": "载体上实际显示的团字；由本次明确交互记录。",
+        "en": "An inscription visibly displayed on this carrier, recorded by this explicit interaction."
+      },
+      "enabled": true,
+      "scope": "LANG01_runtime_carrier",
+      "observed_parts": [
+        "busu"
+      ]
+    }
+  ],
+  "relic_template": {
+    "reuse_requires_new_stable_relic_id": true,
+    "duplicate_relic_ids": "reject_definition",
+    "repeat_success": "show_record_without_grant",
+    "reward_receipt_scope": "player_profile_and_stable_relic_id",
+    "completion_and_reward": "single_authoritative_commit",
+    "journal_notes_affect_answer": false
+  },
+  "relics": [
+    {
+      "id": "Relic_LanguageDemo_01",
+      "enabled": true,
+      "scope": "original_standard_example",
+      "display_name": {
+        "zh": "盾构机残骸",
+        "en": "Machine wreck"
+      },
+      "answer_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ],
+      "candidate_pool_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu",
+        "ka",
+        "ma",
+        "ha",
+        "ba",
+        "do",
+        "li",
+        "shi",
+        "wa",
+        "sha",
+        "sa",
+        "nu",
+        "mi",
+        "na",
+        "pe",
+        "ru",
+        "tu",
+        "so",
+        "ki",
+        "he",
+        "la",
+        "wi",
+        "hu",
+        "ho",
+        "mu",
+        "du",
+        "ku",
+        "gu",
+        "ngu",
+        "shu",
+        "lu",
+        "wu"
+      ],
+      "candidate_count": 15,
+      "candidate_count_status": "html_ui_test_value_not_final_difficulty",
+      "required_answer_ids_always_in_pool": true,
+      "candidate_reuse_allowed": true,
+      "matching": "ordered_stable_ids_exact",
+      "discovery_prerequisite": false,
+      "discovery_prerequisite_status": "html_has_no_gate_not_an_added_formal_rule",
+      "story": {
+        "zh": "第一补给点取水后，前往第二补给点。这是盾构队穿越前留下的补给指示。",
+        "en": "Take water at the first supply point, then go to the second. These are supply instructions left by the tunnelling crew before crossing."
+      },
+      "skill_points": 1,
+      "reward_scope": "original_html_playtest_example_only",
+      "reward_policy": "once_per_stable_relic_id",
+      "html_lines": [
+        643,
+        645,
+        666
+      ],
+      "glyph_entries": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_02",
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "display_name": {
+        "zh": "试玩残骸 02",
+        "en": "Trial wreck 02"
+      },
+      "answer_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ],
+      "candidate_pool_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu",
+        "ka",
+        "ma",
+        "ha",
+        "ba",
+        "do",
+        "li",
+        "shi",
+        "wa",
+        "sha",
+        "sa",
+        "nu",
+        "mi",
+        "na",
+        "pe",
+        "ru",
+        "tu",
+        "so",
+        "ki",
+        "he",
+        "la",
+        "wi",
+        "hu",
+        "ho",
+        "mu",
+        "du",
+        "ku",
+        "gu",
+        "ngu",
+        "shu",
+        "lu",
+        "wu"
+      ],
+      "candidate_count": 15,
+      "candidate_count_status": "html_ui_test_value_not_final_difficulty",
+      "required_answer_ids_always_in_pool": true,
+      "candidate_reuse_allowed": true,
+      "matching": "ordered_stable_ids_exact",
+      "discovery_prerequisite": false,
+      "discovery_prerequisite_status": "html_has_no_gate_not_an_added_formal_rule",
+      "story": {
+        "zh": "试玩记录 02：第一补给点取水后，前往第二补给点。本记录用于体验天赋分支，不是正式剧情定稿。",
+        "en": "Trial record 02: take water at the first supply point, then go to the second. This fixture tests talent progression; it is not final story canon."
+      },
+      "skill_points": 1,
+      "reward_scope": "original_html_playtest_example_only",
+      "reward_policy": "once_per_stable_relic_id",
+      "html_lines": [
+        643,
+        645,
+        666
+      ],
+      "glyph_entries": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_03",
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "display_name": {
+        "zh": "试玩残骸 03",
+        "en": "Trial wreck 03"
+      },
+      "answer_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ],
+      "candidate_pool_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu",
+        "ka",
+        "ma",
+        "ha",
+        "ba",
+        "do",
+        "li",
+        "shi",
+        "wa",
+        "sha",
+        "sa",
+        "nu",
+        "mi",
+        "na",
+        "pe",
+        "ru",
+        "tu",
+        "so",
+        "ki",
+        "he",
+        "la",
+        "wi",
+        "hu",
+        "ho",
+        "mu",
+        "du",
+        "ku",
+        "gu",
+        "ngu",
+        "shu",
+        "lu",
+        "wu"
+      ],
+      "candidate_count": 15,
+      "candidate_count_status": "html_ui_test_value_not_final_difficulty",
+      "required_answer_ids_always_in_pool": true,
+      "candidate_reuse_allowed": true,
+      "matching": "ordered_stable_ids_exact",
+      "discovery_prerequisite": false,
+      "discovery_prerequisite_status": "html_has_no_gate_not_an_added_formal_rule",
+      "story": {
+        "zh": "试玩记录 03：第一补给点取水后，前往第二补给点。本记录用于体验天赋分支，不是正式剧情定稿。",
+        "en": "Trial record 03: take water at the first supply point, then go to the second. This fixture tests talent progression; it is not final story canon."
+      },
+      "skill_points": 1,
+      "reward_scope": "original_html_playtest_example_only",
+      "reward_policy": "once_per_stable_relic_id",
+      "html_lines": [
+        643,
+        645,
+        666
+      ],
+      "glyph_entries": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_04",
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "display_name": {
+        "zh": "试玩残骸 04",
+        "en": "Trial wreck 04"
+      },
+      "answer_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ],
+      "candidate_pool_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu",
+        "ka",
+        "ma",
+        "ha",
+        "ba",
+        "do",
+        "li",
+        "shi",
+        "wa",
+        "sha",
+        "sa",
+        "nu",
+        "mi",
+        "na",
+        "pe",
+        "ru",
+        "tu",
+        "so",
+        "ki",
+        "he",
+        "la",
+        "wi",
+        "hu",
+        "ho",
+        "mu",
+        "du",
+        "ku",
+        "gu",
+        "ngu",
+        "shu",
+        "lu",
+        "wu"
+      ],
+      "candidate_count": 15,
+      "candidate_count_status": "html_ui_test_value_not_final_difficulty",
+      "required_answer_ids_always_in_pool": true,
+      "candidate_reuse_allowed": true,
+      "matching": "ordered_stable_ids_exact",
+      "discovery_prerequisite": false,
+      "discovery_prerequisite_status": "html_has_no_gate_not_an_added_formal_rule",
+      "story": {
+        "zh": "试玩记录 04：第一补给点取水后，前往第二补给点。本记录用于体验天赋分支，不是正式剧情定稿。",
+        "en": "Trial record 04: take water at the first supply point, then go to the second. This fixture tests talent progression; it is not final story canon."
+      },
+      "skill_points": 1,
+      "reward_scope": "original_html_playtest_example_only",
+      "reward_policy": "once_per_stable_relic_id",
+      "html_lines": [
+        643,
+        645,
+        666
+      ],
+      "glyph_entries": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_05",
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "display_name": {
+        "zh": "试玩残骸 05",
+        "en": "Trial wreck 05"
+      },
+      "answer_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ],
+      "candidate_pool_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu",
+        "ka",
+        "ma",
+        "ha",
+        "ba",
+        "do",
+        "li",
+        "shi",
+        "wa",
+        "sha",
+        "sa",
+        "nu",
+        "mi",
+        "na",
+        "pe",
+        "ru",
+        "tu",
+        "so",
+        "ki",
+        "he",
+        "la",
+        "wi",
+        "hu",
+        "ho",
+        "mu",
+        "du",
+        "ku",
+        "gu",
+        "ngu",
+        "shu",
+        "lu",
+        "wu"
+      ],
+      "candidate_count": 15,
+      "candidate_count_status": "html_ui_test_value_not_final_difficulty",
+      "required_answer_ids_always_in_pool": true,
+      "candidate_reuse_allowed": true,
+      "matching": "ordered_stable_ids_exact",
+      "discovery_prerequisite": false,
+      "discovery_prerequisite_status": "html_has_no_gate_not_an_added_formal_rule",
+      "story": {
+        "zh": "试玩记录 05：第一补给点取水后，前往第二补给点。本记录用于体验天赋分支，不是正式剧情定稿。",
+        "en": "Trial record 05: take water at the first supply point, then go to the second. This fixture tests talent progression; it is not final story canon."
+      },
+      "skill_points": 1,
+      "reward_scope": "original_html_playtest_example_only",
+      "reward_policy": "once_per_stable_relic_id",
+      "html_lines": [
+        643,
+        645,
+        666
+      ],
+      "glyph_entries": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_06",
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "display_name": {
+        "zh": "试玩残骸 06",
+        "en": "Trial wreck 06"
+      },
+      "answer_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ],
+      "candidate_pool_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu",
+        "ka",
+        "ma",
+        "ha",
+        "ba",
+        "do",
+        "li",
+        "shi",
+        "wa",
+        "sha",
+        "sa",
+        "nu",
+        "mi",
+        "na",
+        "pe",
+        "ru",
+        "tu",
+        "so",
+        "ki",
+        "he",
+        "la",
+        "wi",
+        "hu",
+        "ho",
+        "mu",
+        "du",
+        "ku",
+        "gu",
+        "ngu",
+        "shu",
+        "lu",
+        "wu"
+      ],
+      "candidate_count": 15,
+      "candidate_count_status": "html_ui_test_value_not_final_difficulty",
+      "required_answer_ids_always_in_pool": true,
+      "candidate_reuse_allowed": true,
+      "matching": "ordered_stable_ids_exact",
+      "discovery_prerequisite": false,
+      "discovery_prerequisite_status": "html_has_no_gate_not_an_added_formal_rule",
+      "story": {
+        "zh": "试玩记录 06：第一补给点取水后，前往第二补给点。本记录用于体验天赋分支，不是正式剧情定稿。",
+        "en": "Trial record 06: take water at the first supply point, then go to the second. This fixture tests talent progression; it is not final story canon."
+      },
+      "skill_points": 1,
+      "reward_scope": "original_html_playtest_example_only",
+      "reward_policy": "once_per_stable_relic_id",
+      "html_lines": [
+        643,
+        645,
+        666
+      ],
+      "glyph_entries": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_07",
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "display_name": {
+        "zh": "试玩残骸 07",
+        "en": "Trial wreck 07"
+      },
+      "answer_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ],
+      "candidate_pool_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu",
+        "ka",
+        "ma",
+        "ha",
+        "ba",
+        "do",
+        "li",
+        "shi",
+        "wa",
+        "sha",
+        "sa",
+        "nu",
+        "mi",
+        "na",
+        "pe",
+        "ru",
+        "tu",
+        "so",
+        "ki",
+        "he",
+        "la",
+        "wi",
+        "hu",
+        "ho",
+        "mu",
+        "du",
+        "ku",
+        "gu",
+        "ngu",
+        "shu",
+        "lu",
+        "wu"
+      ],
+      "candidate_count": 15,
+      "candidate_count_status": "html_ui_test_value_not_final_difficulty",
+      "required_answer_ids_always_in_pool": true,
+      "candidate_reuse_allowed": true,
+      "matching": "ordered_stable_ids_exact",
+      "discovery_prerequisite": false,
+      "discovery_prerequisite_status": "html_has_no_gate_not_an_added_formal_rule",
+      "story": {
+        "zh": "试玩记录 07：第一补给点取水后，前往第二补给点。本记录用于体验天赋分支，不是正式剧情定稿。",
+        "en": "Trial record 07: take water at the first supply point, then go to the second. This fixture tests talent progression; it is not final story canon."
+      },
+      "skill_points": 1,
+      "reward_scope": "original_html_playtest_example_only",
+      "reward_policy": "once_per_stable_relic_id",
+      "html_lines": [
+        643,
+        645,
+        666
+      ],
+      "glyph_entries": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_08",
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "display_name": {
+        "zh": "试玩残骸 08",
+        "en": "Trial wreck 08"
+      },
+      "answer_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ],
+      "candidate_pool_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu",
+        "ka",
+        "ma",
+        "ha",
+        "ba",
+        "do",
+        "li",
+        "shi",
+        "wa",
+        "sha",
+        "sa",
+        "nu",
+        "mi",
+        "na",
+        "pe",
+        "ru",
+        "tu",
+        "so",
+        "ki",
+        "he",
+        "la",
+        "wi",
+        "hu",
+        "ho",
+        "mu",
+        "du",
+        "ku",
+        "gu",
+        "ngu",
+        "shu",
+        "lu",
+        "wu"
+      ],
+      "candidate_count": 15,
+      "candidate_count_status": "html_ui_test_value_not_final_difficulty",
+      "required_answer_ids_always_in_pool": true,
+      "candidate_reuse_allowed": true,
+      "matching": "ordered_stable_ids_exact",
+      "discovery_prerequisite": false,
+      "discovery_prerequisite_status": "html_has_no_gate_not_an_added_formal_rule",
+      "story": {
+        "zh": "试玩记录 08：第一补给点取水后，前往第二补给点。本记录用于体验天赋分支，不是正式剧情定稿。",
+        "en": "Trial record 08: take water at the first supply point, then go to the second. This fixture tests talent progression; it is not final story canon."
+      },
+      "skill_points": 1,
+      "reward_scope": "original_html_playtest_example_only",
+      "reward_policy": "once_per_stable_relic_id",
+      "html_lines": [
+        643,
+        645,
+        666
+      ],
+      "glyph_entries": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_09",
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "display_name": {
+        "zh": "试玩残骸 09",
+        "en": "Trial wreck 09"
+      },
+      "answer_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ],
+      "candidate_pool_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu",
+        "ka",
+        "ma",
+        "ha",
+        "ba",
+        "do",
+        "li",
+        "shi",
+        "wa",
+        "sha",
+        "sa",
+        "nu",
+        "mi",
+        "na",
+        "pe",
+        "ru",
+        "tu",
+        "so",
+        "ki",
+        "he",
+        "la",
+        "wi",
+        "hu",
+        "ho",
+        "mu",
+        "du",
+        "ku",
+        "gu",
+        "ngu",
+        "shu",
+        "lu",
+        "wu"
+      ],
+      "candidate_count": 15,
+      "candidate_count_status": "html_ui_test_value_not_final_difficulty",
+      "required_answer_ids_always_in_pool": true,
+      "candidate_reuse_allowed": true,
+      "matching": "ordered_stable_ids_exact",
+      "discovery_prerequisite": false,
+      "discovery_prerequisite_status": "html_has_no_gate_not_an_added_formal_rule",
+      "story": {
+        "zh": "试玩记录 09：第一补给点取水后，前往第二补给点。本记录用于体验天赋分支，不是正式剧情定稿。",
+        "en": "Trial record 09: take water at the first supply point, then go to the second. This fixture tests talent progression; it is not final story canon."
+      },
+      "skill_points": 1,
+      "reward_scope": "original_html_playtest_example_only",
+      "reward_policy": "once_per_stable_relic_id",
+      "html_lines": [
+        643,
+        645,
+        666
+      ],
+      "glyph_entries": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    },
+    {
+      "id": "Relic_LanguageTrial_10",
+      "enabled": true,
+      "scope": "explicit_adjustable_trial_fixture_not_confirmed_story",
+      "display_name": {
+        "zh": "试玩残骸 10",
+        "en": "Trial wreck 10"
+      },
+      "answer_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ],
+      "candidate_pool_ids": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu",
+        "ka",
+        "ma",
+        "ha",
+        "ba",
+        "do",
+        "li",
+        "shi",
+        "wa",
+        "sha",
+        "sa",
+        "nu",
+        "mi",
+        "na",
+        "pe",
+        "ru",
+        "tu",
+        "so",
+        "ki",
+        "he",
+        "la",
+        "wi",
+        "hu",
+        "ho",
+        "mu",
+        "du",
+        "ku",
+        "gu",
+        "ngu",
+        "shu",
+        "lu",
+        "wu"
+      ],
+      "candidate_count": 15,
+      "candidate_count_status": "html_ui_test_value_not_final_difficulty",
+      "required_answer_ids_always_in_pool": true,
+      "candidate_reuse_allowed": true,
+      "matching": "ordered_stable_ids_exact",
+      "discovery_prerequisite": false,
+      "discovery_prerequisite_status": "html_has_no_gate_not_an_added_formal_rule",
+      "story": {
+        "zh": "试玩记录 10：第一补给点取水后，前往第二补给点。本记录用于体验天赋分支，不是正式剧情定稿。",
+        "en": "Trial record 10: take water at the first supply point, then go to the second. This fixture tests talent progression; it is not final story canon."
+      },
+      "skill_points": 1,
+      "reward_scope": "original_html_playtest_example_only",
+      "reward_policy": "once_per_stable_relic_id",
+      "html_lines": [
+        643,
+        645,
+        666
+      ],
+      "glyph_entries": [
+        "pu",
+        "ta",
+        "su",
+        "go",
+        "bu"
+      ]
+    }
+  ],
+  "mechanism_examples": [
+    {
+      "id": "LanguageOffering_Water2",
+      "entry_id": "busu",
+      "parts": [
+        "bu",
+        "su"
+      ],
+      "scope": "pdf_example_enabled_by_LANG01_task",
+      "enabled": true,
+      "required_item_id": "Water",
+      "required_total": 2,
+      "matching": "fixed_definition_item_id_and_quantity",
+      "player_guesses_affect_condition": false,
+      "partial_correct_contributions_accumulate": true,
+      "wrong_item_refund": false,
+      "requires_explicit_player_item_submission": true,
+      "success_action": "open_linked_gate",
+      "reward_configured": false,
+      "progress_persistence": "required_by_example_but_not_implemented_by_this_data_export",
+      "source": "gameplay_pdf page 3",
+      "note": "No new reward, economy, item or save-world behavior is invented. This is not an eighth environmental clue fixture.",
+      "units_per_submission": 1,
+      "skill_points": 0,
+      "display_name": {
+        "zh": "铭文投物洞口",
+        "en": "Inscribed offering"
+      },
+      "reward_glyph_entries": []
+    }
+  ],
+  "provenance_conflicts": [
+    {
+      "id": "tasu",
+      "library_legacy_gloss": "储水囊",
+      "library_html_line": 210,
+      "current_usage": "water-taking notice scene example",
+      "current_html_line": 697,
+      "resolution": "Keep objective scene clue only. Neither standard gloss nor automatic guess is shown in the journal."
+    }
+  ],
+  "excluded_demo_behaviors": [
+    "auto_guess_water",
+    "fixed_hp_100",
+    "unlimited_water_plus_one",
+    "skills_assign_one",
+    "reset_entire_player_progress",
+    "canvas_pixel_movement_as_ue_units",
+    "public_mutable_debug_api",
+    "localstorage_as_ue_save_implementation",
+    "old_library_gameplay_examples_as_current_rules"
+  ],
+  "runtime_notes": [
+    "玩家猜测永不自动填写",
+    "新增9处残骸为明确标记的可调试玩示例",
+    "只有stableRelic首次完成给予天赋点；投物开门不额外给物/点",
+    "Explicit trade and offering inspections register their own real carrier clue IDs; they do not borrow the separate plaque source."
+  ]
+}

@@ -22,6 +22,7 @@ class ADWPlayerCharacter;
 class ADWEnemyCharacter;
 class UAnimSequence;
 class FDWCombatRules;
+struct FDWInventorySlotSnapshot;
 class FDWCombatInventoryTransaction;
 class UStaticMeshComponent;
 class UProceduralMeshComponent;
@@ -71,6 +72,10 @@ public:
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapons|Bow Projectile") FTransform BowProjectileVisualTransform=FTransform::Identity;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Weapons") bool bEnabled=true;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Weapons") TArray<TObjectPtr<UDWWeaponAnimationSet>> AnimationSets;
+    /** Optional cosmetic sequence. Incompatible or invalid assets leave the original no-animation fallback. */
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapons|Unarmed Presentation") TObjectPtr<UAnimSequenceBase> UnarmedAttackAnimation;
+    /** Authored clip fractions: windup end and active end. Gameplay phase timings remain independent. */
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapons|Unarmed Presentation") FVector2D UnarmedAttackSourcePhaseEnds=FVector2D(.2,1. / 3.);
     UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="Weapons") EDWAnimatedWeapon SelectedWeapon=EDWAnimatedWeapon::Unarmed;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Input") FKey ReloadKey=EKeys::R;
     /** Optional implementation mapping; conflicts with existing actions/shortcuts disable this shortcut. */
@@ -89,6 +94,9 @@ public:
     UFUNCTION(BlueprintPure,Category="Weapons") UDWWeaponAnimationSet* GetSelectedSet() const;
     UFUNCTION(BlueprintPure,Category="Weapons") bool CanSelectCombatEquipment(EDWAnimatedWeapon Weapon)const;
     UFUNCTION(BlueprintCallable,Category="Weapons") bool SelectWeapon(EDWAnimatedWeapon Weapon);
+    /** Native exact-inventory-menu equip; does not authorize paused combat actions. */
+    bool CanEquipInventoryItem(const FDWInventorySlotSnapshot& Slot)const;
+    bool EquipInventoryItem(const FDWInventorySlotSnapshot& Slot);
     UFUNCTION(BlueprintPure,Category="Weapons") FName GetCurrentEquipmentId()const{return CombatWeaponResources.Snapshot.CurrentEquipmentId;}
     uint64 GetCombatWeaponRestoreEpoch()const{return CombatWeaponResources.RestoreEpoch;}
     double GetRemainingAttackLockSeconds()const{return FMath::Max(0.,NextAttackTime-GetCombatActionWorldSeconds());}
@@ -240,6 +248,7 @@ private:
     bool bShotgunConfigured=false,bFormalShotgunActive=false,bFormalShotgunReload=false,bShotgunStartPublished=false;
     void InitializeShotgunRules();bool StartFormalShotgun(FVector,bool Reload);
     bool IsCurrentFormalShotgun()const;void EndFormalShotgun();void PublishFormalShotgunStart();void AdvanceFormalShotgun(double);
+    friend class UDWCharacterA01Component;
     friend class FDWCombatEquipmentTransaction;
     friend class FDWCombatRecoveryTransaction;
     friend class FDWCombatPlayerStateTransaction;

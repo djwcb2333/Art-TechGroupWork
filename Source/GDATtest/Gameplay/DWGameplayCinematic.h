@@ -8,17 +8,20 @@
 #include "DWGameplayCinematic.generated.h"
 class UCameraShakeBase;
 class UInputComponent;
+class ADWPlayerController;
 class UBoxComponent;
 class ACameraActor;
 class UDWWorldEventComponent;
+class UDWWorldEventSubsystem;
 class UDWUIOffscreenComponent;
 class UTextBlock;
 class UDWTextVoiceProfile;
 UENUM(BlueprintType)
-enum class EDWCinematicPhase:uint8 { Idle,TravelOut,SceneEvent,Hold,TravelBack,UIReturn };
+enum class EDWCinematicPhase:uint8 { Idle,TravelOut,SceneEvent,Hold,TravelBack,UIReturn,External };
 UENUM(BlueprintType)
 enum class EDWCinematicShakeStart:uint8 { AtTarget,AtStart,Manual };
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDWCinematicTargetReached);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDWCinematicExternalCancelRequested);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDWCinematicFinished,bool,bSuccessful);
 
 UCLASS(Blueprintable)
@@ -72,7 +75,19 @@ public:
  UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="Cinematic|Diagnostics") FString LastError;
  UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="Cinematic|Diagnostics") int32 PlaybackCount=0;
  UPROPERTY(BlueprintAssignable,Category="Cinematic") FDWCinematicFinished OnFinished;
+ UPROPERTY() FDWCinematicExternalCancelRequested OnExternalCancelRequested;
  UPROPERTY(BlueprintAssignable,Category="Cinematic") FDWCinematicTargetReached OnTargetReached;
+ /** Shared cinematic controls for an externally authored sequence. No automatic target/event/shot timer is started. */
+ bool BeginExternalControl(ADWPlayerController* Controller,APawn* ControlledPawn);
+ void EndExternalControl(bool bSuccessful=true);
+ void ReleaseExternalResources();
+ void FlushExternalCompletion();
+ void DeferExternalCompletionUntilDirectorTickExit(){bExternalDeferToDirector=true;}
+ void RequestExternalAspect(ACameraActor* Camera,float TargetAspect);
+ void AdvanceExternalAspect(ACameraActor* Camera,float DeltaSeconds);
+ void ApplyAuthoredCameraPose(ACameraActor* Camera,const FVector& Location,const FQuat& Rotation,float FieldOfView);
+ UDWCinematicSubtitleWidget* CreateAuthoredSubtitle(APlayerController* Controller,int32 ZOrder);
+ UDWDialogueSequenceComponent* CreateAuthoredDialogue();
  UFUNCTION(BlueprintCallable,Category="Cinematic") bool PlayCinematic(APlayerController* PlayerController);
  UFUNCTION(BlueprintCallable,Category="Cinematic") void CancelCinematic();
  UFUNCTION(BlueprintPure,Category="Cinematic") bool IsPlaying()const{return Phase!=EDWCinematicPhase::Idle;}
@@ -89,6 +104,11 @@ private:
  UPROPERTY(Transient) TObjectPtr<UDWCinematicSubtitleWidget> Subtitle;
  UPROPERTY(Transient) TObjectPtr<UDWDialogueSequenceComponent> Dialogue;
  UPROPERTY(Transient) TObjectPtr<UInputComponent> SubtitleInput;
+ TWeakObjectPtr<ADWPlayerController> ExternalController;
+ TWeakObjectPtr<UDWWorldEventSubsystem> ExternalEvents;
+ bool bExternalControlOwned=false,bExternalCursor=false,bExternalCancelInFlight=false;
+ bool bExternalCompletionPending=false,bExternalCompletionSuccessful=true,bExternalDeferToDirector=false,bExternalResourcesReleased=false;
+ float ExternalAspectFrom=1.777778f,ExternalAspectTo=1.777778f,ExternalAspectAge=0.f;
  bool bSkipPressHeld=false,bSubtitleDismissed=false;
  void SubtitlePressed();
  void SubtitleReleased();

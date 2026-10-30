@@ -5,6 +5,9 @@
 #include "DWGameplayTypes.h"
 #include "DWCombatPlayerSave.h"
 #include "DWCombatWorldSave.h"
+#include "DWAdventureFlowSave.h"
+#include "DWFormalLanguageSave.h"
+#include "DWWorldMapData.h"
 #include "DWSaveGame.generated.h"
 
 USTRUCT(BlueprintType)
@@ -22,10 +25,20 @@ class GDATTEST_API UDWSaveGame : public USaveGame
     GENERATED_BODY()
 
 public:
-    static constexpr int32 CurrentVersion = 4;
+    static constexpr int32 CurrentVersion = 5;
+    // Schema-zero old slots never opt into the new opening or starter policy.
+    UPROPERTY(SaveGame) FDWAdventureFlowSave AdventureFlow;
+    UPROPERTY(SaveGame) FDWFormalLanguageSave FormalLanguage;
+    /** Optional additive data. Missing field in old saves defaults to schema zero. */
+    UPROPERTY(SaveGame) FDWWorldMapMarkerSave WorldMapMarkers;
+
+    // Optional LANG-01 aggregate. Old adventure files keep schema zero and the original path.
+    UPROPERTY(SaveGame) int32 LanguageTrialSchema=0;
+    UPROPERTY(SaveGame) FString LanguageProgressJson;
+    UPROPERTY(SaveGame) FString A01StateJson;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, Category="Save")
-    int32 Version = CurrentVersion;
+    int32 Version = 4; // Preserve the original unbound/legacy construction format. NewGame explicitly chooses v5.
     // Additive resource subblock only. Missing schema is rejected without migrating/deleting files.
     UPROPERTY(SaveGame) FDWCombatPlayerResourceSave CombatPlayerResources;
     // Complete D22 aggregate; never independently load a participant.

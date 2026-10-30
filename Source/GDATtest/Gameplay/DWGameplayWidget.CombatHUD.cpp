@@ -1,9 +1,12 @@
 #include "DWGameplayWidget.h"
 #include "DWCombatHUDModel.h"
+#include "DWCommittedHitFeedbackComponent.h"
+#include "DWCommittedDamageVignettePaint.h"
 #include "DWC01UIStyle.h"
 #include "DWWeaponAnimationComponent.h"
 #include "DWInventoryComponent.h"
 #include "DWWorldEvent.h"
+#include "DWLanguageUIBridgeComponent.h"
 #include "DWGameInstance.h"
 #include "DWLoadingTransition.h"
 #include "DWPlayerCharacter.h"
@@ -18,6 +21,7 @@
 #include "Components/VerticalBoxSlot.h"
 #include "Components/CapsuleComponent.h"
 #include "Engine/World.h"
+#include "Engine/Texture2D.h"
 #include "Engine/Font.h"
 #include "EngineUtils.h"
 #include "Rendering/DrawElements.h"
@@ -45,16 +49,78 @@ void UDWGameplayWidget::InitializeCombatSettings()
     }
     CombatEnemyHealthCheck->OnCheckStateChanged.RemoveDynamic(this,&UDWGameplayWidget::ChangeCombatEnemyHealth);
     CombatEnemyHealthCheck->OnCheckStateChanged.AddUniqueDynamic(this,&UDWGameplayWidget::ChangeCombatEnemyHealth);
+    DamageShakeCheck=Cast<UCheckBox>(GetWidgetFromName(TEXT("DamageShakeCheck")));
+    DamageShakeLabel=Cast<UTextBlock>(GetWidgetFromName(TEXT("DamageShakeLabel")));
+    if(!DamageShakeCheck&&!GetWidgetFromName(TEXT("DamageShakeCheck"))&&!GetWidgetFromName(TEXT("DamageShakeLabel")))
+    {
+        if(auto* General=Cast<UVerticalBox>(GetWidgetFromName(TEXT("SettingsBookGeneralPage"))))
+        {
+            DamageShakeCheck=WidgetTree->ConstructWidget<UCheckBox>(UCheckBox::StaticClass(),TEXT("DamageShakeCheck"));
+            DamageShakeLabel=WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass(),TEXT("DamageShakeLabel"));
+            FSlateFontInfo Font=FCoreStyle::GetDefaultFontStyle("Regular",18);
+            if(HUD&&HUD->GameUIFont)Font.FontObject=HUD->GameUIFont;
+            DamageShakeLabel->SetFont(Font);DamageShakeCheck->SetContent(DamageShakeLabel);
+            General->AddChildToVerticalBox(DamageShakeCheck)->SetPadding(FMargin(4.f,18.f,4.f,8.f));
+        }
+    }
+    if(DamageShakeCheck)
+    {
+        DamageShakeCheck->OnCheckStateChanged.RemoveDynamic(this,&UDWGameplayWidget::ChangeDamageShake);
+        DamageShakeCheck->OnCheckStateChanged.AddUniqueDynamic(this,&UDWGameplayWidget::ChangeDamageShake);
+    }
     RefreshCombatSettings();
 }
 void UDWGameplayWidget::RefreshCombatSettings()
 {
     if(CombatEnemyHealthLabel)CombatEnemyHealthLabel->SetText(DWText(this,TEXT("显示敌人生命"),TEXT("Show enemy health")));
+    if(DamageShakeLabel)DamageShakeLabel->SetText(DWText(this,TEXT("受击震屏"),TEXT("Damage camera shake")));
+    if(DamageShakeCheck)
+    {
+        const auto* Settings=UDWUserSettings::Resolve(this);DamageShakeCheck->SetIsEnabled(Settings!=nullptr);
+        if(Settings&&DamageShakeCheck->IsChecked()!=Settings->GetDamageShakeEnabled())
+        {TGuardValue<bool> Guard(bRefreshingDamageShake,true);DamageShakeCheck->SetIsChecked(Settings->GetDamageShakeEnabled());}
+    }
     if(CombatEnemyHealthCheck)if(const auto* Settings=UDWUserSettings::Resolve(this))
         if(CombatEnemyHealthCheck->IsChecked()!=Settings->GetShowEnemyHealth())CombatEnemyHealthCheck->SetIsChecked(Settings->GetShowEnemyHealth());
 }
 void UDWGameplayWidget::ChangeCombatEnemyHealth(bool Checked)
 {if(auto* Settings=UDWUserSettings::Resolve(this))Settings->SetShowEnemyHealth(Checked,true);}
+void UDWGameplayWidget::ChangeDamageShake(bool Checked)
+{if(!bRefreshingDamageShake)if(auto* Settings=UDWUserSettings::Resolve(this))Settings->SetDamageShakeEnabled(Checked,true);}
+
+void UDWGameplayWidget::SuppressDamageVignette()
+{
+    const auto* Player=GetPlayer();
+    const auto* Feedback=IsValid(Player)?Player->CommittedHitFeedback.Get():nullptr;
+    const uint64 Serial=IsValid(Feedback)?Feedback->GetCombatHitSerial():0;
+    DamageEdgeGuard.Block(Serial,FPlatformTime::Seconds());DamageEdgeIntensity=0.f;
+}
+void UDWGameplayWidget::TickDamageVignette()
+{
+    auto* Player=GetPlayer();auto* PC=GetOwningPlayer();auto* World=GetWorld();
+    auto* Feedback=IsValid(Player)?Player->CommittedHitFeedback.Get():nullptr;
+    const uint64 Serial=IsValid(Feedback)?Feedback->GetCombatHitSerial():0;
+    const double Now=FPlatformTime::Seconds();
+    const auto* GI=GetDWGameInstance();
+    const auto* Loading=GI?GI->GetSubsystem<UDWLoadingTransitionSubsystem>():nullptr;
+    const auto* Modal=UDWLanguageUIBridgeComponent::Find(PC);
+    const bool Allowed=IsValid(Player)&&IsValid(Feedback)&&PC&&PC->IsLocalController()&&PC->GetPawn()==Player&&PC->GetViewTarget()==Player&&World&&!World->bIsTearingDown&&
+        !World->IsPaused()&&HUD&&HUD->IsSessionStarted()&&HUD->GetMenuPage()==EDWMenuPage::None&&!HUD->IsBlockingGameplay()&&
+        !Player->IsDead()&&!Player->IsCombatRestoreInProgress()&&(!GI||!GI->IsPlayerRestorePending())&&
+        (!Loading||!Loading->IsTransitionActive())&&!UDWWorldEventSubsystem::IsPlaying(this)&&
+        (!bUseC01HUD||GetC01CinematicOffset().IsNearlyZero(.5))&&(!Modal||!Modal->HasModalLease());
+    const float Strength=Allowed?Feedback->GetCombatHitIntensity():0.f;
+    if(DamageEdgeOwner.Get()!=Player||DamageEdgeFeedback.Get()!=Feedback)
+    {
+        DamageEdgeOwner=Player;DamageEdgeFeedback=Feedback;
+        // Only the first valid binding can adopt an already active, backend-validated hit.
+        // Later rebindings fail closed until a new committed hit arrives.
+        const bool ValidBinding=IsValid(Player)&&IsValid(Feedback);
+        DamageEdgeGuard.Bind(Serial,Now,ValidBinding&&!bDamageEdgeHasBound,Allowed,Strength);
+        if(ValidBinding)bDamageEdgeHasBound=true;
+    }
+    DamageEdgeIntensity=DamageEdgeGuard.Observe(Allowed,Serial,Strength,Now,DamageEdgeMaxContinuousSeconds,DamageEdgeMinimumClearSeconds);
+}
 
 void UDWGameplayWidget::RefreshCombatHUD()
 {
@@ -70,11 +136,71 @@ void UDWGameplayWidget::RefreshCombatHUD()
 }
 
 
+// Mouse observation only: no hit-test widget, pointer capture, button or input mode changes.
+void UDWGameplayWidget::TickC01StatusIcons(float DeltaSeconds)
+{
+    const TSoftObjectPtr<UTexture2D>* Sources[]={&C01StatusIconSpecial,&C01StatusIconHealth,&C01StatusIconWater,&C01StatusIconFood};
+    if(C01StatusIconImages.Num()!=4||C01StatusIconPaths.Num()!=4||C01StatusIconBrushes.Num()!=4)
+    { C01StatusIconImages.SetNum(4);C01StatusIconPaths.SetNum(4);C01StatusIconBrushes.SetNum(4);bC01StatusIconPathsInitialized=false; }
+    for(int32 I=0;I<4;++I)
+    {
+        const FSoftObjectPath Path=Sources[I]->ToSoftObjectPath();
+        if(!bC01StatusIconPathsInitialized||Path!=C01StatusIconPaths[I])
+        {
+            C01StatusIconImages[I]=Path.IsNull()?nullptr:Sources[I]->LoadSynchronous();
+            C01StatusIconPaths[I]=Path;
+            FSlateBrush& Brush=C01StatusIconBrushes[I];
+            Brush.SetResourceObject(C01StatusIconImages[I].Get());Brush.DrawAs=ESlateBrushDrawType::Image;
+            Brush.ImageSize=FVector2D(18,18);
+        }
+    }
+    bC01StatusIconPathsInitialized=true;
+    int32 Hovered=INDEX_NONE;
+    auto* PC=GetOwningPlayer();float MouseX=0.f,MouseY=0.f;
+    const auto* LanguageModal=UDWLanguageUIBridgeComponent::Find(PC);
+    if(bUseC01HUD&&HUD&&HUD->GetMenuPage()==EDWMenuPage::None&&(!LanguageModal||!LanguageModal->HasModalLease())&&!UDWWorldEventSubsystem::IsPlaying(this)&&
+        GetC01CinematicOffset().IsNearlyZero(.5)&&PC&&PC->GetMousePosition(MouseX,MouseY)&&FSlateApplication::IsInitialized())
+    {
+        // Cursor is desktop-space; tick geometry is also desktop-space in UE5.8.
+        const FGeometry& Geometry=GetTickSpaceGeometry();const FVector2D View=Geometry.GetLocalSize();
+        const float Diameter=FMath::IsFinite(C01HUDDiameter)?FMath::Clamp(C01HUDDiameter,160.f,400.f):248.f;
+        const FVector2D Margin=C01HUDMargin.ContainsNaN()?FVector2D(72,30):C01HUDMargin;
+        const FVector2D Position=FVector2D(Margin.X,FMath::Max(0.,View.Y-Margin.Y-Diameter))+GetC01CinematicOffset();
+        const FVector2D Pointer=Geometry.AbsoluteToLocal(FSlateApplication::Get().GetCursorPos());
+        const FVector2D Centers[]={FVector2D(19,90),FVector2D(161,90),FVector2D(56,90),FVector2D(124,90)};
+        const float Scale=Diameter/180.f;
+        const float IconSize=FMath::IsFinite(C01StatusIconSize)?FMath::Clamp(C01StatusIconSize,8.f,28.f):18.f;
+        const float Radius=FMath::Max(12.f,IconSize*.65f)*Scale;
+        if(View.X>0&&View.Y>0&&!Pointer.ContainsNaN())
+            for(int32 I=0;I<4;++I)if(C01StatusIconImages[I]&&FVector2D::DistSquared(Pointer,Position+Centers[I]*Scale)<=Radius*Radius)
+            {Hovered=I;break;}
+    }
+    C01StatusHoveredIndex=Hovered;
+    const float Seconds=FMath::IsFinite(C01StatusIconHoverSeconds)?FMath::Max(0.f,C01StatusIconHoverSeconds):.18f;
+    const float Dt=FMath::IsFinite(DeltaSeconds)?FMath::Clamp(DeltaSeconds,0.f,.1f):0.f;
+    // Same stable underdamped spring family as the existing UI Bounce component.
+    constexpr double Damping=.55;
+    for(int32 I=0;I<4;++I)
+    {
+        const double Target=Hovered==I?1.:0.;
+        if(Seconds<=SMALL_NUMBER){C01StatusHoverAlpha[I]=float(Target);C01StatusHoverVelocity[I]=0.f;continue;}
+        const double Omega=2.*PI/FMath::Max(.02,double(Seconds));
+        const double Wd=Omega*FMath::Sqrt(1.-Damping*Damping);
+        const double X=double(C01StatusHoverAlpha[I])-Target,Velocity=C01StatusHoverVelocity[I];
+        const double Decay=FMath::Exp(-Damping*Omega*Dt),Sin=FMath::Sin(Wd*Dt),Cos=FMath::Cos(Wd*Dt);
+        C01StatusHoverAlpha[I]=float(Target+Decay*(X*Cos+(Velocity+Damping*Omega*X)*Sin/Wd));
+        C01StatusHoverVelocity[I]=float(Decay*(Velocity*Cos-(Damping*Omega*Velocity+Omega*Omega*X)*Sin/Wd));
+    }
+}
+
 void UDWGameplayWidget::RefreshC01Presentation(float DeltaSeconds)
 {
     auto* Player=GetPlayer();
     if(!bUseC01HUD||!CombatHUD.bReady||!IsValid(Player))
-    {bC01VisualReady=false;C01VisualPlayer.Reset();return;}
+    {bC01VisualReady=false;C01VisualPlayer.Reset();C01StatusHoveredIndex=INDEX_NONE;
+        for(float& Alpha:C01StatusHoverAlpha)Alpha=0.f;
+        for(float& Velocity:C01StatusHoverVelocity)Velocity=0.f;return;}
+    TickC01StatusIcons(DeltaSeconds);
     const FVector4f Target(float(CombatHUD.Special.Fraction),float(CombatHUD.Health.Fraction),
         float(CombatHUD.Water.Fraction),float(CombatHUD.Satiety.Fraction));
     if(!bC01VisualReady||C01VisualPlayer.Get()!=Player)
@@ -133,6 +259,10 @@ int32 UDWGameplayWidget::NativePaint(const FPaintArgs& Args,const FGeometry& G,c
         Out=FVector2f(Point);return !Point.ContainsNaN();
     };
     const bool bC01Cinematic=bMenuOpen||UDWWorldEventSubsystem::IsPlaying(this)||(bUseC01HUD&&!GetC01CinematicOffset().IsNearlyZero(.5));
+    const auto* DamageModal=UDWLanguageUIBridgeComponent::Find(PC);
+    if(!bC01Cinematic&&PC->IsLocalController()&&PC->GetPawn()==P&&PC->GetViewTarget()==P&&!GetWorld()->IsPaused()&&!HUD->IsBlockingGameplay()&&!P->IsCombatRestoreInProgress()&&
+        (!DamageModal||!DamageModal->HasModalLease()))
+        DWCommittedDamageVignette::Paint(E,Base+1,G,DamageEdgeIntensity,DamageEdgeColor,DamageEdgeMaxOpacity,DamageEdgeFraction);
     if(!bC01Cinematic&&bShowShotgunOverhead&&DWCombatHUD::ShouldShowShotgunOverhead(P))
     {
         // Fresh facts: shell commit, cancel and switch cannot leave a cached progress ring.
@@ -301,6 +431,43 @@ int32 UDWGameplayWidget::NativePaint(const FPaintArgs& Args,const FGeometry& G,c
         }
         // The supplied alpha has a real central hole. Never place an opaque backing behind this.
         Image(TEXT("T_DW_C01_ResourceDial_WhiteRims"),Position,FVector2f(Diameter,Diameter),Base+7);
+        // Draw only supplied icon textures. Observe modal ownership without taking input.
+        const auto* StatusModal=UDWLanguageUIBridgeComponent::Find(PC);
+        if(!bC01Cinematic&&(!StatusModal||!StatusModal->HasModalLease()))
+        {
+            const FVector2f Centers[]={FVector2f(19,90),FVector2f(161,90),FVector2f(56,90),FVector2f(124,90)};
+            const FDWCombatHUDResource* Resources[]={&CombatHUD.Special,&CombatHUD.Health,&CombatHUD.Water,&CombatHUD.Satiety};
+            const float Size=(FMath::IsFinite(C01StatusIconSize)?FMath::Clamp(C01StatusIconSize,8.f,28.f):18.f)*Scale;
+            const float BaseOpacity=FMath::IsFinite(C01StatusIconOpacity)?FMath::Clamp(C01StatusIconOpacity,0.f,1.f):.48f;
+            const float Lift=(FMath::IsFinite(C01StatusIconHoverLift)?FMath::Clamp(C01StatusIconHoverLift,0.f,16.f):5.f)*Scale;
+            for(int32 I=0;I<4;++I)
+            {
+                UTexture2D* Icon=C01StatusIconImages.IsValidIndex(I)?C01StatusIconImages[I].Get():nullptr;
+                if(!Icon)continue;
+                const float Hover=FMath::Clamp(C01StatusHoverAlpha[I],0.f,1.25f);
+                const FVector2f Center=Position+Centers[I]*Scale;
+                const FVector2f DrawPos=Center-FVector2f(Size*.5f,Size*.5f+Lift*Hover);
+                const FSlateBrush& Brush=C01StatusIconBrushes[I];
+                FSlateDrawElement::MakeBox(E,Base+8,G.ToPaintGeometry(FVector2f(Size,Size),FSlateLayoutTransform(DrawPos)),
+                    &Brush,ESlateDrawEffect::None,FLinearColor(1,1,1,FMath::Lerp(BaseOpacity,1.f,FMath::Clamp(Hover,0.f,1.f))));
+                if(C01StatusHoveredIndex==I)
+                {
+                    const FText AmountText=Amount(*Resources[I]);
+                    const bool bInactiveSpecial=I==0&&CombatHUD.bUsesA01Resources&&CombatHUD.Form==EDWCombatBaseForm::Normal;
+                    const FText Label=bInactiveSpecial?DWText(this,TEXT("普通 · 特殊槽未激活"),TEXT("Normal · Special inactive")):
+                        I==0?FText::Format(FText::FromString(TEXT("{0}  {1}")),DWCombatHUD::FormLabel(this,CombatHUD.Form),AmountText):AmountText;
+                    auto NumberFont=Font;NumberFont.Size=14;
+                    NumberFont.OutlineSettings.OutlineSize=1;
+                    NumberFont.OutlineSettings.OutlineColor=FLinearColor(.12f,.10f,.08f,1.f);
+                    const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
+                    const float Width=FMath::Min(180.f*Scale,FMath::Max(1.f,ViewSize.X-8.f));
+                    const float ActualWidth=FMath::Min(Width,float(Measure->Measure(Label,NumberFont).X));
+                    const float LabelX=FMath::Clamp(Center.X-ActualWidth*.5f,4.f,FMath::Max(4.f,ViewSize.X-ActualWidth-4.f));
+                    const float LabelY=FMath::Clamp(Center.Y+Size*.5f+5.f,4.f,FMath::Max(4.f,ViewSize.Y-24.f));
+                    Text(E,Base+9,G,FVector2f(LabelX,LabelY),Width,Label,NumberFont,White);
+                }
+            }
+        }
         const FText Acquired=HUD->GetPickupToast();
         if(!Acquired.IsEmpty()&&!C01PickupPanel)
         {

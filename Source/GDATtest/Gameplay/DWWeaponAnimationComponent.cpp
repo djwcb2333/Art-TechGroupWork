@@ -1,4 +1,5 @@
 #include "DWWeaponAnimationComponent.h"
+#include "DWGatheringComponent.h"
 #include <limits>
 #include "DWCombatInputOrigin.h"
 #include "DWPlayerCharacter.h"
@@ -117,6 +118,7 @@ bool UDWWeaponAnimationComponent::LocksMovement() const
 {if(bFormalShotgunReload)return false;if(bFormalBowActive)return BowPlan.Phase!=EDWBowPhase::Gap;if(bFormalBottleActive)return BottlePlan.GetPhase()!=EDWBottlePhase::Gap;if(bFormalSporeActive)return SporePlan.GetPhase()!=EDWSporePhase::Gap;if(bFormalSwordActive)return !IsFormalSwordGap();return bActive&&(bFormalDaggerActive||bFormalSpearActive||bFormalUnarmedActive||bFormalAxeActive||IsFormalShieldGuarding()||bFormalShotgunActive||(ActiveSet&&ActiveSet->bLockMovementDuringAction));}
 bool UDWWeaponAnimationComponent::StartRole(FName Role,float StartSeconds)
 {
+    if(auto* Owner=Player();Owner&&Owner->IsBuildingPlacementBlockingAttack())return false;
     auto* P=Player();auto* Set=GetSelectedSet();
     const auto* Clip=Set?Set->FindClip(Role):nullptr;
     if(!IsEnabled()||!P||!P->IsCombatActionAllowed()||P->bIsRolling||P->IsFormalDashing()||!Clip||!Clip->Animation||!FMath::IsFinite(Clip->DurationSeconds)||Clip->DurationSeconds<=0.f)return false;
@@ -153,6 +155,8 @@ bool UDWWeaponAnimationComponent::PlayRole(FName Role,FVector Target)
 }
 bool UDWWeaponAnimationComponent::PrimaryPressed(FVector Target)
 {
+    if(auto* Owner=Player();Owner&&Owner->CharacterA01&&Owner->CharacterA01->IsEnabled()&&!Owner->CharacterA01->PrepareForAttack())return false;
+    if(auto* Owner=Player();Owner&&Owner->IsBuildingPlacementBlockingAttack())return false;
     auto* P=Player();auto* Set=GetSelectedSet();
     if(!IsEnabled()||!P||!P->IsCombatActionAllowed()||P->IsFormalDashing()||Target.ContainsNaN())return false;
 
@@ -213,6 +217,8 @@ void UDWWeaponAnimationComponent::PrimaryReleased()
 }
 bool UDWWeaponAnimationComponent::SecondaryPressed()
 {
+    if(auto* Owner=Player();Owner&&Owner->CharacterA01&&Owner->CharacterA01->IsEnabled()&&!Owner->CharacterA01->PrepareForAttack())return false;
+    if(auto* Owner=Player();Owner&&Owner->IsBuildingPlacementBlockingAttack())return false;
     if(SelectedWeapon==EDWAnimatedWeapon::ShieldAxe&&bShieldAxeConfigured)return BeginFormalShieldGuard();
     if(!IsEnabled()||bActive||GetCombatActionWorldSeconds()<NextAttackTime||SelectedWeapon!=EDWAnimatedWeapon::ShieldAxe)return false;
     if(auto* P=Player())TargetLocation=P->GetActorLocation()+P->GetActorForwardVector()*500.f;
@@ -227,6 +233,7 @@ void UDWWeaponAnimationComponent::SecondaryReleased()
 }
 bool UDWWeaponAnimationComponent::RequestReload()
 {
+    if(auto* Owner=Player();Owner&&Owner->IsBuildingPlacementBlockingAttack())return false;
     if(SelectedWeapon==EDWAnimatedWeapon::Shotgun&&bShotgunConfigured)
     {auto* P=Player();if(!P||!StartFormalShotgun(P->GetActorLocation()+P->GetActorForwardVector()*1000.,true))return false;PublishFormalShotgunStart();return true;}
     auto* Set=GetSelectedSet();auto* P=Player();
@@ -263,6 +270,8 @@ float UDWWeaponAnimationComponent::FilterIncomingDamage(float Amount,AActor* Cau
 }
 void UDWWeaponAnimationComponent::CancelAction()
 {
+    // Freeze the sampled authored pose before the plan loses its phase mapping.
+    if(bFormalUnarmedActive)ElapsedSeconds=GetPresentationSourceSeconds();
     EndFormalBow();
     CancelFormalSporeFacts();
     EndFormalBottle();
@@ -662,7 +671,7 @@ void UDWWeaponAnimationComponent::UpdateVisuals()
     TRACE_CPUPROFILER_EVENT_SCOPE(DWWeapon_UpdateVisuals);
     auto* P=Player();auto* Set=GetSelectedSet();
     if(!P)return;
-    if(!bEnabled||!Set||!IsEnabled()||SelectedWeapon==EDWAnimatedWeapon::Unarmed)
+    if(!bEnabled||!Set||!IsEnabled()||SelectedWeapon==EDWAnimatedWeapon::Unarmed||(P->GatheringComponent&&P->GatheringComponent->IsGatheringSwingActive()))
     {
         for(USceneComponent* C:{static_cast<USceneComponent*>(PrimaryVisual.Get()),static_cast<USceneComponent*>(SecondaryVisual.Get()),static_cast<USceneComponent*>(PrimaryDeformedVisual.Get()),static_cast<USceneComponent*>(SecondaryDeformedVisual.Get()),static_cast<USceneComponent*>(PrimaryTrailVisual.Get()),static_cast<USceneComponent*>(SecondaryTrailVisual.Get())})if(C)C->SetVisibility(false);
         if(SelectedWeapon==EDWAnimatedWeapon::Unarmed&&P->SwordPlaceholder)P->SwordPlaceholder->SetVisibility(false);

@@ -1,4 +1,7 @@
 #include "DWUIEntryWidgets.h"
+#include "DWLanguageItemTooltipFactory.h"
+#include "DWLanguageSubsystem.h"
+#include "DWCharacterA01Component.h"
 #include "DWGameplayWidget.h"
 #include "DWC01UIStyle.h"
 #include "Components/SizeBox.h"
@@ -17,6 +20,7 @@
 #include "DWInventoryComponent.h"
 #include "DWInventoryInteraction.h"
 #include "DWPlayerCharacter.h"
+#include "DWPlayerController.h"
 #include "DWLocalizationLibrary.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
@@ -104,7 +108,7 @@ void UDWInventorySlotWidget::ApplyItemData(UDWGameplayWidget* OwnerScreen,int32 
     if(bC01)
     {
         if(auto* Dimensions=Cast<USizeBox>(GetWidgetFromName(TEXT("SlotDimensions")))){Dimensions->SetWidthOverride(88);Dimensions->SetHeightOverride(88);}
-        if(auto* IconBox=Cast<USizeBox>(GetWidgetFromName(TEXT("ItemIconSize")))){IconBox->SetWidthOverride(36);IconBox->SetHeightOverride(36);IconBox->SetVisibility(bHasIcon?ESlateVisibility::HitTestInvisible:ESlateVisibility::Collapsed);}
+        if(auto* IconBox=Cast<USizeBox>(GetWidgetFromName(TEXT("ItemIconSize")))){IconBox->SetWidthOverride(64);IconBox->SetHeightOverride(64);IconBox->SetVisibility(bHasIcon?ESlateVisibility::HitTestInvisible:ESlateVisibility::Collapsed);}
         if(SlotButton)
         {
             // Keep the authored widgets and their events. Only the runtime arrangement changes:
@@ -133,7 +137,7 @@ void UDWInventorySlotWidget::ApplyItemData(UDWGameplayWidget* OwnerScreen,int32 
                 SlotButton->SetContent(Overlay);
             }
             if(auto* NameRegion=GetWidgetFromName(TEXT("C03SlotNameRegion")))NameRegion->SetVisibility(bOccupied&&!bHasIcon?ESlateVisibility::HitTestInvisible:ESlateVisibility::Collapsed);
-            const bool bQuickSlot=SlotIndex>=0&&SlotIndex<3;
+            const bool bQuickSlot=SlotIndex>=0&&SlotIndex<Screen->GetUnlockedQuickInventorySlotCount();
             auto* QuickNumber=Cast<UTextBlock>(GetWidgetFromName(TEXT("C04QuickSlotNumber")));
             if(bQuickSlot&&!QuickNumber&&WidgetTree)
             {
@@ -148,7 +152,9 @@ void UDWInventorySlotWidget::ApplyItemData(UDWGameplayWidget* OwnerScreen,int32 
             }
             if(QuickNumber)
             {
-                QuickNumber->SetText(FText::AsNumber(SlotIndex+1));
+                const auto* InputOwner=Cast<ADWPlayerController>(GetOwningPlayer());
+                const auto QuickAction=SlotIndex==3?EDWInputAction::Shortcut4:static_cast<EDWInputAction>(int32(EDWInputAction::SelectWeapon1)+SlotIndex);
+                QuickNumber->SetText(InputOwner?InputOwner->GetActionKeyLabel(QuickAction):FText::AsNumber(SlotIndex+1));
                 QuickNumber->SetVisibility(bQuickSlot?ESlateVisibility::HitTestInvisible:ESlateVisibility::Collapsed);
                 QuickNumber->SetColorAndOpacity(FLinearColor(1.f,1.f,1.f,.55f));
                 FSlateFontInfo NumberFont=QuantityText?QuantityText->GetFont():QuickNumber->GetFont();
@@ -168,21 +174,20 @@ void UDWInventorySlotWidget::ApplyItemData(UDWGameplayWidget* OwnerScreen,int32 
         }
     }
     else if(SlotButton)SlotButton->SetBackgroundColor(bSelected?FLinearColor(.9f,.63f,.25f):FLinearColor(.34f,.27f,.21f));
-    OnItemPresentationUpdated(bSelected);
+    OnItemPresentationUpdated(bSelected);DWLanguageItemTooltip::AttachItem(SlotButton,this->Screen,Item);
 }
 int32 UDWInventorySlotWidget::NativePaint(const FPaintArgs& Args,const FGeometry& G,const FSlateRect& Cull,
     FSlateWindowElementList& Elements,int32 Layer,const FWidgetStyle& Style,bool bParentEnabled)const
 {
     const int32 Base=Super::NativePaint(Args,G,Cull,Elements,Layer,Style,bParentEnabled);
-    if(!Screen||!Screen->HasHandbook()||SlotIndex<0||SlotIndex>=3||!SlotButton||Screen->C01QuickSlotOutlineThickness<=0.f)return Base;
-    const FGeometry Cell=SlotButton->GetTickSpaceGeometry();
-    const FVector2D Origin=G.AbsoluteToLocal(Cell.LocalToAbsolute(FVector2D::ZeroVector));
-    const FVector2D End=G.AbsoluteToLocal(Cell.LocalToAbsolute(Cell.GetLocalSize()));
-    const FVector2D Size=End-Origin;if(Size.X<=0.f||Size.Y<=0.f)return Base;
+    if(!Screen||!Screen->HasHandbook()||SlotIndex<0||SlotIndex>=Screen->GetUnlockedQuickInventorySlotCount()||!SlotButton||Screen->C01QuickSlotOutlineThickness<=0.f)return Base;
+    // Use the geometry actually painted after the handbook frame transform.
+    const FGeometry Cell=SlotButton->GetPaintSpaceGeometry();
+    const FVector2D Size=Cell.GetLocalSize();if(Size.X<=0.f||Size.Y<=0.f)return Base;
     FSlateBrush Outline=DWC01UI::QuickSlotOutline(Size,Screen->C01QuickSlotOutlineThickness);
     Outline.OutlineSettings.Color=FLinearColor(1,1,1,Style.GetColorAndOpacityTint().A);
     // Separate overlay paint keeps the approved white rim white throughout the selection tween.
-    FSlateDrawElement::MakeBox(Elements,Base+1,G.ToPaintGeometry(FVector2f(Size),FSlateLayoutTransform(FVector2f(Origin))),
+    FSlateDrawElement::MakeBox(Elements,Base+1,Cell.ToPaintGeometry(),
         &Outline,ESlateDrawEffect::None,FLinearColor::Transparent);
     return Base+1;
 }
@@ -232,7 +237,7 @@ void UDWRecipeEntryWidget::ApplyRecipeData(UDWGameplayWidget* OwnerScreen,const 
     if(RequirementText)RequirementText->SetText(bNeedsForm?DWText(this,TEXT("仅酵母形态可制作"),TEXT("Requires Yeast form")):DWText(this,TEXT("任意形态可制作"),TEXT("Any form can craft")));
     if(CraftButton)CraftButton->SetIsEnabled(bCan);
     if(CraftButtonText)CraftButtonText->SetText(bCan?DWText(this,TEXT("制作一份"),TEXT("Craft one")):(bNeedsForm?DWText(this,TEXT("检查材料、形态与背包空间"),TEXT("Check materials, form and bag space")):DWText(this,TEXT("检查材料与背包空间"),TEXT("Check materials and bag space"))));
-    OnRecipePresentationUpdated(bCan);
+    OnRecipePresentationUpdated(bCan);DWLanguageItemTooltip::AttachRecipe(CraftButton,Screen,RecipeId);
 }
 void UDWRecipeEntryWidget::ClickCraft(){if(Screen){Screen->PlayClick();Screen->CraftRecipe(RecipeId);}}
 

@@ -5,6 +5,9 @@
 #include "DWGameplayHUD.generated.h"
 
 class UDWGameplayWidget;
+class UDWWorldTargetIndicator;
+class UDWWorldMapScreen;
+class UDWWorldMapEntry;
 class UTexture2D;
 class UFont;
 class UAudioComponent;
@@ -13,7 +16,7 @@ class USoundBase;
 UENUM(BlueprintType)
 enum class EDWMenuPage : uint8
 {
-    None, Title, SaveSlots, Inventory, Crafting, Pause, Settings, Defeat, Character, Building, LanguageJournal
+    None, Title, SaveSlots, Inventory, Crafting, Pause, Settings, Defeat, Character, Building, LanguageJournal, WorldMap
 };
 
 /** Owns game UI state; layout is supplied by a real, editable Widget Blueprint. */
@@ -55,6 +58,8 @@ public:
     UFUNCTION(BlueprintCallable, Category="Dough World|UI") void ToggleInventory();
     UFUNCTION(BlueprintCallable, Category="Dough World|UI") void ToggleCrafting();
     UFUNCTION(BlueprintCallable, Category="Dough World|UI") void TogglePause();
+    UFUNCTION(BlueprintCallable, Category="Dough World|UI") void ToggleWorldMap();
+    void FinishWorldMapClose(UDWWorldMapScreen* Screen);
     UFUNCTION(BlueprintCallable, Category="Dough World|UI") void ShowTitle();
     UFUNCTION(BlueprintCallable, Category="Dough World|UI") void ShowDefeat();
     UFUNCTION(BlueprintCallable, Category="Dough World|UI") void ShowMenu(EDWMenuPage Page);
@@ -88,6 +93,13 @@ public:
     UFUNCTION(BlueprintPure, Category="Dough World|UI|Audio|Diagnostics") UAudioComponent* GetMusicPlaybackComponent() const { return MusicComponent; }
     UFUNCTION(BlueprintPure, Category="Dough World|UI|Audio|Diagnostics") USoundBase* GetCurrentMusicSound() const { return CurrentMusic; }
 
+    /** Same MusicComponent and Music sound category. A null sound intentionally silences background music during the lease. */
+    FGuid AcquireOpeningMusic(AActor* InOwner,USoundBase* Sound,float VolumeMultiplier=1.f,float PitchMultiplier=1.f);
+    /** A stale token cannot release a later director. Opening worlds remain silent until leaving the map; other worlds restore their normal music. */
+    bool ReleaseOpeningMusic(const FGuid& Lease);
+    /** Retain the opening lease while fading its music to silence; stale tokens are rejected. */
+    bool FadeOpeningMusicToSilence(const FGuid& Lease);
+
 protected:
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
@@ -101,6 +113,9 @@ protected:
 
 private:
     UPROPERTY(Transient) TObjectPtr<UDWGameplayWidget> GameplayWidget;
+    UPROPERTY(Transient) TObjectPtr<UDWWorldTargetIndicator> WorldTargetIndicator;
+    UPROPERTY(Transient) TObjectPtr<UDWWorldMapScreen> WorldMapScreen;
+    UPROPERTY(Transient) TObjectPtr<UDWWorldMapEntry> WorldMapEntry;
     EDWMenuPage MenuPage = EDWMenuPage::None;
     EDWMenuPage SettingsReturnPage = EDWMenuPage::Title;
     bool bSessionStarted = false;
@@ -109,6 +124,25 @@ private:
     FText PickupToast;double PickupToastStarted=0.,PickupToastUntil=0.;
     UPROPERTY(Transient) TObjectPtr<UAudioComponent> MusicComponent;
     UPROPERTY(Transient) TObjectPtr<USoundBase> CurrentMusic;
+    TWeakObjectPtr<AActor> OpeningMusicOwner;
+    FGuid OpeningMusicLease;
+    UPROPERTY(Transient) TObjectPtr<USoundBase> OpeningMusicSound;
+    float OpeningMusicVolumeMultiplier=1.f,OpeningMusicPitchMultiplier=1.f;
+    bool bMusicEnding=false;
+    UPROPERTY(Transient) TObjectPtr<UAudioComponent> CombatMusicComponent;
+    bool bCombatMusicFading=false,bCombatRestartPending=false,bCombatFinishedDuringFade=false,bCombatStartBlocked=false,bCombatFailurePending=false,bBackgroundPausedForCombat=false,bBackgroundNotStarted=false;
+    bool bOpeningMusicFading=false,bOpeningMusicFinishedPending=false;
+    float CombatMusicGain=1.f,CombatFadeFrom=1.f,CombatFadeTo=1.f,OpeningMusicGain=1.f;
+    double CombatFadeStart=0.,CombatFadeDuration=0.,CombatLastPlayStart=0.,OpeningFadeStart=0.,OpeningFadeDuration=0.;
+    void TickCombatMusic();
+    void TickOpeningMusicFade();
+    void StopCombatMusic(bool bResumeBackground);
+    void BeginCombatFade(float Target,float Seconds);
+    float GetMusicFadeSeconds() const;
+    UFUNCTION() void HandleCombatMusicFinished();
+    bool IsOpeningMusicWorld()const;
+    bool HasOpeningMusicOwner()const;
+    void ResetOpeningMusicLease();
     void PlayPanelTransitionSound(EDWMenuPage Page, bool bOpening);
     UFUNCTION() void HandleMusicFinished();
 };

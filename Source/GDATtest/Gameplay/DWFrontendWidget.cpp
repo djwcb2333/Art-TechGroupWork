@@ -81,6 +81,32 @@ namespace
     }
 }
 
+void UDWFrontendWidget::RefreshTitleTextShadow()
+{
+    const float Opacity=bTitleTextShadow&&FMath::IsFinite(TitleTextShadowOpacity)?FMath::Clamp(TitleTextShadowOpacity,0.f,1.f):0.f;
+    FLinearColor Color=TitleTextShadowColor;
+    if(!FMath::IsFinite(Color.R)||!FMath::IsFinite(Color.G)||!FMath::IsFinite(Color.B)||!FMath::IsFinite(Color.A))Color=FLinearColor(.06f,.035f,.015f,1.f);
+    Color.A=FMath::Clamp(Color.A,0.f,1.f)*Opacity;
+    const FVector2D Offset=Opacity>0.f&&FMath::IsFinite(TitleTextShadowOffset.X)&&FMath::IsFinite(TitleTextShadowOffset.Y)
+        ?FVector2D(FMath::Clamp(TitleTextShadowOffset.X,-16.,16.),FMath::Clamp(TitleTextShadowOffset.Y,-16.,16.)):FVector2D::ZeroVector;
+    auto Apply=[&](UTextBlock* Text)
+    {
+        if(!Text)return;
+        if(!Text->GetShadowColorAndOpacity().Equals(Color))Text->SetShadowColorAndOpacity(Color);
+        if(!Text->GetShadowOffset().Equals(Offset))Text->SetShadowOffset(Offset);
+    };
+    // Bound traversal excludes Settings, SaveSlots, dialogs and in-game HUD pages.
+    TFunction<void(UWidget*,int32)> Visit=[&](UWidget* Widget,int32 Depth)
+    {
+        if(!Widget||Depth>64)return;
+        Apply(Cast<UTextBlock>(Widget));
+        if(auto* Panel=Cast<UPanelWidget>(Widget))for(int32 I=0;I<Panel->GetChildrenCount();++I)Visit(Panel->GetChildAt(I),Depth+1);
+    };
+    Visit(TitlePage,0);
+    Apply(TitleText);Apply(SubtitleText); // Optional bindings also support an authored outer title.
+    // Intro LogoLayer/SkipIntroButton belong to a separate intro, not the title page.
+}
+
 void UDWFrontendWidget::NativeConstruct()
 {
     Super::NativeConstruct();
@@ -90,11 +116,12 @@ void UDWFrontendWidget::NativeConstruct()
         // Keep the authored font/size and layout; white C01 title has no old brown outline.
         FSlateFontInfo Font=TitleText->GetFont();
         if(Font.OutlineSettings.OutlineSize!=0){Font.OutlineSettings.OutlineSize=0;TitleText->SetFont(Font);}
-        TitleText->SetShadowColorAndOpacity(FLinearColor::Transparent);TitleText->SetShadowOffset(FVector2D::ZeroVector);
+
     }
     for(UButton* Button:{StartButton.Get(),TitleSettingsButton.Get(),QuitButton.Get()})
         if(Button)StyleC01Button(Button,DWC01UI::Paper());
     AlignC01TitleButtons(StartButton,TitleSettingsButton,QuitButton);
+    RefreshTitleTextShadow();
     SetIsFocusable(true);
     bHasObservedPage = false;
     if (SkipIntroButton)
@@ -486,8 +513,9 @@ void UDWFrontendWidget::NativeTick(const FGeometry& Geometry, float DeltaSeconds
         // Keep the authored font/size and layout; white C01 title has no old brown outline.
         FSlateFontInfo Font=TitleText->GetFont();
         if(Font.OutlineSettings.OutlineSize!=0){Font.OutlineSettings.OutlineSize=0;TitleText->SetFont(Font);}
-        TitleText->SetShadowColorAndOpacity(FLinearColor::Transparent);TitleText->SetShadowOffset(FVector2D::ZeroVector);
+
     }
+    RefreshTitleTextShadow(); // After shared style/localization refresh; setters only run on changes.
     ReleaseFinishedPresentationSounds();
     const double Now = FPlatformTime::Seconds(); // Independent of the paused world's game time.
     const EDWMenuPage Page = HUD ? HUD->GetMenuPage() : EDWMenuPage::None;

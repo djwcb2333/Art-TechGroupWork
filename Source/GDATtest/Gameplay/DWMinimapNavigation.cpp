@@ -4,6 +4,7 @@
 #include "DWEnemyCharacter.h"
 #include "DWEnemyNest.h"
 #include "DWResourceNode.h"
+#include "DWGatheringWorld.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
@@ -39,6 +40,7 @@ bool UDWMinimapMarkerComponent::IsMarkerValid() const
         if (const ADWEnemyCharacter* Enemy = Cast<ADWEnemyCharacter>(Owner)) return Enemy->IsAlive();
         if (const ADWEnemyNest* Nest = Cast<ADWEnemyNest>(Owner)) return Nest->IsAlive();
         if (const ADWResourceNode* Resource = Cast<ADWResourceNode>(Owner)) return Resource->IsAvailable();
+        if (const ADWGatheringResource* MinimapGatheringResource = Cast<ADWGatheringResource>(Owner)) return MinimapGatheringResource->IsInteractionAvailable();
     }
     return true;
 }
@@ -74,6 +76,7 @@ bool UDWMinimapNavigationSubsystem::SetWaypoint(FVector WorldPosition, FText Lab
     StaticTarget.NavigationPosition = WorldPosition;
     StaticTarget.Label = GetMinimapLabel(Label);
     StaticTarget.Color = DWMinimapMath::CategoryColor(EDWMinimapMarkerKind::Landmark);
+    ++NavigationRevision;
     OnNavigationTargetChanged.Broadcast();
     return true;
 }
@@ -84,6 +87,7 @@ bool UDWMinimapNavigationSubsystem::SetActorTarget(UDWMinimapMarkerComponent* Ma
     ClearTargetWithoutNotification();
     ActorTarget = Marker;
     bHasActorTarget = true;
+    ++NavigationRevision;
     OnNavigationTargetChanged.Broadcast();
     return true;
 }
@@ -99,7 +103,7 @@ void UDWMinimapNavigationSubsystem::ClearWaypoint()
 {
     const bool bHadTarget = bHasActorTarget || StaticTarget.bValid;
     ClearTargetWithoutNotification();
-    if (bHadTarget) OnNavigationTargetChanged.Broadcast();
+    if (bHadTarget) { ++NavigationRevision; OnNavigationTargetChanged.Broadcast(); }
 }
 
 bool UDWMinimapNavigationSubsystem::ValidateActorTarget()

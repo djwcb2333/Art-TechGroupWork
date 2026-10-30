@@ -8,8 +8,13 @@
 #include "DWInventoryInteraction.h"
 #include "DWCombatHUDModel.h"
 #include "DWC01UIStyle.h"
+#include "DWCommittedDamageVignetteGuard.h"
 #include "DWGameplayWidget.generated.h"
+class UNativeWidgetHost; class SWidget; class UDWCommittedHitFeedbackComponent;
+class UDWBuildingPlacementHints;
+class UDWCharacterPreview; class UAnimSequenceBase;
 class UDWGameplayConfig; class UDWGameInstance; class ADWPlayerCharacter; class UDWInventoryComponent;
+class UTexture2D;
 class UButton; class UTextBlock; class UProgressBar; class UBorder; class UWidgetSwitcher; class UUniformGridPanel;
 class UVerticalBox; class UCanvasPanel; class USlider; class UComboBoxString; class UCheckBox; class UImage;
 class UDWSettingsPanel;
@@ -35,6 +40,7 @@ class GDATTEST_API UDWGameplayWidget : public UUserWidget
     GENERATED_BODY()
 public:
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01") bool bUseC01HUD=true;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Character Preview") TSoftObjectPtr<UAnimSequenceBase> CharacterPreviewIdle;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01",meta=(ClampMin="160",ClampMax="400")) float C01HUDDiameter=248.f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01") FVector2D C01HUDMargin=FVector2D(72,30);
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Motion",meta=(ClampMin="0",Units="s")) float C01FocusSeconds=.18f;
@@ -48,6 +54,16 @@ public:
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Quick Slots",meta=(ClampMin="0",ClampMax="12")) float C01QuickSlotOutlineThickness=3.f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Quick Slots",meta=(ClampMin="64",ClampMax="128")) float C01QuickSlotSize=92.f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Quick Slots",meta=(ClampMin="0",ClampMax="32")) float C01QuickSlotGap=16.f;
+    /** Optional authored status icon textures; empty fields draw no placeholder artwork. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Resource Icons") TSoftObjectPtr<UTexture2D> C01StatusIconSpecial=TSoftObjectPtr<UTexture2D>(FSoftObjectPath(TEXT("/Game/DoughWorld/UI/Image/T_DW_Status_Lightning.T_DW_Status_Lightning")));
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Resource Icons") TSoftObjectPtr<UTexture2D> C01StatusIconHealth=TSoftObjectPtr<UTexture2D>(FSoftObjectPath(TEXT("/Game/DoughWorld/UI/Image/T_DW_Status_Heart.T_DW_Status_Heart")));
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Resource Icons") TSoftObjectPtr<UTexture2D> C01StatusIconWater=TSoftObjectPtr<UTexture2D>(FSoftObjectPath(TEXT("/Game/DoughWorld/UI/Image/T_DW_Status_Water.T_DW_Status_Water")));
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Resource Icons") TSoftObjectPtr<UTexture2D> C01StatusIconFood=TSoftObjectPtr<UTexture2D>(FSoftObjectPath(TEXT("/Game/DoughWorld/UI/Image/T_DW_Status_Stomach.T_DW_Status_Stomach")));
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Resource Icons",meta=(ClampMin="8",ClampMax="28")) float C01StatusIconSize=18.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Resource Icons",meta=(ClampMin="0",ClampMax="1")) float C01StatusIconOpacity=.48f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Resource Icons",meta=(ClampMin="0",ClampMax="16")) float C01StatusIconHoverLift=5.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Resource Icons",meta=(ClampMin="0",Units="s")) float C01StatusIconHoverSeconds=.18f;
+    void TickC01StatusIcons(float DeltaSeconds);
     void StyleC01Button(UButton*,FLinearColor BaseColor,bool bSelected=false,bool bTransparentRest=false,bool bItemSlot=false);
     void RefreshC01Presentation(float DeltaSeconds);
     UFUNCTION(BlueprintPure,Category="UI|C01|Diagnostics") FVector2D GetC01CinematicOffset() const;
@@ -60,6 +76,9 @@ public:
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Feedback") FVector2D C01FeedbackCurve2=FVector2D(.25,1);
     void TickC01QuickDock();bool IsC01QuickDockPointer(FVector2D ScreenPosition)const;
     UFUNCTION(BlueprintPure,Category="UI|Inventory|Quick slots") bool CanActivateQuickInventorySlot(int32 SlotIndex)const;
+    UFUNCTION(BlueprintPure,Category="UI|Inventory|Quick slots") int32 GetUnlockedQuickInventorySlotCount()const;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Language|Artwork") TSoftObjectPtr<UTexture2D> LanguageWaterSourceIcon=TSoftObjectPtr<UTexture2D>(FSoftObjectPath(TEXT("/Game/DoughWorld/UI/Image/T_LangIcon_water_pond.T_LangIcon_water_pond")));
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Language|Artwork") TSoftObjectPtr<UTexture2D> LanguageHandcraftIcon=TSoftObjectPtr<UTexture2D>(FSoftObjectPath(TEXT("/Game/DoughWorld/UI/Image/T_LangIcon_hand_crafting.T_LangIcon_hand_crafting")));
     UFUNCTION(BlueprintCallable,Category="UI|Inventory|Quick slots") void ActivateQuickInventorySlot(int32 SlotIndex);
     UFUNCTION(BlueprintPure,Category="UI|Inventory|Equipment") bool CanEquipInventorySlot(int32 SlotIndex)const;
     UFUNCTION(BlueprintCallable,Category="UI|Inventory|Equipment") bool EquipInventorySlot(int32 SlotIndex);
@@ -69,6 +88,13 @@ public:
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat",meta=(ClampMin="260")) float CombatInfoWidth=480.f;
     UFUNCTION(BlueprintPure,Category="UI|Combat") FDWCombatHUDSnapshot GetCombatHUDSnapshot()const{return CombatHUD;}
     UFUNCTION(BlueprintCallable,Category="UI|Combat") void RefreshCombatHUD();
+    /** Presentation only: configure the edge colour and spatial extent, not damage. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Damage Edge") FLinearColor DamageEdgeColor=FLinearColor(.65f,.06f,.03f,1.f);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Damage Edge",meta=(ClampMin="0",ClampMax="0.4")) float DamageEdgeMaxOpacity=.28f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Damage Edge",meta=(ClampMin="0.04",ClampMax="0.24")) float DamageEdgeFraction=.14f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Damage Edge",meta=(ClampMin="0.2",ClampMax="3",Units="s")) float DamageEdgeMaxContinuousSeconds=.85f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Damage Edge",meta=(ClampMin="0.05",ClampMax="1",Units="s")) float DamageEdgeMinimumClearSeconds=.15f;
+    void TickDamageVignette();void SuppressDamageVignette();
     /** Local runtime UMG cells reuse DW UI Bounce; native paint retains the read-only reload ring. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead",meta=(ClampMin="0.05",Units="s")) float ShotgunShellBounceSeconds=.32f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Shotgun Overhead",meta=(ClampMin="0.05",ClampMax="1")) float ShotgunShellEntryScale=.72f;
@@ -142,6 +168,8 @@ public:
     UFUNCTION(BlueprintCallable,Category="UI|Page Transitions") void PlayCurrentPageEntrance();
     /** Stop and restore the exact opacity and RenderTransform captured before the entrance. */
     UFUNCTION(BlueprintCallable,Category="UI|Page Transitions") void FinishPageTransition();
+    bool MountLanguageJournal(TSharedRef<SWidget> Content);
+    void UnmountLanguageJournal();
     UFUNCTION(BlueprintCallable,Category="UI") void InitializeScreen(ADWGameplayHUD* InHUD);
     UFUNCTION(BlueprintCallable,Category="UI") void RefreshFromHUD(bool bForceLists=false);
     UFUNCTION(BlueprintCallable,Category="UI") void ApplyMenuPage(EDWMenuPage Page);
@@ -220,6 +248,20 @@ protected:
     UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> HUDPauseButton;
     UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> PauseQuitButton;
     UFUNCTION() void ClickPause(); UFUNCTION() void ClickPauseQuit();
+    UFUNCTION() void ClickSaveTrialFromPause(); UFUNCTION() void ClickLoadTrialFromPause();
+    void InitializeTrialPauseControls(); void RefreshTrialPauseControls();
+    bool IsTrialPauseWorld() const; bool IsCurrentPauseOwner() const; bool SaveTrialFromPauseAndStayCurrent();
+    bool bTrialPauseInitAttempted=false;
+    bool bTrialSaveVisibilityOverridden=false;
+    bool bTrialPauseOverridesApplied=false;
+    bool OriginalPauseQuitEnabled=true;
+    FText OriginalSaveAndTitleText;
+    ESlateVisibility OriginalPauseSaveVisibility=ESlateVisibility::Visible;
+    UPROPERTY(Transient) TObjectPtr<USizeBox> TrialPauseRow;
+    UPROPERTY(Transient) TObjectPtr<UButton> TrialSaveButton;
+    UPROPERTY(Transient) TObjectPtr<UButton> TrialLoadButton;
+    UPROPERTY(Transient) TObjectPtr<UTextBlock> TrialSaveLabel;
+    UPROPERTY(Transient) TObjectPtr<UTextBlock> TrialLoadLabel;
     UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> ContinueButton;
     UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> SaveButton;
     UPROPERTY(meta=(BindWidgetOptional),BlueprintReadOnly) TObjectPtr<UButton> PauseSettingsButton;
@@ -239,6 +281,7 @@ protected:
     UPROPERTY(Transient,BlueprintReadOnly,Category="UI") TObjectPtr<ADWGameplayHUD> HUD;
     UPROPERTY(BlueprintReadOnly,Category="UI") int32 SelectedSlot=INDEX_NONE;
 private:
+    UPROPERTY(Transient) TObjectPtr<UDWBuildingPlacementHints> PlacementHints;
     UPROPERTY(Transient) TObjectPtr<UDWC01HUDAnchor> C01HUDAnchor;
     UPROPERTY(Transient) TObjectPtr<UBorder> C01QuickDock;
     UPROPERTY(Transient) TObjectPtr<UBorder> C01PickupPanel;
@@ -262,6 +305,11 @@ private:
     UPROPERTY(Transient) TArray<TObjectPtr<UTextBlock>> C01QuickQuantities;
     UPROPERTY(Transient) TArray<TObjectPtr<UTextBlock>> C01QuickKeys;
     UPROPERTY(Transient) TObjectPtr<UVerticalBox> HandbookEquipmentList;
+    UPROPERTY(Transient) TObjectPtr<UWidget> LanguageBagItemsArea;
+    UPROPERTY(Transient) TObjectPtr<UWidget> LanguageBagEquipmentArea;
+    UPROPERTY(Transient) TObjectPtr<class UDWLanguageRecipeNeedsWidget> LanguageRecipeNeeds;
+    int64 LanguageBookProgressRevision=-1;
+    UPROPERTY(Transient) TArray<TObjectPtr<class USizeBox>> C01QuickCells;
     UPROPERTY(Transient) TObjectPtr<UButton> HandbookRelatedRecipeButton;
     UPROPERTY(Transient) TObjectPtr<UButton> HandbookCraftMoreButton;
     TMap<TWeakObjectPtr<UButton>,FDWC01ButtonVisual> C01Buttons;
@@ -274,6 +322,15 @@ private:
     UPROPERTY(Transient) TObjectPtr<UTextBlock> CombatEnemyHealthLabel;
     void RefreshCombatSettings();
     UFUNCTION() void ChangeCombatEnemyHealth(bool Checked);
+    UPROPERTY(Transient) TObjectPtr<UCheckBox> DamageShakeCheck;
+    UPROPERTY(Transient) TObjectPtr<UTextBlock> DamageShakeLabel;
+    UFUNCTION() void ChangeDamageShake(bool Checked);
+    bool bRefreshingDamageShake=false;
+    FDWCommittedDamageVignetteGuard DamageEdgeGuard;
+    TWeakObjectPtr<ADWPlayerCharacter> DamageEdgeOwner;
+    TWeakObjectPtr<UDWCommittedHitFeedbackComponent> DamageEdgeFeedback;
+    bool bDamageEdgeHasBound=false;
+    float DamageEdgeIntensity=0.f;
     int32 SettingsBookTab=0;
     UFUNCTION() void BookGraphicsTab();
     UFUNCTION() void BookAudioTab();
@@ -302,10 +359,32 @@ private:
     TMap<TWeakObjectPtr<UTextBlock>,TPair<FString,FString>> HandbookLabels;
     int32 HandbookPageIndex=INDEX_NONE;int32 HandbookRecipeIndex=0;
     int64 HandbookInventoryRevision=-1;int32 HandbookLanguageRevision=-1;
+    // Presentation-only throttle: real crafting authority is always checked again at execution.
+    double HandbookRecipeLastRefresh=-1.;int32 HandbookRecipeLastIndex=INDEX_NONE;int64 HandbookRecipeLastRevision=-1;int32 HandbookRecipeLastLocale=INDEX_NONE;
+    TWeakObjectPtr<UDWGameplayConfig> HandbookRecipeLastConfig;TWeakObjectPtr<UDWInventoryComponent> HandbookRecipeLastInventory;TWeakObjectPtr<ADWPlayerCharacter> HandbookRecipeLastPlayer;
+    UPROPERTY(Transient) TObjectPtr<UNativeWidgetHost> LanguageJournalHost;
+    UPROPERTY(Transient) TObjectPtr<UWidget> LanguagePagePlaceholder;
     UPROPERTY(Transient) TObjectPtr<UWidgetSwitcher> HandbookPages;
     UPROPERTY(Transient) TObjectPtr<UVerticalBox> HandbookRecipeList;
     UPROPERTY(Transient) TObjectPtr<UTextBlock> HandbookRecipeDetails;
     UPROPERTY(Transient) TObjectPtr<UTextBlock> HandbookStats;
+    UPROPERTY(Transient) TObjectPtr<UImage> HandbookEquippedIcon;
+    UPROPERTY(Transient) TObjectPtr<UImage> HandbookFormIcon;
+    UPROPERTY(Transient) TObjectPtr<UTextBlock> HandbookFormPlaceholder;
+    UPROPERTY(Transient) TObjectPtr<UImage> HandbookPreviewImage;
+    UPROPERTY(Transient) TObjectPtr<UImage> HandbookPreviewPlaceholder;
+    UPROPERTY(Transient) TObjectPtr<UDWCharacterPreview> CharacterPreview;
+    double NextCharacterPreviewAttempt=0.;
+    /** Runtime-only cards; read the same snapshot as the existing text panel. */
+    UPROPERTY(Transient) TArray<TObjectPtr<UProgressBar>> HandbookResourceBars;
+    UPROPERTY(Transient) TArray<TObjectPtr<UTextBlock>> HandbookResourceLabels;
+    UPROPERTY(Transient) TArray<TObjectPtr<UTexture2D>> C01StatusIconImages;
+    UPROPERTY(Transient) TArray<FSlateBrush> C01StatusIconBrushes;
+    TArray<FSoftObjectPath> C01StatusIconPaths;
+    bool bC01StatusIconPathsInitialized=false;
+    int32 C01StatusHoveredIndex=INDEX_NONE;
+    float C01StatusHoverAlpha[4]={0.f,0.f,0.f,0.f};
+    float C01StatusHoverVelocity[4]={0.f,0.f,0.f,0.f};
     UPROPERTY(Transient) TObjectPtr<UDWHandbookFrame> HandbookFrame;
     UPROPERTY(Transient) TObjectPtr<UTextBlock> HandbookSelection;
     UPROPERTY(Transient) TObjectPtr<UImage> HandbookItemImage;

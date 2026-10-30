@@ -73,6 +73,8 @@ public:
     UFUNCTION(BlueprintPure,Category="DoughWorld|Minimap|Diagnostics") UTextureRenderTarget2D* GetDepthRenderTarget() const {return DepthTarget;}
     UFUNCTION(BlueprintPure,Category="DoughWorld|Minimap|Diagnostics") UDWMinimapWidget* GetMinimapWidget() const {return Widget;}
     const FDWMinimapProjection& GetProjection() const {return Projection;}
+    /** Read-only capture settings for a separately owned transition. */
+    const USceneCaptureComponent2D* GetMotionCaptureComponent() const;
     void GatherDisplayMarkers(TArray<FDWMinimapDisplayMarker>& Out) const;
     FDWMinimapNavigationTarget GetNavigationTarget() const;
     FVector GetPlayerLocation() const;

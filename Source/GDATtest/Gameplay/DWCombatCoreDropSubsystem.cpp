@@ -1,16 +1,22 @@
 #include "DWCombatCoreDropSubsystem.h"
+#include "DWLootBeaconSubsystem.h"
 #include "DWCombatCorePickup.h"
 #include "DWCombatItemRegistry.h"
 #include "DWCombatRules.h"
 #include "DWEnemyCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Engine/World.h"
+#include "Engine/GameInstance.h"
+#include "DWLanguageSubsystem.h"
+#include "DWFormalLanguagePersistence.h"
 
 namespace DWCombatCoreDrop
 {
+static bool FormalSession(const UWorld* W)
+{const auto* L=W&&W->GetGameInstance()?W->GetGameInstance()->GetSubsystem<UDWLanguageSubsystem>():nullptr;return L&&FDWFormalLanguagePersistence::IsCurrent(*L,true);}
 static bool Ground(EDWEnemyCoreDropDecision D)
 {return D==EDWEnemyCoreDropDecision::SpawnPending||D==EDWEnemyCoreDropDecision::Spawned;}
-static bool ValidSave(const FDWCombatCoreDropSave& S)
+static bool ValidSave(const FDWCombatCoreDropSave& S,const FString& MapPackage,bool bFormal=false)
 {
     if(S.Schema!=1||!S.DeathId.IsValid()||!S.StableEnemyId.IsValid()||S.Location.ContainsNaN()||
         !S.FatalEpoch||!S.FatalReceipt||!S.EnemyEntity||!S.EnemyLife||
@@ -24,8 +30,7 @@ static bool ValidSave(const FDWCombatCoreDropSave& S)
     if(S.Decision==EDWEnemyCoreDropDecision::Failed)
         return Eligible&&!S.PickupId.IsValid()&&S.ItemId.IsNone()&&S.Count==0;
     if(!Ground(S.Decision)&&S.Decision!=EDWEnemyCoreDropDecision::Claimed)return false;
-    const FName Expected=S.Profile==EDWEnemyCombatProfile::MoldGrunt?FDWCombatItemRegistry::MoldCoreId():FDWCombatItemRegistry::YeastCoreId();
-    return Eligible&&S.PickupId.IsValid()&&S.ItemId==Expected&&S.Count>0;
+    return Eligible&&S.PickupId.IsValid()&&S.Count>0&&DWEnemyFormal::IsSavedCoreDropItemAllowed(S.Profile,S.ItemId,MapPackage,bFormal);
 }
 static bool SameDrop(const FDWCombatCoreDropSave& D,const FDWEnemyFormalSaveData& S)
 {
@@ -61,8 +66,18 @@ bool UDWCombatCoreDropSubsystem::PrepareFatal(ADWEnemyCharacter& Enemy,DWCombatC
     FDWPreparedCoreDrop P;P.Revision=Revision;P.Enemy=&Enemy;
     // This draw is only reached for a valid pending fatal commit. The resulting failure is a terminal fact too.
     const bool bEligible=(Enemy.CombatProfile==EDWEnemyCombatProfile::MoldGrunt||Enemy.CombatProfile==EDWEnemyCombatProfile::YeastGrunt)&&PlayerLife.Entity&&PlayerLife.Life;
-    const double Sample=bEligible?FMath::FRand():0.; // Other factions/environment deaths never draw.
-    if(!DWEnemyFormal::DecideCoreDrop(P.EnemyRecord,Enemy.CombatProfile,Enemy.FormalCoreDropConfig,
+    auto DropConfig=Enemy.FormalCoreDropConfig;DropConfig.bLanguageEssenceIds=false;
+    const FString MapPackage=UWorld::RemovePIEPrefix(GetWorld()->GetOutermost()->GetName());
+    const bool bFormal=DWCombatCoreDrop::FormalSession(GetWorld());
+    if(bEligible&&(DWEnemyFormal::IsLanguageEssenceDropMap(MapPackage)||bFormal))
+    {
+        auto* GI=GetWorld()->GetGameInstance();auto* Language=GI?GI->GetSubsystem<UDWLanguageSubsystem>():nullptr;FString Error;
+        if(!Language||!Language->IsReady()||(!Language->IsTrialWorld()&&!Language->IsFormalSession())||
+            !DWEnemyFormal::ApplyLanguageEssenceDropOverrides(MapPackage,Language->GetTrialConfig(),DropConfig,Error,bFormal))
+        {UE_LOG(LogTemp,Warning,TEXT("LANG essence fatal preparation rejected before RNG: %s"),*Error);return false;}
+    }
+    const double Sample=bEligible?FMath::FRand():0.; // One existing draw only; other factions/environment deaths never draw.
+    if(!DWEnemyFormal::DecideCoreDrop(P.EnemyRecord,Enemy.CombatProfile,DropConfig,
         Receipt,EnemyLife,PlayerLife,Sample,FGuid::NewGuid()))return false;
     P.EnemyRecord.DeathId=FGuid::NewGuid();
     auto& S=P.Save;S.DeathId=P.EnemyRecord.DeathId;S.StableEnemyId=Enemy.FormalEnemyId;S.Profile=Enemy.CombatProfile;
@@ -70,7 +85,7 @@ bool UDWCombatCoreDropSubsystem::PrepareFatal(ADWEnemyCharacter& Enemy,DWCombatC
     S.EnemyEntity=EnemyLife.Entity;S.EnemyLife=EnemyLife.Life;S.PlayerEntity=PlayerLife.Entity;S.PlayerLife=PlayerLife.Life;
     S.PickupId=P.EnemyRecord.PickupId;S.ItemId=P.EnemyRecord.CoreItemId;S.Count=P.EnemyRecord.Count;S.Location=ForcedFallPoint?*ForcedFallPoint:Enemy.GetActorLocation();
     S.ForcedFallReceiptEpoch=ForcedFallReceipt.Epoch;S.ForcedFallReceiptId=ForcedFallReceipt.Id;
-    if(!DWCombatCoreDrop::ValidSave(S)||Records.Contains(S.DeathId))return false;
+    if(!DWCombatCoreDrop::ValidSave(S,MapPackage,bFormal)||Records.Contains(S.DeathId))return false;
     Records.Reserve(Records.Num()+1);P.bValid=true;Out=MoveTemp(P);return true;
 }
 void UDWCombatCoreDropSubsystem::CommitFatalUnchecked(FDWPreparedCoreDrop&& P)
@@ -118,7 +133,8 @@ void UDWCombatCoreDropSubsystem::Materialize(FGuid Id)
     }
     Record=Records.Find(Id);
     if(!Record||Record->Physical.Get()!=Actor||!DWCombatCoreDrop::Ground(Record->Save.Decision))
-    {if(IsValid(Actor)&&!Actor->IsActorBeingDestroyed())Actor->Destroy();}
+    {if(IsValid(Actor)&&!Actor->IsActorBeingDestroyed())Actor->Destroy();return;}
+    if(auto* V=GetWorld()->GetSubsystem<UDWLootBeaconSubsystem>())V->PublishBeacon(Actor,Actor->Placeholder,Actor->ItemId);
 }
 bool UDWCombatCoreDropSubsystem::IsPhysicalCurrent(const ADWCombatCorePickup& P)const
 {
@@ -142,7 +158,7 @@ bool UDWCombatCoreDropSubsystem::CaptureSave(TArray<FDWCombatCoreDropSave>& Out,
     TArray<FDWCombatCoreDropSave> Candidate;Candidate.Reserve(Records.Num());
     for(const auto& Pair:Records)
     {auto S=Pair.Value.Save;if(const auto* P=Pair.Value.Physical.Get())S.Location=P->GetActorLocation();
-     if(!DWCombatCoreDrop::ValidSave(S)){Error=TEXT("Invalid core drop snapshot; output unchanged.");return false;}Candidate.Add(S);}
+     if(!DWCombatCoreDrop::ValidSave(S,UWorld::RemovePIEPrefix(GetWorld()->GetOutermost()->GetName()),DWCombatCoreDrop::FormalSession(GetWorld()))){Error=TEXT("Invalid core drop snapshot; output unchanged.");return false;}Candidate.Add(S);}
     Out=MoveTemp(Candidate);Error.Reset();return true;
 }
 bool UDWCombatCoreDropSubsystem::RestoreBeforeBeginPlay(const TArray<FDWCombatCoreDropSave>& Saved,const FDWCombatRules& Rules,FString& Error)
@@ -157,7 +173,7 @@ bool UDWCombatCoreDropSubsystem::RestoreBeforeBeginPlay(const TArray<FDWCombatCo
     {
         const FString Death=FString::Printf(TEXT("%llu/%llu/%llu"),S.FatalEpoch,S.EnemyEntity,S.EnemyLife);
         const FString Receipt=FString::Printf(TEXT("%llu/%llu"),S.FatalEpoch,S.FatalReceipt);
-        if(!DWCombatCoreDrop::ValidSave(S)||Candidate.Contains(S.DeathId)||Deaths.Contains(Death)||Receipts.Contains(Receipt)||(S.PickupId.IsValid()&&Pickups.Contains(S.PickupId)))
+        if(!DWCombatCoreDrop::ValidSave(S,UWorld::RemovePIEPrefix(GetWorld()->GetOutermost()->GetName()))||Candidate.Contains(S.DeathId)||Deaths.Contains(Death)||Receipts.Contains(Receipt)||(S.PickupId.IsValid()&&Pickups.Contains(S.PickupId)))
         {Error=TEXT("Invalid or duplicate core death/pickup identity; no records imported.");return false;}
         FRecord R;R.Save=S;R.PickupRadiusCm=C.PickupRadiusCm;R.bRestored=true;R.bMayMaterialize=DWCombatCoreDrop::Ground(S.Decision);
         Candidate.Add(S.DeathId,MoveTemp(R));Deaths.Add(Death);Receipts.Add(Receipt);if(S.PickupId.IsValid())Pickups.Add(S.PickupId);

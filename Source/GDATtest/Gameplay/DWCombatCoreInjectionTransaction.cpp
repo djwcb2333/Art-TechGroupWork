@@ -10,7 +10,9 @@ bool FDWCombatCoreInjectionTransaction::Commit(ADWPlayerCharacter& P)
     if(!A||!I||!P.bCoreInjectionCompletionDue||!Session.Plan.IsReady()||!P.IsCoreInjectionCurrent()||
         !P.IsCombatActionAllowed()||!I->CanWriteInventory())return false;
     auto CandidateVitals=P.CombatVitals;auto CandidatePlan=Session.Plan;
-    if(!CandidateVitals.EnterCommittedForm(Session.TargetForm)||!CandidatePlan.Commit())return false;
+    const bool A01=P.CharacterA01&&P.CharacterA01->IsEnabled();FDWCharacterA01Runtime A01Candidate;
+    const uint64 A01Revision=A01?P.CharacterA01->GetResourceRevision():0;
+    if((A01?!P.CharacterA01->PrepareFormEntry(Session.TargetForm,A01Candidate):!CandidateVitals.EnterCommittedForm(Session.TargetForm))||!CandidatePlan.Commit())return false;
     FDWPreparedInventoryChange Prepared;
     if(!I->PrepareRemoveSnapshot(Session.Slot,Session.Config.CoreCost,Prepared)||!I->ValidatePreparedForCommit(Prepared))return false;
     auto* Ledger=A->GetLedgerForResourceTransaction();
@@ -18,12 +20,13 @@ bool FDWCombatCoreInjectionTransaction::Commit(ADWPlayerCharacter& P)
     const auto Admission=Ledger->AdmitResource({Session.Action,1,EResourceKind::CoreInjection,1});
     if(Admission.Result!=EAdmission::Admitted)return false;
     const auto Reject=[&](){Ledger->Resolve(Admission.Receipt.Handle,EOutcome::Rejected);return false;};
-    if(!P.IsCoreInjectionCurrent()||!I->ValidatePreparedForCommit(Prepared))return Reject();
+    if(!P.IsCoreInjectionCurrent()||!I->ValidatePreparedForCommit(Prepared)||(A01&&P.CharacterA01->GetResourceRevision()!=A01Revision))return Reject();
     FDWCombatCoreInjectionNotice Notice;Notice.Player=&P;Notice.Inventory=I;Notice.Life=Session.Life;
     Notice.WorldEpoch=Session.WorldEpoch;Notice.Receipt=Admission.Receipt.Handle;Notice.Form=Session.TargetForm;
     // The final fallible step precedes every live assignment. All state is native and callback-free here.
     if(Ledger->Resolve(Admission.Receipt.Handle,EOutcome::Committed)!=EResolve::Resolved)return false;
-    I->AdoptPreparedUnchecked(MoveTemp(Prepared));P.CombatVitals=MoveTemp(CandidateVitals);
+    I->AdoptPreparedUnchecked(MoveTemp(Prepared));
+    if(A01)P.CharacterA01->AdoptRuntimeUnchecked(MoveTemp(A01Candidate),true);else P.CombatVitals=MoveTemp(CandidateVitals);
     Session.Plan=MoveTemp(CandidatePlan);P.bCoreInjectionCompletionDue=false;
     P.LastCoreInjectionReceipt=Admission.Receipt.Handle;
     A->EndAction(Session.Action);Session.Action={};

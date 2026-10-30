@@ -1,6 +1,10 @@
 #include "DWPlayerCharacter.h"
+#include "DWRetiredSaveProjection.h"
 #include "DWGatheringComponent.h"
+#include "DWBuildingPlacementComponent.h"
 #include "DWCombatHUDModel.h"
+#include "DWCombatEquipment.h"
+#include "DWLanguageSubsystem.h"
 #include "DWCombatItemRegistry.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWCombatPlayerSave.h"
@@ -15,6 +19,7 @@
 #include "Misc/ScopeExit.h"
 #include "DWWeaponAnimationComponent.h"
 #include "DWCombatFeedbackComponent.h"
+#include "DWCommittedHitFeedbackComponent.h"
 #include "DWDamageVolumeLibrary.h"
 #include "DWLoadingTransition.h"
 #include "Components/BoxComponent.h"
@@ -67,8 +72,11 @@ ADWPlayerCharacter::ADWPlayerCharacter()
     GameplayCameraShake=CreateDefaultSubobject<UDWGameplayCameraShakeComponent>(TEXT("GameplayCameraShake"));
     Inventory=CreateDefaultSubobject<UDWInventoryComponent>(TEXT("DoughWorldInventory"));
     GatheringComponent=CreateDefaultSubobject<UDWGatheringComponent>(TEXT("GatheringComponent"));
+    CharacterA01=CreateDefaultSubobject<UDWCharacterA01Component>(TEXT("CharacterA01"));
+    BuildingPlacement=CreateDefaultSubobject<UDWBuildingPlacementComponent>(TEXT("BuildingPlacement"));
     WeaponAnimationComponent=CreateDefaultSubobject<UDWWeaponAnimationComponent>(TEXT("WeaponAnimationComponent"));
     CombatFeedback=CreateDefaultSubobject<UDWCombatFeedbackComponent>(TEXT("CombatFeedback"));
+    CommittedHitFeedback=CreateDefaultSubobject<UDWCommittedHitFeedbackComponent>(TEXT("CommittedHitFeedback"));
     SwordPlaceholder=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SwordPlaceholder"));
     SwordPlaceholder->SetupAttachment(GetMesh());SwordPlaceholder->SetCollisionEnabled(ECollisionEnabled::NoCollision);SwordPlaceholder->SetCanEverAffectNavigation(false);
     static ConstructorHelpers::FObjectFinder<UStaticMesh> Cube(TEXT("/Engine/BasicShapes/Cube.Cube"));
@@ -119,6 +127,7 @@ void ADWPlayerCharacter::BeginPlay()
     if(GetMesh()->DoesSocketExist(SwordSocket))SwordPlaceholder->AttachToComponent(GetMesh(),FAttachmentTransformRules::KeepRelativeTransform,SwordSocket);
     else SwordPlaceholder->SetVisibility(false);
     InitializeCombatVitals();
+    if(CharacterA01){FString A01Error;if(!CharacterA01->InitializeForTrial(A01Error)){Health=0.f;UE_LOG(LogTemp,Error,TEXT("A01 initialization failed: %s"),*A01Error);return;}}
     if(GatheringComponent)GatheringComponent->InitializeGathering();
     if(IsActorBeingDestroyed()||!GetWorld()||GetWorld()->bIsTearingDown)return;
     GetCharacterMovement()->NavAgentProps.bCanJump=false;JumpMaxCount=0;
@@ -187,7 +196,7 @@ void ADWPlayerCharacter::Tick(float Dt)
     UpdateCombat(Dt);
     UpdateAnimatedMeleeWeaponVisibility();
     if(!GameplayConfig){StopPlayerVFX(true);StopMovementAudio();bHasVFXLocationSample=false;CurrentVFXGroundSpeed=0.f;return;}
-    bSprinting=false; // Formal combat has no generic sprint or sprint-produced alcohol.
+    bSprinting=CharacterA01&&CharacterA01->IsEnabled()&&CharacterA01->IsSprinting();
     if(!IsDead())UpdateHarvest(Dt);
     UpdatePlayerVFX(Dt);
     // All movement effects now use the retained Niagara components; no mesh actors are spawned.
@@ -227,25 +236,26 @@ void ADWPlayerCharacter::InitializeCombatVitals()
     SyncCombatVitalsCompatibility();
 }
 float ADWPlayerCharacter::GetCombatHealthFloor() const
-{return HasCombatVitalsReady()?DWCombatPlayerSave::HealthFloor(CombatVitals.GetConfig()):0.f;}
+{return CharacterA01&&CharacterA01->IsEnabled()?0.f:(HasCombatVitalsReady()?DWCombatPlayerSave::HealthFloor(CombatVitals.GetConfig()):0.f);}
 bool ADWPlayerCharacter::IsDead() const {return !FMath::IsFinite(Health)||Health<=GetCombatHealthFloor();}
 void ADWPlayerCharacter::SyncCombatVitalsCompatibility()
 {
-    Transformation=static_cast<float>(CombatVitals.GetSpecial());bYeastForm=GetCombatBaseForm()==EDWCombatBaseForm::Yeast;
+    Transformation=static_cast<float>(GetCombatSpecial());bYeastForm=GetCombatBaseForm()==EDWCombatBaseForm::Yeast;
     if(WeaponAnimationComponent)WeaponAnimationComponent->NotifyCombatBaseFormChanged(static_cast<uint8>(GetCombatBaseForm()));
-    SprintAlcoholElapsed=TransformationDecayElapsed=0.f;bSprinting=false;
+    SprintAlcoholElapsed=TransformationDecayElapsed=0.f;bSprinting=CharacterA01&&CharacterA01->IsEnabled()&&CharacterA01->IsSprinting();
     RefreshCombatMovementSpeed();
 }
 void ADWPlayerCharacter::RefreshCombatMovementSpeed()
 {
     if(!HasCombatVitalsReady()||!GetCharacterMovement())return;
-    const double FormSpeed=CombatVitals.GetConfig().BaseMoveCentimetersPerSecond*
+    const double FormSpeed=CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetWalkSpeedCmPerSecond():CombatVitals.GetConfig().BaseMoveCentimetersPerSecond*
         (IsFormallyRooted()?0.:(GetCombatBaseForm()==EDWCombatBaseForm::Yeast?CombatVitals.GetConfig().YeastMoveMultiplier:1.));
     const double ReloadMultiplier=WeaponAnimationComponent?WeaponAnimationComponent->GetReloadMovementMultiplier():1.;
     GetCharacterMovement()->MaxWalkSpeed=static_cast<float>(FormSpeed*ReloadMultiplier*GetGatheringEnvironmentMovementMultiplier());
 }
 double ADWPlayerCharacter::GetCombatIncomingMultiplier() const
 {
+    if(CharacterA01&&CharacterA01->IsEnabled())return 1.;
     const auto& C=CombatVitals.GetConfig();
     if(IsFormallyRooted())return FormalRoot.GetConfig().IncomingMultiplier;
     if(GetCombatBaseForm()==EDWCombatBaseForm::Yeast)return C.YeastIncomingMultiplier;
@@ -320,6 +330,7 @@ void ADWPlayerCharacter::TickGameplayClocks(float Dt,bool bActuallySprinting)
     };
     // Resource callbacks may pause before the corresponding weapon clock reaches the same point.
     // Resume that fixed old slice first, without consuming a second unit of resource time.
+    if(CharacterA01&&CharacterA01->IsEnabled()&&!CharacterA01->PumpPaidMotion())return;
     if(!PumpFormalDashSlice()||!IsCurrent()||!IsCombatActionAllowed())return;
     Authority->ResolveShieldDamageAt(this,PaidCombatWeaponSlice.bPending?
         PaidCombatWeaponSlice.StartWorldSeconds+PaidCombatWeaponSlice.Seconds:FrameStart);
@@ -338,7 +349,8 @@ void ADWPlayerCharacter::TickGameplayClocks(float Dt,bool bActuallySprinting)
         if(WeaponBoundary<0.||FMath::IsNaN(WeaponBoundary))
         {UE_LOG(LogTemp,Error,TEXT("Combat clock rejected an invalid weapon boundary."));return;}
         bool bDashWall=false;
-        const double DashBoundary=GetFormalDashBoundary(Remaining,bDashWall);
+        const bool bA01=CharacterA01&&CharacterA01->IsEnabled();
+        const double DashBoundary=bA01?CharacterA01->GetNextAbilityBoundary(Remaining):GetFormalDashBoundary(Remaining,bDashWall);
         if(Remaining<=0.&&WeaponBoundary!=0.&&CoreBoundary!=0.&&DashBoundary!=0.&&ShieldBoundary!=0.)return;
         if(ShieldBoundary==0.)
         {
@@ -347,7 +359,8 @@ void ADWPlayerCharacter::TickGameplayClocks(float Dt,bool bActuallySprinting)
             if(Authority->GetShieldDamageRevision()==BeforeShield){UE_LOG(LogTemp,Error,TEXT("Shield deadline made no progress."));return;}
             continue;
         }
-        if(IsFormalDashing()&&DashBoundary==0.)
+        if(bA01&&DashBoundary==0.){if(!CharacterA01->PumpPaidMotion()||!IsCurrent())return;continue;}
+        if(!bA01&&IsFormalDashing()&&DashBoundary==0.)
         {
             FDWYeastDashStep Zero;
             if(bDashWall)EndFormalDashFacts(EDWYeastDashEnd::Wall);
@@ -364,7 +377,7 @@ void ADWPlayerCharacter::TickGameplayClocks(float Dt,bool bActuallySprinting)
             continue;
         }
         CombatFrameStartForm=GetCombatBaseForm();CombatFrameLife=ClockLife;CombatSliceStartWorldSeconds=SliceStart;
-        CombatFrameExpiryOffset=CombatFrameStartForm==EDWCombatBaseForm::Normal?std::numeric_limits<double>::infinity():CombatVitals.GetFormRemaining();
+        CombatFrameExpiryOffset=CombatFrameStartForm==EDWCombatBaseForm::Normal?std::numeric_limits<double>::infinity():GetCombatFormRemaining();
         bCombatFrameStartRooted=IsFormallyRooted();
         CombatFrameRootExitOffset=bCombatFrameStartRooted?
             FMath::Min(CombatFrameExpiryOffset,FormalRoot.EstimateResourceBoundarySeconds(GetCombatSpecial())):0.;
@@ -390,21 +403,29 @@ void ADWPlayerCharacter::TickGameplayClocks(float Dt,bool bActuallySprinting)
         // AdvanceNext is native/transactional and also stops at the next resource or form boundary.
         // Adopt these facts before any notification at that timestamp, never the rest of the frame.
         const bool bDashThisSlice=IsFormalDashing();
-        auto VitalsCandidate=CombatVitals;auto DashCandidate=FormalDash;FDWYeastDashStep DashStep;
-        if(!VitalsCandidate.AdvanceNext(Requested,Health,Step,IsFormallyRooted()?FormalRoot.GetConfig().SpendPerSecond:(bDashThisSlice?FormalDash.GetConfig().SpendPerSecond:0.))||Step.AdvancedSeconds<=0.)return;
-        if(bDashThisSlice)
+        FDWCharacterA01Step A01Step;
+        if(bA01)
         {
-            if(!DashCandidate.AdvanceAtResourceBoundary(Step.AdvancedSeconds,Step.bFormExpired,
-                VitalsCandidate.GetSpecial()==VitalsCandidate.GetConfig().Vitals.SpecialFloor,DashStep))return;
+            if(!CharacterA01->AdvanceSlice(Requested,Step,A01Step)||Step.AdvancedSeconds<=0.)return;
         }
-        else if(!DashCandidate.AdvanceCooldown(Step.AdvancedSeconds))return;
-        CombatVitals=MoveTemp(VitalsCandidate);FormalDash=MoveTemp(DashCandidate);
-        if(IsFormallyRooted()&&(Step.bFormExpired||GetCombatSpecial()==CombatVitals.GetConfig().Vitals.SpecialFloor))
+        else
         {
-            CombatFrameRootExitOffset=Step.AdvancedSeconds; // Actual committed boundary wins over prediction rounding.
-            EndFormalRootFacts(Step.bFormExpired?EDWMoldRootEnd::FormExpired:EDWMoldRootEnd::SpecialExhausted);
+            auto VitalsCandidate=CombatVitals;auto DashCandidate=FormalDash;FDWYeastDashStep DashStep;
+            if(!VitalsCandidate.AdvanceNext(Requested,Health,Step,IsFormallyRooted()?FormalRoot.GetConfig().SpendPerSecond:(bDashThisSlice?FormalDash.GetConfig().SpendPerSecond:0.))||Step.AdvancedSeconds<=0.)return;
+            if(bDashThisSlice)
+            {
+                if(!DashCandidate.AdvanceAtResourceBoundary(Step.AdvancedSeconds,Step.bFormExpired,
+                    VitalsCandidate.GetSpecial()==VitalsCandidate.GetConfig().Vitals.SpecialFloor,DashStep))return;
+            }
+            else if(!DashCandidate.AdvanceCooldown(Step.AdvancedSeconds))return;
+            CombatVitals=MoveTemp(VitalsCandidate);FormalDash=MoveTemp(DashCandidate);
+            if(IsFormallyRooted()&&(Step.bFormExpired||GetCombatSpecial()==CombatVitals.GetConfig().Vitals.SpecialFloor))
+            {
+                CombatFrameRootExitOffset=Step.AdvancedSeconds; // Actual committed boundary wins over prediction rounding.
+                EndFormalRootFacts(Step.bFormExpired?EDWMoldRootEnd::FormExpired:EDWMoldRootEnd::SpecialExhausted);
+            }
+            if(bDashThisSlice)QueueFormalDashSlice(DashStep,bDashWall&&Step.AdvancedSeconds>=DashBoundary);
         }
-        if(bDashThisSlice)QueueFormalDashSlice(DashStep,bDashWall&&Step.AdvancedSeconds>=DashBoundary);
         SyncCombatVitalsCompatibility();
         // Only prepare Ready here. Same-instant resource damage still precedes core consumption.
         if(bAdvanceCore&&!CoreInjection.Plan.Advance(Step.AdvancedSeconds))
@@ -428,17 +449,18 @@ void ADWPlayerCharacter::TickGameplayClocks(float Dt,bool bActuallySprinting)
         Pair.StarvationAmount=Step.Starvation.EventCount?static_cast<float>(Step.Starvation.DamagePerEvent):0.f;
         // HC05: hunger/thirst facts precede an uncommitted weapon event at the same timestamp.
         // The fixed pair commits both channels before its first callback. Fatal damage cancels the weapon.
-        const uint64 AdoptedRevision=CombatVitals.GetMutationRevision();
-        Authority->SubmitVitalsDamagePair(Pair);
+        const uint64 AdoptedRevision=bA01?CharacterA01->GetResourceRevision():CombatVitals.GetMutationRevision();
+        Authority->SubmitVitalsDamagePair(Pair,bA01?A01Step.CurrentHealthRegenDue:0.,bA01?A01Step.HealthCeilingBeforeRecovery:0.,bA01?A01Step.HealthCeiling:0.,bA01?SliceStart+Step.AdvancedSeconds:-1.);
         if(!IsCurrent())return;
         Authority->ResolveShieldDamageAt(this,SliceStart+Step.AdvancedSeconds);
         if(!IsCurrent()||!IsCombatActionAllowed())return;
         if(!PublishFormalRootMovementEffects()||!IsCurrent())return;
-        if(CombatVitals.GetMutationRevision()!=AdoptedRevision)
+        if((bA01?CharacterA01->GetResourceRevision():CombatVitals.GetMutationRevision())!=AdoptedRevision)
         {PaidCombatWeaponSlice={};EndFormalDashFacts(EDWYeastDashEnd::Cancelled);UE_LOG(LogTemp,Warning,TEXT("Combat clock stopped after a resource callback changed the current resource timeline."));return;}
         // Resource facts/damage precede this timestamp's pending dash motion/hits (HC05).
         // Paused callbacks keep the already-paid slice; resume never charges those seconds twice.
-        if(!PumpFormalDashSlice()||!IsCurrent())return;
+        if(bA01){if(!CharacterA01->PumpPaidMotion()||!IsCurrent())return;}
+        else if(!PumpFormalDashSlice()||!IsCurrent())return;
         if(Step.bFormExpired)
         {
             UpdateFormAppearance();if(!IsCurrent())return;
@@ -467,6 +489,7 @@ float ADWPlayerCharacter::GetSprintAlcoholProgress()const {return 0.f;}
 void ADWPlayerCharacter::MoveCameraRelative(float Forward,float Right)
 {
     if(!FMath::IsFinite(Forward)||!FMath::IsFinite(Right))return;
+    if(CharacterA01&&CharacterA01->IsEnabled()){const FRotationMatrix A01R(FRotator(0,CameraYaw,0));CharacterA01->SetMoveInput(A01R.GetUnitAxis(EAxis::X)*Forward+A01R.GetUnitAxis(EAxis::Y)*Right);}
     if(IsCombatActionAllowed()&&(Forward!=0.f||Right!=0.f))
     {
         CancelCoreInjectionFacts();
@@ -523,6 +546,8 @@ bool ADWPlayerCharacter::IsCombatSimulationSuspended() const
     const auto* PC=Cast<ADWPlayerController>(GetController());
     return UGameplayStatics::IsGamePaused(this)||(PC&&PC->IsCombatInputSuspended());
 }
+bool ADWPlayerCharacter::IsBuildingPlacementBlockingAttack() const
+{return BuildingPlacement&&BuildingPlacement->IsAttackInputBlocked();}
 bool ADWPlayerCharacter::IsCombatActionAllowed() const
 {
     if(IsCombatSimulationSuspended()||!HasCombatVitalsReady()||bCombatRecoveryPositionPending)return false;
@@ -538,6 +563,8 @@ bool ADWPlayerCharacter::IsCombatActionAllowed() const
 
 bool ADWPlayerCharacter::PerformMeleeAttack(FVector TargetLocation)
 {
+    if(CharacterA01&&CharacterA01->IsEnabled()&&!CharacterA01->PrepareForAttack())return false;
+    if(IsBuildingPlacementBlockingAttack())return false;
     if(HasCombatVitalsReady())
     {
         if(!WeaponAnimationComponent)return false;
@@ -614,6 +641,11 @@ bool ADWPlayerCharacter::BeginMeleeStep(FVector TargetLocation,int32 ComboStep)
 
 UAnimationAsset* ADWPlayerCharacter::GetCurrentMeleeAnimation() const
 {
+    if(GatheringComponent&&GatheringComponent->IsGatheringSwingActive())return GatheringComponent->GetGatheringSequence();
+    // GetActiveSequence may retain a finished weapon clip. It must not steal the gathering exit blend.
+    if(AttackPhase==EDWCombatPhase::None&&GatheringComponent&&GatheringComponent->HasGatheringAnimationSnapshot()&&
+        (!WeaponAnimationComponent||!WeaponAnimationComponent->IsEnabled()||!WeaponAnimationComponent->IsBusy()))
+        return GatheringComponent->GetGatheringSequence();
     if(WeaponAnimationComponent&&WeaponAnimationComponent->IsEnabled()&&WeaponAnimationComponent->GetActiveSequence())return WeaponAnimationComponent->GetActiveSequence();
     // Retain the outgoing sequence during its short Idle/Move blend.
     return bHasMeleeAnimationSnapshot?ActiveMeleeClip.Get():MeleeAnimation.Get();
@@ -661,6 +693,7 @@ void ADWPlayerCharacter::TryStartBufferedMeleeStep()
 
 void ADWPlayerCharacter::CancelCombatActions()
 {
+    if(GatheringComponent)GatheringComponent->CancelGatheringSwing();
     EndFormalDashFacts(IsDead()?EDWYeastDashEnd::Death:EDWYeastDashEnd::Cancelled);
     CancelCoreInjectionFacts();
     PaidCombatWeaponSlice={}; // Death/restore/unpossess cancel unpaid weapon continuation; pause does not.
@@ -956,6 +989,7 @@ EDWCombatAnimationState ADWPlayerCharacter::GetCombatAnimationState() const
     const float Now=GetWorld()?GetWorld()->GetTimeSeconds():0.f;
     if(Now<TransformUntil)return EDWCombatAnimationState::Transform;
     if(bIsRolling||IsFormalDashing())return EDWCombatAnimationState::Dash;
+    if(GatheringComponent&&GatheringComponent->IsGatheringSwingActive())return EDWCombatAnimationState::Melee;
     if(WeaponAnimationComponent&&WeaponAnimationComponent->IsEnabled()&&WeaponAnimationComponent->HasWeaponPresentation())
         return !WeaponAnimationComponent->GetActiveSequence()?EDWCombatAnimationState::Idle:EDWCombatAnimationState::Melee;
     if(AttackPhase!=EDWCombatPhase::None)return EDWCombatAnimationState::Melee;
@@ -966,11 +1000,21 @@ float ADWPlayerCharacter::GetCombatThrowElapsedSeconds() const
 {return GetWorld()?FMath::Max(0.f,GetWorld()->GetTimeSeconds()-ThrowAnimationStartTime):0.f;}
 float ADWPlayerCharacter::GetMeleeAnimationElapsedSeconds() const
 {
+    if(GatheringComponent&&GatheringComponent->IsGatheringSwingActive())return GatheringComponent->GetGatheringSourceSeconds();
+    // GetActiveSequence may retain a finished weapon clip. It must not steal the gathering exit blend.
+    if(AttackPhase==EDWCombatPhase::None&&GatheringComponent&&GatheringComponent->HasGatheringAnimationSnapshot()&&
+        (!WeaponAnimationComponent||!WeaponAnimationComponent->IsEnabled()||!WeaponAnimationComponent->IsBusy()))
+        return GatheringComponent->GetGatheringSourceSeconds();
     if(WeaponAnimationComponent&&WeaponAnimationComponent->IsEnabled()&&WeaponAnimationComponent->GetActiveSequence())return static_cast<float>(WeaponAnimationComponent->GetPresentationSourceSeconds());
     return AttackPhase!=EDWCombatPhase::None&&GetWorld()?FMath::Clamp(GetWorld()->GetTimeSeconds()-MeleeStartTime,0.f,ActiveMeleeDuration):FrozenMeleeAnimationElapsed;
 }
 float ADWPlayerCharacter::GetMeleeAnimationDuration() const
 {
+    if(GatheringComponent&&GatheringComponent->IsGatheringSwingActive())return GatheringComponent->GetGatheringSourceDuration();
+    // GetActiveSequence may retain a finished weapon clip. It must not steal the gathering exit blend.
+    if(AttackPhase==EDWCombatPhase::None&&GatheringComponent&&GatheringComponent->HasGatheringAnimationSnapshot()&&
+        (!WeaponAnimationComponent||!WeaponAnimationComponent->IsEnabled()||!WeaponAnimationComponent->IsBusy()))
+        return GatheringComponent->GetGatheringSourceDuration();
     if(WeaponAnimationComponent&&WeaponAnimationComponent->IsEnabled()&&WeaponAnimationComponent->GetActiveSequence())return WeaponAnimationComponent->GetActionDuration();
     return ActiveMeleeDuration;
 }
@@ -1167,7 +1211,7 @@ void ADWPlayerCharacter::PlayFormTransitionVFX(bool bEntering)
     {
         TransformBurstComponent->DeactivateImmediate();
         if(TransformBurstComponent->GetAsset()!=System)TransformBurstComponent->SetAsset(System);
-        if(!TransformVFXColorParameter.IsNone())TransformBurstComponent->SetVariableLinearColor(TransformVFXColorParameter,bEntering?YeastTint:DoughTint);
+        if(!TransformVFXColorParameter.IsNone())TransformBurstComponent->SetVariableLinearColor(TransformVFXColorParameter,GetTintForCombatForm(GetCombatBaseForm()));
     }
     PlayPlayerBurstVFX(TransformBurstComponent,System,TransformVFXOffset,TransformVFXRotation,TransformVFXScale);
     TransformBurstVFXStopTime=GetWorld()->GetTimeSeconds()+FMath::Max(.01f,TransformBurstVFXMaxSeconds);
@@ -1185,10 +1229,10 @@ void ADWPlayerCharacter::SetHarvestHeld(bool bHeld)
     if(bPreviousHeld!=bHarvestHeld&&GatheringComponent&&GatheringComponent->IsGatheringEnabled())
         GatheringComponent->HandleInteraction(0.f,bHarvestHeld);
 }
-void ADWPlayerCharacter::CancelHarvestInteraction(){SetHarvestHeld(false);}
+void ADWPlayerCharacter::CancelHarvestInteraction(){SetHarvestHeld(false);if(GatheringComponent)GatheringComponent->CancelGatheringSwing();}
 bool ADWPlayerCharacter::CanPerformGatheringAction() const
 {
-    return !bGameplayActionInProgress&&!bRestoringSave&&!IsDead()&&HasCombatVitalsReady()&&!bIsRolling&&!IsFormalDashing()&&!IsFormallyRooted()&&AttackPhase==EDWCombatPhase::None&&(!WeaponAnimationComponent||!WeaponAnimationComponent->IsBusy());
+    return !IsBuildingPlacementBlockingAttack()&&!bGameplayActionInProgress&&!bRestoringSave&&!IsDead()&&HasCombatVitalsReady()&&!bIsRolling&&!IsFormalDashing()&&!IsFormallyRooted()&&AttackPhase==EDWCombatPhase::None&&(!WeaponAnimationComponent||!WeaponAnimationComponent->IsBusy());
 }
 void ADWPlayerCharacter::UpdateHarvest(float Dt)
 {
@@ -1327,6 +1371,7 @@ void ADWPlayerCharacter::NotifyAlcoholHit()
 }
 bool ADWPlayerCharacter::ThrowAlcoholAt(FVector Target)
 {
+    if(IsBuildingPlacementBlockingAttack())return false;
     if(HasCombatVitalsReady())return false; // Formal stocked bottles use the unique rules-clock/emitter transaction.
     if(!IsCombatActionAllowed()||AttackPhase!=EDWCombatPhase::None||bIsRolling||IsFormalDashing()||!AlcoholProjectileClass||Target.ContainsNaN()||GetWorld()->GetTimeSeconds()<NextThrowTime||bGameplayActionInProgress)return false;
     TGuardValue<bool> ActionGuard(bGameplayActionInProgress,true);
@@ -1346,16 +1391,54 @@ bool ADWPlayerCharacter::ThrowAlcoholAt(FVector Target)
     UDWAudioLibrary::PlayWorldSound(this,ThrowSound,SpawnLocation,ThrowSoundVolume,ThrowSoundPitch);
     OnAlcoholThrown(IsValid(Bottle)?Bottle:nullptr,Target,Cost);return true;
 }
+bool ADWPlayerCharacter::CanUseMainHandShortcut(int32 Index)const
+{
+    if(Index<0||Index>3||IsDead()||!HasCombatVitalsReady()||!Inventory||bRestoringSave||bGameplayActionInProgress)return false;
+    if(CharacterA01&&CharacterA01->IsEnabled()&&!CharacterA01->CanUseShortcuts())return false;
+    if(Index<3)return true;
+    const auto* GI=GetGameInstance<UDWGameInstance>();const auto* L=GI?GI->GetSubsystem<UDWLanguageSubsystem>():nullptr;
+    return CharacterA01&&CharacterA01->IsEnabled()&&L&&L->HasTalent(TEXT("a1"));
+}
+bool ADWPlayerCharacter::UseMainHandShortcut(int32 Index)
+{
+    if(!CanUseMainHandShortcut(Index))return false;FDWInventorySlotSnapshot Slot;if(!Inventory->CaptureSlotSnapshot(Index,Slot))return false;
+    const bool Used=UseInventoryItem(Index);
+    if(Used&&IsValid(this)&&!IsActorBeingDestroyed()&&CharacterA01&&CharacterA01->IsEnabled())CharacterA01->NotifyShortcutUse(Index);
+    return Used;
+}
 bool ADWPlayerCharacter::UseInventoryItem(int32 Index)
 {
-    if(IsDead()||!HasCombatVitalsReady()||!GameplayConfig||!Inventory||bGameplayActionInProgress||bRestoringSave)return false;
+    if(IsDead()||!HasCombatVitalsReady()||!GameplayConfig||!Inventory||bGameplayActionInProgress||bRestoringSave||
+        (CharacterA01&&CharacterA01->IsEnabled()&&!CharacterA01->CanUseShortcuts()))return false;
     FDWInventorySlotSnapshot Slot;
     if(Inventory->CaptureSlotSnapshot(Index,Slot))
     {
+        const auto SlotRole=FDWCombatItemRegistry::GetItemRole(Slot.ItemId);
+        if(SlotRole==EDWCombatItemRole::PermanentWeapon||SlotRole==EDWCombatItemRole::ThrowableStock)
+        {
+            const auto* Binding=FDWCombatItemRegistry::FindItem(Slot.ItemId);auto* A=UDWCombatAuthoritySubsystem::Get(this);
+            const TWeakObjectPtr<UDWWeaponAnimationComponent> W(WeaponAnimationComponent);const TWeakObjectPtr<UDWInventoryComponent> I(Inventory);
+            if(!Binding||!A||!W.IsValid())return false;
+            if(const auto* PC=Cast<ADWPlayerController>(GetController()))if(const auto* H=Cast<ADWGameplayHUD>(PC->GetHUD());H&&H->GetMenuPage()==EDWMenuPage::Inventory)
+                return W->EquipInventoryItem(Slot);
+            const auto Life=A->CaptureActorLife(this);const uint64 Epoch=A->GetWorldEpoch();
+            if(SlotRole==EDWCombatItemRole::PermanentWeapon&&!FDWCombatEquipmentTransaction::ClaimExistingPermanent(*W.Get(),Slot))return false;
+            A=UDWCombatAuthoritySubsystem::Get(this);
+            if(!IsValid(this)||IsActorBeingDestroyed()||!A||A->GetWorldEpoch()!=Epoch||!W.IsValid()||W.Get()!=WeaponAnimationComponent.Get()||!I.IsValid()||I.Get()!=Inventory.Get()||!I->IsSlotSnapshotCurrent(Slot))return false;
+            const auto Current=A->CaptureActorLife(this);if(Current.Entity!=Life.Entity||Current.Life!=Life.Life)return false;
+            return W->SelectWeapon(Binding->Presentation);
+        }
+        if(CharacterA01&&CharacterA01->IsEnabled())
+        {
+            if(UDWCharacterA01Component::FormForEssence(Slot.ItemId)!=EDWCombatBaseForm::Normal)return RequestCoreInjection(Slot);
+            bool Handled=false;const bool Used=HandleTrialConsumable(Slot,Handled);if(Handled)return Used;
+        }
+        if(BuildingPlacement&&GameplayConfig->GetBuildingDefinition(Slot.ItemId))return BuildingPlacement->BeginPlacement(Slot);
         if(GatheringComponent&&GatheringComponent->TryUseTool(Slot.ItemId))return true;
         const auto ItemRole=FDWCombatItemRegistry::GetItemRole(Slot.ItemId);
         if(ItemRole==EDWCombatItemRole::MoldCore||ItemRole==EDWCombatItemRole::YeastCore)return RequestCoreInjection(Slot);
     }
+    if(CharacterA01&&CharacterA01->IsEnabled())return false; // Trial consumables are typed; never stack retired generic HealAmount.
     TGuardValue<bool> ActionGuard(bGameplayActionInProgress,true);
     if(auto* Authority=UDWCombatAuthoritySubsystem::Get(this))return Authority->UseLegacyHealingItem(this,Index);
     return false;
@@ -1364,13 +1447,41 @@ bool ADWPlayerCharacter::CraftRecipe(FName RecipeId)
 {
     if(IsDead()||!Inventory||bGameplayActionInProgress||bRestoringSave)return false;
     TGuardValue<bool> ActionGuard(bGameplayActionInProgress,true);
-    const bool Result=Inventory->TryCraft(RecipeId,bYeastForm);
     const FDWRecipeDefinition* FeedbackRecipe=GameplayConfig?GameplayConfig->GetRecipeDefinition(RecipeId):nullptr;
     const bool bBlockedByForm=GameplayConfig&&GameplayConfig->bRequireTransformationForCrafting&&FeedbackRecipe&&FeedbackRecipe->bRequiresYeast&&!bYeastForm;
-    Notify(Result?DWText(this,TEXT("制作完成"),TEXT("Crafting complete."))
-        :(bBlockedByForm?DWText(this,TEXT("该配方需要先变身为酵母形态"),TEXT("This recipe requires Yeast form."))
-        :DWText(this,TEXT("制作失败：检查配方、材料和背包空间"),TEXT("Crafting failed. Check the recipe, ingredients and inventory space."))));
-    if(Result)OnRecipeCrafted(RecipeId);return Result;
+    const FText SuccessText=DWText(this,TEXT("制作完成"),TEXT("Crafting complete."));
+    const FText FailureText=bBlockedByForm?DWText(this,TEXT("该配方需要先变身为酵母形态"),TEXT("This recipe requires Yeast form."))
+        :DWText(this,TEXT("制作失败：检查配方、材料、工位、背包空间或是否已拥有"),TEXT("Crafting failed. Check ingredients, station, space and existing ownership."));
+    const TWeakObjectPtr<ADWPlayerCharacter> SafePlayer(this);
+    const TWeakObjectPtr<UDWInventoryComponent> SafeInventory(Inventory.Get());
+    const TWeakObjectPtr<UDWWeaponAnimationComponent> SafeWeapon(WeaponAnimationComponent.Get());
+    auto* Authority=UDWCombatAuthoritySubsystem::Get(this);
+    const TWeakObjectPtr<UDWCombatAuthoritySubsystem> SafeAuthority(Authority);
+    const auto Life=Authority?Authority->CaptureActorLife(this):DWCombatCommit::FEntityLife{};
+    const uint64 Epoch=Authority?Authority->GetWorldEpoch():0,RestoreEpoch=SafeWeapon.IsValid()?SafeWeapon->GetCombatWeaponRestoreEpoch():0;
+    auto FeedbackCurrent=[=]()
+    {
+        auto* P=SafePlayer.Get();
+        if(!P||P->IsActorBeingDestroyed()||P->IsDead()||P->bRestoringSave||P->GetInventory()!=SafeInventory.Get()||
+            !P->GetWorld()||P->GetWorld()->bIsTearingDown||P->WeaponAnimationComponent.Get()!=SafeWeapon.Get())return false;
+        if(SafeWeapon.IsValid()&&SafeWeapon->GetCombatWeaponRestoreEpoch()!=RestoreEpoch)return false;
+        if(Epoch)
+        {
+            if(!SafeAuthority.IsValid()||UDWCombatAuthoritySubsystem::Get(P)!=SafeAuthority.Get()||SafeAuthority->GetWorldEpoch()!=Epoch)return false;
+            const auto Current=SafeAuthority->FindRegisteredActorLife(P);
+            if(Current.Entity!=Life.Entity||Current.Life!=Life.Life)return false;
+        }
+        return true;
+    };
+    FName Permanent;bool Result=false;
+    if(Inventory->GetCraftPermanentWeaponOutput(RecipeId,Permanent))
+        Result=Permanent.IsNone()?Inventory->TryCraft(RecipeId,bYeastForm)
+            :(WeaponAnimationComponent&&FDWCombatEquipmentTransaction::TryCraft(*WeaponAnimationComponent,RecipeId,bYeastForm));
+    // Inventory listeners may restore/destroy the player. Feedback never rewrites the committed facts.
+    if(!FeedbackCurrent())return Result;
+    SafePlayer->Notify(Result?SuccessText:FailureText);
+    if(Result&&FeedbackCurrent())SafePlayer->OnRecipeCrafted(RecipeId);
+    return Result;
 }
 float ADWPlayerCharacter::TakeDamage(float Amount,const FDamageEvent& Event,AController* InstigatorController,AActor* Causer)
 {
@@ -1381,6 +1492,7 @@ float ADWPlayerCharacter::TakeDamage(float Amount,const FDamageEvent& Event,ACon
 void ADWPlayerCharacter::RecordCombatDamageFacts(float Applied)
 {
     if(Applied<=0.f)return;
+    if(CharacterA01&&CharacterA01->IsEnabled())CharacterA01->SyncAuthoritativeHealth();
     CancelCoreInjectionFacts(); // Actual positive damage cancels before any damage notification.
     if(CombatDamageRevision<MAX_uint64)++CombatDamageRevision;
     LastCombatDamageWorldTime=GetWorld()?GetWorld()->GetTimeSeconds():-1.;
@@ -1389,10 +1501,12 @@ void ADWPlayerCharacter::CommitCombatDeathFacts()
 {
     if(bDeathHandled)return;
     bDeathHandled=true;bCombatDeathEffectsPending=true;Health=GetCombatHealthFloor();
+    if(BuildingPlacement)BuildingPlacement->CancelPlacement();
     if(WeaponAnimationComponent)WeaponAnimationComponent->ClearShieldCounterFacts();
     EndFormalRootFacts(EDWMoldRootEnd::Death);
     CancelCoreInjectionFacts();
     ResetCombatKnockbackFacts();
+    if(CharacterA01&&CharacterA01->IsEnabled()){CharacterA01->SyncAuthoritativeHealth();CharacterA01->CancelAbility(true);}
     CombatVitals.EndForm();bHasCombatFormFrameSlice=false;SyncCombatVitalsCompatibility();
 }
 void ADWPlayerCharacter::PublishCombatDeathEffects()
@@ -1485,6 +1599,13 @@ void ADWPlayerCharacter::UpdateAnimation()
         bRestartAttackAnimation=false;bRestartMeleeAnimation=false;
         return;
     }
+    if(GatheringComponent&&GatheringComponent->IsGatheringSwingActive())
+    {
+        UAnimSequenceBase* Sequence=GatheringComponent->GetGatheringSequence();
+        if(Sequence&&(!GetMesh()->GetSingleNodeInstance()||GetMesh()->GetSingleNodeInstance()->GetAnimationAsset()!=Sequence))GetMesh()->PlayAnimation(Sequence,false);
+        if(auto* Instance=GetMesh()->GetSingleNodeInstance()){Instance->SetPlaying(false);Instance->SetPosition(GatheringComponent->GetGatheringSourceSeconds(),false);}
+        ActiveAnimation=Sequence;return;
+    }
     if(WeaponAnimationComponent&&WeaponAnimationComponent->IsEnabled()&&WeaponAnimationComponent->HasWeaponPresentation()&&WeaponAnimationComponent->GetActiveSequence())
     {
         UAnimSequenceBase* Sequence=WeaponAnimationComponent->GetActiveSequence();
@@ -1525,10 +1646,20 @@ void ADWPlayerCharacter::UpdateAnimation()
     }
     if(Now>=AttackUntil||IsDead())bRestartAttackAnimation=false;
 }
+FLinearColor ADWPlayerCharacter::GetTintForCombatForm(EDWCombatBaseForm Form) const
+{
+    switch(Form)
+    {
+    case EDWCombatBaseForm::Yeast:return YeastTint;
+    case EDWCombatBaseForm::Mold:return MoldTint;
+    default:return DoughTint;
+    }
+}
 void ADWPlayerCharacter::InitializeFormVisuals()
 {
     if(bFormVisualsInitialized||!GetMesh())return;
     bFormVisualsInitialized=true;DoughMeshScale=GetMesh()->GetRelativeScale3D();
+    CurrentFormTint=FormBlendStartTint=FormBlendTargetTint=DoughTint;
     FormBoneFinalizedHandle=GetMesh()->RegisterOnBoneTransformsFinalizedDelegate(
         FOnBoneTransformsFinalizedMultiCast::FDelegate::CreateUObject(this,&ADWPlayerCharacter::HandleFormBonesFinalized));
 }
@@ -1536,9 +1667,14 @@ void ADWPlayerCharacter::UpdateFormAppearance(bool bImmediate)
 {
     InitializeFormVisuals();
     FormBlendStartAlpha=CurrentFormBlendAlpha;FormBlendTargetAlpha=bYeastForm?1.f:0.f;FormBlendElapsed=0.f;
+    FormBlendStartTint=CurrentFormTint;FormBlendTargetTint=GetTintForCombatForm(GetCombatBaseForm());
     const float EnterSeconds=bMatchFormEnterBlendToAnimation?TransformAnimationSeconds:FormEnterBlendSeconds;
     FormBlendDuration=FMath::Max(.01f,bYeastForm?EnterSeconds:FormExitBlendSeconds);
-    if(bImmediate){CurrentFormBlendAlpha=FormBlendTargetAlpha;FormBlendStartAlpha=CurrentFormBlendAlpha;FormBlendElapsed=FormBlendDuration;}
+    if(bImmediate)
+    {
+        CurrentFormBlendAlpha=FormBlendTargetAlpha;FormBlendStartAlpha=CurrentFormBlendAlpha;
+        CurrentFormTint=FormBlendTargetTint;FormBlendStartTint=CurrentFormTint;FormBlendElapsed=FormBlendDuration;
+    }
     TickFormAppearance(0.f);
 }
 void ADWPlayerCharacter::TickFormAppearance(float DeltaSeconds)
@@ -1549,12 +1685,12 @@ void ADWPlayerCharacter::TickFormAppearance(float DeltaSeconds)
     const float SmoothAlpha=FMath::InterpEaseInOut(0.f,1.f,TimeAlpha,FMath::Max(1.f,FormBlendExponent));
     CurrentFormBlendAlpha=FMath::Lerp(FormBlendStartAlpha,FormBlendTargetAlpha,SmoothAlpha);
     CurrentFormVisualScale=FMath::Lerp(1.f,FMath::Max(.1f,YeastFormScaleMultiplier),CurrentFormBlendAlpha);
-    const FLinearColor Tint=FMath::Lerp(DoughTint,YeastTint,CurrentFormBlendAlpha);
+    CurrentFormTint=FMath::Lerp(FormBlendStartTint,FormBlendTargetTint,SmoothAlpha);
     for(int32 I=0;I<GetMesh()->GetNumMaterials();++I)
     {
         auto* MID=Cast<UMaterialInstanceDynamic>(GetMesh()->GetMaterial(I));
         if(!MID)MID=GetMesh()->CreateDynamicMaterialInstance(I);
-        if(MID)MID->SetVectorParameterValue(TEXT("FormTint"),Tint);
+        if(MID)MID->SetVectorParameterValue(TEXT("FormTint"),CurrentFormTint);
     }
     ApplyFormMeshScale();
 }
@@ -1620,7 +1756,10 @@ template<class T> bool DWMatchesSave(const FString& Key, const FString& Path, co
 }
 void ADWPlayerCharacter::CaptureSaveData(UDWSaveGame* Save)const
 {
-    if(!Save)return;Save->CompletedWorldEvents=GetWorld()->GetSubsystem<UDWWorldEventSubsystem>()->ExportCompleted();Save->PlayerTransform=GetActorTransform();Save->bHasPlayerTransform=true;Save->Health=Health;Save->Transformation=Transformation;Save->bYeastForm=bYeastForm;
+    if(!Save||!GetWorld())return;
+    // The legacy Blueprint capture entry must not silently capture only inventory after placement.
+    if(auto* GI=GetGameInstance<UDWGameInstance>();GI&&GI->RejectGatheringPreviewPersistence())return;
+    Save->CompletedWorldEvents=GetWorld()->GetSubsystem<UDWWorldEventSubsystem>()->ExportCompleted();Save->PlayerTransform=GetActorTransform();Save->bHasPlayerTransform=true;Save->Health=Health;Save->Transformation=Transformation;Save->bYeastForm=bYeastForm;
     Save->SprintAlcoholElapsed=0.f;Save->TransformationDecayElapsed=0.f;Save->Inventory=Inventory->GetSlots();Save->WorldActors.Reset();
     Save->CombatPlayerResources={};
     if(HasCombatVitalsReady()&&WeaponAnimationComponent)
@@ -1650,10 +1789,13 @@ void ADWPlayerCharacter::ApplySaveData(const UDWSaveGame* Save) {TryApplySaveDat
 bool ADWPlayerCharacter::TryApplySaveData(const UDWSaveGame* InSave)
 {
     if(!InSave||IsActorBeingDestroyed()||!GetWorld()||GetWorld()->bIsTearingDown)return false;
+    auto* GI=GetGameInstance<UDWGameInstance>();
+    if(GI&&GI->RejectGatheringPreviewPersistence())return false;
     if(const auto* Recovery=UDWCombatRecoverySubsystem::Get(this);Recovery&&Recovery->HasRecoveryFacts())return false;
     TStrongObjectPtr<UDWSaveGame> Frozen(DuplicateObject<UDWSaveGame>(InSave,GetTransientPackage()));
+    FString Error;
+    if(!Frozen.IsValid()||!GameplayConfig||!DWRetiredSaveProjection::ApplyToDuplicate(*Frozen,Error,GameplayConfig->MaxInventorySlots))return false;
     const UDWSaveGame* Save=Frozen.Get();
-    auto* GI=GetGameInstance<UDWGameInstance>();FString Error;
     auto* Authority=UDWCombatAuthoritySubsystem::Get(this);
     if(!Authority||!Save||!GameplayConfig||!Inventory||bRestoringSave||bGameplayActionInProgress||!GI||!GI->GetCombatRules()||
         !DWCombatPlayerSave::Validate(*GI->GetCombatRules(),*Save,Error)||!Inventory->AreSlotsValid(Save->Inventory))return false;

@@ -3,6 +3,8 @@
 #include "DWCombatRules.h"
 #include "DWCombatItemRegistry.h"
 #include "DWSaveGame.h"
+#include "DWCharacterA01SaveBridge.h"
+#include "DWYeastDashPlan.h"
 #include <cmath>
 #include <limits>
 
@@ -64,6 +66,32 @@ bool DWCombatPlayerSave::MakeNew(const FDWCombatRules& Rules,UDWSaveGame& Save,F
     Save.SprintAlcoholElapsed=Save.TransformationDecayElapsed=0.f;
     return Validate(Rules,Save,Error);
 }
+bool DWCombatPlayerSave::MakeNewFullSurvival(const FDWCombatRules& Rules,UDWSaveGame& Save,FString& Error)
+{
+    FDWCombatPlayerVitalsConfig C;
+    if(!FDWCombatPlayerVitalsConfig::Build(Rules,C,Error)||!MakeNew(Rules,Save,Error))return false;
+    Save.CombatPlayerResources.Vitals.Water=C.Vitals.WaterMax;
+    Save.CombatPlayerResources.Vitals.Satiety=C.Vitals.SatietyMax;
+    return Validate(Rules,Save,Error);
+}
+bool DWCombatPlayerSave::BuildConfigForSave(const FDWCombatRules& Rules,const UDWSaveGame& Save,FDWCombatPlayerVitalsConfig& Out,FString& Error)
+{
+    if(!(DWCharacterA01SaveBridge::HasTrialFields(Save)||DWCharacterA01SaveBridge::HasFormalFields(Save)))return FDWCombatPlayerVitalsConfig::Build(Rules,Out,Error);
+    FDWA01SavedProjection Projection;if(!DWCharacterA01SaveBridge::ValidateProjection(Rules,Save,Projection,Error))return false;
+    Out=Projection.LegacyConfig;return true;
+}
+bool DWCombatPlayerSave::BuildDashConfigForSave(const FDWCombatRules& Rules,const UDWSaveGame& Save,FDWYeastDashConfig& Out,FString& Error)
+{
+    if(!FDWYeastDashConfig::Build(Rules,Out,Error))return false;
+    if((DWCharacterA01SaveBridge::HasTrialFields(Save)||DWCharacterA01SaveBridge::HasFormalFields(Save)))
+    {
+        FDWA01SavedProjection Projection;if(!DWCharacterA01SaveBridge::ValidateProjection(Rules,Save,Projection,Error))return false;
+        Out.CooldownSeconds=Projection.MaximumCooldown;Out.FormDuration=Projection.LegacyConfig.FormDurationSeconds;
+        Out.SpecialMax=Projection.LegacyConfig.Vitals.SpecialMax;
+        if(!Out.IsValid()){Error=TEXT("A01 compatibility dash cooldown projection is invalid.");return false;}
+    }
+    return true;
+}
 bool DWCombatPlayerSave::Validate(const FDWCombatRules& Rules,const UDWSaveGame& Save,FString& Error)
 {
     if(Save.Version<1||Save.Version>UDWSaveGame::CurrentVersion||
@@ -78,7 +106,7 @@ bool DWCombatPlayerSave::Validate(const FDWCombatRules& Rules,const UDWSaveGame&
         ActorIds.Add(Actor.ActorId);
     }
     FDWCombatPlayerVitalsConfig C;FDWCombatWeaponResourceState WeaponCandidate;
-    if(!FDWCombatPlayerVitalsConfig::Build(Rules,C,Error)
+    if(!BuildConfigForSave(Rules,Save,C,Error)
         ||!FDWCombatPlayerVitalsRuntime::Validate(C,Save.CombatPlayerResources.Vitals,Error)
         ||!BuildWeaponCandidate(Rules,Save.CombatPlayerResources,WeaponCandidate,Error))return false;
     const auto& V=Save.CombatPlayerResources.Vitals;

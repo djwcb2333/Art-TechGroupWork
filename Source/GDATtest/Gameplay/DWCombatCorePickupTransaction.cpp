@@ -1,4 +1,5 @@
 #include "DWCombatCorePickupTransaction.h"
+#include "DWLootBeaconSubsystem.h"
 #include "DWCombatCorePickup.h"
 #include "DWCombatCoreDropSubsystem.h"
 #include "DWCombatAuthoritySubsystem.h"
@@ -45,6 +46,7 @@ bool FDWCombatCorePickupTransaction::Commit(ADWCombatCorePickup& P,ADWPlayerChar
     // Fixed fact commit: inventory, persistent claim and physical availability precede any callback.
     Inventory->AdoptPreparedUnchecked(MoveTemp(Plan));
     Record->Save.Decision=EDWEnemyCoreDropDecision::Claimed;Record->bMayMaterialize=false;P.bClaimed=true;++Drops->Revision;
+    if(auto* W=P.GetWorld())if(auto* V=W->GetSubsystem<UDWLootBeaconSubsystem>())V->SuspendBeacon(&P);
     if(auto* E=Record->Origin.Get();IsValid(E)&&!E->IsActorBeingDestroyed()&&E->GetWorld()==P.GetWorld()&&E->FormalCoreDrop.DeathId==P.DeathId)E->FormalCoreDrop.Decision=EDWEnemyCoreDropDecision::Claimed;
     Authority->EndAction(Action);Authority->EnqueueCommittedCorePickup(Notice);Authority->DrainNotifications();
     return true; // No old object accesses after notification reentry.

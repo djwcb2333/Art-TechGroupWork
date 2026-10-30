@@ -2,6 +2,7 @@
 #include "DWCombatRules.h"
 #include "DWCombatPlayerVitals.h"
 #include "DWCombatItemRegistry.h"
+#include "Dom/JsonObject.h"
 
 namespace DWEnemyFormal
 {
@@ -118,6 +119,32 @@ namespace DWEnemyFormal
         Out=C;Error.Reset();return true;
     }
 
+    bool IsLanguageEssenceDropMap(const FString& MapPackage)
+    {return MapPackage.Equals(TEXT("/Game/DoughWorld/Maps/Gameplay/Levels/L_DoughWorld_LanguagePlaytest"),ESearchCase::CaseSensitive);}
+    bool ApplyLanguageEssenceDropOverrides(const FString& MapPackage,const TSharedPtr<FJsonObject>& Trial,
+        FDWEnemyCoreDropConfig& InOut,FString& Error,bool bValidatedFormalSession)
+    {
+        auto Candidate=InOut;Candidate.bLanguageEssenceIds=false;
+        if(!IsLanguageEssenceDropMap(MapPackage)&&!bValidatedFormalSession){InOut=Candidate;Error.Reset();return true;}
+        const TSharedPtr<FJsonObject>* Parameters=nullptr;const TSharedPtr<FJsonObject>* ProbabilityRow=nullptr;const TSharedPtr<FJsonObject>* CountRow=nullptr;
+        double Probability=0.,Count=0.;
+        if(!Trial||!Trial->TryGetObjectField(TEXT("parameters"),Parameters)||!Parameters||!Parameters->IsValid()||
+            !(*Parameters)->TryGetObjectField(TEXT("essence.drop_probability"),ProbabilityRow)||!ProbabilityRow||!ProbabilityRow->IsValid()||
+            !(*Parameters)->TryGetObjectField(TEXT("essence.drop_count"),CountRow)||!CountRow||!CountRow->IsValid()||
+            !(*ProbabilityRow)->TryGetNumberField(TEXT("value"),Probability)||!FMath::IsFinite(Probability)||Probability<0.||Probability>1.||
+            !(*CountRow)->TryGetNumberField(TEXT("value"),Count)||!FMath::IsFinite(Count)||Count<1.||Count>MAX_int32||FMath::FloorToDouble(Count)!=Count)
+        {Error=TEXT("LANG essence drop probability/count is missing or invalid; no death roll was drawn.");return false;}
+        Candidate.MoldProbability=Candidate.YeastProbability=Probability;Candidate.Count=static_cast<int32>(Count);Candidate.bLanguageEssenceIds=true;
+        InOut=Candidate;Error.Reset();return true;
+    }
+    bool IsSavedCoreDropItemAllowed(EDWEnemyCombatProfile Profile,FName ItemId,const FString& MapPackage,bool bValidatedFormalSession)
+    {
+        if(Profile==EDWEnemyCombatProfile::MoldGrunt)
+            return ItemId==FDWCombatItemRegistry::MoldCoreId()||((IsLanguageEssenceDropMap(MapPackage)||bValidatedFormalSession)&&ItemId==TEXT("MoldEssence"));
+        if(Profile==EDWEnemyCombatProfile::YeastGrunt)
+            return ItemId==FDWCombatItemRegistry::YeastCoreId()||((IsLanguageEssenceDropMap(MapPackage)||bValidatedFormalSession)&&ItemId==TEXT("YeastEssence"));
+        return false;
+    }
     bool IsHostile(EDWEnemyCombatProfile Profile,EDWCombatBaseForm Form,bool bRememberedCombat)
     {
         switch(Profile)
@@ -145,7 +172,8 @@ namespace DWEnemyFormal
             {
                 if(!PickupId.IsValid())return false;
                 Candidate.Decision=EDWEnemyCoreDropDecision::SpawnPending;Candidate.PickupId=PickupId;
-                Candidate.CoreItemId=Mold?FDWCombatItemRegistry::MoldCoreId():FDWCombatItemRegistry::YeastCoreId();Candidate.Count=C.Count;
+                Candidate.CoreItemId=C.bLanguageEssenceIds?(Mold?FName(TEXT("MoldEssence")):FName(TEXT("YeastEssence"))):
+                    (Mold?FDWCombatItemRegistry::MoldCoreId():FDWCombatItemRegistry::YeastCoreId());Candidate.Count=C.Count;
             }
             else Candidate.Decision=EDWEnemyCoreDropDecision::Failed;
         }

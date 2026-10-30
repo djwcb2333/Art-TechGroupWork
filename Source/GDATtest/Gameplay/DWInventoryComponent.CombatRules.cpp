@@ -1,6 +1,8 @@
 #include "DWInventoryComponent.h"
 #include "DWCombatRules.h"
 #include "DWCombatItemRegistry.h"
+#include "DWCombatEquipment.h"
+#include "DWGameplayConfig.h"
 
 bool UDWInventoryComponent::TryApplyCombatStackPolicy(const FDWCombatRules& Rules,FString& OutError)
 {
@@ -20,4 +22,24 @@ bool UDWInventoryComponent::TryApplyCombatStackPolicy(const FDWCombatRules& Rule
     // This sole policy commit increments the inventory revision and then broadcasts.
     // Callers must recheck their own lifecycle after the external notification.
     return TrySetStackLimitOverrides(Candidate);
+}
+
+bool UDWInventoryComponent::GetCraftPermanentWeaponOutput(FName RecipeId,FName& OutItemId) const
+{
+    OutItemId=NAME_None;
+    const auto* Recipe=GetConfig()->GetRecipeDefinition(RecipeId);
+    if(!Recipe)return false;
+    for(const auto& Output:Recipe->Outputs)
+        if(FDWCombatItemRegistry::GetItemRole(Output.ItemId)==EDWCombatItemRole::PermanentWeapon)
+        {
+            // E1 permanent acquisition is one identity and one physical item in the same transaction.
+            if(Recipe->Outputs.Num()!=1||Output.Quantity!=1)return false;
+            OutItemId=Output.ItemId;
+        }
+    return true;
+}
+
+bool UDWInventoryComponent::CanCraftPermanentWeapon(FName ItemId) const
+{
+    return FDWCombatEquipmentTransaction::CanCraft(*this,ItemId);
 }

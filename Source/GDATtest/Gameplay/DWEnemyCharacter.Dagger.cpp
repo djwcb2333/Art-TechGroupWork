@@ -18,11 +18,13 @@ bool ADWEnemyCharacter::IsEngagedForDagger()const
 {return IsFormalCombatReady()?FormalMemory.bEngaged:(PendingDaggerAlertTarget.IsValid()||TargetPawn.IsValid()||State==EDWEnemyState::Attack||State==EDWEnemyState::Alert);}
 void ADWEnemyCharacter::SyncDaggerAwareness(ADWPlayerCharacter* P,bool EquipmentChange)
 {
-    if(!IsAlive()||!GetWorld()||GetWorld()->bIsTearingDown||GetWorld()->IsPaused()||!IsValid(P)||P->IsActorBeingDestroyed())return;
+    if(!IsAlive()||!GetWorld()||GetWorld()->bIsTearingDown||(GetWorld()->IsPaused()&&!EquipmentChange)||!IsValid(P)||P->IsActorBeingDestroyed())return;
     auto* A=UDWCombatAuthoritySubsystem::Get(this);if(!A)return;const auto Life=A->CaptureActorLife(P);
     const bool Equipped=DWDaggerEnemy::Equipped(P),Inside=FVector::Dist2D(GetActorLocation(),P->GetActorLocation())<=GetDaggerAlertRadius();
     if(EquipmentChange||Life.Entity!=DaggerPlayerLife.Entity||Life.Life!=DaggerPlayerLife.Life)
     {DaggerAwareness.EquipmentChanged(Inside,Equipped);DaggerPlayerLife=Life;}
+    // A committed menu equip synchronizes facts while paused; AI observation/time stay frozen.
+    if(GetWorld()->IsPaused())return;
     const auto* W=P->WeaponAnimationComponent.Get();
     const double Grace=W?W->GetDaggerGraceSeconds():0.;
     DaggerAwareness.Observe(GetWorld()->GetTimeSeconds(),Inside,Equipped,IsEngagedForDagger(),Grace);

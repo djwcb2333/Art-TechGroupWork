@@ -1,5 +1,10 @@
 #include "DWPlayerController.h"
+#include "DWWorldMapPauseGate.h"
+#include "GameFramework/GameModeBase.h"
+#include "DWLanguageUIBridgeComponent.h"
+#include "DWCharacterA01Component.h"
 #include "DWGatheringComponent.h"
+#include "DWBuildingPlacementComponent.h"
 #include "DWCombatHUDModel.h"
 #include "DWCombatInputAdapter.h"
 #include "Misc/ScopeExit.h"
@@ -33,7 +38,7 @@ namespace
     TArray<FKey> DefaultDWKeys()
     {
         return {EKeys::W,EKeys::S,EKeys::A,EKeys::D,EKeys::SpaceBar,EKeys::LeftShift,EKeys::RightShift,
-            EKeys::F,EKeys::E,EKeys::LeftMouseButton,EKeys::MiddleMouseButton,EKeys::B,EKeys::Tab,EKeys::Escape,EKeys::P,EKeys::RightMouseButton,EKeys::C,EKeys::H,EKeys::I,EKeys::Q,EKeys::E,EKeys::R,EKeys::Zero,EKeys::One,EKeys::Two,EKeys::Three,FKey(),FKey(),FKey(),FKey(),FKey()};
+            EKeys::F,EKeys::E,EKeys::LeftMouseButton,EKeys::MiddleMouseButton,EKeys::B,EKeys::Tab,EKeys::Escape,EKeys::P,EKeys::RightMouseButton,EKeys::C,EKeys::H,EKeys::I,EKeys::Q,EKeys::E,EKeys::R,EKeys::Zero,EKeys::One,EKeys::Two,EKeys::Three,FKey(),FKey(),FKey(),FKey(),FKey(),EKeys::G,EKeys::Tilde,EKeys::Four};
     }
 
     FText DWKeyLabel(const UObject* Context, const FKey Key)
@@ -82,6 +87,13 @@ void ADWPlayerController::GetPlayerViewPoint(FVector& Location,FRotator& Rotatio
 void ADWPlayerController::BeginPlay()
 {
     Super::BeginPlay();
+    // The trial previously installed this bridge itself; formal maps need the same
+    // local presentation owner without starting or modifying any language session.
+    if(IsLocalController()&&!UDWLanguageUIBridgeComponent::Find(this))
+    {
+        auto* Bridge=NewObject<UDWLanguageUIBridgeComponent>(this,NAME_None,RF_Transient);
+        if(Bridge){AddInstanceComponent(Bridge);Bridge->RegisterComponent();}
+    }
     if(auto* Settings=UDWUserSettings::Resolve(this))Settings->ApplyAudio();
     // Existing Blueprint defaults can override constructor values. Paused camera updates
     // are gated by this runtime flag in UWorld::Tick, separately from SpringArm updates.
@@ -90,7 +102,7 @@ void ADWPlayerController::BeginPlay()
     // SceneViewFamily otherwise freezes temporal view history when the title pauses
     // before the first correct pawn view, even though CameraManager's POV is current.
     if(UWorld* World=GetWorld())World->bIsCameraMoveableWhenPaused=true;
-    FInputModeGameAndUI Mode;Mode.SetHideCursorDuringCapture(false);Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);SetInputMode(Mode);
+    FInputModeGameAndUI Mode;Mode.SetHideCursorDuringCapture(false);Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);ApplyDWGameAndUI(Mode);
     CombatInputAdapter=FDWCombatInputAdapter::Create(this);
     ImportLegacyCombatShortcutDefaults();
     RefreshCombatInputKeys();
@@ -116,13 +128,13 @@ void ADWPlayerController::SetupInputComponent()
 TArray<FKey> ADWPlayerController::GetConfiguredKeys() const
 {
     return {KeyMoveForward,KeyMoveBackward,KeyMoveLeft,KeyMoveRight,KeyDash,KeySprint,KeySprintAlternate,
-        KeyHarvest,KeyTransform,KeyThrow,KeyCameraDrag,KeyInventory,KeyCrafting,KeyPauseMenu,KeyPauseAlternate,KeyMelee,KeyCharacter,KeyBuilding,KeyLanguageJournal,KeyPreviousBookTab,KeyNextBookTab,KeyReload,KeySelectUnarmed,KeySelectWeapon1,KeySelectWeapon2,KeySelectWeapon3,FKey(),FKey(),FKey(),FKey(),FKey()};
+        KeyHarvest,KeyTransform,KeyThrow,KeyCameraDrag,KeyInventory,KeyCrafting,KeyPauseMenu,KeyPauseAlternate,KeyMelee,KeyCharacter,KeyBuilding,KeyLanguageJournal,KeyPreviousBookTab,KeyNextBookTab,KeyReload,KeySelectUnarmed,KeySelectWeapon1,KeySelectWeapon2,KeySelectWeapon3,FKey(),FKey(),FKey(),FKey(),FKey(),KeyReadGlyph,KeyLanguageJournalAlternate,KeyShortcut4};
 }
 
 bool ADWPlayerController::DoBindingContextsOverlap(int32 A,int32 B)
 {
  auto IsTab=[](int32 I){return I==int32(EDWInputAction::PreviousBookTab)||I==int32(EDWInputAction::NextBookTab);};
- auto IsMenu=[](int32 I){return I==int32(EDWInputAction::Inventory)||I==int32(EDWInputAction::Crafting)||I==int32(EDWInputAction::PauseMenu)||I==int32(EDWInputAction::PauseAlternate)||(I>=int32(EDWInputAction::Character)&&I<=int32(EDWInputAction::NextBookTab));};
+ auto IsMenu=[](int32 I){return I==int32(EDWInputAction::Inventory)||I==int32(EDWInputAction::Crafting)||I==int32(EDWInputAction::PauseMenu)||I==int32(EDWInputAction::PauseAlternate)||I==int32(EDWInputAction::LanguageJournalAlternate)||(I>=int32(EDWInputAction::Character)&&I<=int32(EDWInputAction::NextBookTab));};
  return (!IsTab(A)&&!IsTab(B))||(IsTab(A)&&IsMenu(B))||(IsTab(B)&&IsMenu(A));
 }
 
@@ -132,7 +144,7 @@ bool ADWPlayerController::ValidateInputBindings(FText& OutError) const
     const TArray<FKey> Keys = GetConfiguredKeys();
     const TCHAR* Names[] = {TEXT("MoveForward"),TEXT("MoveBackward"),TEXT("MoveLeft"),TEXT("MoveRight"),
         TEXT("Dash"),TEXT("Sprint"),TEXT("SprintAlternate"),TEXT("Harvest"),TEXT("Transform"),TEXT("Throw"),
-        TEXT("CameraDrag"),TEXT("Inventory"),TEXT("Crafting"),TEXT("PauseMenu"),TEXT("PauseAlternate"),TEXT("Melee"),TEXT("Character"),TEXT("Building"),TEXT("LanguageJournal"),TEXT("PreviousBookTab"),TEXT("NextBookTab"),TEXT("Reload"),TEXT("SelectUnarmed"),TEXT("SelectWeapon1"),TEXT("SelectWeapon2"),TEXT("SelectWeapon3"),TEXT("SelectWeapon4"),TEXT("SelectWeapon5"),TEXT("SelectWeapon6"),TEXT("SelectWeapon7"),TEXT("SelectWeapon8")};
+        TEXT("CameraDrag"),TEXT("Inventory"),TEXT("Crafting"),TEXT("PauseMenu"),TEXT("PauseAlternate"),TEXT("Melee"),TEXT("Character"),TEXT("Building"),TEXT("LanguageJournal"),TEXT("PreviousBookTab"),TEXT("NextBookTab"),TEXT("Reload"),TEXT("SelectUnarmed"),TEXT("SelectWeapon1"),TEXT("SelectWeapon2"),TEXT("SelectWeapon3"),TEXT("SelectWeapon4"),TEXT("SelectWeapon5"),TEXT("SelectWeapon6"),TEXT("SelectWeapon7"),TEXT("SelectWeapon8"),TEXT("ReadGlyph"),TEXT("LanguageJournalAlternate"),TEXT("Shortcut4")};
     static_assert(UE_ARRAY_COUNT(Names)==int32(EDWInputAction::Count),"Every input action requires a validation name");
     TMap<FKey, int32> Seen;
     for (int32 Index=0; Index<Keys.Num(); ++Index)
@@ -193,7 +205,7 @@ FText ADWPlayerController::GetActionKeyLabel(EDWInputAction Action) const
 bool ADWPlayerController::IsActionDown(EDWInputAction Action) const
 {
     const FKey Key=GetAppliedActionKey(Action);
-    return Key.IsValid() && IsInputKeyDown(Key);
+    return Key.IsValid() && (!CombatInputAdapter||!CombatInputAdapter->IsPresentationKeyReserved(Key)) && IsInputKeyDown(Key);
 }
 
 void ADWPlayerController::RemoveOwnedKeyBindings()
@@ -259,8 +271,14 @@ void ADWPlayerController::CommitQueuedBindings()
     AddOwnedBinding(GetAppliedActionKey(EDWInputAction::PauseMenu),IE_Pressed,&ADWPlayerController::PauseMenu,true);
     AddOwnedBinding(GetAppliedActionKey(EDWInputAction::PauseAlternate),IE_Pressed,&ADWPlayerController::PauseMenu,true);
     AddOwnedBinding(GetAppliedActionKey(EDWInputAction::Character),IE_Pressed,&ADWPlayerController::Character,true);
-    AddOwnedBinding(GetAppliedActionKey(EDWInputAction::Building),IE_Pressed,&ADWPlayerController::Building,true);
+    // Keep the serialized Building action for compatibility; retire its page shortcut.
     AddOwnedBinding(GetAppliedActionKey(EDWInputAction::LanguageJournal),IE_Pressed,&ADWPlayerController::LanguageJournal,true);
+    AddOwnedBinding(GetAppliedActionKey(EDWInputAction::ReadGlyph),IE_Pressed,&ADWPlayerController::ReadGlyph);
+    AddOwnedBinding(GetAppliedActionKey(EDWInputAction::LanguageJournalAlternate),IE_Pressed,&ADWPlayerController::LanguageJournal,true);
+    // A saved user binding has priority. Never overwrite or steal a pre-existing M.
+    if(!AppliedKeys.Contains(EKeys::M))AddOwnedBinding(EKeys::M,IE_Pressed,&ADWPlayerController::WorldMap,true);
+    else UE_LOG(LogTemp,Warning,TEXT("World map M is already assigned; existing user binding was preserved."));
+    // Shortcut4 is sampled by the same physical shortcut adapter as slots 1-3.
     // Tab navigation is handled by the focused UI; do not bind E twice and consume Transform in gameplay.
     bInputBindingsPending=false;
     ++InputBindingsRevision;
@@ -278,7 +296,7 @@ void ADWPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
     Super::EndPlay(EndPlayReason);
 }
 bool ADWPlayerController::IsGameplayBlocked()const
-{const auto* H=Cast<ADWGameplayHUD>(GetHUD());return UDWWorldEventSubsystem::IsPlaying(this)||IsPaused()||(H&&H->IsBlockingGameplay())||(Player()&&Player()->IsDead());}
+{const auto* H=Cast<ADWGameplayHUD>(GetHUD());const auto* Bridge=UDWLanguageUIBridgeComponent::Find(this);return (Bridge&&Bridge->HasModalLease())||UDWWorldEventSubsystem::IsPlaying(this)||IsPaused()||(H&&H->IsBlockingGameplay())||(Player()&&Player()->IsDead());}
 bool ADWPlayerController::IsCameraInputAllowed()const
 {
     const auto* P=Player();const auto* H=Cast<ADWGameplayHUD>(GetHUD());
@@ -310,7 +328,7 @@ void ADWPlayerController::PlayerTick(float DeltaSeconds)
         if(!IsPaused()&&!IsCombatInputSuspended())P->CancelCombatActions();
         return;
     }
-    if(auto* Weapons=P->WeaponAnimationComponent.Get();Weapons&&P->HasCombatVitalsReady())
+    if(auto* Weapons=P->WeaponAnimationComponent.Get();Weapons&&P->HasCombatVitalsReady()&&!P->IsBuildingPlacementBlockingAttack()&&CanUseGameplayShortcuts())
     {
         auto ShortcutAvailable=[this](EDWInputAction Action)
         {
@@ -325,9 +343,9 @@ void ADWPlayerController::PlayerTick(float DeltaSeconds)
         {if(ConsumeCombatPress(ReloadKey,TEXT("Reload"),ShortcutPress)&&!Weapons->RequestReload())DWCombatHUD::NotifyRejected(P,EDWCombatHUDRequest::Reload);}
         else if(Weapons->bEnableQuickSelection&&ShortcutAvailable(EDWInputAction::SelectUnarmed)&&WasInputKeyJustPressed(UnarmedKey))
         {if(ConsumeCombatPress(UnarmedKey,TEXT("SelectWeapon"),ShortcutPress))Weapons->SelectWeapon(EDWAnimatedWeapon::Unarmed);}
-        else if(Weapons->bEnableQuickSelection)for(int32 I=0;I<3;++I)
+        else if(Weapons->bEnableQuickSelection)for(int32 I=0;I<4;++I)
         {
-            const auto Action=static_cast<EDWInputAction>(int32(EDWInputAction::SelectWeapon1)+I);const FKey Key=GetAppliedActionKey(Action);
+            const auto Action=I==3?EDWInputAction::Shortcut4:static_cast<EDWInputAction>(int32(EDWInputAction::SelectWeapon1)+I);const FKey Key=GetAppliedActionKey(Action);
             if(ShortcutAvailable(Action)&&WasInputKeyJustPressed(Key))
             {if(ConsumeCombatPress(Key,TEXT("InventoryQuickSlot"),ShortcutPress))
              {if(auto* H=Cast<ADWGameplayHUD>(GetHUD()))if(auto* Screen=H->GetGameplayWidget())Screen->ActivateQuickInventorySlot(I);
@@ -366,7 +384,9 @@ void ADWPlayerController::PlayerTick(float DeltaSeconds)
     {FHitResult Aim;if(GetHitResultUnderCursor(ECC_Visibility,false,Aim))Weapons->UpdateFormalSporeGapAim(Aim.ImpactPoint);}
     P->MoveCameraRelative(Forward,Right);
     P->SetSprintHeld(IsActionDown(EDWInputAction::Sprint)||IsActionDown(EDWInputAction::SprintAlternate));
-    if(P->GatheringComponent&&P->GatheringComponent->IsGatheringEnabled())
+    if(P->IsBuildingPlacementBlockingAttack())
+    {bGatheringHarvestPressActive=false;P->SetHarvestHeld(false);}
+    else if(P->GatheringComponent&&P->GatheringComponent->IsGatheringEnabled())
     {
         // Existing Slate observation also sees releases consumed by a paused/focused widget.
         // Rebind, pawn/world replacement and focus invalidation retire the old press identity.
@@ -392,7 +412,7 @@ void ADWPlayerController::PlayerTick(float DeltaSeconds)
 void ADWPlayerController::Dash()
 {
     auto* P=Player();FDWCombatInputPress Press;
-    if(!P||IsGameplayBlocked()||!ConsumeCombatPress(GetAppliedActionKey(EDWInputAction::Dash),TEXT("Dash"),Press))return;
+    if(!P||P->IsBuildingPlacementBlockingAttack()||IsGameplayBlocked()||!ConsumeCombatPress(GetAppliedActionKey(EDWInputAction::Dash),TEXT("Dash"),Press))return;
     const double Forward=double(IsActionDown(EDWInputAction::MoveForward))-double(IsActionDown(EDWInputAction::MoveBackward));
     const double Right=double(IsActionDown(EDWInputAction::MoveRight))-double(IsActionDown(EDWInputAction::MoveLeft));
     const FRotationMatrix Camera(FRotator(0.,P->GetMovementCameraYaw(),0.));
@@ -411,7 +431,19 @@ void ADWPlayerController::SprintDown(){if(Player()&&!IsGameplayBlocked())Player(
 void ADWPlayerController::SprintUp(){if(Player())Player()->SetSprintHeld(IsActionDown(EDWInputAction::Sprint)||IsActionDown(EDWInputAction::SprintAlternate));}
 void ADWPlayerController::HarvestDown()
 {
-    auto* P=Player();if(!P||IsGameplayBlocked())return;
+    auto* P=Player();if(!P||P->IsBuildingPlacementBlockingAttack()||IsGameplayBlocked())return;
+    if(auto* Bridge=UDWLanguageUIBridgeComponent::Find(this);Bridge&&Bridge->IsTrialReady())
+    {
+        if(!Bridge->CanOpenMenus())return;
+        // F has exactly one physical request. A language rejection is still handled.
+        FDWCombatInputPress SemanticPress;
+        if(!ConsumeCombatPress(GetAppliedActionKey(EDWInputAction::Harvest),TEXT("GatheringHarvest"),SemanticPress))return;
+        if(Bridge->TryHandlePrimaryInteraction()){bGatheringHarvestPressActive=false;P->SetHarvestHeld(false);return;}
+        GatheringHarvestPress=SemanticPress;bGatheringHarvestPressActive=true;
+        const TWeakObjectPtr<ADWPlayerCharacter> WeakPlayer(P);P->SetHarvestHeld(true);
+        if(WeakPlayer.IsValid()&&Player()==WeakPlayer.Get()&&CombatInputAdapter&&CombatInputAdapter->HasObservedReleaseAfter(SemanticPress))
+        {bGatheringHarvestPressActive=false;WeakPlayer->SetHarvestHeld(false);}return;
+    }
     if(!P->GatheringComponent||!P->GatheringComponent->IsGatheringEnabled())
     {P->SetHarvestHeld(true);return;}
     FDWCombatInputPress Press;
@@ -429,10 +461,10 @@ void ADWPlayerController::HarvestUp()
     if(Player())Player()->SetHarvestHeld(false);
 }
 void ADWPlayerController::Transform()
-{FDWCombatInputPress Press;if(Player()&&!IsGameplayBlocked()&&ConsumeCombatPress(GetAppliedActionKey(EDWInputAction::Transform),TEXT("Transform"),Press))Player()->TryTransform();}
+{FDWCombatInputPress Press;if(Player()&&!Player()->IsBuildingPlacementBlockingAttack()&&!IsGameplayBlocked()&&ConsumeCombatPress(GetAppliedActionKey(EDWInputAction::Transform),TEXT("Transform"),Press))Player()->TryTransform();}
 void ADWPlayerController::Throw()
 {
-    auto* P=Player();if(!P||IsGameplayBlocked())return;
+    auto* P=Player();if(!P||P->IsBuildingPlacementBlockingAttack()||IsGameplayBlocked())return;
     FDWCombatInputPress Press;
     if(!ConsumeCombatPress(GetAppliedActionKey(EDWInputAction::Throw),TEXT("Primary"),Press))return;
     if(P->GatheringComponent&&P->GatheringComponent->HandlePrimaryClick())return;
@@ -445,7 +477,7 @@ void ADWPlayerController::Throw()
 }
 void ADWPlayerController::Melee()
 {
-    auto* P=Player();if(!P||IsGameplayBlocked())return;
+    auto* P=Player();if(!P||P->IsBuildingPlacementBlockingAttack()||IsGameplayBlocked())return;
     FDWCombatInputPress Press;
     if(!ConsumeCombatPress(GetAppliedActionKey(EDWInputAction::Melee),TEXT("Secondary"),Press))return;
     FHitResult Hit;FVector Target=P->GetActorLocation()+P->GetActorForwardVector()*600.f;
@@ -461,19 +493,32 @@ void ADWPlayerController::Melee()
 }
 void ADWPlayerController::WeaponPrimaryReleased(){PrepareCombatInputForSimulation();}
 void ADWPlayerController::WeaponSecondaryReleased(){PrepareCombatInputForSimulation();}
-void ADWPlayerController::Inventory(){if(UDWWorldEventSubsystem::IsPlaying(this))return;if(auto* H=Cast<ADWGameplayHUD>(GetHUD())){H->ToggleInventory();}}
-void ADWPlayerController::Crafting(){if(UDWWorldEventSubsystem::IsPlaying(this))return;if(auto* H=Cast<ADWGameplayHUD>(GetHUD())){H->ToggleCrafting();}}
-void ADWPlayerController::PauseMenu(){if(UDWWorldEventSubsystem::IsPlaying(this))return;if(auto* H=Cast<ADWGameplayHUD>(GetHUD())){H->TogglePause();}}
+void ADWPlayerController::WorldMap()
+{
+    auto* H=Cast<ADWGameplayHUD>(GetHUD());if(!H)return;
+    if(H->GetMenuPage()==EDWMenuPage::WorldMap){H->ToggleWorldMap();return;}
+    if(H->GetMenuPage()!=EDWMenuPage::None||!CanOpenWorldMap())return;
+    H->ToggleWorldMap();
+}
+void ADWPlayerController::Inventory(){if(!CanOpenGameplayMenus())return;if(auto* H=Cast<ADWGameplayHUD>(GetHUD())){H->ToggleInventory();}}
+void ADWPlayerController::Crafting(){if(!CanOpenGameplayMenus())return;if(auto* H=Cast<ADWGameplayHUD>(GetHUD())){H->ToggleCrafting();}}
+void ADWPlayerController::PauseMenu(){if(auto* P=Player();P&&P->BuildingPlacement&&P->BuildingPlacement->bPlacing&&WasInputKeyJustPressed(EKeys::Escape)){P->BuildingPlacement->CancelPlacement();return;}if(UDWWorldEventSubsystem::IsPlaying(this))return;if(auto* H=Cast<ADWGameplayHUD>(GetHUD())){H->TogglePause();}}
 
-void ADWPlayerController::Character(){if(!UDWWorldEventSubsystem::IsPlaying(this))if(auto* H=Cast<ADWGameplayHUD>(GetHUD()))H->ToggleHandbook(EDWMenuPage::Character);}
-void ADWPlayerController::Building(){if(!UDWWorldEventSubsystem::IsPlaying(this))if(auto* H=Cast<ADWGameplayHUD>(GetHUD()))H->ToggleHandbook(EDWMenuPage::Building);}
-void ADWPlayerController::LanguageJournal(){if(!UDWWorldEventSubsystem::IsPlaying(this))if(auto* H=Cast<ADWGameplayHUD>(GetHUD()))H->ToggleHandbook(EDWMenuPage::LanguageJournal);}
-void ADWPlayerController::PreviousBookTab(){if(auto* H=Cast<ADWGameplayHUD>(GetHUD()))H->CycleHandbook(-1);}
-void ADWPlayerController::NextBookTab(){if(auto* H=Cast<ADWGameplayHUD>(GetHUD()))H->CycleHandbook(1);}
+void ADWPlayerController::Character(){if(CanOpenGameplayMenus())if(auto* H=Cast<ADWGameplayHUD>(GetHUD()))H->ToggleHandbook(EDWMenuPage::Character);}
+void ADWPlayerController::Building(){if(CanOpenGameplayMenus())if(auto* H=Cast<ADWGameplayHUD>(GetHUD()))H->ToggleHandbook(EDWMenuPage::Building);}
+void ADWPlayerController::LanguageJournal()
+{if(!CanOpenGameplayMenus())return;
+ if(auto* H=Cast<ADWGameplayHUD>(GetHUD()))H->ToggleHandbook(EDWMenuPage::LanguageJournal);}
+void ADWPlayerController::ReadGlyph()
+{FDWCombatInputPress Press;if(!Player()||Player()->IsBuildingPlacementBlockingAttack()||IsGameplayBlocked()||!CanOpenGameplayMenus()||
+ !ConsumeCombatPress(GetAppliedActionKey(EDWInputAction::ReadGlyph),TEXT("ReadGlyph"),Press))return;
+ if(auto* Bridge=UDWLanguageUIBridgeComponent::Find(this))Bridge->TryReadGlyph();}
+void ADWPlayerController::PreviousBookTab(){if(auto* P=Player();P&&P->BuildingPlacement&&P->BuildingPlacement->bPlacing)return;if(auto* H=Cast<ADWGameplayHUD>(GetHUD()))H->CycleHandbook(-1);}
+void ADWPlayerController::NextBookTab(){if(auto* P=Player();P&&P->BuildingPlacement&&P->BuildingPlacement->bPlacing)return;if(auto* H=Cast<ADWGameplayHUD>(GetHUD()))H->CycleHandbook(1);}
 
 void ADWPlayerController::AssignKeys(const TArray<FKey>& K)
 {
- FKey* Fields[]={&KeyMoveForward,&KeyMoveBackward,&KeyMoveLeft,&KeyMoveRight,&KeyDash,&KeySprint,&KeySprintAlternate,&KeyHarvest,&KeyTransform,&KeyThrow,&KeyCameraDrag,&KeyInventory,&KeyCrafting,&KeyPauseMenu,&KeyPauseAlternate,&KeyMelee,&KeyCharacter,&KeyBuilding,&KeyLanguageJournal,&KeyPreviousBookTab,&KeyNextBookTab,&KeyReload,&KeySelectUnarmed,&KeySelectWeapon1,&KeySelectWeapon2,&KeySelectWeapon3,&KeySelectWeapon4,&KeySelectWeapon5,&KeySelectWeapon6,&KeySelectWeapon7,&KeySelectWeapon8};
+ FKey* Fields[]={&KeyMoveForward,&KeyMoveBackward,&KeyMoveLeft,&KeyMoveRight,&KeyDash,&KeySprint,&KeySprintAlternate,&KeyHarvest,&KeyTransform,&KeyThrow,&KeyCameraDrag,&KeyInventory,&KeyCrafting,&KeyPauseMenu,&KeyPauseAlternate,&KeyMelee,&KeyCharacter,&KeyBuilding,&KeyLanguageJournal,&KeyPreviousBookTab,&KeyNextBookTab,&KeyReload,&KeySelectUnarmed,&KeySelectWeapon1,&KeySelectWeapon2,&KeySelectWeapon3,&KeySelectWeapon4,&KeySelectWeapon5,&KeySelectWeapon6,&KeySelectWeapon7,&KeySelectWeapon8,&KeyReadGlyph,&KeyLanguageJournalAlternate,&KeyShortcut4};
  static_assert(UE_ARRAY_COUNT(Fields)==int32(EDWInputAction::Count),"Every action requires one configured field");
  if(K.Num()!=UE_ARRAY_COUNT(Fields))return;for(int32 I=0;I<K.Num();++I)*Fields[I]=K[I];
 }
@@ -501,6 +546,9 @@ void ADWPlayerController::LoadSavedBindings()
   // A newly introduced default must not displace any existing saved action.
   for(int32 I=int32(EDWInputAction::Character);I<=int32(EDWInputAction::NextBookTab);++I)if(!SavedActions.Contains(I))
     for(int32 J=0;J<K.Num();++J)if(I!=J&&K[I].IsValid()&&K[I]==K[J]&&DoBindingContextsOverlap(I,J)){K[I]=FKey();break;}
+  for(const EDWInputAction NewAction:{EDWInputAction::ReadGlyph,EDWInputAction::LanguageJournalAlternate,EDWInputAction::Shortcut4})
+  {const int32 I=int32(NewAction);if(!SavedActions.Contains(I))for(int32 J=0;J<K.Num();++J)
+    if(I!=J&&K[I].IsValid()&&K[I]==K[J]&&DoBindingContextsOverlap(I,J)){K[I]=FKey();break;}}
   AssignKeys(K);FText Error;
   if(!ValidateInputBindings(Error)){AssignKeys(Before);UE_LOG(LogTemp,Warning,TEXT("Ignoring invalid saved bindings: %s"),*Error.ToString());return;}
   int32 DefaultVersion=0;
@@ -547,8 +595,8 @@ FText ADWPlayerController::GetActionDisplayName(EDWInputAction A)const
      if(A==EDWInputAction::Throw)return DWText(this,TEXT("武器攻击 / 蓄力"),TEXT("Weapon attack / charge"));
      if(A==EDWInputAction::Melee)return DWText(this,TEXT("盾斧格挡"),TEXT("Shield-axe block"));
  }
- const TCHAR* CN[]={TEXT("向前移动"),TEXT("向后移动"),TEXT("向左移动"),TEXT("向右移动"),TEXT("酵母冲撞"),TEXT("疾跑（旧兼容）"),TEXT("疾跑备用（旧兼容）"),TEXT("场景交互"),TEXT("霉菌扎根 / 解除"),TEXT("投掷酒精"),TEXT("拖拽视角"),TEXT("背包"),TEXT("制作"),TEXT("暂停 / 返回"),TEXT("暂停备用键"),TEXT("近战攻击"),TEXT("角色"),TEXT("建造 / 放置页"),TEXT("语言图鉴"),TEXT("上一标签（手册内）"),TEXT("下一标签（手册内）"),TEXT("装填"),TEXT("选择空手"),TEXT("快捷栏1 · 背包第1格"),TEXT("快捷栏2 · 背包第2格"),TEXT("快捷栏3 · 背包第3格"),TEXT("装备4 · 双匕首"),TEXT("装备5 · 孢子枪"),TEXT("装备6 · 霰弹枪"),TEXT("装备7 · 霉菌弓"),TEXT("装备8 · 酒瓶")};
- const TCHAR* EN[]={TEXT("Move forward"),TEXT("Move backward"),TEXT("Move left"),TEXT("Move right"),TEXT("Yeast charge"),TEXT("Sprint (legacy)"),TEXT("Sprint alternate (legacy)"),TEXT("Interact"),TEXT("Mold root / release"),TEXT("Throw alcohol"),TEXT("Drag camera"),TEXT("Inventory"),TEXT("Crafting"),TEXT("Pause / Back"),TEXT("Pause alternate"),TEXT("Melee attack"),TEXT("Character"),TEXT("Building"),TEXT("Language journal"),TEXT("Previous handbook tab"),TEXT("Next handbook tab"),TEXT("Reload"),TEXT("Select unarmed"),TEXT("Quick slot 1 · Inventory slot 1"),TEXT("Quick slot 2 · Inventory slot 2"),TEXT("Quick slot 3 · Inventory slot 3"),TEXT("Equipment4 · Dual daggers"),TEXT("Equipment5 · Spore gun"),TEXT("Equipment6 · Shotgun"),TEXT("Equipment7 · Mold bow"),TEXT("Equipment8 · Bottle")};
+ const TCHAR* CN[]={TEXT("向前移动"),TEXT("向后移动"),TEXT("向左移动"),TEXT("向右移动"),TEXT("酵母冲撞"),TEXT("疾跑（旧兼容）"),TEXT("疾跑备用（旧兼容）"),TEXT("场景交互"),TEXT("霉菌扎根 / 解除"),TEXT("投掷酒精"),TEXT("拖拽视角"),TEXT("背包"),TEXT("制作"),TEXT("暂停 / 返回"),TEXT("暂停备用键"),TEXT("近战攻击"),TEXT("角色"),TEXT("建造 / 放置页"),TEXT("语言图鉴"),TEXT("上一标签（手册内）"),TEXT("下一标签（手册内）"),TEXT("装填"),TEXT("选择空手"),TEXT("快捷栏1 · 背包第1格"),TEXT("快捷栏2 · 背包第2格"),TEXT("快捷栏3 · 背包第3格"),TEXT("装备4 · 双匕首"),TEXT("装备5 · 孢子枪"),TEXT("装备6 · 霰弹枪"),TEXT("装备7 · 霉菌弓"),TEXT("装备8 · 酒瓶"),TEXT("阅读文字"),TEXT("语言图鉴备用键"),TEXT("快捷栏4 · 第三只手")};
+ const TCHAR* EN[]={TEXT("Move forward"),TEXT("Move backward"),TEXT("Move left"),TEXT("Move right"),TEXT("Yeast charge"),TEXT("Sprint (legacy)"),TEXT("Sprint alternate (legacy)"),TEXT("Interact"),TEXT("Mold root / release"),TEXT("Throw alcohol"),TEXT("Drag camera"),TEXT("Inventory"),TEXT("Crafting"),TEXT("Pause / Back"),TEXT("Pause alternate"),TEXT("Melee attack"),TEXT("Character"),TEXT("Building"),TEXT("Language journal"),TEXT("Previous handbook tab"),TEXT("Next handbook tab"),TEXT("Reload"),TEXT("Select unarmed"),TEXT("Quick slot 1 · Inventory slot 1"),TEXT("Quick slot 2 · Inventory slot 2"),TEXT("Quick slot 3 · Inventory slot 3"),TEXT("Equipment4 · Dual daggers"),TEXT("Equipment5 · Spore gun"),TEXT("Equipment6 · Shotgun"),TEXT("Equipment7 · Mold bow"),TEXT("Equipment8 · Bottle"),TEXT("Read glyph"),TEXT("Language journal alternate"),TEXT("Quick slot 4 · Third hand")};
  static_assert(UE_ARRAY_COUNT(CN)==int32(EDWInputAction::Count)&&UE_ARRAY_COUNT(EN)==int32(EDWInputAction::Count),"Every input action requires two labels");
  const int32 I=int32(A);return I>=0&&I<UE_ARRAY_COUNT(CN)?DWText(this,CN[I],EN[I]):FText::GetEmpty();
 }
@@ -600,6 +648,12 @@ void ADWPlayerController::BeginCombatMenuSuspension()
 }
 bool ADWPlayerController::IsCombatInputSuspended() const
 {return CombatInputAdapter&&CombatInputAdapter->IsSuspended();}
+bool ADWPlayerController::AcquirePresentationKey(UObject* InOwner,FKey Key)
+{return CombatInputAdapter&&CombatInputAdapter->AcquirePresentationKey(InOwner,Key);}
+void ADWPlayerController::ReleasePresentationKey(UObject* InOwner)
+{if(CombatInputAdapter)CombatInputAdapter->ReleasePresentationKey(InOwner);}
+bool ADWPlayerController::HasObservedPresentationKeyRelease(const UObject* InOwner) const
+{return CombatInputAdapter&&CombatInputAdapter->HasObservedPresentationKeyRelease(InOwner);}
 void ADWPlayerController::InvalidateCombatInputLife()
 {
     PendingCombatReleases.Reset();
@@ -650,4 +704,91 @@ void ADWPlayerController::PrepareCombatInputForSimulation()
             }
         }
     }
+}
+
+// LANG-01 modal policy: known native HUD calls use ApplyDWGameAndUI. External
+// unknown modes take priority by closing the lease before applying their mode.
+void ADWPlayerController::ApplyDWGameAndUI(const FInputModeGameAndUI& Mode,TSharedPtr<SWidget> Focus)
+{
+ DWTrackedGameAndUI=Mode;DWTrackedGameAndUI.SetWidgetToFocus(TSharedPtr<SWidget>());DWTrackedFocus=Focus;bDWTrackedMode=true;
+ if(auto* Bridge=UDWLanguageUIBridgeComponent::Find(this))
+ {
+  const bool bHadModalLease=Bridge->HasModalLease();
+  Bridge->RecordUnderlyingGameAndUI(Mode,Focus,bShowMouseCursor);
+  if(bHadModalLease)return;
+ }
+ TGuardValue<bool> OwnMode(bApplyingLanguageMode,true);Super::SetInputMode(Mode);
+}
+bool ADWPlayerController::GetDWTrackedGameAndUI(FInputModeGameAndUI& OutMode,TWeakPtr<SWidget>& OutFocus)const
+{if(!bDWTrackedMode)return false;OutMode=DWTrackedGameAndUI;OutFocus=DWTrackedFocus;return true;}
+void ADWPlayerController::ApplyLanguageUIOnly(TSharedPtr<SWidget> Focus)
+{
+ TGuardValue<bool> OwnMode(bApplyingLanguageMode,true);FInputModeUIOnly Mode;
+ Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);Mode.SetWidgetToFocus(Focus);Super::SetInputMode(Mode);
+}
+void ADWPlayerController::SetInputMode(const FInputModeDataBase& InData)
+{
+ if(bWorldMapPauseOwned&&!bApplyingLanguageMode)bWorldMapExternalInput=true;
+ if(!bApplyingLanguageMode){if(auto* Bridge=UDWLanguageUIBridgeComponent::Find(this))Bridge->CloseForExternalInputMode();bDWTrackedMode=false;}
+ Super::SetInputMode(InData);
+}
+bool ADWPlayerController::CanOpenWorldMap() const
+{
+ if(!CanOpenGameplayMenus()||!IsCameraInputAllowed())return false;
+ const auto* P=Player();return !(P&&P->BuildingPlacement&&P->BuildingPlacement->bPlacing);
+}
+bool ADWPlayerController::BeginWorldMapPause()
+{
+ if(bWorldMapPauseOwned||IsPaused())return false;
+ if(auto* Bridge=UDWLanguageUIBridgeComponent::Find(this);Bridge&&Bridge->HasModalLease())return false;
+ bWorldMapPauseOwned=true;bWorldMapUnderlyingPaused=false;bWorldMapExternalInput=false;
+ const FCanUnpause Gate=FCanUnpause::CreateUObject(this,&ADWPlayerController::CanReleaseWorldMapPause);
+ if(!Super::SetPause(true,Gate)||!IsPaused()){bWorldMapPauseOwned=false;return false;}
+ return true;
+}
+void ADWPlayerController::EndWorldMapPause()
+{
+ if(!bWorldMapPauseOwned)return;
+ bWorldMapPauseOwned=false;bWorldMapUnderlyingPaused=false;
+ if(!GetWorld()||GetWorld()->bIsTearingDown)return;
+ // ClearPause sweeps every delegate. Suppress all accepted external wrappers
+ // only during this specific sweep; later external releases evaluate normally.
+ if(IsPaused()){TGuardValue<bool> OwnSweep(bWorldMapClearingOwnGate,true);Super::SetPause(false);}
+}
+bool ADWPlayerController::SetPause(bool bPause,FCanUnpause Delegate)
+{
+ if(bWorldMapPauseOwned)
+ {
+  AGameModeBase* GM=GetWorld()?GetWorld()->GetAuthGameMode():nullptr;if(!GM)return false;
+  if(bPause)
+  {
+   const TWeakObjectPtr<ADWPlayerController> WeakThis(this);
+   const FCanUnpause Protected=FCanUnpause::CreateWeakLambda(this,[WeakThis,Delegate]() mutable
+   {
+    const ADWPlayerController* Owner=WeakThis.Get();
+    return DWWorldMapPauseGate::AllowExternalClear(Owner&&Owner->bWorldMapClearingOwnGate,
+        [&Delegate](){return !Delegate.IsBound()||Delegate.Execute();});
+   });
+   const bool Added=GM->SetPause(this,Protected);if(Added)bWorldMapUnderlyingPaused=true;return Added;
+  }
+  bWorldMapUnderlyingPaused=false;return GM->ClearPause();
+ }
+ if(!bApplyingLanguagePause)if(auto* Bridge=UDWLanguageUIBridgeComponent::Find(this);Bridge&&Bridge->HasModalLease())
+ {Bridge->RecordUnderlyingPause(bPause,Delegate);return bPause&&IsPaused();}
+ return Super::SetPause(bPause,Delegate);
+}
+bool ADWPlayerController::ApplyLanguagePause(bool bPause,FCanUnpause Delegate)
+{TGuardValue<bool> OwnPause(bApplyingLanguagePause,true);if(IsPaused()==bPause)return true;Super::SetPause(bPause,Delegate);return IsPaused()==bPause;}
+bool ADWPlayerController::CanOpenGameplayMenus()const
+{
+ if(UDWWorldEventSubsystem::IsPlaying(this))return false;
+ if(auto* Bridge=UDWLanguageUIBridgeComponent::Find(this))return Bridge->CanOpenMenus();
+ const auto* P=Player();const auto* A=P?P->FindComponentByClass<UDWCharacterA01Component>():nullptr;
+ return !A||!A->IsEnabled()||A->CanOpenMenus();
+}
+bool ADWPlayerController::CanUseGameplayShortcuts()const
+{
+ if(auto* Bridge=UDWLanguageUIBridgeComponent::Find(this))return Bridge->CanUseShortcuts();
+ const auto* P=Player();const auto* A=P?P->FindComponentByClass<UDWCharacterA01Component>():nullptr;
+ return !A||!A->IsEnabled()||A->CanUseShortcuts();
 }

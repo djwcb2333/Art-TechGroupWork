@@ -102,7 +102,7 @@ public:
         AController* Instigator, AActor* Causer);
 
     // Fixed two-channel batch: all same-instant health facts precede the first notification.
-    void SubmitVitalsDamagePair(const FDWCombatVitalsDamagePair& Pair);
+    void SubmitVitalsDamagePair(const FDWCombatVitalsDamagePair& Pair,double A01Regen=0.,double A01CeilingBeforeRecovery=0.,double A01FinalCeiling=0.,double A01ClockTime=-1.);
     FDWCombatDamageResult SubmitEnemyEnvironmentFatal(ADWEnemyCharacter&,EDWEnemyEnvironmentFatal,const UDamageType&);
     bool UseLegacyHealingItem(ADWPlayerCharacter* Player,int32 SlotIndex);
     bool CommitCoreInjection(ADWPlayerCharacter* Player);
@@ -126,13 +126,16 @@ public:
     double GetNextShieldDamageBoundary(const ADWPlayerCharacter*,double SliceStart)const;
     uint64 GetShieldDamageRevision()const;
     int32 GetPendingShieldDamageCount(const ADWPlayerCharacter*)const;
-    void ResolveShieldDamageAt(ADWPlayerCharacter*,double WorldGameSeconds);
+    void ResolveShieldDamageAt(ADWPlayerCharacter*,double WorldGameSeconds,bool bDrainNotices=true);
     void ParryEligibleShieldDamage(ADWPlayerCharacter*,double WorldGameSeconds);
     std::optional<DWCombatCommit::FReceipt> FindReceipt(DWCombatCommit::FReceiptId Receipt) const;
 
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type WorldType) const override;
 private:
+    friend class UDWCharacterA01Component;
+    friend class UDWGatheringComponent;
+    friend class ADWGatheringResource;
     friend class UDWCombatMineSubsystem;
     friend class FDWCombatEffectsPersistence;
     friend class UDWWeaponAnimationComponent;
@@ -153,6 +156,7 @@ private:
     void RetireSporeProjectile(const ADWCombatSporeProjectile& Bullet);
     friend class FDWCombatInventoryTransaction;
     friend class FDWCombatRecoveryTransaction;
+    friend class FDWFormalLanguagePersistence;
     bool ReserveRecoveryNoticeSlot();
     void EnqueueCommittedRecovery(const FDWCombatRecoveryNotice&);
     friend class FDWCombatPlayerStateTransaction;

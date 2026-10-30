@@ -1,0 +1,1948 @@
+{
+  "schema_version": "LANG-DESIGN-TrialDefaults-v1",
+  "version": "2026-10-26-trial-2-weapons-corrected",
+  "status": "外部设计交付_未安装UE_试玩候选待最终确认",
+  "authority": {
+    "human_reply": "允许补可调的试玩默认值，明确标注待最终确认",
+    "verified_in_thread": "01a178a9-fdbd-7600-8c84-dd99eec818d5",
+    "verified_user_reply_id": "01a178c0-43a2-7152-beae-d3b39507b10a",
+    "latest_weapon_user_message_id": "01a178c9-026e-7e33-889e-580dee729e28",
+    "latest_weapon_rulings": [
+      "长枪与糖矛是同一武器",
+      "其余武器开局可用，其他合成方式未定",
+      "武器是物品，在背包管理，不放角色界面"
+    ],
+    "adopted_sections": [
+      "0",
+      "1",
+      "2",
+      "3"
+    ],
+    "excluded_sections": [
+      "4"
+    ],
+    "formal_a01_unchanged": true,
+    "never_restore": [
+      "old_15_second_form",
+      "shared_special_energy",
+      "mold_bastion_and_mines"
+    ]
+  },
+  "sources": [
+    {
+      "path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\ProjectHandbook\\角色系统_参数与规则.json",
+      "sha256": "b20829c428c2a2995d424a2365ec86327fda93080f01769b2f8ffc768c0af6e4"
+    },
+    {
+      "path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\ProjectHandbook\\SDD-A01-Character-角色系统.md",
+      "sha256": "cd7b965338d033104c5e2fea6cb9fa86ec58243b559ed469869827fc29704bf7"
+    },
+    {
+      "path": "E:\\GDAT\\第一学期\\AP6402 Art-Tech Collaboration\\Codex Mission\\UE_Whitebox_Delivery\\LanguageIntegration_20261026\\SourceReview\\Source_Manifest.json",
+      "note": "PDF与HTML原始SHA见此；HTML skills=1只作演示，不作游戏赋值。"
+    }
+  ],
+  "deployment": {
+    "ue_installed": false,
+    "never_replace_current_runtime_json": true,
+    "single_executor": "ArtTech战斗实现",
+    "shared_state_maintainer": "ArtTech项目总调度",
+    "formal_saves_untouched": true
+  },
+  "base_parameter_count": 72,
+  "resolved_original_null_count": 22,
+  "parameters": {
+    "health.base_max": {
+      "label": "最大生命上限初始值",
+      "value": 100,
+      "unit": "生命点",
+      "status": "已确认",
+      "source": "A01 1.1",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "health.death_threshold": {
+      "label": "死亡判定值",
+      "value": 0,
+      "unit": "生命点",
+      "status": "已确认",
+      "source": "A01 1.1",
+      "note": "生命小于等于此值进入既有死亡流程",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "health.current_initial": {
+      "label": "新角色当前生命",
+      "value": 100,
+      "unit": "生命点",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "health.cap_loss.amount": {
+      "label": "每次接种损失生命上限",
+      "value": 1,
+      "unit": "生命点",
+      "status": "已确认",
+      "source": "A01 2.3/2.4",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "health.cap_loss.interval_s": {
+      "label": "接种上限损失间隔",
+      "value": 5,
+      "unit": "秒",
+      "status": "已确认",
+      "source": "A01 2.3/2.4",
+      "note": "只保留一套周期结算，不同时再按0.2每秒扣一次",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "health.cap_loss.minimum_effective_max": {
+      "label": "无b6时最低有效生命上限",
+      "value": 1,
+      "unit": "生命点",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "health.cap_recovery.amount": {
+      "label": "一般形态每次恢复生命上限",
+      "value": 1,
+      "unit": "生命点",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "health.cap_recovery.interval_s": {
+      "label": "一般形态上限恢复间隔",
+      "value": 2,
+      "unit": "秒",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "health.normal_regen.amount": {
+      "label": "一般形态每次恢复当前生命",
+      "value": 1,
+      "unit": "生命点",
+      "status": "已确认",
+      "source": "用户2026-10-26直接纠正A01 2.2",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "health.normal_regen.interval_s": {
+      "label": "一般形态生命再生间隔",
+      "value": 5,
+      "unit": "秒",
+      "status": "已确认",
+      "source": "A01 2.2及用户2026-10-26纠正",
+      "note": "只恢复当前生命，不将它写成减少或恢复生命上限",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "health.normal_regen.requires_cap_loss": {
+      "label": "再生是否仍要求生命上限未恢复满",
+      "value": true,
+      "unit": "开关",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确认"
+    },
+    "move.base_speed_mps": {
+      "label": "普通移动速度",
+      "value": 4.5,
+      "unit": "米/秒",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待配置"
+    },
+    "satiety.max": {
+      "label": "饱腹上限",
+      "value": 100,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 1.2",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "satiety.min": {
+      "label": "饱腹下限",
+      "value": 0,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 1.2",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "satiety.drain_amount": {
+      "label": "饱腹单次消耗",
+      "value": 1,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 1.2",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "satiety.drain_interval_s": {
+      "label": "饱腹消耗基准间隔",
+      "value": 4.5,
+      "unit": "秒",
+      "status": "已确认",
+      "source": "A01 1.2",
+      "note": "1/间隔为派生速率，不重复推进第二套时钟",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "satiety.initial": {
+      "label": "饱腹初始值",
+      "value": 100,
+      "unit": "点",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "hydration.max": {
+      "label": "水分上限",
+      "value": 100,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 1.2",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "hydration.min": {
+      "label": "水分下限",
+      "value": 0,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 1.2",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "hydration.drain_amount": {
+      "label": "水分单次消耗",
+      "value": 1,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 1.2",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "hydration.drain_interval_s": {
+      "label": "水分消耗基准间隔",
+      "value": 3,
+      "unit": "秒",
+      "status": "已确认",
+      "source": "A01 1.2",
+      "note": "1/间隔为派生速率，不重复推进第二套时钟",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "hydration.initial": {
+      "label": "水分初始值",
+      "value": 100,
+      "unit": "点",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "satiety.empty_health_loss_per_s": {
+      "label": "饥饿扣当前生命速度",
+      "value": 3,
+      "unit": "生命点/秒",
+      "status": "已确认",
+      "source": "A01 1.2",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "hydration.empty_move_multiplier": {
+      "label": "口渴普通移动倍率",
+      "value": 0.75,
+      "unit": "倍率",
+      "status": "已确认",
+      "source": "A01 1.2",
+      "note": "减少25%；与冲刺/疾跑的合成顺序另列待确定",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "essence.use_count": {
+      "label": "每次使用精华数量",
+      "value": 1,
+      "unit": "份",
+      "status": "已确认",
+      "source": "A01 2.1/2.3/2.4",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "essence.injection_duration_s": {
+      "label": "精华使用/注射耗时",
+      "value": 0.6,
+      "unit": "秒",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "essence.drop_probability": {
+      "label": "对应怪物精华掉率",
+      "value": 0.5,
+      "unit": "概率",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待配置"
+    },
+    "essence.drop_count": {
+      "label": "对应怪物精华掉落数量",
+      "value": 1,
+      "unit": "份",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待配置"
+    },
+    "yeast.duration_s": {
+      "label": "酵母菌形态时长",
+      "value": 180,
+      "unit": "秒",
+      "status": "已确认",
+      "source": "A01 2.1/2.3/2.4",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "yeast.same_essence_refresh": {
+      "label": "同种精华刷新时长",
+      "value": true,
+      "unit": "开关",
+      "status": "已确认",
+      "source": "用户2026-10-26直接裁定",
+      "note": "刷新到当前配置时长，非额外叠加",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "yeast.energy_max": {
+      "label": "储气上限",
+      "value": 100,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 2.3/2.4",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "yeast.energy_entry_fraction": {
+      "label": "酵母入形态储气补至上限",
+      "value": 1,
+      "unit": "上限比例",
+      "status": "已确认",
+      "source": "A01 2.3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "mold.duration_s": {
+      "label": "霉菌形态时长",
+      "value": 180,
+      "unit": "秒",
+      "status": "已确认",
+      "source": "A01 2.1/2.3/2.4",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "mold.same_essence_refresh": {
+      "label": "同种精华刷新时长",
+      "value": true,
+      "unit": "开关",
+      "status": "已确认",
+      "source": "用户2026-10-26直接裁定",
+      "note": "刷新到当前配置时长，非额外叠加",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "mold.energy_max": {
+      "label": "腐化上限",
+      "value": 100,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 2.3/2.4",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "mold.energy_entry_base_amount": {
+      "label": "霉菌基础入形态腐化值",
+      "value": 100,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 2.4",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "mold.energy_entry_fraction": {
+      "label": "有上限天赋后首次入霉菌是否补满",
+      "value": 1.0,
+      "unit": "上限比例",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "含b5的初入是否补满原为待定：本轮明确选补满当前有效上限。无b5仍100，有b5为130；学b5当场不补能。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "yeast.satiety_drain_multiplier": {
+      "label": "酵母饱腹消耗倍率",
+      "value": 1.5,
+      "unit": "倍率",
+      "status": "已确认",
+      "source": "A01 2.3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "yeast.hydration_drain_multiplier": {
+      "label": "酵母水分消耗倍率",
+      "value": 0.2,
+      "unit": "倍率",
+      "status": "已确认",
+      "source": "A01 2.3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "mold.satiety_drain_multiplier": {
+      "label": "霉菌饱腹消耗倍率",
+      "value": 0.2,
+      "unit": "倍率",
+      "status": "已确认",
+      "source": "A01 2.4",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "mold.hydration_drain_multiplier": {
+      "label": "霉菌水分消耗倍率",
+      "value": 1.5,
+      "unit": "倍率",
+      "status": "已确认",
+      "source": "A01 2.4",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "yeast.gas_regen_per_s": {
+      "label": "不耗气时储气恢复",
+      "value": 20,
+      "unit": "点/秒",
+      "status": "已确认",
+      "source": "A01 2.3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "yeast.sprint.gas_per_s": {
+      "label": "疾跑储气消耗",
+      "value": 10,
+      "unit": "点/秒",
+      "status": "已确认",
+      "source": "A01 2.3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "yeast.sprint.move_multiplier": {
+      "label": "疾跑速度倍率",
+      "value": 1.2,
+      "unit": "倍率",
+      "status": "已确认",
+      "source": "A01 2.3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "yeast.dash.gas_cost": {
+      "label": "单次冲刺储气消耗",
+      "value": 30,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 2.3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "yeast.dash.move_multiplier": {
+      "label": "冲刺速度倍率",
+      "value": 2,
+      "unit": "倍率",
+      "status": "已确认",
+      "source": "A01 2.3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "yeast.dash.damage": {
+      "label": "冲刺伤害",
+      "value": 50,
+      "unit": "生命点",
+      "status": "正文测试值",
+      "source": "A01 2.3",
+      "note": "原文暂定50，后续可调",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "yeast.dash.hits_per_target": {
+      "label": "同次冲刺每目标伤害次数",
+      "value": 1,
+      "unit": "次",
+      "status": "已确认",
+      "source": "A01 2.3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "input.hold_threshold_s": {
+      "label": "Space长按阈值",
+      "value": 0.18,
+      "unit": "秒",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "yeast.dash.distance_m": {
+      "label": "冲刺总距离",
+      "value": 3.15,
+      "unit": "米",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "无减速时的派生展示路程；不是第二套独立距离驱动。运行时用最终普通移速重算。",
+      "original_value": null,
+      "original_status": "待确定",
+      "editable": false,
+      "derived_from": "move.base_speed_mps * yeast.dash.move_multiplier * (yeast.dash.accel_s/2 + yeast.dash.hold_s + yeast.dash.decel_s/2)"
+    },
+    "yeast.dash.accel_s": {
+      "label": "冲刺加速时长",
+      "value": 0.1,
+      "unit": "秒",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "yeast.dash.hold_s": {
+      "label": "冲刺保持时长",
+      "value": 0.25,
+      "unit": "秒",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "yeast.dash.decel_s": {
+      "label": "冲刺减速时长",
+      "value": 0.1,
+      "unit": "秒",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "yeast.dash.self_rebound_m": {
+      "label": "碰敌自身弹开距离",
+      "value": 0.8,
+      "unit": "米",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "yeast.dash.enemy_rebound_m": {
+      "label": "碰敌目标弹开距离",
+      "value": 1.6,
+      "unit": "米",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "yeast.dash.rebound_duration_s": {
+      "label": "双方弹开时长",
+      "value": 0.18,
+      "unit": "秒",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "yeast.dash.cooldown_s": {
+      "label": "新版是否另有冲刺冷却",
+      "value": 0.3,
+      "unit": "秒",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "mold.corruption_regen_per_s": {
+      "label": "未使用工具时腐化恢复",
+      "value": 1,
+      "unit": "点/秒",
+      "status": "已确认",
+      "source": "A01 2.4及用户2026-10-26裁定",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "mold.corruption_cost": {
+      "label": "单次工具强化消耗",
+      "value": 10,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 2.4",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "mold.damage_bonus": {
+      "label": "工具伤害加成",
+      "value": 0.25,
+      "unit": "加成比例",
+      "status": "正文测试值",
+      "source": "A01 2.4",
+      "note": "强化伤害=本次工具原伤害×(1+加成)",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "mold.harvest_bonus": {
+      "label": "工具采集能力加成",
+      "value": 0.5,
+      "unit": "加成比例",
+      "status": "正文测试值",
+      "source": "A01 2.4",
+      "note": "强化锋利度/采集能力，不等于奖励数量增加50%",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "mold.charges_per_action": {
+      "label": "同次工具动作最多扣费次数",
+      "value": 1,
+      "unit": "次",
+      "status": "已确认",
+      "source": "A01 2.4",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "talent.default_cost": {
+      "label": "当前已定义节点默认学习成本",
+      "value": 1,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 3.2",
+      "note": "具体节点保留可调字段；当前流程写扣1，不自行给节点加不同费用",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "talent.initial_points": {
+      "label": "初始天赋点",
+      "value": 0,
+      "unit": "点",
+      "status": "试玩候选_待最终确认",
+      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
+      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "original_value": null,
+      "original_status": "待确定"
+    },
+    "talent.a1.extra_mainhand_slots": {
+      "label": "第三只手额外主手快捷格",
+      "value": 1,
+      "unit": "格",
+      "status": "已确认",
+      "source": "A01 3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "talent.a2.satiety_max_add": {
+      "label": "a2饱腹上限增加",
+      "value": 20,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "talent.a3.hydration_max_add": {
+      "label": "a3水分上限增加",
+      "value": 20,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "talent.a4.base_health_max_add": {
+      "label": "a4最大生命上限增加",
+      "value": 20,
+      "unit": "生命点",
+      "status": "已确认",
+      "source": "A01 3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "talent.b3.duration_add_s": {
+      "label": "b3形态时长增加",
+      "value": 60,
+      "unit": "秒",
+      "status": "已确认",
+      "source": "A01 3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "talent.b4.gas_max_add": {
+      "label": "b4储气上限增加",
+      "value": 30,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "talent.b5.corruption_max_add": {
+      "label": "b5腐化上限增加",
+      "value": 30,
+      "unit": "点",
+      "status": "已确认",
+      "source": "A01 3",
+      "note": "腐蚀值与腐化值统一显示名，不改现有UE资源路径",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "talent.b6.max_health_cap_loss_fraction": {
+      "label": "b6接种最大生命上限损失比例",
+      "value": 0.4,
+      "unit": "最大上限比例",
+      "status": "已确认",
+      "source": "A01 3",
+      "note": "",
+      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+    },
+    "health.clamp_current_hp_on_cap_decrease": {
+      "value": true,
+      "label": "上限下降仅截断超额当前HP",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "health.clamp_emits_damage_event": {
+      "value": false,
+      "label": "上限截断不发战斗受击事件",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "health.keep_recorded_loss_on_talent_change": {
+      "value": true,
+      "label": "天赋变化不抹除真实未恢复损失",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "health.b6.accumulate_past_limit": {
+      "value": false,
+      "label": "b6触底后不暗中新增损失",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "health.b6.protection_while_normal": {
+      "value": true,
+      "label": "正常形态恢复期间继续保护同一笔损失",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "health.regen_while_starving": {
+      "value": false,
+      "label": "饥饿扣血期间不进行当前HP再生",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "health.simultaneous_tick_order": {
+      "value": "damage_then_hp_regen_then_cap_recovery",
+      "label": "同刻先伤害/死亡，再用更新前损失判定HP再生，最后上限恢复",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "essence.drop_roles": {
+      "value": [
+        "MoldBruiser",
+        "YeastBruiser"
+      ],
+      "label": "只对应两阵营战斗打手的语义角色",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "essence.drop_rolls_per_death": {
+      "value": 1,
+      "label": "同一稳定死亡的精华判定次数",
+      "unit": "次",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "essence.old_core_parallel_drop_enabled": {
+      "value": false,
+      "label": "新精华替代旧核心同一死亡掉落，不双roll",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "essence.commit_policy": {
+      "value": "atomic_on_successful_end",
+      "label": "成功注射结束才一次提交扣物和形态",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "essence.cancel_on_move": {
+      "value": true,
+      "label": "注射移动取消且不扣物",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "essence.cancel_on_actual_damage": {
+      "value": true,
+      "label": "注射期间实际受伤取消",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "essence.cancel_on_hard_control_or_death": {
+      "value": true,
+      "label": "硬控/死亡取消注射",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "essence.cancel_on_escape": {
+      "value": true,
+      "label": "Esc取消未提交注射并保留暂停",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "essence.attack_during_use": {
+      "value": false,
+      "label": "注射期间不攻击",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "essence.repeat_request": {
+      "value": "reject_not_queue",
+      "label": "注射期间重复请求不排队",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "essence.legacy_use_adapter_enabled": {
+      "value": true,
+      "label": "旧核心仅在使用时显式适配A01",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "essence.bulk_convert_inventory": {
+      "value": false,
+      "label": "不批量兑换/改写既有库存",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "input.form_entry_held_space_requires_release": {
+      "value": true,
+      "label": "进入酵母时已有按住Space需先松开",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "input.sprint_start_min_gas": {
+      "value": 1,
+      "label": "疾跑起步最低储气",
+      "unit": "点",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "input.sprint_without_move": {
+      "value": "end_and_require_release",
+      "label": "无移动方向不原地耗气、不循环重起",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "input.sprint_attack": {
+      "value": "stop_then_execute_once",
+      "label": "疾跑收到合法攻击/格挡先结束再执行原动作",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "input.dash_attack": {
+      "value": "reject_no_buffer",
+      "label": "冲刺及反弹拒绝攻击/格挡/装填，不缓存",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "input.space_retry_requires_release": {
+      "value": true,
+      "label": "能力因空能量/取消等停止后需松开再按",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "input.escape_pause_during_ability": {
+      "value": true,
+      "label": "保留Esc全局暂停例外",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "input.open_menus_during_ability": {
+      "value": false,
+      "label": "喷气能力期间禁背包/制作/天赋/图鉴和快捷物品",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "input.speed_stack": {
+      "value": "final_walk_then_ability",
+      "label": "先合成口渴等普通移速，再乘技能倍率",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "yeast.dash.regen_during_action": {
+      "value": false,
+      "label": "冲刺全程含反弹不回气",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "yeast.dash.invulnerability_scope": {
+      "value": "incoming_combat_damage_only",
+      "label": "恒速免战斗受击；饥饿和接种损失继续",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "yeast.dash.damage_stages": {
+      "value": [
+        "acceleration",
+        "hold",
+        "deceleration"
+      ],
+      "label": "伤害有效段不含反弹",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "yeast.dash.rebound_direction": {
+      "value": "opposite_contact_normal_xy_fallback_dash_direction",
+      "label": "地面接触法线确定双方反向弹开",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "yeast.dash.refund_on_early_end": {
+      "value": false,
+      "label": "撞墙/碰敌/切形态不退已付气",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "yeast.dash.target_filter": {
+      "value": "alive_damageable_bruisers_including_neutral_not_town_npcs",
+      "label": "可冲撞中立打手并正常引战，不连带伤害镇民",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "mold.first_invalid_or_insufficient_hit_policy": {
+      "value": "invalid_does_not_decide_insufficient_valid_locks_plain",
+      "label": "无效命中不扣费不决策，首有效命中能量不足则本动作普通",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "mold.regen_during_tool_action": {
+      "value": false,
+      "label": "工具前摇/有效段/后摇都不回腐化",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "mold.finisher_enhancement_enabled": {
+      "value": false,
+      "label": "匕首秒杀及精英最大HP比例伤害不乘腐化",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "mold.finisher_only_cost_enabled": {
+      "value": false,
+      "label": "纯固定处决命中不花腐化",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "mold.exit_pending_hit": {
+      "value": "plain_no_refund",
+      "label": "退出霉菌后未结算部分恢复普通，已付费不退",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "mold.multiply_resource_reward_count": {
+      "value": false,
+      "label": "不增加资源奖励数量",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "role.legacy_extra_damage_multiplier": {
+      "value": 1.0,
+      "label": "不恢复旧形态常驻伤害倍率",
+      "unit": "倍率",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "role.legacy_extra_attack_speed_multiplier": {
+      "value": 1.0,
+      "label": "不恢复旧形态额外攻速",
+      "unit": "倍率",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "role.legacy_extra_damage_taken_multiplier": {
+      "value": 1.0,
+      "label": "不恢复旧形态承伤/堡垒减伤",
+      "unit": "倍率",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "role.legacy_extra_range_multiplier": {
+      "value": 1.0,
+      "label": "不恢复旧形态额外攻击距离",
+      "unit": "倍率",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "faction.switch_clears_combat_hostility": {
+      "value": false,
+      "label": "交战中形态切换不洗仇恨",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.a1.base_shortcut_count": {
+      "value": 3,
+      "label": "原快捷入口数",
+      "unit": "格",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.a1.extra_inventory_index": {
+      "value": 3,
+      "label": "新增入口引用现背包第四格",
+      "unit": "零基索引",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.a1.default_key": {
+      "value": "Four",
+      "label": "新增快捷格4动作默认键4，不恢复旧SelectWeapon4语义",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.a1.unlearn_policy": {
+      "value": "cancel_uncommitted_unequip_keep_inventory",
+      "label": "遗忘取消未提交动作并卸下该格装备，物品原位保留",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.a1.dual_wield_enabled": {
+      "value": false,
+      "label": "第三只手不启用双持或同时攻击",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.a5.enabled": {
+      "value": false,
+      "label": "空白a5禁用不收点",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.a6.enabled": {
+      "value": false,
+      "label": "空白a6禁用不收点",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.b3.active_duration_update": {
+      "value": "next_successful_essence_only",
+      "label": "b3只影响下次成功使用/刷新，不改当前期限",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.b3.lock_forget_while_contributed": {
+      "value": true,
+      "label": "当前仍在享受b3加时的接种期间不能遗忘b3",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.energy_cap_increase_fills_current": {
+      "value": false,
+      "label": "学习b4/b5升限不补能",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.energy_cap_decrease_clamps_current": {
+      "value": true,
+      "label": "遗忘降能量上限截去超额",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.b5.entry_policy": {
+      "value": "fill_effective_max",
+      "label": "霉菌进入/续用精华补满当前有效上限，新增试玩候选",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.a4.learn_heals_current": {
+      "value": false,
+      "label": "学习a4只加上限不加当前HP",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.relic_default_reward_points": {
+      "value": 1,
+      "label": "残骸成功默认奖励技能点",
+      "unit": "点",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.relic_reward_key": {
+      "value": "PlaythroughId+StableRelicId",
+      "label": "同一周目同一稳定残骸只领奖一次",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "talent.allow_other_point_sources": {
+      "value": false,
+      "label": "除残骸解谜外不从交易/投物/战斗/图鉴发点",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "weapon.canonical_spear_item_id": {
+      "value": "SugarSpear",
+      "label": "糖矛/长枪统一后建议使用现糖矛库存ID",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "weapon.manage_in_character_window": {
+      "value": false,
+      "label": "武器不放角色界面",
+      "unit": "规则",
+      "status": "最新用户明确裁定",
+      "source": "主调度用户消息01a178c9-026e-7e33-889e-580dee729e28"
+    },
+    "weapon.starter_permanent_count": {
+      "value": 1,
+      "label": "其余永久武器开局每种数量",
+      "unit": "件",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "weapon.starter_alcohol_count": {
+      "value": 6,
+      "label": "酒精瓶开局可调数量",
+      "unit": "瓶",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "weapon.starter_spore_ammo_count": {
+      "value": 60,
+      "label": "开局孢子弹试玩数量",
+      "unit": "发",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "weapon.starter_arrow_count": {
+      "value": 30,
+      "label": "开局霉菌箭试玩数量",
+      "unit": "支",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "weapon.starter_shell_count": {
+      "value": 18,
+      "label": "开局霰弹弹药试玩数量",
+      "unit": "发",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "language.guess_max_chars": {
+      "value": 40,
+      "label": "图鉴猜测字符上限",
+      "unit": "字符",
+      "status": "语言PDF规则_保持可调",
+      "source": "语言图鉴系统.pdf第4页"
+    },
+    "language.npc_success_close_delay_s": {
+      "value": 1,
+      "label": "NPC成功交换后关闭等待",
+      "unit": "秒",
+      "status": "语言PDF规则_保持可调",
+      "source": "语言玩法部分 (1).pdf第3页示意图"
+    },
+    "language.npc_reject_when_inventory_full": {
+      "value": true,
+      "label": "背包满先拒绝交换不扣物",
+      "unit": "规则",
+      "status": "语言PDF规则_保持可调",
+      "source": "语言玩法部分 (1).pdf第3页示意图"
+    },
+    "language.wrong_deposit_refund": {
+      "value": false,
+      "label": "投物错误不退",
+      "unit": "规则",
+      "status": "语言PDF规则_保持可调",
+      "source": "语言玩法部分 (1).pdf第3页"
+    },
+    "language.correct_deposit_progress_persists": {
+      "value": true,
+      "label": "正确投入累计",
+      "unit": "规则",
+      "status": "语言PDF规则_保持可调",
+      "source": "语言玩法部分 (1).pdf第3页"
+    },
+    "language.book_pauses_world": {
+      "value": true,
+      "label": "普通图鉴暂停世界时间",
+      "unit": "规则",
+      "status": "语言PDF规则_保持可调",
+      "source": "语言图鉴系统.pdf第3页"
+    },
+    "language.deposit_excess_policy": {
+      "value": "accept_remaining_keep_excess",
+      "label": "正确物超额仅接受剩余需要量，余量保留",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "essence.open_other_menus_during_use": {
+      "value": false,
+      "label": "注射期间其他菜单请求拒绝，Esc取消/暂停例外",
+      "unit": "规则",
+      "status": "试玩候选_待最终确认",
+      "source": "本轮补充可调试玩行为参数"
+    },
+    "language.water_source.hydration_per_use": {
+      "value": 25,
+      "status": "本轮可调试玩新增，待最终确认",
+      "source": "LANG01执行供水/库存事务规范化",
+      "unit": "点或件"
+    },
+    "language.water_source.cooldown_s": {
+      "value": 1,
+      "status": "本轮可调试玩新增，待最终确认",
+      "source": "LANG01执行供水/库存事务规范化",
+      "unit": "秒"
+    },
+    "language.water_source.water_per_use": {
+      "value": 1,
+      "status": "本轮可调试玩新增，待最终确认",
+      "source": "LANG01执行供水/库存事务规范化",
+      "unit": "点或件"
+    }
+  },
+  "health_formula": {
+    "HealthyMax": "health.base_max + learned(a4)*talent.a4.base_health_max_add",
+    "AllowedNewLoss": "learned(b6) ? min(HealthyMax-health.cap_loss.minimum_effective_max,HealthyMax*talent.b6.max_health_cap_loss_fraction) : HealthyMax-health.cap_loss.minimum_effective_max",
+    "InoculationLossTick": "RecordedLoss<AllowedNewLoss ? min(AllowedNewLoss,RecordedLoss+health.cap_loss.amount) : RecordedLoss",
+    "NormalRecoveryTick": "RecordedLoss=max(0,RecordedLoss-health.cap_recovery.amount)",
+    "EffectiveLoss": "min(RecordedLoss,AllowedNewLoss)",
+    "EffectiveMax": "max(health.cap_loss.minimum_effective_max,HealthyMax-EffectiveLoss)",
+    "CurrentHP": "cap decrease clamps downward only; cap increase never heals; dead characters never revived by recomputation",
+    "CurrentRegenEligible": "Alive and Normal and (not health.normal_regen.requires_cap_loss or EffectiveMax<HealthyMax) and (not starving or health.regen_while_starving)",
+    "b6_debt_policy": "older over-limit RecordedLoss remains visible and recovers normally; do not add new loss while at/past limit; protection remains during Normal recovery"
+  },
+  "talents": [
+    {
+      "id": "a1",
+      "enabled": true,
+      "cost_parameter": "talent.default_cost",
+      "prerequisites": [],
+      "status": "原效果保留；前置和当前态处理为试玩候选",
+      "effect_parameter_ids": [
+        "talent.a1.extra_mainhand_slots"
+      ],
+      "effect_text": "新增一个主手快捷格",
+      "prerequisites_mode": "all"
+    },
+    {
+      "id": "a2",
+      "enabled": true,
+      "cost_parameter": "talent.default_cost",
+      "prerequisites": [],
+      "status": "原效果保留；前置和当前态处理为试玩候选",
+      "effect_parameter_ids": [
+        "talent.a2.satiety_max_add"
+      ],
+      "effect_text": "饱腹上限+20",
+      "prerequisites_mode": "all"
+    },
+    {
+      "id": "a3",
+      "enabled": true,
+      "cost_parameter": "talent.default_cost",
+      "prerequisites": [],
+      "status": "原效果保留；前置和当前态处理为试玩候选",
+      "effect_parameter_ids": [
+        "talent.a3.hydration_max_add"
+      ],
+      "effect_text": "水分上限+20",
+      "prerequisites_mode": "all"
+    },
+    {
+      "id": "a4",
+      "enabled": true,
+      "cost_parameter": "talent.default_cost",
+      "prerequisites": [
+        "a2",
+        "a3"
+      ],
+      "status": "原效果保留；前置和当前态处理为试玩候选",
+      "effect_parameter_ids": [
+        "talent.a4.base_health_max_add"
+      ],
+      "effect_text": "最大生命上限+20",
+      "prerequisites_mode": "all"
+    },
+    {
+      "id": "a5",
+      "enabled": false,
+      "cost_parameter": "talent.default_cost",
+      "prerequisites": [],
+      "status": "未配置禁用，不收点、不作为任何前置",
+      "effect_parameter_ids": [],
+      "effect_text": "",
+      "prerequisites_mode": "all"
+    },
+    {
+      "id": "a6",
+      "enabled": false,
+      "cost_parameter": "talent.default_cost",
+      "prerequisites": [],
+      "status": "未配置禁用，不收点、不作为任何前置",
+      "effect_parameter_ids": [],
+      "effect_text": "",
+      "prerequisites_mode": "all"
+    },
+    {
+      "id": "b1",
+      "enabled": true,
+      "cost_parameter": "talent.default_cost",
+      "prerequisites": [
+        "a2"
+      ],
+      "status": "原效果保留；前置和当前态处理为试玩候选",
+      "effect_parameter_ids": [],
+      "effect_text": "酵母不再增加饱腹消耗，只移除此形态的+50%部分",
+      "prerequisites_mode": "all"
+    },
+    {
+      "id": "b2",
+      "enabled": true,
+      "cost_parameter": "talent.default_cost",
+      "prerequisites": [
+        "a3"
+      ],
+      "status": "原效果保留；前置和当前态处理为试玩候选",
+      "effect_parameter_ids": [],
+      "effect_text": "霉菌不再增加水分消耗，只移除此形态的+50%部分",
+      "prerequisites_mode": "all"
+    },
+    {
+      "id": "b3",
+      "enabled": true,
+      "cost_parameter": "talent.default_cost",
+      "prerequisites": [
+        "b1",
+        "b2"
+      ],
+      "status": "原效果保留；前置和当前态处理为试玩候选",
+      "effect_parameter_ids": [
+        "talent.b3.duration_add_s"
+      ],
+      "effect_text": "接种时长+60秒",
+      "prerequisites_mode": "all"
+    },
+    {
+      "id": "b4",
+      "enabled": true,
+      "cost_parameter": "talent.default_cost",
+      "prerequisites": [
+        "b1"
+      ],
+      "status": "原效果保留；前置和当前态处理为试玩候选",
+      "effect_parameter_ids": [
+        "talent.b4.gas_max_add"
+      ],
+      "effect_text": "储气上限+30",
+      "prerequisites_mode": "all"
+    },
+    {
+      "id": "b5",
+      "enabled": true,
+      "cost_parameter": "talent.default_cost",
+      "prerequisites": [
+        "b2"
+      ],
+      "status": "原效果保留；前置和当前态处理为试玩候选",
+      "effect_parameter_ids": [
+        "talent.b5.corruption_max_add"
+      ],
+      "effect_text": "腐化上限+30",
+      "prerequisites_mode": "all"
+    },
+    {
+      "id": "b6",
+      "enabled": true,
+      "cost_parameter": "talent.default_cost",
+      "prerequisites": [
+        "a4",
+        "b3"
+      ],
+      "status": "原效果保留；前置和当前态处理为试玩候选",
+      "effect_parameter_ids": [
+        "talent.b6.max_health_cap_loss_fraction"
+      ],
+      "effect_text": "接种损失最多为最大生命上限40%",
+      "prerequisites_mode": "all"
+    }
+  ],
+  "corruption_whitelist": [
+    {
+      "item_id": "SimpleSugarAxe",
+      "family": "gathering_swing",
+      "damage": false,
+      "harvest": true
+    },
+    {
+      "item_id": "SugarAxe",
+      "family": "gathering_swing",
+      "damage": false,
+      "harvest": true
+    },
+    {
+      "item_id": "SimpleSugarPickaxe",
+      "family": "gathering_swing",
+      "damage": false,
+      "harvest": true
+    },
+    {
+      "item_id": "SugarPickaxe",
+      "family": "gathering_swing",
+      "damage": false,
+      "harvest": true
+    },
+    {
+      "item_id": "SugarSpear",
+      "family": "melee_weapon_action",
+      "damage": true,
+      "harvest": false
+    },
+    {
+      "item_id": "DWWeapon_ShieldAxe",
+      "family": "melee_weapon_action",
+      "damage": true,
+      "harvest": false
+    },
+    {
+      "item_id": "DWWeapon_Greatsword",
+      "family": "melee_weapon_action",
+      "damage": true,
+      "harvest": false
+    },
+    {
+      "item_id": "DWWeapon_DualDaggers",
+      "family": "melee_weapon_action",
+      "damage": true,
+      "harvest": false
+    }
+  ],
+  "corruption_excluded": [
+    "SimpleSugarHammer",
+    "SugarHammer",
+    "SimpleSugarSpear",
+    "DWWeapon_SporeGun",
+    "DWWeapon_MoldBow",
+    "DWWeapon_Shotgun",
+    "Alcohol",
+    "BottledAlcohol",
+    "Yeast",
+    "MoldEssence",
+    "YeastEssence",
+    "DWCore_Mold",
+    "DWCore_Yeast",
+    "bare_hands",
+    "food",
+    "building_items",
+    "unconfigured_items"
+  ],
+  "weapon_policy": {
+    "status": "最新用户裁定优先；下述库存适配办法与开局数量是可调试玩实现候选",
+    "canonical_spear_item_parameter": "weapon.canonical_spear_item_id",
+    "identity_aliases": {
+      "DWWeapon_Spear": "SugarSpear"
+    },
+    "identity_policy": "SugarSpear与旧DWWeapon_Spear解析成同一spear战斗身份和一份拥有资格；保留原库存ID/数量不批量迁移、不额外生成另一件；SimpleSugarSpear尚未被用户明确合并，不自行推定。",
+    "confirmed_spear_recipe": "GatherCraft_SugarSpear_CraftingTable",
+    "recipe_source": "StormAreaWhitebox_20261013/ItemsTable_20261026_逐项核对.json中合成表第18行；现配方数量/材料/工位不改",
+    "spear_crafting_transaction": "扣原料、产出SugarSpear、登记spear身份同成败；不再同时Grant一个DWWeapon_Spear；物品使用走孢子长枪动作/距离衰减机制。",
+    "historical_example_recipe_policy": "七条GatherCraft_DWWeapon_*_CraftingTable均保留历史定义，不作为本试玩可见/可执行的正式配方或解锁门槛；重复长枪示例也停用，不新增第二条长枪制作路径。",
+    "starter_scope": "仅新建的隔离试玩资料一次性初始化；旧档不自动塞物，不每次开背包/死亡/重载发一套",
+    "starter_items": [
+      {
+        "item_id": "DWWeapon_ShieldAxe",
+        "count_parameter": "weapon.starter_permanent_count"
+      },
+      {
+        "item_id": "DWWeapon_Greatsword",
+        "count_parameter": "weapon.starter_permanent_count"
+      },
+      {
+        "item_id": "DWWeapon_DualDaggers",
+        "count_parameter": "weapon.starter_permanent_count"
+      },
+      {
+        "item_id": "DWWeapon_SporeGun",
+        "count_parameter": "weapon.starter_permanent_count"
+      },
+      {
+        "item_id": "DWWeapon_MoldBow",
+        "count_parameter": "weapon.starter_permanent_count"
+      },
+      {
+        "item_id": "DWWeapon_Shotgun",
+        "count_parameter": "weapon.starter_permanent_count"
+      },
+      {
+        "item_id": "Alcohol",
+        "count_parameter": "weapon.starter_alcohol_count"
+      },
+      {
+        "item_id": "DWAmmo_Spore",
+        "count_parameter": "weapon.starter_spore_ammo_count"
+      },
+      {
+        "item_id": "DWAmmo_MoldArrow",
+        "count_parameter": "weapon.starter_arrow_count"
+      },
+      {
+        "item_id": "DWAmmo_BreadShell",
+        "count_parameter": "weapon.starter_shell_count"
+      }
+    ],
+    "spear_given_at_start": false,
+    "inventory_rule": "作为物品持有与使用，开局可用不等于无限弹药/无限酒精；弹容/装填继续原武器；不只给隐藏拥有标记。发放及标记一次事务，容量不足不丢物、不静默半套发放。",
+    "ui_rule": "背包中查看/悬浮信息/装备使用/快捷栏；角色界面只角色属性与天赋。图标、工位需要图标和视觉交付由UI/主调度按原Figma流程处理。"
+  },
+  "essence_use_aliases": [
+    {
+      "request_item_id": "MoldEssence",
+      "consume_item_id": "MoldEssence",
+      "target_form": "Mold",
+      "policy": "new_essence"
+    },
+    {
+      "request_item_id": "YeastEssence",
+      "consume_item_id": "YeastEssence",
+      "target_form": "Yeast",
+      "policy": "new_essence"
+    },
+    {
+      "request_item_id": "DWCore_Mold",
+      "consume_item_id": "DWCore_Mold",
+      "target_form": "Mold",
+      "policy": "legacy_use_adapter"
+    },
+    {
+      "request_item_id": "DWCore_Yeast",
+      "consume_item_id": "DWCore_Yeast",
+      "target_form": "Yeast",
+      "policy": "legacy_use_adapter"
+    }
+  ],
+  "action_matrix": [
+    {
+      "id": "gather_axe_pickaxe",
+      "action_unit": "一次已接受的采集挥击",
+      "action_id": "同次挥击一个ActionID",
+      "fee": "首次有效采集命中最多扣一次",
+      "effect": "只加采集能力，不加奖励数量"
+    },
+    {
+      "id": "spear",
+      "action_unit": "一次攻击",
+      "action_id": "一个父ActionID共享所有目标",
+      "fee": "首次有效普通伤害最多一次",
+      "effect": "保留距离倍率及独立目标命中去重"
+    },
+    {
+      "id": "shield_axe_attack",
+      "action_unit": "一次左键攻击",
+      "action_id": "一个ActionID",
+      "fee": "首次有效普通伤害最多一次",
+      "effect": "不另发第二次伤害，完美格挡奖励沿既有武器规则"
+    },
+    {
+      "id": "shield_axe_block",
+      "action_unit": "右键格挡/招架",
+      "action_id": "沿原格挡ID",
+      "fee": "不扣腐化",
+      "effect": "不增强减伤/窗口，实际反击出手可强化"
+    },
+    {
+      "id": "greatsword",
+      "action_unit": "释放后的整次攻击",
+      "action_id": "下砸/横扫共享父ActionID，各子段沿原去重",
+      "fee": "两段合计最多一次",
+      "effect": "空蓄或取消未命中不扣，已命中取消不退；后段须仍霉菌"
+    },
+    {
+      "id": "dagger_normal",
+      "action_unit": "每一段连击",
+      "action_id": "每段独立ActionID，段内目标共享",
+      "fee": "每段首次有效普通命中一次",
+      "effect": "不是整套连段只付一次"
+    },
+    {
+      "id": "dagger_backstab",
+      "action_unit": "一次已成立的固定处决",
+      "action_id": "沿原处决事务",
+      "fee": "纯处决不扣腐化",
+      "effect": "普通秒杀/精英最大HP比例均不乘强化"
+    },
+    {
+      "id": "spore_gun",
+      "action_unit": "每次发射",
+      "action_id": "沿原弹药/弹体ID",
+      "fee": "本轮不花腐化",
+      "effect": "远程正常可用，未列白名单"
+    },
+    {
+      "id": "mold_bow",
+      "action_unit": "每箭及其区域",
+      "action_id": "沿原箭/区域父子ID",
+      "fee": "本轮不花腐化",
+      "effect": "保留直击、击退/减速，不加DOT"
+    },
+    {
+      "id": "shotgun",
+      "action_unit": "一枪全部弹丸",
+      "action_id": "沿原一枪父ID与弹丸子ID",
+      "fee": "本轮不花腐化",
+      "effect": "弹丸数/装填取原武器参数，不逐弹加形态费"
+    },
+    {
+      "id": "alcohol",
+      "action_unit": "一瓶及其持续区域",
+      "action_id": "沿原消耗/投射物/区域ID",
+      "fee": "不花腐化",
+      "effect": "普通消耗品排除，不附加腐化DOT"
+    },
+    {
+      "id": "yeast_dash",
+      "action_unit": "一次冲刺及反弹",
+      "action_id": "冲刺ActionID与每敌唯一命中",
+      "fee": "只花冲刺气，不花腐化",
+      "effect": "伤害取yeast.dash.damage，不乘旧形态倍率"
+    },
+    {
+      "id": "unconfigured",
+      "action_unit": "空手/不匹配/未知工具/普通消耗品",
+      "action_id": "沿原动作",
+      "fee": "不花腐化",
+      "effect": "快捷栏内存在不等于获得腐化资格"
+    }
+  ],
+  "noncombat_bruiser_attitudes": {
+    "Normal": {
+      "MoldBruiser": "Hostile",
+      "YeastBruiser": "Hostile",
+      "SourdoughBruiser": "Hostile",
+      "SourdoughElite": "Hostile"
+    },
+    "Mold": {
+      "MoldBruiser": "Neutral",
+      "YeastBruiser": "Hostile",
+      "SourdoughBruiser": "Hostile",
+      "SourdoughElite": "Hostile"
+    },
+    "Yeast": {
+      "MoldBruiser": "Hostile",
+      "YeastBruiser": "Neutral",
+      "SourdoughBruiser": "Hostile",
+      "SourdoughElite": "Hostile"
+    },
+    "scope": "仅未交战打手；镇民/中立生态不复用打手AI；战斗记忆按原脱战/重置，非切形态重置。"
+  },
+  "pending_resolution": [
+    {
+      "id": "P01",
+      "title": "生命上限怎样恢复及再生前提",
+      "resolution": "两条恢复时钟分开；保留上限未满前提；饥饿期间不再生当前HP。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P02",
+      "title": "生命上限减少后的边界",
+      "resolution": "最低有效上限1，超额HP仅截断；b6保留原损失账本且不暗中继续积累。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P03",
+      "title": "新角色初值与普通移速",
+      "resolution": "新角色HP/水/食100，普通移速4.5m/s，旧档不填满。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P04",
+      "title": "精华获得与使用动作",
+      "resolution": "两阵营打手各一次50%掉1份；0.6s注射成功才扣物/换形态，不双发旧核心。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P05",
+      "title": "冲刺动作参数",
+      "resolution": "Space0.18s判别互斥；三阶段0.1/0.25/0.1；派生路程；反弹与冷却独立参数。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P06",
+      "title": "能力与其他输入的关系",
+      "resolution": "先普通移速再技能倍率；疾跑接受攻击先结束，冲刺不接受；Esc安全暂停保留。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P07",
+      "title": "哪些工具可以腐化",
+      "resolution": "四近战及四斧镐ID白名单，糖矛即长枪，旧DWWeapon_Spear使用时按同一身份解析；其余不强化。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P08",
+      "title": "一次工具动作的划分",
+      "resolution": "父动作收费去重与子段命中去重分开，退出霉菌后未结算部分普通。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P09",
+      "title": "旧形态战斗倍率",
+      "resolution": "旧形态常驻额外倍率不带回；八武器未冲突基础保持。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P10",
+      "title": "天赋前置与点数来源",
+      "resolution": "十有效节点、两空白禁用，候选无环前置表；初始0，残骸唯一奖励来源。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P11",
+      "title": "第三只手对应哪个格",
+      "resolution": "武器只在背包管理；第三只手新增快捷格4动作，引用现背包索引3，不双持/不增容量，遗忘不丢物。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P12",
+      "title": "天赋影响当前状态",
+      "resolution": "b3下次精华读新时长且当前贡献时不退；b4/b5升限不补；霉菌新入场补满候选；b6保留原损失。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P13",
+      "title": "形态与阵营态度",
+      "resolution": "未交战打手阵营矩阵仅为试玩候选；已交战不洗仇恨。城镇NPC不复用打手AI。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P14",
+      "title": "新精华与旧物品兼容",
+      "resolution": "旧核心在使用时显式适配A01并消耗旧ID；不批量兑换，Yeast原材料不参与。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P15",
+      "title": "瓶装酒精与武器消耗品",
+      "resolution": "保留E1显式BottledAlcohol→Alcohol单向配方，不设库存别名。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    },
+    {
+      "id": "P16",
+      "title": "后续持久化",
+      "resolution": "仍排除A01第4节；既有保存保护保持。语言任务需要的稳定ID奖励防重独立核对，不借此扩大角色持久化。",
+      "status": "试玩可实施候选_正式最终认可仍待用户"
+    }
+  ],
+  "language_talent_transaction": {
+    "initial_points_parameter": "talent.initial_points",
+    "reward_amount_parameter": "talent.relic_default_reward_points",
+    "reward_key_parameter": "talent.relic_reward_key",
+    "on_correct": "atomic_mark_solved_and_rewarded_and_add_points",
+    "on_repeat": "no_point_change_replay_story_only",
+    "on_wrong": "no_point_change_no_guess_autocorrection",
+    "point_ledger": "AvailablePoints = AllOnceAwardedRelicPoints - Sum(ActualPaidCostOfCurrentlyLearnedTalents)",
+    "refund": "末端遗忘只退实际消费，不是新增奖励来源；b3有当期贡献限制",
+    "content_budget": "试玩图全部稳定残骸奖励之和至少覆盖全部启用天赋的实际成本总和，禁止用初始白送或击杀奖励冒充残骸成长",
+    "persistence_boundary": "只有稳定ID账本/天赋点的原子安全保存实际通过后才能称跨重开不刷点；正式档不测试，不解除现世界保存保护。"
+  },
+  "content_limits": [
+    "所有新数字和开关位于parameters；文档表中数字为其阅读展示。派生距离由速度/时长决定，不重复独立驱动。",
+    "普通图鉴暂停冻结游戏时间上的形态/饥饿/能量/冷却；关闭后不按真实时间补扣。",
+    "不暗中关闭饥饿/口渴。新图需已实现的补水/食物入口；若食物恢复仍无实现须报阻，不能称完整生存闭环。",
+    "当前按键4未接，需明确新增Shortcut4并接设置/冲突/鼠标/动态键名；别复活旧SelectWeapon4。",
+    "候选不证明可玩、编译或保存；执行者需映射真实敌人/输入/动作事务并逐层验收。"
+  ],
+  "runtime_known_item_ids": [
+    "Flour",
+    "Water",
+    "Dough",
+    "Yeast",
+    "Alcohol",
+    "DWWeapon_Spear",
+    "DWWeapon_ShieldAxe",
+    "DWWeapon_Greatsword",
+    "DWWeapon_DualDaggers",
+    "DWWeapon_SporeGun",
+    "DWWeapon_MoldBow",
+    "DWWeapon_Shotgun",
+    "DWCore_Mold",
+    "DWCore_Yeast",
+    "DWAmmo_Spore",
+    "DWAmmo_MoldArrow",
+    "DWAmmo_BreadShell",
+    "Paste",
+    "SugarStick",
+    "SugarChunk",
+    "HardSugarChunk",
+    "Bottle",
+    "BottledSyrup",
+    "Furnace",
+    "CraftingTable",
+    "FermentationVat",
+    "SimpleSugarPickaxe",
+    "SimpleSugarAxe",
+    "SimpleSugarHammer",
+    "SimpleSugarSpear",
+    "SugarPickaxe",
+    "SugarAxe",
+    "SugarHammer",
+    "SugarSpear",
+    "SugarArmor",
+    "YeastEssence",
+    "MoldEssence",
+    "Jelly",
+    "GummyCandy",
+    "Waffle",
+    "CandyCane",
+    "Marshmallow",
+    "LicoriceCandy",
+    "GingerbreadMan",
+    "Tofu",
+    "Cocoa",
+    "Beeswax",
+    "Salt",
+    "Acid",
+    "ElementC",
+    "ElementH",
+    "ElementO",
+    "ElementN",
+    "ElementP",
+    "ElementK",
+    "ElementS",
+    "BottledWater",
+    "BottledSugarWater",
+    "BottledAlcohol"
+  ],
+  "runtime_trade": {
+    "id": "LANG01_Trade_Water2_Flour1",
+    "required_item_id": "Water",
+    "required_count": 2,
+    "reward_item_id": "Flour",
+    "reward_count": 1,
+    "glyph_entries": [
+      "bu",
+      "su"
+    ],
+    "reward_glyph_entries": [
+      "pu",
+      "ma"
+    ],
+    "display_name": {
+      "zh": "补给交换",
+      "en": "Supply exchange"
+    },
+    "status": "adjustable_trial_default_not_final_economy"
+  },
+  "runtime_consumables": {
+    "Water": {
+      "hydration": 15,
+      "satiety": 0,
+      "consume": 1
+    },
+    "Dough": {
+      "hydration": 0,
+      "satiety": 25,
+      "consume": 1
+    },
+    "BottledWater": {
+      "hydration": 30,
+      "satiety": 0,
+      "consume": 1,
+      "return_item": "Bottle",
+      "return_count": 1
+    }
+  },
+  "runtime_water_source": {
+    "item_id": "Water",
+    "per_interaction": 1,
+    "infinite": true,
+    "status": "adjustable_trial_supply_not_final_resource_economy"
+  },
+  "runtime_execution": {
+    "map": "/Game/DoughWorld/Maps/Gameplay/Levels/L_DoughWorld_LanguagePlaytest",
+    "mode": "isolated_trial",
+    "formal_save_test": false,
+    "source_design_sha": "cf2c4b098bec75183d2829c0be616c1b6e8fa9cb572f557070d324ab9d68074d",
+    "all_trial_additions_pending_final_user_balance": true
+  }
+}

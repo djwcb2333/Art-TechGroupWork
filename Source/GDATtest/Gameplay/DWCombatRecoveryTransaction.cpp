@@ -1,4 +1,7 @@
 #include "DWCombatRecoveryTransaction.h"
+#include "DWLootBeaconSubsystem.h"
+#include "DWFormalLanguagePersistence.h"
+#include "DWLanguageSubsystem.h"
 #include "DWCombatRecoverySubsystem.h"
 #include "DWCombatRecoveryActors.h"
 #include "DWCombatAuthoritySubsystem.h"
@@ -74,6 +77,7 @@ bool FDWCombatRecoveryTransaction::Claim(ADWCombatDeathBag& B,ADWPlayerCharacter
     N.PlayerId=Candidate.PlayerId;N.BagId=Bag.BagId;N.WorldEpoch=A->GetWorldEpoch();N.RecoveryRevision=Candidate.Revision;N.bInventoryChanged=true;
     if(Ledger->Resolve(Admission.Receipt.Handle,EOutcome::Committed)!=EResolve::Resolved){A->EndAction(Action);return false;}
     I->AdoptPreparedUnchecked(MoveTemp(Inventory));R->State=MoveTemp(Candidate);
+    if(Changed.bClaimed)if(auto* W=B.GetWorld())if(auto* V=W->GetSubsystem<UDWLootBeaconSubsystem>())V->SuspendBeacon(&B);
     A->EndAction(Action);A->EnqueueCommittedRecovery(N);A->DrainNotifications();return true;
 }
 bool FDWCombatRecoveryTransaction::Respawn(ADWPlayerCharacter& P)
@@ -83,7 +87,13 @@ bool FDWCombatRecoveryTransaction::Respawn(ADWPlayerCharacter& P)
     auto* W=P.WeaponAnimationComponent.Get();
     if(!R||!A||!I||!W||W->IsBeingDestroyed()||!I->CanWriteInventory()||!R->CanRespawn(P)||
         P.bRestoringSave||P.bGameplayActionInProgress||P.bCombatRecoveryPositionPending||!A->CanRestorePlayerState(&P))return false;
-    FDWCombatPlayerVitalsRuntime Vitals;if(!Vitals.Initialize(P.CombatVitals.GetConfig(),EDWCombatVitalsReset::Respawn))return false;
+    auto* Language=P.GetGameInstance()?P.GetGameInstance()->GetSubsystem<UDWLanguageSubsystem>():nullptr;
+    const bool bFormal=Language&&Language->IsFormalSession();FDWFormalRespawnPlan Formal;FString FormalError;float FormalHealth=0.f;
+    if(P.CharacterA01&&P.CharacterA01->IsEnabled()&&(!Language||!Language->IsTrialWorld())&&!bFormal)return false;
+    FDWCombatPlayerVitalsRuntime Vitals;
+    if(bFormal){if(!FDWFormalLanguagePersistence::PrepareRespawn(P,Formal,Vitals,FormalHealth,FormalError))return false;}
+    else if(!Vitals.Initialize(P.CombatVitals.GetConfig(),EDWCombatVitalsReset::Respawn))return false;
+    const uint64 ExpectedRecoveryRevision=R->State.Revision;
     auto Candidate=R->State;Candidate.bAwaitingRespawn=false;Candidate.CurrentDeathBagId.Invalidate();++Candidate.Revision;
     auto* Ledger=A->GetLedgerForResourceTransaction();const auto Life=A->CaptureActorLife(&P);
     if(!Ledger||!Life.Entity||!A->ReserveRecoveryNoticeSlot())return false;
@@ -94,12 +104,14 @@ bool FDWCombatRecoveryTransaction::Respawn(ADWPlayerCharacter& P)
     FDWCombatRecoveryNotice N;N.Kind=EDWRecoveryNotice::Respawn;N.Player=&P;N.Inventory=I;N.Recovery=R;N.PlayerId=Candidate.PlayerId;
     N.WorldEpoch=A->GetWorldEpoch();N.RecoveryRevision=Candidate.Revision;N.Destination=Candidate.SafePoint.Transform;
     const auto RespawnValues=Vitals.Capture(P.CombatVitals.GetConfig().Vitals.HealthMax*P.CombatVitals.GetConfig().Vitals.RespawnHealthFraction);
-    const float Health=DWCombatPlayerSave::NativeHealth(RespawnValues.Health,P.CombatVitals.GetConfig());
-    if(!FMath::IsFinite(Health)||Health<=P.GetCombatHealthFloor())
+    const float Health=bFormal?FormalHealth:DWCombatPlayerSave::NativeHealth(RespawnValues.Health,P.CombatVitals.GetConfig());
+    if(!FMath::IsFinite(Health)||Health<=P.GetCombatHealthFloor()||(bFormal&&
+        (!FDWFormalLanguagePersistence::CanCommitRespawn(Formal)||R->State.Revision!=ExpectedRecoveryRevision||R->BoundPlayer.Get()!=&P||!R->CanRespawn(P))))
     {Ledger->Resolve(Admission.Receipt.Handle,EOutcome::Rejected);Ledger->EndAction(Action);return false;}
     if(Ledger->Resolve(Admission.Receipt.Handle,EOutcome::Committed)!=EResolve::Resolved){Ledger->EndAction(Action);return false;}
     Ledger->EndAction(Action);A->NotifyActorRestored(&P);
     P.CombatVitals=MoveTemp(Vitals);P.Health=Health;P.bDeathHandled=false;P.bCombatDeathEffectsPending=false;
+    if(bFormal)FDWFormalLanguagePersistence::AdoptRespawnUnchecked(Formal);
     P.bCombatRecoveryPositionPending=true;P.bHasCombatFormFrameSlice=false;P.PaidCombatWeaponSlice={};P.ResetCombatKnockbackFacts();
     P.SyncCombatVitalsCompatibility();R->State=MoveTemp(Candidate);R->bPlacementPending=true;N.Life=A->CaptureActorLife(&P);
     // Permanent ownership, current equipment, loaded shells and all remaining locks/CD are deliberately untouched.
@@ -127,6 +139,8 @@ void FDWCombatRecoveryTransaction::Publish(const FDWCombatRecoveryNotice& N)
             P->UpdateFormAppearance(true);if(!Current())return;P->UpdateAnimation();if(!Current())return;
             if(auto* PC=Cast<APlayerController>(P->GetController()))if(auto* H=Cast<ADWGameplayHUD>(PC->GetHUD()))
             {H->SetSessionStarted(true);H->ClosePanels();}
+            if(!Current())return;
+            if(auto* L=P->GetGameInstance()?P->GetGameInstance()->GetSubsystem<UDWLanguageSubsystem>():nullptr;L&&L->IsFormalSession())L->PublishAfterRestore();
             if(!Current())return;
         }
         if(N.bInventoryChanged){auto* I=N.Inventory.Get();if(I&&I->CanWriteInventory()&&I->GetOwner()==P)I->OnChanged.Broadcast();}
