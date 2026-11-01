@@ -2,11 +2,13 @@
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "DWEnemyCombatProfile.h"
+#include "DWCreatureDefinition.h"
 #include "DWCombatCoreDropSubsystem.generated.h"
 
 class ADWEnemyCharacter;
 class ADWCombatCorePickup;
 class FDWCombatRules;
+class UDWGameplayConfig;
 class FDWCombatCorePickupTransaction;
 class UDWCombatAuthoritySubsystem;
 
@@ -33,7 +35,17 @@ struct FDWCombatCoreDropSave
     UPROPERTY(SaveGame) FName ItemId;
     UPROPERTY(SaveGame) int32 Count=0;
     UPROPERTY(SaveGame) FVector Location=FVector::ZeroVector;
+    // Schema 2 only: one frozen row of a generic death group. Schema 1 remains the strict old core branch.
+    UPROPERTY(SaveGame) FString SourceStableId;
+    UPROPERTY(SaveGame) FGuid GenericGroup;
+    UPROPERTY(SaveGame) int32 GenericOrdinal=0;
 };
+namespace DWCreatureDropPolicy
+{
+ bool ValidateEntries(const TArray<FDWCreatureDropEntry>& Entries,TFunctionRef<bool(FName)> ItemExists,FString& Error);
+ bool ValidateGenericShape(const FDWCombatCoreDropSave& Save);
+ bool ValidateEntriesForConfig(const TArray<FDWCreatureDropEntry>& Entries,const UDWGameplayConfig* Config,FString& Error);
+}
 struct FDWPreparedCoreDrop
 {
     FDWCombatCoreDropSave Save;
@@ -41,6 +53,11 @@ struct FDWPreparedCoreDrop
     TWeakObjectPtr<ADWEnemyCharacter> Enemy;
     uint64 Revision=0;
     bool bValid=false;
+    bool bGeneric=false;
+    FGuid GenericGroup;
+    FString GenericSourceStableId;
+    TArray<FDWCombatCoreDropSave> GenericRows;
+    double GenericPickupRadiusCm=0.;
 };
 
 /** World-owned drop facts; this is not another health/inventory authority. */
@@ -84,6 +101,7 @@ private:
     bool PrepareFatal(ADWEnemyCharacter& Enemy,DWCombatCommit::FReceiptId Receipt,
         DWCombatCommit::FEntityLife EnemyLife,DWCombatCommit::FEntityLife PlayerLife,FDWPreparedCoreDrop& Out,const FVector* ForcedFallPoint=nullptr,DWCombatCommit::FReceiptId ForcedFallReceipt={});
     void CommitFatalUnchecked(FDWPreparedCoreDrop&& Prepared);
+    bool PrepareGenericFatal(ADWEnemyCharacter&,DWCombatCommit::FReceiptId,DWCombatCommit::FEntityLife,DWCombatCommit::FEntityLife,FDWPreparedCoreDrop&,const FVector*,DWCombatCommit::FReceiptId);
     void Materialize(FGuid DeathId);
     void PhysicalEnded(ADWCombatCorePickup& Pickup);
     bool IsPhysicalCurrent(const ADWCombatCorePickup& Pickup) const;

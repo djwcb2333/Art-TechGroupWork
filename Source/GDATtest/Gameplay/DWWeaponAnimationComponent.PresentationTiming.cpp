@@ -1,4 +1,6 @@
 #include "DWWeaponAnimationComponent.h"
+#include "DWCombatPresentationComponent.h"
+#include "DWCombatGroundAreaSubsystem.h"
 #include "DWCombatPresentationTiming.h"
 #include "DWCombatFeedbackComponent.h"
 #include "Animation/AnimSequenceBase.h"
@@ -114,5 +116,7 @@ void UDWWeaponAnimationComponent::PublishSwordProgressEffects()
     if(!bFormalSwordActive||GetNextSwordPresentationBoundary()>1.e-9)return;
     const bool Slam=SwordPlan.GetPhase()==EDWSwordPhase::Slam;
     if(Slam)bSwordSlamFeedbackPlayed=true;else bSwordSweepFeedbackPlayed=true;
+    const auto FeedbackAction=SwordAction;
+    if(!IsCurrentFormalSword(FeedbackAction))return;
     if(auto* P=Player();P&&P->CombatFeedback)P->CombatFeedback->PlayFeedback(Slam?EDWCombatFeedbackCue::SwordSlam:EDWCombatFeedbackCue::SwordSweep);
 }

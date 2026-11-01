@@ -17,8 +17,8 @@ struct FDWCharacterA01Config
     double WaterDrainAmount=1., WaterDrainIntervalSeconds=3.;
     double StarvationDamagePerSecond=3., ThirstMovementMultiplier=.75;
     double CapLossAmount=1., CapLossIntervalSeconds=5.;
-    double CapRecoveryAmount=1., CapRecoveryIntervalSeconds=2.;
-    double NormalRegenAmount=1., NormalRegenIntervalSeconds=5.;
+    double CapRecoveryAmount=1., CapRecoveryIntervalSeconds=5.;
+    double NormalRegenAmount=0., NormalRegenIntervalSeconds=5.;
     bool bNormalRegenRequiresCapLoss=true, bRegenWhileStarving=false;
     // b6 supplies .4. Recorded loss is never erased when this limit changes.
     double MaximumLossFraction=1.;
@@ -48,6 +48,8 @@ struct FDWCharacterA01State
 struct FDWCharacterA01Activity
 {
     double GasSpendPerSecond=0.;
+    double CorruptionSpendPerSecond=0.;
+    bool bSuppressCorruptionRegeneration=false;
     // Also true for a dash that paid its full cost at startup.
     bool bSuppressGasRegeneration=false;
     bool bToolActionActive=false;
@@ -93,6 +95,7 @@ public:
     bool EnterForm(EDWA01Form); // Caller already committed exactly one essence inventory transaction.
     bool ExitForm();
     bool AdvanceNext(double MaximumSeconds, const FDWCharacterA01Activity&, FDWCharacterA01Step&);
+    bool SpendCorruption(double Cost);
     bool SpendGas(double Cost); // Startup cost: caller commits this candidate with its action receipt.
     double AddSatiety(double Amount);
     double AddWater(double Amount);

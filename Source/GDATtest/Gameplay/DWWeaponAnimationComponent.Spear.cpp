@@ -73,7 +73,12 @@ bool UDWWeaponAnimationComponent::ConfigureFormalSpear(const FDWCombatRules& Rul
 EDWSpearForm UDWWeaponAnimationComponent::ReadFormalSpearForm(double FrameOffset) const
 {
     const auto* P=Player();if(!P)return EDWSpearForm::Normal;
-    if(P->CharacterA01&&P->CharacterA01->IsEnabled())return EDWSpearForm::Normal; // Keep weapon base behavior; A01 does not revive old form multipliers.
+    if(P->CharacterA01&&P->CharacterA01->IsEnabled())
+    {
+        // Retain the committed root modifier/paid slice, without reviving old mobile Mold or Yeast base bonuses.
+        const bool Rooted=FrameOffset<0.?P->IsFormallyRooted():P->IsFormallyRootedAtFrameOffset(FrameOffset);
+        return Rooted?EDWSpearForm::MoldRooted:EDWSpearForm::Normal;
+    }
     const auto Form=FrameOffset<0.?P->GetCombatBaseForm():P->GetCombatBaseFormAtFrameOffset(FrameOffset);
     if(Form==EDWCombatBaseForm::Yeast)return EDWSpearForm::Yeast;
     // D10 committed stance and its read-only paid slice view; no visual flag inference.

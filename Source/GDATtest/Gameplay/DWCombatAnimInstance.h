@@ -49,6 +49,8 @@ public:
     UPROPERTY(Transient, BlueprintReadOnly, Category="DoughWorld|Combat Animation|Playback") float ThrowPositionSeconds=0.f;
     UPROPERTY(Transient, BlueprintReadOnly, Category="DoughWorld|Combat Animation|Playback") float MeleePositionSeconds=0.f;
     UPROPERTY(Transient, BlueprintReadOnly, Category="DoughWorld|Combat Animation|Playback") float AttackPositionSeconds=0.f;
+    /** Explicit source position copied on the game thread for the new R05 Thug Alert Evaluator only. */
+    UPROPERTY(Transient, BlueprintReadOnly, Category="DoughWorld|Combat Animation|Playback") float AlertPositionSeconds=0.f;
 
 private:
     UAnimSequenceBase* CompatibleSequence(UAnimationAsset* Candidate) const;

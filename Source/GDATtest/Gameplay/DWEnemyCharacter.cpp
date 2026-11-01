@@ -1,4 +1,8 @@
 #include "DWEnemyCharacter.h"
+#include "DWGiantAttackTiming.h"
+#include "DWCreatureAlertClock.h"
+#include "DWCombatPresentationComponent.h"
+#include "Animation/AnimSequenceBase.h"
 #include "DWCommittedHitFeedbackComponent.h"
 #include "DWCombatGroundAreaSubsystem.h"
 #include "DWCombatAuthoritySubsystem.h"
@@ -9,6 +13,7 @@
 #include "DWUserSettings.h"
 #include "DWPlayerCharacter.h"
 #include "DWEnemyNest.h"
+#include "DWCreaturePatrolComponent.h"
 #include "DWWorldEvent.h"
 #include "AIController.h"
 #include "Components/CapsuleComponent.h"
@@ -116,6 +121,9 @@ void ADWEnemyCharacter::BeginPlay()
         PlaceholderBaseTransform = PlaceholderBody->GetRelativeTransform();
         bPlaceholderTransformCaptured = true;
     }
+    FString DefinitionError;
+    bCreatureDefinitionValid=ApplyCreatureDefinition(DefinitionError);
+    if(!bCreatureDefinitionValid)UE_LOG(LogTemp,Error,TEXT("Creature definition rejected: %s"),*DefinitionError);
     if (!bHealthRestoredFromSave) Health = DWEnemyCombat::FiniteClamp(MaxHealth, 1.f, 100000000.f, 100.f);
 
     if(!bFormalHomeCaptured)HomeLocation=GetActorLocation();
@@ -126,6 +134,7 @@ void ADWEnemyCharacter::BeginPlay()
             UE_LOG(LogTemp,Warning,TEXT("Formal enemy disabled without valid rules/art contract: %s"),*Error);
     }
     NextPatrolTime = GetWorld()->GetTimeSeconds() + FMath::FRandRange(0.f, DWEnemyCombat::FiniteClamp(PatrolWaitTime, 0.f, 3600.f, 1.5f));
+    if(bCreatureDefinitionValid)if(auto* Patrol=Cast<UDWCreaturePatrolComponent>(RegisteredAmbientPatrol.Get()))Patrol->StartPatrol();
 }
 
 bool ADWEnemyCharacter::HasSightTo(const AActor* Target) const
@@ -142,6 +151,7 @@ bool ADWEnemyCharacter::HasSightTo(const AActor* Target) const
 
 bool ADWEnemyCharacter::CanDetectTarget_Implementation(AActor* Target) const
 {
+    if(!bCreatureDefinitionValid||(CreatureDefinition&&CreatureDefinition->Disposition==EDWCreatureDisposition::Neutral))return false;
     if(HasDaggerDiscoveryGrace(Cast<ADWPlayerCharacter>(Target)))return false;
     if(CombatProfile!=EDWEnemyCombatProfile::Legacy)
         return IsHostileToCombatPlayer(Cast<ADWPlayerCharacter>(Target))&&IsCombatTargetAlive(Target)&&
@@ -151,6 +161,7 @@ bool ADWEnemyCharacter::CanDetectTarget_Implementation(AActor* Target) const
 
 bool ADWEnemyCharacter::CanAttackTarget_Implementation(AActor* Target) const
 {
+    if(!bCreatureDefinitionValid||(CreatureDefinition&&CreatureDefinition->Disposition==EDWCreatureDisposition::Neutral))return false;
     if(CombatProfile!=EDWEnemyCombatProfile::Legacy)return CanResolveFormalMeleeHit(Target,false);
     if (!IsCombatTargetAlive(Target)) return false;
     const float Range = AttackPhase != EDWCombatPhase::None ? CurrentAttackRange : DWEnemyCombat::FiniteClamp(AttackRange, 1.f, 100000.f, 150.f);
@@ -199,6 +210,9 @@ void ADWEnemyCharacter::MoveToward(const FVector& Goal, float DeltaSeconds)
     UNavigationSystemV1* Nav = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
     FNavLocation OnNav;
     const bool bHasNav = Nav && Nav->ProjectPointToNavigation(GetActorLocation(), OnNav, FVector(100.f, 100.f, 250.f));
+    // Ambient patrol never falls back to blind steering after navigation disappears.
+    if(CreatureDefinition&&CreatureDefinition->bExternalAmbientPatrol&&AmbientPatrolOwner.IsValid()&&State==EDWEnemyState::Patrol&&!bHasNav)
+    {StopAIMovement();return;}
     if (AI && bHasNav)
     {
         if (GetWorld()->GetTimeSeconds() >= NextPathRequestTime)
@@ -223,6 +237,7 @@ void ADWEnemyCharacter::Tick(float DeltaSeconds)
     ON_SCOPE_EXIT { if(IsValid(this)&&!IsActorBeingDestroyed()&&GetWorld()&&!GetWorld()->bIsTearingDown)UpdatePlaceholderPresentation(); };
     if(CombatProfile!=EDWEnemyCombatProfile::Legacy){if(IsAlive())TickFormalCombat(DeltaSeconds);return;}
     if (!IsAlive() || !GetWorld()) return;
+    if(!bCreatureDefinitionValid){CancelMeleeAttack();StopAIMovement();return;}
     if (GetWorld()->IsPaused() || UDWWorldEventSubsystem::IsPlaying(this))
     {
         CancelMeleeAttack();
@@ -284,6 +299,7 @@ void ADWEnemyCharacter::Tick(float DeltaSeconds)
         return;
     }
 
+    if(TickAmbientPatrol(DeltaSeconds))return;
     SetAIState(EDWEnemyState::Patrol);
     if (!bHasPatrolGoal && Now >= NextPatrolTime) ChoosePatrolGoal();
     if (bHasPatrolGoal)
@@ -310,7 +326,7 @@ bool ADWEnemyCharacter::IsCombatTargetAlive(const AActor* Target) const
 
 void ADWEnemyCharacter::BeginAlert(APawn* NewTarget)
 {
-    if (!IsAlive() || !IsCombatTargetAlive(NewTarget) || !GetWorld()) return;
+    if (!IsAlive() || !IsCombatTargetAlive(NewTarget) || !GetWorld() || !bCreatureDefinitionValid || (CreatureDefinition&&CreatureDefinition->Disposition==EDWCreatureDisposition::Neutral)) return;
 
     if(CombatProfile!=EDWEnemyCombatProfile::Legacy)
     {
@@ -332,6 +348,21 @@ EDWCombatAnimationState ADWEnemyCharacter::GetCombatAnimationState() const
     return EDWCombatAnimationState::Idle;
 }
 
+float ADWEnemyCharacter::GetCombatAlertSourceSeconds(float SourceLength) const
+{
+    // Definition-backed non-neutral formal hosts expose the same existing clock. Only new graphs consume this value.
+    if(!bCreatureDefinitionValid||!IsValid(CreatureDefinition)||!IsFormalCombatReady()||
+        CreatureDefinition->NumericSource!=EDWCreatureNumericSource::ExistingFormalProfile||
+        CreatureDefinition->FormalProfile!=CombatProfile||
+        CombatProfile==EDWEnemyCombatProfile::Legacy||CreatureDefinition->Disposition==EDWCreatureDisposition::Neutral||
+        !FormalMemory.bEngaged||!IsAlive()||bCombatWorldStaged||bCombatRestoreInProgress||
+        !GetWorld()||GetWorld()->bIsTearingDown||IsActorBeingDestroyed())return 0.f;
+    // Restore already reconstructs End = restored game time + remaining; paused game time stays fixed.
+    // Do not use the writable AlertDuration mirror or animation DeltaSeconds as a second clock.
+    return DWCreatureAlertClock::SourceSeconds(GetWorld()->GetTimeSeconds(),FormalAlertEndTime,
+        FormalCombatConfig.AlertDelaySeconds,SourceLength);
+}
+
 float ADWEnemyCharacter::GetCombatAttackElapsedSeconds() const
 {
     if(CombatProfile!=EDWEnemyCombatProfile::Legacy)return GetWorld()&&AttackPhase!=EDWCombatPhase::None?FMath::Clamp(static_cast<float>(GetWorld()->GetTimeSeconds()-FormalAttackStartedTime),0.f,GetCombatAttackDuration()):0.f;
@@ -346,6 +377,7 @@ UAnimationAsset* ADWEnemyCharacter::GetCurrentAttackAnimation() const
 
 bool ADWEnemyCharacter::TryStartMeleeAttack(AActor* Target)
 {
+    if(!bCreatureDefinitionValid||(CreatureDefinition&&CreatureDefinition->Disposition==EDWCreatureDisposition::Neutral))return false;
     if(bCombatWorldStaged||bPlayerDeathReturn)return false;
     if(CombatProfile!=EDWEnemyCombatProfile::Legacy)return TryStartFormalMeleeAttack(Target);
     if (bStartingMeleeAttack || bDeathTransitionInProgress || bCombatRestoreInProgress || !IsAlive() || !GetWorld() || IsActorBeingDestroyed() ||
@@ -427,6 +459,7 @@ void ADWEnemyCharacter::CancelMeleeAttack()
 
 bool ADWEnemyCharacter::CanResolveMeleeHit(AActor* Target) const
 {
+    if(!bCreatureDefinitionValid||(CreatureDefinition&&CreatureDefinition->Disposition==EDWCreatureDisposition::Neutral))return false;
     if(CombatProfile!=EDWEnemyCombatProfile::Legacy)return CanResolveFormalMeleeHit(Target,true);
     if (!IsAlive() || !IsCombatTargetAlive(Target) || bIsCombatKnockedBack) return false;
     const float Range = AttackPhase != EDWCombatPhase::None ? CurrentAttackRange : DWEnemyCombat::FiniteClamp(AttackRange, 1.f, 100000.f, 150.f);
@@ -437,6 +470,40 @@ bool ADWEnemyCharacter::CanResolveMeleeHit(AActor* Target) const
     return ToTarget.IsNearlyZero() || FVector::DotProduct(Facing, ToTarget) >= CosHalfAngle;
 }
 
+bool ADWEnemyCharacter::UsesGiantContactAnimation()const
+{
+ const auto* Sequence=Cast<UAnimSequenceBase>(GetCurrentAttackAnimation());
+ const auto* Timing=Sequence?Cast<UDWGiantAttackTiming>(Sequence->FindMetaDataByClass(UDWGiantAttackTiming::StaticClass())):nullptr;
+ return Timing&&Timing->IsValidFor(Sequence->GetPlayLength());
+}
+float ADWEnemyCharacter::GetCombatAttackSourceSeconds(float Length)const
+{
+ const auto* Sequence=Cast<UAnimSequenceBase>(GetCurrentAttackAnimation());
+ const auto* Timing=Sequence?Cast<UDWGiantAttackTiming>(Sequence->FindMetaDataByClass(UDWGiantAttackTiming::StaticClass())):nullptr;
+ const float E=GetCombatAttackElapsedSeconds();
+ if(Timing&&Timing->IsValidFor(Length))return UDWGiantAttackTiming::Map(E,CurrentAttackWindup,CurrentAttackActiveDuration,CurrentAttackRecovery,Timing->ContactSeconds,Timing->ActiveEndSeconds,Timing->SourceEndSeconds);
+ return Length*FMath::Clamp(E/FMath::Max(.001f,GetCombatAttackDuration()),0.f,1.f);
+}
+void ADWEnemyCharacter::PublishGiantStrike()
+{
+ auto* A=UDWCombatAuthoritySubsystem::Get(this);const auto Action=FormalMeleeAction;
+ if(!UsesGiantContactAnimation()||!A||!Action.Id||!A->IsCurrentPresentationAction(Action,this)||AttackPhase!=EDWCombatPhase::Active)return;
+ if(LastGiantImpactEpoch==Action.Epoch&&LastGiantImpactAction==Action.Id)return;
+ LastGiantImpactEpoch=Action.Epoch;LastGiantImpactAction=Action.Id;
+ const FVector Origin=GetActorLocation();const FVector Forward=LockedAttackDirection;const double Range=CurrentAttackRange;const double HalfAngle=DWEnemyCombat::FiniteClamp(AttackHalfAngle,1.f,180.f,65.f);
+ const auto Pulse=GiantSlamPulse;
+ // Camera requests are queued before callbacks; same-action damage merges into this one request.
+ if(auto* P=Cast<ADWPlayerCharacter>(UGameplayStatics::GetPlayerPawn(this,0));P&&P->CommittedHitFeedback&&Range>0.)
+ {
+  const double Weight=FMath::Clamp(1.-FVector::Dist2D(Origin,P->GetActorLocation())/Range,0.,1.);
+  P->CommittedHitFeedback->QueueCommittedImpact(Action,Pulse,static_cast<float>(Weight));
+ }
+ if(auto* Presentation=FindComponentByClass<UDWCombatPresentationComponent>())
+ {
+  FVector Ground;if(UDWCombatGroundAreaSubsystem::FindLegalGround(GetWorld(),Origin,this,Ground))
+   Presentation->PublishCommitted(EDWCombatPresentationKind::GiantSlam,Action.Epoch,Action.Id,FTransform(Forward.Rotation(),Ground),1,Range,HalfAngle);
+ }
+}
 void ADWEnemyCharacter::ResolveMeleeHit()
 {
     AActor* Target = MeleeTarget.Get();
@@ -484,6 +551,8 @@ void ADWEnemyCharacter::UpdateMeleeAttack(float Now)
         LockedAttackDirection = GetActorForwardVector().GetSafeNormal2D();
         AttackPhase = EDWCombatPhase::Active;
         AttackPhaseEndTime += CurrentAttackActiveDuration;
+        const int32 StrikeSerial=AttackSerial;PublishGiantStrike();
+        if(!IsAlive()||AttackPhase!=EDWCombatPhase::Active||AttackSerial!=StrikeSerial)return;
     }
     if (AttackPhase == EDWCombatPhase::Active)
     {

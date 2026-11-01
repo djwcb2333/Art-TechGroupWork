@@ -1,4 +1,7 @@
 #include "DWWeaponAnimationComponent.h"
+#include "DWWeaponVisualSampler.h"
+#include "DWAttackVfxResolver.h"
+#include "DWCombatPresentationComponent.h"
 #include "DWGatheringComponent.h"
 #include <limits>
 #include "DWCombatInputOrigin.h"
@@ -25,26 +28,7 @@ namespace DWWeaponAnimation
 {
     static float Positive(float Value,float Fallback=.001f)
     {return FMath::IsFinite(Value)&&Value>0.f?Value:Fallback;}
-    template<typename T> static int32 SampleIndex(const TArray<T>& Samples,double Time)
-    {
-        int32 Result=0;
-        for(int32 I=1;I<Samples.Num()&&Samples[I].TimeSeconds<=Time;++I)Result=I;
-        return Result;
-    }
-    static TArray<FVector> InterpolateVertices(const TArray<FVector>& A,const TArray<FVector>& B,float Alpha)
-    {
-        if(A.Num()!=B.Num()||Alpha<=0.f)return A;
-        TArray<FVector> Result;Result.SetNumUninitialized(A.Num());
-        for(int32 I=0;I<A.Num();++I)Result[I]=FMath::Lerp(A[I],B[I],Alpha);
-        return Result;
-    }
-    static TArray<FVector> ScaleVerticesAboutPivot(const TArray<FVector>& Vertices,const FVector& Pivot,float Scale)
-    {
-        if(Scale==1.f)return Vertices;
-        TArray<FVector> Result;Result.Reserve(Vertices.Num());
-        for(const FVector& Vertex:Vertices)Result.Add(Pivot+(Vertex-Pivot)*Scale);
-        return Result;
-    }
+
 }
 
 UDWWeaponAnimationComponent::UDWWeaponAnimationComponent()
@@ -633,10 +617,11 @@ void UDWWeaponAnimationComponent::ResetTrails()
     if(SecondaryTrailVisual)SecondaryTrailVisual->SetVisibility(false);
     for(UNiagaraComponent* Component:{PrimaryTrailComponent.Get(),SecondaryTrailComponent.Get()})if(Component)Component->DeactivateImmediate();
     bPrimaryTrailEmitting=bSecondaryTrailEmitting=false;
+    if(auto* P=Player();P&&P->CombatPresentation)P->CombatPresentation->ClearWeaponVisuals();
 }
 void UDWWeaponAnimationComponent::UpdateParticleTrail(TObjectPtr<UNiagaraComponent>& Component,UNiagaraSystem* System,FName ComponentName,
     const FTransform& WeaponTransform,const FTransform& SourceWeaponTransform,const FVector& SourceRoot,const FVector& SourceTip,
-    const FVector& Offset,const FRotator& Rotation,const FVector& Scale,bool bShouldEmit,bool& bWasEmitting)
+    const FTransform& EffectLocal,FName StartParameter,FName EndParameter,bool bAtTip,bool bReplacesGeometry,bool bShouldEmit,bool& bWasEmitting)
 {
     auto* P=Player();auto* Set=GetSelectedSet();if(!P||!Set)return;
     if(!System)
@@ -652,19 +637,34 @@ void UDWWeaponAnimationComponent::UpdateParticleTrail(TObjectPtr<UNiagaraCompone
         Component->SetAsset(System);Component->RegisterComponent();
     }
     if(Component->GetAsset()!=System){Component->DeactivateImmediate();Component->SetAsset(System);bWasEmitting=false;}
-    // Source points already include authored stretch. Map through the weapon to apply grip and visual-size edits.
-    const FVector Root=WeaponTransform.TransformPosition(SourceWeaponTransform.InverseTransformPosition(SourceRoot));
-    const FVector Tip=WeaponTransform.TransformPosition(SourceWeaponTransform.InverseTransformPosition(SourceTip));
-    FTransform Attachment=FTransform(Rotation,Offset,Scale)*WeaponTransform;
-    if(Set->bAttachTrailAtAuthoredTip)Attachment.SetTranslation(Tip+WeaponTransform.TransformVector(Offset));
+    const auto Points=DWWeaponVisualSampler::MapTrailEndpoints(WeaponTransform,SourceWeaponTransform,SourceRoot,SourceTip);
+    const FTransform Attachment=DWWeaponVisualSampler::ResolveTrailAttachment(WeaponTransform,Points.Tip,EffectLocal,bAtTip);
     Component->SetRelativeTransform(Attachment);
-    if(!Set->TrailStartParameterName.IsNone())Component->SetVariableVec3(Set->TrailStartParameterName,P->GetActorTransform().TransformPosition(Root));
-    if(!Set->TrailEndParameterName.IsNone())Component->SetVariableVec3(Set->TrailEndParameterName,P->GetActorTransform().TransformPosition(Tip));
+    if(!StartParameter.IsNone())Component->SetVariableVec3(StartParameter,P->GetActorTransform().TransformPosition(Points.Root));
+    if(!EndParameter.IsNone())Component->SetVariableVec3(EndParameter,P->GetActorTransform().TransformPosition(Points.Tip));
     if(const auto* Feedback=P->CombatFeedback.Get();Feedback&&Feedback->bHighlightTrails&&Feedback->TrailHighlightMaterial&&!Feedback->NiagaraTrailMaterialParameter.IsNone())
         Component->SetVariableMaterial(Feedback->NiagaraTrailMaterialParameter,Feedback->TrailHighlightMaterial);
     if(bShouldEmit&&!bWasEmitting)Component->Activate(true);
-    else if(!bShouldEmit&&bWasEmitting)Component->Deactivate();
+    else if(!bShouldEmit&&bWasEmitting){if(bReplacesGeometry)Component->DeactivateImmediate();else Component->Deactivate();}
     bWasEmitting=bShouldEmit;
+}
+bool UDWWeaponAnimationComponent::CaptureVisualSnapshot(DWWeaponVisualSampler::FRequest& In,DWWeaponVisualSampler::FFrame& Out) const
+{
+ auto* P=Player();auto* Set=GetSelectedSet();
+ if(!P||!Set||!bEnabled||!IsEnabled()||SelectedWeapon==EDWAnimatedWeapon::Unarmed||
+  (P->GatheringComponent&&P->GatheringComponent->IsGatheringSwingActive()))return false;
+ In.SourceSeconds=GetPresentationSourceSeconds();In.SelectedWeapon=SelectedWeapon;
+ In.bPresentationActive=HasWeaponPresentation();In.bActionActive=bActive;In.bDead=P->IsDead();
+ In.bFormalBowActive=bFormalBowActive;In.bBowShotCommitted=bBowShotCommitted;In.OwnerToWorld=P->GetActorTransform();
+ const auto& Clip=GetPresentationClip();
+ const bool NeedsSocketFallback=In.bPresentationActive&&In.SourceSeconds>=Clip.HeldStartSeconds&&In.SourceSeconds<Clip.HeldEndSeconds&&!(Set->bUseBakedVisualSamples&&!Clip.VisualSamples.IsEmpty());
+ if(auto* Mesh=NeedsSocketFallback?P->GetMesh():nullptr)
+ {
+  In.bHasMesh=true;In.bHasPrimarySocket=Mesh->DoesSocketExist(Set->PrimaryBone);In.bHasSecondarySocket=Mesh->DoesSocketExist(Set->SecondaryBone);
+  if(In.bHasPrimarySocket)In.PrimarySocketToWorld=Mesh->GetSocketTransform(Set->PrimaryBone);
+  if(In.bHasSecondarySocket)In.SecondarySocketToWorld=Mesh->GetSocketTransform(Set->SecondaryBone);
+ }
+ Out=DWWeaponVisualSampler::EvaluateWeaponVisualFrame(*Set,Clip,In);return true;
 }
 void UDWWeaponAnimationComponent::UpdateVisuals()
 {
@@ -685,73 +685,66 @@ void UDWWeaponAnimationComponent::UpdateVisuals()
     CreateProc(PrimaryDeformedVisual,TEXT("WeaponPrimaryDeformation"));CreateProc(SecondaryDeformedVisual,TEXT("WeaponSecondaryDeformation"));
     const auto& Presentation=GetPresentationClip();
     const auto* Feedback=P->CombatFeedback.Get();
-    const bool bUseGeometryTrail=Set->bUseGeometryTrail||(Feedback&&Feedback->bHighlightTrails&&!Presentation.GeometryFrames.IsEmpty());
+    const auto EffectiveTrails=DWAttackVfxResolver::ResolveTrails(Set->AttackVfxProfile.Get(),*Set);
+    const bool bPrimaryGeometryAllowed=!EffectiveTrails.bParticleReplacesGeometry||!EffectiveTrails.Primary.System;
+    const bool bSecondaryGeometryAllowed=!EffectiveTrails.bParticleReplacesGeometry||!EffectiveTrails.Secondary.System;
+    const bool bUseGeometryTrail=(bPrimaryGeometryAllowed||bSecondaryGeometryAllowed)&&
+        (EffectiveTrails.bUseGeometryTrail||(Feedback&&Feedback->bHighlightTrails&&!Presentation.GeometryFrames.IsEmpty()));
     if(bUseGeometryTrail){CreateProc(PrimaryTrailVisual,TEXT("WeaponPrimaryTrail"));CreateProc(SecondaryTrailVisual,TEXT("WeaponSecondaryTrail"));}
     if(P->SwordPlaceholder)P->SwordPlaceholder->SetVisibility(false);
-    const double SourceSeconds=GetPresentationSourceSeconds();
-    const bool bPresentationActive=HasWeaponPresentation();
-    const bool bHeld=bPresentationActive&&SourceSeconds>=Presentation.HeldStartSeconds&&SourceSeconds<Presentation.HeldEndSeconds;
-    FTransform Primary=Set->PrimaryBack,Secondary=Set->SecondaryBack;
-    bool bPrimaryVisible=!P->IsDead(),bSecondaryVisible=bPrimaryVisible;
-    FDWWeaponVisualSample Sample;bool bHasSample=false;
-    if(bPresentationActive&&Set->bUseBakedVisualSamples&&!Presentation.VisualSamples.IsEmpty())
+    DWWeaponVisualSampler::FRequest VisualRequest;
+    VisualRequest.SourceSeconds=GetPresentationSourceSeconds();VisualRequest.SelectedWeapon=SelectedWeapon;
+    VisualRequest.bPresentationActive=HasWeaponPresentation();VisualRequest.bActionActive=bActive;VisualRequest.bDead=P->IsDead();
+    VisualRequest.bFormalBowActive=bFormalBowActive;VisualRequest.bBowShotCommitted=bBowShotCommitted;VisualRequest.OwnerToWorld=P->GetActorTransform();
+    const bool NeedsSocketFallback=VisualRequest.bPresentationActive&&VisualRequest.SourceSeconds>=Presentation.HeldStartSeconds&&VisualRequest.SourceSeconds<Presentation.HeldEndSeconds&&!(Set->bUseBakedVisualSamples&&!Presentation.VisualSamples.IsEmpty());
+    if(auto* Mesh=NeedsSocketFallback?P->GetMesh():nullptr)
     {
-        const int32 Index=DWWeaponAnimation::SampleIndex(Presentation.VisualSamples,SourceSeconds);
-        Sample=Presentation.VisualSamples[Index];
-        if(Presentation.VisualSamples.IsValidIndex(Index+1))
-        {
-            const auto& B=Presentation.VisualSamples[Index+1];
-            const float Alpha=static_cast<float>(FMath::Clamp((SourceSeconds-Sample.TimeSeconds)/DWWeaponAnimation::Positive(B.TimeSeconds-Sample.TimeSeconds),0.,1.));
-            Sample.PrimaryTransform.Blend(Presentation.VisualSamples[Index].PrimaryTransform,B.PrimaryTransform,Alpha);
-            Sample.SecondaryTransform.Blend(Presentation.VisualSamples[Index].SecondaryTransform,B.SecondaryTransform,Alpha);
-            Sample.PrimaryTrailRoot=FMath::Lerp(Sample.PrimaryTrailRoot,B.PrimaryTrailRoot,Alpha);Sample.PrimaryTrailTip=FMath::Lerp(Sample.PrimaryTrailTip,B.PrimaryTrailTip,Alpha);
-            Sample.SecondaryTrailRoot=FMath::Lerp(Sample.SecondaryTrailRoot,B.SecondaryTrailRoot,Alpha);Sample.SecondaryTrailTip=FMath::Lerp(Sample.SecondaryTrailTip,B.SecondaryTrailTip,Alpha);
-        }
-        Primary=bHeld?Set->PrimaryGrip*Sample.PrimaryTransform:Set->PrimaryBack;
-        Secondary=bHeld?Set->SecondaryGrip*Sample.SecondaryTransform:Set->SecondaryBack;
-        bPrimaryVisible=Sample.bPrimaryVisible;bSecondaryVisible=Sample.bSecondaryVisible;bHasSample=true;
-        if(!bHeld){bPrimaryVisible=!P->IsDead();bSecondaryVisible=bPrimaryVisible;}
+        VisualRequest.bHasMesh=true;
+        VisualRequest.bHasPrimarySocket=Mesh->DoesSocketExist(Set->PrimaryBone);VisualRequest.bHasSecondarySocket=Mesh->DoesSocketExist(Set->SecondaryBone);
+        if(VisualRequest.bHasPrimarySocket)VisualRequest.PrimarySocketToWorld=Mesh->GetSocketTransform(Set->PrimaryBone);
+        if(VisualRequest.bHasSecondarySocket)VisualRequest.SecondarySocketToWorld=Mesh->GetSocketTransform(Set->SecondaryBone);
     }
-    else if(bHeld&&P->GetMesh())
-    {
-        if(P->GetMesh()->DoesSocketExist(Set->PrimaryBone))Primary=Set->PrimaryGrip*P->GetMesh()->GetSocketTransform(Set->PrimaryBone)*P->GetActorTransform().Inverse();
-        if(P->GetMesh()->DoesSocketExist(Set->SecondaryBone))Secondary=Set->SecondaryGrip*P->GetMesh()->GetSocketTransform(Set->SecondaryBone)*P->GetActorTransform().Inverse();
-    }
-    // The bow's secondary prop is a nocked arrow, never a back-hover accessory.
-    // Preserve authored sample visibility during the attack; only idle/out-of-hand is suppressed here.
-    if(SelectedWeapon==EDWAnimatedWeapon::MoldBow)bSecondaryVisible=bSecondaryVisible&&bHeld&&!P->IsDead()&&!(bFormalBowActive&&bBowShotCommitted);
-    Primary.SetScale3D(Primary.GetScale3D()*FMath::Max(.01f,Set->VisualScale));Secondary.SetScale3D(Secondary.GetScale3D()*FMath::Max(.01f,Set->VisualScale));
+    const auto VisualFrame=DWWeaponVisualSampler::EvaluateWeaponVisualFrame(*Set,Presentation,VisualRequest);
+    const FTransform& Primary=VisualFrame.PrimaryToOwner;const FTransform& Secondary=VisualFrame.SecondaryToOwner;
+    const bool bPrimaryVisible=VisualFrame.bPrimaryVisible,bSecondaryVisible=VisualFrame.bSecondaryVisible;
+    const bool bHasSample=VisualFrame.bHasSample;const auto& Sample=VisualFrame.Sample;
     PrimaryVisual->SetStaticMesh(Set->PrimaryMesh);SecondaryVisual->SetStaticMesh(Set->SecondaryMesh);
     PrimaryVisual->SetRelativeTransform(Primary);SecondaryVisual->SetRelativeTransform(Secondary);
     PrimaryDeformedVisual->SetRelativeTransform(Primary);SecondaryDeformedVisual->SetRelativeTransform(Secondary);
     if(Set->WeaponMaterial)for(UMeshComponent* C:{static_cast<UMeshComponent*>(PrimaryVisual.Get()),static_cast<UMeshComponent*>(SecondaryVisual.Get()),static_cast<UMeshComponent*>(PrimaryDeformedVisual.Get()),static_cast<UMeshComponent*>(SecondaryDeformedVisual.Get())})C->SetMaterial(0,Set->WeaponMaterial);
-    UMaterialInterface* TrailMaterial=Feedback&&Feedback->bHighlightTrails&&Feedback->TrailHighlightMaterial?Feedback->TrailHighlightMaterial.Get():Set->TrailMaterial.Get();
+    UMaterialInterface* TrailMaterial=Feedback&&Feedback->bHighlightTrails&&Feedback->TrailHighlightMaterial?Feedback->TrailHighlightMaterial.Get():EffectiveTrails.GeometryMaterial.Get();
     if(bUseGeometryTrail&&TrailMaterial){PrimaryTrailVisual->SetMaterial(0,TrailMaterial);SecondaryTrailVisual->SetMaterial(0,TrailMaterial);}
-    const FDWWeaponGeometryFrame* Frame=nullptr;const FDWWeaponGeometryFrame* NextFrame=nullptr;float Alpha=0.f;
-    if(bPresentationActive&&!Presentation.GeometryFrames.IsEmpty())
-    {
-        const int32 Index=DWWeaponAnimation::SampleIndex(Presentation.GeometryFrames,SourceSeconds);Frame=&Presentation.GeometryFrames[Index];
-        if(Presentation.GeometryFrames.IsValidIndex(Index+1)){NextFrame=&Presentation.GeometryFrames[Index+1];Alpha=static_cast<float>(FMath::Clamp((SourceSeconds-Frame->TimeSeconds)/DWWeaponAnimation::Positive(NextFrame->TimeSeconds-Frame->TimeSeconds),0.,1.));}
-    }
-    const TArray<FVector>& PV=Frame&&!Frame->PrimaryVertices.IsEmpty()?Frame->PrimaryVertices:Set->PrimaryGeometry.Vertices;
-    const TArray<FVector>& SV=Frame&&!Frame->SecondaryVertices.IsEmpty()?Frame->SecondaryVertices:Set->SecondaryGeometry.Vertices;
-    ApplyGeometry(PrimaryDeformedVisual,NextFrame?DWWeaponAnimation::InterpolateVertices(PV,NextFrame->PrimaryVertices,Alpha):PV,Set->PrimaryGeometry.Triangles,Set->PrimaryGeometry.UVs);
-    ApplyGeometry(SecondaryDeformedVisual,NextFrame?DWWeaponAnimation::InterpolateVertices(SV,NextFrame->SecondaryVertices,Alpha):SV,Set->SecondaryGeometry.Triangles,Set->SecondaryGeometry.UVs);
+    const FDWWeaponGeometryFrame* Frame=VisualFrame.Geometry;
+    const FDWWeaponGeometryFrame* NextFrame=VisualFrame.NextGeometry;const float Alpha=VisualFrame.GeometryAlpha;
+    const TArray<FVector>& PV=*VisualFrame.PrimaryGeometry.A;
+    const TArray<FVector>& SV=*VisualFrame.SecondaryGeometry.A;
+    ApplyGeometry(PrimaryDeformedVisual,NextFrame?DWWeaponVisualSampler::InterpolateVertices(PV,NextFrame->PrimaryVertices,Alpha):PV,Set->PrimaryGeometry.Triangles,Set->PrimaryGeometry.UVs);
+    ApplyGeometry(SecondaryDeformedVisual,NextFrame?DWWeaponVisualSampler::InterpolateVertices(SV,NextFrame->SecondaryVertices,Alpha):SV,Set->SecondaryGeometry.Triangles,Set->SecondaryGeometry.UVs);
     PrimaryDeformedVisual->SetVisibility(bPrimaryVisible&&!PV.IsEmpty()&&!Set->PrimaryGeometry.Triangles.IsEmpty());
     SecondaryDeformedVisual->SetVisibility(bSecondaryVisible&&!SV.IsEmpty()&&!Set->SecondaryGeometry.Triangles.IsEmpty());
     PrimaryVisual->SetVisibility(bPrimaryVisible&&Set->PrimaryMesh&&!PrimaryDeformedVisual->IsVisible());SecondaryVisual->SetVisibility(bSecondaryVisible&&Set->SecondaryMesh&&!SecondaryDeformedVisual->IsVisible());
-    const bool bParticleWindow=bActive&&bHasSample&&Sample.bTrailActive&&!P->IsDead();
-    UpdateParticleTrail(PrimaryTrailComponent,Set->PrimaryTrailSystem,TEXT("WeaponPrimaryTrailFX"),Primary,Sample.PrimaryTransform,Sample.PrimaryTrailRoot,Sample.PrimaryTrailTip,
-        Set->PrimaryTrailOffset,Set->PrimaryTrailRotation,Set->PrimaryTrailScale,bParticleWindow&&bPrimaryVisible,bPrimaryTrailEmitting);
-    UpdateParticleTrail(SecondaryTrailComponent,Set->SecondaryTrailSystem,TEXT("WeaponSecondaryTrailFX"),Secondary,Sample.SecondaryTransform,Sample.SecondaryTrailRoot,Sample.SecondaryTrailTip,
-        Set->SecondaryTrailOffset,Set->SecondaryTrailRotation,Set->SecondaryTrailScale,bParticleWindow&&bSecondaryVisible,bSecondaryTrailEmitting);
+    const auto Window=[&](const FDWAttackVfxTrailChannel& Channel,bool Legacy,bool Visible)
+    {
+        if(Channel.bUseBakedWindow)return Legacy;
+        const double D=Presentation.DurationSeconds;
+        return bActive&&bHasSample&&!VisualRequest.bDead&&Visible&&FMath::IsFinite(D)&&D>0.&&
+            VisualRequest.SourceSeconds>=Channel.StartNormalized*D&&VisualRequest.SourceSeconds<Channel.EndNormalized*D;
+    };
+    UpdateParticleTrail(PrimaryTrailComponent,EffectiveTrails.Primary.System,TEXT("WeaponPrimaryTrailFX"),Primary,Sample.PrimaryTransform,Sample.PrimaryTrailRoot,Sample.PrimaryTrailTip,
+        EffectiveTrails.Primary.LocalTransform,EffectiveTrails.StartParameter,EffectiveTrails.EndParameter,EffectiveTrails.bAttachAtAuthoredTip,EffectiveTrails.bParticleReplacesGeometry,
+        Window(EffectiveTrails.Primary,VisualFrame.bPrimaryParticleWindow,bPrimaryVisible),bPrimaryTrailEmitting);
+    UpdateParticleTrail(SecondaryTrailComponent,EffectiveTrails.Secondary.System,TEXT("WeaponSecondaryTrailFX"),Secondary,Sample.SecondaryTransform,Sample.SecondaryTrailRoot,Sample.SecondaryTrailTip,
+        EffectiveTrails.Secondary.LocalTransform,EffectiveTrails.StartParameter,EffectiveTrails.EndParameter,EffectiveTrails.bAttachAtAuthoredTip,EffectiveTrails.bParticleReplacesGeometry,
+        Window(EffectiveTrails.Secondary,VisualFrame.bSecondaryParticleWindow,bSecondaryVisible),bSecondaryTrailEmitting);
     if(bUseGeometryTrail&&Frame&&(!bHasSample||Sample.bTrailActive))
     {
         // Trails are already actor-local, while weapons scale about their own translated origin.
         const float Scale=FMath::Max(.01f,Set->VisualScale);
-        ApplyGeometry(PrimaryTrailVisual,DWWeaponAnimation::ScaleVerticesAboutPivot(Frame->TrailVertices,Primary.GetTranslation(),Scale),Frame->TrailTriangles,TArray<FVector2D>());
-        ApplyGeometry(SecondaryTrailVisual,DWWeaponAnimation::ScaleVerticesAboutPivot(Frame->SecondaryTrailVertices,Secondary.GetTranslation(),Scale),Frame->SecondaryTrailTriangles,TArray<FVector2D>());
+        ApplyGeometry(PrimaryTrailVisual,DWWeaponVisualSampler::ScaleVerticesAboutPivot(Frame->TrailVertices,Primary.GetTranslation(),Scale),Frame->TrailTriangles,TArray<FVector2D>());
+        ApplyGeometry(SecondaryTrailVisual,DWWeaponVisualSampler::ScaleVerticesAboutPivot(Frame->SecondaryTrailVertices,Secondary.GetTranslation(),Scale),Frame->SecondaryTrailTriangles,TArray<FVector2D>());
         PrimaryTrailVisual->SetRelativeTransform(FTransform::Identity);SecondaryTrailVisual->SetRelativeTransform(FTransform::Identity);
+        if(!bPrimaryGeometryAllowed)PrimaryTrailVisual->SetVisibility(false);
+        if(!bSecondaryGeometryAllowed)SecondaryTrailVisual->SetVisibility(false);
         if(SelectedWeapon==EDWAnimatedWeapon::MoldBow&&!bSecondaryVisible)SecondaryTrailVisual->SetVisibility(false);
     }
     else
@@ -759,6 +752,7 @@ void UDWWeaponAnimationComponent::UpdateVisuals()
         if(PrimaryTrailVisual)PrimaryTrailVisual->SetVisibility(false);
         if(SecondaryTrailVisual)SecondaryTrailVisual->SetVisibility(false);
     }
+    if(P->CombatPresentation)P->CombatPresentation->UpdateWeaponVisuals(*Set,Presentation,VisualRequest,VisualFrame,static_cast<uint32>(ActionSerial));
 }
 
 bool UDWWeaponAnimationComponent::BindObservedInputPress(const FDWCombatInputPress& Press,bool bSecondary)

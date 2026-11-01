@@ -30,6 +30,7 @@ class UNiagaraComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FDWWeaponAnimationEvent,EDWAnimatedWeapon,Weapon,FName,Role,int32,EventIndex);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FDWWeaponResourceChanged,int32,LoadedShells,int64,ResourceRevision,bool,bReload);
 
+namespace DWWeaponVisualSampler { struct FRequest;struct FFrame; }
 UCLASS(ClassGroup=(DoughWorld),BlueprintType,meta=(BlueprintSpawnableComponent))
 class GDATTEST_API UDWWeaponAnimationComponent : public UActorComponent
 {
@@ -92,6 +93,7 @@ public:
     UFUNCTION(BlueprintPure,Category="Weapons") bool IsEnabled() const;
     UFUNCTION(BlueprintPure,Category="Weapons") bool IsBusy() const {return bActive;}
     UFUNCTION(BlueprintPure,Category="Weapons") UDWWeaponAnimationSet* GetSelectedSet() const;
+    bool CaptureVisualSnapshot(DWWeaponVisualSampler::FRequest&,DWWeaponVisualSampler::FFrame&) const;
     UFUNCTION(BlueprintPure,Category="Weapons") bool CanSelectCombatEquipment(EDWAnimatedWeapon Weapon)const;
     UFUNCTION(BlueprintCallable,Category="Weapons") bool SelectWeapon(EDWAnimatedWeapon Weapon);
     /** Native exact-inventory-menu equip; does not authorize paused combat actions. */
@@ -338,7 +340,7 @@ private:
     FDWWeaponGeometryStats GeometryStats;
     FVector TargetLocation=FVector::ZeroVector;
     double ElapsedSeconds=0.,NextAttackTime=0.,BlockStartTime=0.;
-    bool bSwordSlamFeedbackPlayed=false,bSwordSweepFeedbackPlayed=false;
+    bool bSwordSlamFeedbackPlayed=false,bSwordSweepFeedbackPlayed=false,bSwordSlamEffectPublished=false;
     double GetNextFormalSpearBoundarySeconds()const;
     double GetNextSwordPresentationBoundary()const;
     double MapPresentationEventToCombatSeconds(double SourceSeconds)const;
@@ -356,5 +358,5 @@ private:
     void ResetTrails();
     void UpdateParticleTrail(TObjectPtr<UNiagaraComponent>& Component,UNiagaraSystem* System,FName ComponentName,
         const FTransform& WeaponTransform,const FTransform& SourceWeaponTransform,const FVector& SourceRoot,const FVector& SourceTip,
-        const FVector& Offset,const FRotator& Rotation,const FVector& Scale,bool bShouldEmit,bool& bWasEmitting);
+        const FTransform& EffectLocal,FName StartParameter,FName EndParameter,bool bAtTip,bool bReplacesGeometry,bool bShouldEmit,bool& bWasEmitting);
 };

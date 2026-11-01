@@ -3,6 +3,7 @@
 #include "Engine/DataAsset.h"
 #include "DWWeaponAnimationSet.generated.h"
 
+class UDWAttackVfxProfile;
 class UAnimSequenceBase;
 class UStaticMesh;
 class UMaterialInterface;
@@ -83,6 +84,7 @@ class GDATTEST_API UDWWeaponAnimationSet : public UDataAsset
 {
     GENERATED_BODY()
 public:
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Visual|Authoring") TObjectPtr<UDWAttackVfxProfile> AttackVfxProfile;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Identity") EDWAnimatedWeapon Weapon=EDWAnimatedWeapon::Spear;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Identity") FText DisplayName;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Animation",meta=(TitleProperty="Role")) TArray<FDWWeaponAnimationClip> Clips;
@@ -128,6 +130,8 @@ public:
     /** Optional Niagara Vector3 user parameters containing world-space centimetres. They are not required for playback. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Trail|Parameters") FName TrailStartParameterName=TEXT("User.TrailStart");
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Trail|Parameters") FName TrailEndParameterName=TEXT("User.TrailEnd");
+    /** Configured particle trails replace geometry per side; empty slots preserve legacy geometry. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Trail|Attachment") bool bParticleTrailReplacesGeometry=false;
     /** Legacy authored mesh trail is debug-only. Disabled means no trail mesh creation or tangent/geometry work. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Trail|Debug") bool bUseGeometryTrail=false;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Trail|Debug",meta=(EditCondition="bUseGeometryTrail")) TObjectPtr<UMaterialInterface> TrailMaterial;

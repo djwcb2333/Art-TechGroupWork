@@ -3,6 +3,14 @@
 #include "Animation/AnimBlueprint.h"
 
 #if WITH_EDITOR
+#include <initializer_list>
+#include "DWEnemyCharacter.h"
+#include "Engine/Blueprint.h"
+#include "Engine/SCS_Node.h"
+#include "Engine/SimpleConstructionScript.h"
+#include "Engine/StaticMesh.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Animation/Skeleton.h"
 #include "Animation/AnimSequenceBase.h"
 #include "Animation/AnimMontage.h"
@@ -437,6 +445,228 @@ UAnimBlueprint* UDWCombatAuthoringLibrary::CreateCombatAnimationBlueprint(const 
 #else
     OutMessage=TEXT("Combat animation authoring is available only in the Unreal Editor.");
     return nullptr;
+#endif
+}
+
+FString UDWCombatAuthoringLibrary::InspectSharedClubR05(UBlueprint* Blueprint)
+{
+#if WITH_EDITOR
+    const FString Mold=TEXT("/Game/DoughWorld/Characters/Enemies/Blueprints/BP_DWCreature_MoldThug.BP_DWCreature_MoldThug");
+    const FString Yeast=TEXT("/Game/DoughWorld/Characters/Enemies/Blueprints/BP_DWCreature_YeastThug.BP_DWCreature_YeastThug");
+    const TSharedRef<FJsonObject> Result=MakeShared<FJsonObject>();Result->SetBoolField(TEXT("read_only"),true);
+    const auto Finish=[&](){FString Text;auto Writer=TJsonWriterFactory<TCHAR,TCondensedJsonPrintPolicy<TCHAR>>::Create(&Text);FJsonSerializer::Serialize(Result,Writer);return Text;};
+    if(!IsValid(Blueprint)||(Blueprint->GetPathName()!=Mold&&Blueprint->GetPathName()!=Yeast)||
+        !Blueprint->ParentClass||!Blueprint->ParentClass->IsChildOf(ADWEnemyCharacter::StaticClass())||
+        !Blueprint->GeneratedClass||!Blueprint->SimpleConstructionScript)
+    {Result->SetStringField(TEXT("error"),TEXT("Exact compiled Thug BP/Enemy inheritance/SCS required."));return Finish();}
+    Result->SetStringField(TEXT("blueprint"),Blueprint->GetPathName());
+    USCS_Node* Found=nullptr;int32 Count=0;
+    for(USCS_Node* Node:Blueprint->SimpleConstructionScript->GetAllNodes())
+        if(Node&&Node->GetVariableName()==TEXT("SharedClubMesh")){Found=Node;++Count;}
+    Result->SetNumberField(TEXT("matching_nodes"),Count);
+    const auto* Component=Found?Cast<UStaticMeshComponent>(Found->ComponentTemplate):nullptr;
+    if(Count!=1||!Component)
+    {Result->SetStringField(TEXT("error"),TEXT("Expected one StaticMeshComponent SharedClubMesh."));return Finish();}
+    Result->SetStringField(TEXT("node"),Found->GetPathName());Result->SetStringField(TEXT("guid"),Found->VariableGuid.ToString());
+    Result->SetBoolField(TEXT("native_parent"),Found->bIsParentComponentNative);
+    Result->SetStringField(TEXT("parent_component"),Found->ParentComponentOrVariableName.ToString());
+    Result->SetStringField(TEXT("parent_owner_class"),Found->ParentComponentOwnerClassName.ToString());
+    Result->SetStringField(TEXT("attach_to"),Found->AttachToName.ToString());
+    Result->SetStringField(TEXT("template_socket"),Component->GetAttachSocketName().ToString());
+    Result->SetStringField(TEXT("template_parent"),Component->GetAttachParent()?Component->GetAttachParent()->GetPathName():TEXT(""));
+    Result->SetStringField(TEXT("mesh"),Component->GetStaticMesh()?Component->GetStaticMesh()->GetPathName():TEXT(""));
+    const FTransform X=Component->GetRelativeTransform();const FVector L=X.GetTranslation(),S=X.GetScale3D();const FQuat Q=X.GetRotation();
+    const auto Values=[](std::initializer_list<double> Items){TArray<TSharedPtr<FJsonValue>> A;for(double V:Items)A.Add(MakeShared<FJsonValueNumber>(V));return A;};
+    Result->SetArrayField(TEXT("location_cm"),Values({L.X,L.Y,L.Z}));
+    Result->SetArrayField(TEXT("rotation_xyzw"),Values({Q.X,Q.Y,Q.Z,Q.W}));Result->SetArrayField(TEXT("scale"),Values({S.X,S.Y,S.Z}));
+    Result->SetNumberField(TEXT("collision_enabled"),static_cast<int32>(Component->GetCollisionEnabled()));
+    Result->SetStringField(TEXT("collision_profile"),Component->GetCollisionProfileName().ToString());
+    Result->SetBoolField(TEXT("generate_overlap_events"),Component->GetGenerateOverlapEvents());
+    Result->SetBoolField(TEXT("can_affect_navigation"),Component->CanEverAffectNavigation());
+    Result->SetBoolField(TEXT("can_ever_tick"),Component->PrimaryComponentTick.bCanEverTick);
+    Result->SetBoolField(TEXT("start_with_tick_enabled"),Component->PrimaryComponentTick.bStartWithTickEnabled);
+    Result->SetBoolField(TEXT("tick_enabled"),Component->IsComponentTickEnabled());
+    Result->SetNumberField(TEXT("mobility"),static_cast<int32>(Component->Mobility));
+    Result->SetBoolField(TEXT("visible"),Component->IsVisible());Result->SetBoolField(TEXT("hidden_in_game"),Component->bHiddenInGame);
+    Result->SetNumberField(TEXT("child_nodes"),Found->GetChildNodes().Num());
+    Result->SetBoolField(TEXT("is_local_root"),Blueprint->SimpleConstructionScript->FindParentNode(Found)==nullptr);
+    return Finish();
+#else
+    return TEXT("{\"read_only\":true,\"error\":\"Editor only\"}");
+#endif
+}
+
+bool UDWCombatAuthoringLibrary::ConfigureR05ThugClub(UBlueprint* Blueprint,const FTransform& RelativeTransform,FString& OutReport)
+{
+#if WITH_EDITOR
+    const FString Mold=TEXT("/Game/DoughWorld/Characters/Enemies/Blueprints/BP_DWCreature_MoldThug.BP_DWCreature_MoldThug");
+    const FString Yeast=TEXT("/Game/DoughWorld/Characters/Enemies/Blueprints/BP_DWCreature_YeastThug.BP_DWCreature_YeastThug");
+    const FString MeshPath=TEXT("/Game/DoughWorld/Characters/Enemies/Weapons/SM_DWThug_SharedClub_R01.SM_DWThug_SharedClub_R01");
+    if(!IsValid(Blueprint)||(Blueprint->GetPathName()!=Mold&&Blueprint->GetPathName()!=Yeast)||
+        !Blueprint->ParentClass||!Blueprint->ParentClass->IsChildOf(ADWEnemyCharacter::StaticClass())||
+        !Blueprint->GeneratedClass||!Blueprint->SimpleConstructionScript||RelativeTransform.ContainsNaN()||
+        !RelativeTransform.GetRotation().IsNormalized()||RelativeTransform.GetScale3D().GetMin()<=0.)
+    {OutReport=TEXT("Refused: exact Thug BP, Enemy inheritance/SCS and finite normalized positive-scale transform required.");return false;}
+    auto* Default=Cast<ADWEnemyCharacter>(Blueprint->GeneratedClass->GetDefaultObject());
+    auto* NativeMesh=Default?Default->GetMesh():nullptr;
+    if(!NativeMesh||NativeMesh->GetFName()!=TEXT("CharacterMesh0")||NativeMesh->CreationMethod!=EComponentCreationMethod::Native||
+        !NativeMesh->GetSkeletalMeshAsset()||NativeMesh->GetBoneIndex(TEXT("Spear"))==INDEX_NONE||
+        !NativeMesh->GetSkeletalMeshAsset()->GetSkeleton()||NativeMesh->GetSkeletalMeshAsset()->GetSkeleton()->GetPathName()!=
+            TEXT("/Game/DoughWorld/Characters/Hero/Meshes/SK_DWHeroSpear_Skeleton.SK_DWHeroSpear_Skeleton"))
+    {OutReport=TEXT("Refused: existing native CharacterMesh0 with the original Hero Skeleton/Spear bone required.");return false;}
+    auto* ClubMesh=LoadObject<UStaticMesh>(nullptr,*MeshPath);
+    if(!ClubMesh){OutReport=TEXT("Fixed imported shared club mesh is missing; no changes.");return false;}
+    USimpleConstructionScript* SCS=Blueprint->SimpleConstructionScript.Get();USCS_Node* Node=nullptr;int32 Matches=0;
+    for(USCS_Node* Candidate:SCS->GetAllNodes())
+    {
+        if(Candidate&&Candidate->GetVariableName()==TEXT("SharedClubMesh")){Node=Candidate;++Matches;}
+        else if(Candidate)
+        {
+            const auto* Other=Cast<UStaticMeshComponent>(Candidate->ComponentTemplate);
+            if(Other&&Other->GetStaticMesh()==ClubMesh)
+            {OutReport=TEXT("Shared club already exists under another SCS name; refusing to duplicate/rename it.");return false;}
+        }
+    }
+    if(Matches>1||(Node&&(Node->ComponentClass!=UStaticMeshComponent::StaticClass()||
+        !Cast<UStaticMeshComponent>(Node->ComponentTemplate)||Node->GetChildNodes().Num()!=0||SCS->FindParentNode(Node))))
+    {OutReport=TEXT("Unexpected/duplicate SharedClubMesh SCS structure; no changes.");return false;}
+    if(!Node&&Blueprint->ParentClass->FindPropertyByName(TEXT("SharedClubMesh")))
+    {OutReport=TEXT("Inherited SharedClubMesh property would be shadowed; no changes.");return false;}
+    auto* Component=Node?Cast<UStaticMeshComponent>(Node->ComponentTemplate):nullptr;
+    if(Component&&Component->GetStaticMesh()&&Component->GetStaticMesh()!=ClubMesh)
+    {OutReport=TEXT("Existing SharedClubMesh uses another mesh; preserving it, no changes.");return false;}
+    const bool Already=Node&&Node->bIsParentComponentNative&&Node->ParentComponentOrVariableName==TEXT("CharacterMesh0")&&
+        Node->ParentComponentOwnerClassName.IsNone()&&Node->AttachToName==TEXT("Spear")&&Component->GetAttachParent()==NativeMesh&&
+        Component->GetAttachSocketName()==TEXT("Spear")&&Component->GetStaticMesh()==ClubMesh&&
+        Component->GetRelativeTransform().Equals(RelativeTransform,0.000001)&&Component->GetCollisionEnabled()==ECollisionEnabled::NoCollision&&
+        !Component->GetGenerateOverlapEvents()&&!Component->CanEverAffectNavigation()&&!Component->PrimaryComponentTick.bCanEverTick&&
+        !Component->PrimaryComponentTick.bStartWithTickEnabled&&Component->Mobility==EComponentMobility::Movable&&
+        Component->IsVisible()&&!Component->bHiddenInGame;
+    if(!Already)
+    {
+        const FScopedTransaction Transaction(NSLOCTEXT("DWCombatAuthoring","ConfigureR05ThugClub","Configure R05 Shared Thug Club"));
+        Blueprint->Modify();SCS->Modify();
+        if(!Node)
+        {
+            Node=SCS->CreateNode(UStaticMeshComponent::StaticClass(),TEXT("SharedClubMesh"));
+            if(!Node||Node->GetVariableName()!=TEXT("SharedClubMesh"))
+            {OutReport=TEXT("Could not create exact SharedClubMesh node; no node added.");return false;}
+            SCS->AddNode(Node);
+        }
+        Node->Modify();Component=Cast<UStaticMeshComponent>(Node->ComponentTemplate);Component->Modify();
+        // Official SCS native-parent API + public native socket field; no property-access flag hacks.
+        Node->SetParent(NativeMesh);Node->AttachToName=TEXT("Spear");
+        Component->SetupAttachment(NativeMesh,TEXT("Spear"));
+        Component->SetStaticMesh(ClubMesh);Component->SetRelativeTransform(RelativeTransform);
+        Component->SetCollisionEnabled(ECollisionEnabled::NoCollision);Component->SetGenerateOverlapEvents(false);Component->SetCanEverAffectNavigation(false);
+        Component->PrimaryComponentTick.bCanEverTick=false;Component->PrimaryComponentTick.bStartWithTickEnabled=false;
+        Component->SetComponentTickEnabled(false);Component->SetMobility(EComponentMobility::Movable);
+        Component->SetVisibility(true,false);Component->SetHiddenInGame(false,false);
+        FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
+    }
+    const FTransform Actual=Component->GetRelativeTransform();const FVector T=Actual.GetTranslation(),Scale=Actual.GetScale3D();const FQuat Q=Actual.GetRotation();
+    OutReport=FString::Printf(TEXT("{\"already_configured\":%s,\"blueprint\":\"%s\",\"node\":\"%s\",\"guid\":\"%s\",\"native_parent\":%s,\"parent\":\"%s\",\"socket\":\"%s\",\"template_socket\":\"%s\",\"mesh\":\"%s\",\"location_cm\":[%.12g,%.12g,%.12g],\"rotation_xyzw\":[%.12g,%.12g,%.12g,%.12g],\"scale\":[%.12g,%.12g,%.12g],\"collision\":\"NoCollision\",\"overlap\":false,\"tick\":false,\"compile_save\":\"caller only\"}"),
+        Already?TEXT("true"):TEXT("false"),*Blueprint->GetPathName(),*Node->GetVariableName().ToString(),*Node->VariableGuid.ToString(),
+        Node->bIsParentComponentNative?TEXT("true"):TEXT("false"),*Node->ParentComponentOrVariableName.ToString(),*Node->AttachToName.ToString(),
+        *Component->GetAttachSocketName().ToString(),*Component->GetStaticMesh()->GetPathName(),T.X,T.Y,T.Z,Q.X,Q.Y,Q.Z,Q.W,Scale.X,Scale.Y,Scale.Z);
+    return Node->bIsParentComponentNative&&Node->ParentComponentOrVariableName==TEXT("CharacterMesh0")&&Node->AttachToName==TEXT("Spear")&&
+        Component->GetAttachParent()==NativeMesh&&Component->GetAttachSocketName()==TEXT("Spear")&&Actual.Equals(RelativeTransform,0.000001);
+#else
+    OutReport=TEXT("Editor only.");return false;
+#endif
+}
+
+bool UDWCombatAuthoringLibrary::ConfigureR05CreatureAlertClock(UAnimBlueprint* Blueprint,FString& OutReport)
+{
+#if WITH_EDITOR
+    using namespace DWCombatAuthoring;
+    const FString Thug=TEXT("/Game/DoughWorld/Characters/Enemies/Animations/ABP_DWThug_HeroRig_R05.ABP_DWThug_HeroRig_R05");
+    const FString Neutral=TEXT("/Game/DoughWorld/Characters/Enemies/Animations/ABP_DWNeutral_HeroRig_R05.ABP_DWNeutral_HeroRig_R05");
+    if(!IsValid(Blueprint)||Blueprint->ParentClass!=UDWCombatAnimInstance::StaticClass()||
+        (Blueprint->GetPathName()!=Thug&&Blueprint->GetPathName()!=Neutral)||!Blueprint->TargetSkeleton||
+        Blueprint->TargetSkeleton->GetPathName()!=TEXT("/Game/DoughWorld/Characters/Hero/Meshes/SK_DWHeroSpear_Skeleton.SK_DWHeroSpear_Skeleton"))
+    {OutReport=TEXT("Refused: exact R05 package, original Hero Skeleton and native parent are required.");return false;}
+    TArray<UEdGraph*> Graphs;Blueprint->GetAllGraphs(Graphs);
+    UEdGraph* AlertGraph=nullptr;int32 AlertGraphs=0,StateCount=0,TransitionCount=0,MachineCount=0;
+    TSet<FString> States;
+    for(UEdGraph* Graph:Graphs)
+    {
+        if(!Graph)continue;
+        if(Graph->GetName()==TEXT("Alert")){AlertGraph=Graph;++AlertGraphs;}
+        for(UEdGraphNode* Node:Graph->Nodes)
+        {
+            if(const auto* State=Cast<UAnimStateNode>(Node)){++StateCount;States.Add(State->GetStateName());}
+            if(Cast<UAnimStateTransitionNode>(Node))++TransitionCount;
+            if(const auto* Machine=Cast<UAnimGraphNode_StateMachine>(Node))
+            {if(!Machine->EditorStateMachineGraph||Machine->EditorStateMachineGraph->GetName()!=TEXT("EnemyCombatStates"))
+             {OutReport=TEXT("Unexpected R05 state machine; no changes.");return false;}++MachineCount;}
+        }
+    }
+    if(AlertGraphs!=1||StateCount!=5||States.Num()!=5||TransitionCount!=5||MachineCount!=1||
+        !States.Contains(TEXT("Idle"))||!States.Contains(TEXT("Move"))||!States.Contains(TEXT("Alert"))||
+        !States.Contains(TEXT("Attack"))||!States.Contains(TEXT("Death")))
+    {OutReport=TEXT("Unexpected R05 state/transition structure; no changes.");return false;}
+    UAnimGraphNode_SequencePlayer* Player=nullptr;UAnimGraphNode_SequenceEvaluator* Existing=nullptr;
+    int32 Players=0,Evaluators=0;
+    for(UEdGraphNode* Node:AlertGraph->Nodes)
+    {
+        if(auto* P=Cast<UAnimGraphNode_SequencePlayer>(Node)){Player=P;++Players;}
+        if(auto* E=Cast<UAnimGraphNode_SequenceEvaluator>(Node)){Existing=E;++Evaluators;}
+    }
+    const auto Reads=[](UEdGraphPin* Pin,FName Name)
+    {
+        if(!Pin||Pin->LinkedTo.Num()!=1)return false;
+        const auto* Read=Cast<UK2Node_VariableGet>(Pin->LinkedTo[0]->GetOwningNode());
+        return Read&&Read->VariableReference.IsSelfContext()&&Read->VariableReference.GetMemberName()==Name;
+    };
+    if(Blueprint->GetPathName()==Neutral)
+    {
+        if(Players!=1||Evaluators!=0||AlertGraph->Nodes.Num()!=3||!Reads(Player->FindPin(TEXT("Sequence")),TEXT("AlertSequence")))
+        {OutReport=TEXT("Unexpected Neutral R05 Alert structure; no changes.");return false;}
+        OutReport=TEXT("Exact Neutral R05 validated only; no graph/default changes applied.");return true;
+    }
+    if(Evaluators==1&&Players==0)
+    {
+        if(AlertGraph->Nodes.Num()!=4||!Reads(Existing->FindPin(TEXT("Sequence")),TEXT("AlertSequence"))||
+            !Reads(Existing->FindPin(TEXT("ExplicitTime")),TEXT("AlertPositionSeconds"))||
+            !Existing->Node.GetTeleportToExplicitTime()||Existing->Node.IsLooping()||
+            Existing->Node.GetGroupMethod()!=EAnimSyncMethod::DoNotSync)
+        {OutReport=TEXT("Existing R05 evaluator is not the exact expected clock binding; no changes.");return false;}
+        OutReport=TEXT("Exact Thug R05 alert evaluator already configured; no changes.");return true;
+    }
+    UEdGraphPin* OldPose=Player?FirstOutput(Player):nullptr;
+    if(Players!=1||Evaluators!=0||AlertGraph->Nodes.Num()!=3||
+        !Reads(Player->FindPin(TEXT("Sequence")),TEXT("AlertSequence"))||!OldPose||OldPose->LinkedTo.Num()!=1||
+        OldPose->LinkedTo[0]->GetOwningNode()->GetClass()->GetFName()!=FName(TEXT("AnimGraphNode_StateResult")))
+    {OutReport=TEXT("Unexpected Thug R05 Alert player/links; no changes.");return false;}
+    UEdGraphPin* Sink=OldPose->LinkedTo[0];
+    UEdGraphPin* SequenceOutput=Player->FindPin(TEXT("Sequence"))->LinkedTo[0];
+    const FScopedTransaction Transaction(NSLOCTEXT("DWCombatAuthoring","ConfigureR05Alert","Configure R05 Thug Alert Clock"));
+    Blueprint->Modify();AlertGraph->Modify();Player->Modify();Sink->GetOwningNode()->Modify();SequenceOutput->GetOwningNode()->Modify();
+    auto* Evaluator=AddNode<UAnimGraphNode_SequenceEvaluator>(AlertGraph,Player->NodePosX,Player->NodePosY);
+    Evaluator->Node.SetSequence(Player->Node.GetSequence());Evaluator->Node.SetShouldLoop(false);
+    Evaluator->Node.SetTeleportToExplicitTime(true);
+    Evaluator->Node.SetGroupMethod(EAnimSyncMethod::DoNotSync);
+    Evaluator->Node.SetReinitializationBehavior(ESequenceEvalReinit::ExplicitTime);
+    Evaluator->NodeComment=TEXT("Formal Thug alert game clock; explicit presentation only, no gameplay notify dispatch.");
+    Evaluator->bCommentBubbleVisible=true;
+    auto* Time=ReadVariable(AlertGraph,TEXT("AlertPositionSeconds"),Player->NodePosX-340,Player->NodePosY+160);
+    // Finish input validation/connections before replacing the old pose link. Never rebuild the graph.
+    if(!ExposePin(Evaluator,TEXT("Sequence"))||!ExposePin(Evaluator,TEXT("ExplicitTime"))||
+        !Connect(AlertGraph,SequenceOutput,Evaluator->FindPin(TEXT("Sequence")),OutReport)||
+        !Connect(AlertGraph,FirstOutput(Time),Evaluator->FindPin(TEXT("ExplicitTime")),OutReport)||
+        !Connect(AlertGraph,FirstOutput(Evaluator),Sink,OutReport))
+    {
+        FBlueprintEditorUtils::RemoveNode(Blueprint,Evaluator,true);FBlueprintEditorUtils::RemoveNode(Blueprint,Time,true);
+        if(OldPose->LinkedTo.Num()==0)Connect(AlertGraph,OldPose,Sink,OutReport);
+        OutReport=TEXT("R05 clock connection failed; new nodes removed and original player retained.");return false;
+    }
+    FBlueprintEditorUtils::RemoveNode(Blueprint,Player,true);
+    FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
+    OutReport=TEXT("Only Thug R05 Alert player replaced by AlertSequence/AlertPositionSeconds evaluator. Existing states/transitions/GUIDs/layout retained; caller must compile, independently inspect, then save exact package.");
+    return true;
+#else
+    OutReport=TEXT("Editor only.");return false;
 #endif
 }
 

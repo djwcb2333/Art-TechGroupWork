@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "DWMapImage.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "GameFramework/Actor.h"
 #include "DWWorldMapData.h"
@@ -50,6 +51,13 @@ class GDATTEST_API UDWWorldMapSubsystem : public UWorldSubsystem
     GENERATED_BODY()
 public:
     UFUNCTION(BlueprintCallable,Category="DoughWorld|World Map") bool OpenMap(APlayerController* LocalPlayer,FVector2D ViewportSize,FString& OutError);
+    bool OpenMapDeferred(APlayerController* LocalPlayer,FVector2D ViewportSize,FString& OutError);
+    bool CaptureDeferredMap(FVector2D ViewportSize,FString& OutError);
+    bool PollCaptureReadiness(bool& bReady,FString& OutError);
+    void PauseCaptureDeadline(double Seconds);
+    UTexture2D* GetMapImage() const {return ImageResource?ImageResource->GetReadyTexture():nullptr;}
+    const FDWMapImageSettings& GetImageSettings() const {return ImageSettings;}
+
     UFUNCTION(BlueprintCallable,Category="DoughWorld|World Map") void CloseMap();
     UFUNCTION(BlueprintCallable,Category="DoughWorld|World Map") bool RefreshMap(FString& OutError);
     UFUNCTION(BlueprintCallable,Category="DoughWorld|World Map") bool SetViewportSize(FVector2D PixelSize);
@@ -82,6 +90,12 @@ public:
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type WorldType) const override;
 private:
+    bool OpenMapInternal(APlayerController* LocalPlayer,FVector2D ViewportSize,FString& OutError,bool bDeferred);
+    UPROPERTY(Transient) TObjectPtr<UDWMapImageResource> ImageResource;
+    FDWMapImageSettings ImageSettings;
+    uint64 ImageGeneration=0;
+    bool bDeferredFirstCapture=false,bCapturePending=false;
+    double CapturePendingAt=0.;
     UPROPERTY(Transient) TObjectPtr<ASceneCapture2D> CaptureActor;
     UPROPERTY(Transient) TObjectPtr<UTextureRenderTarget2D> DepthTarget;
     UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> Material;

@@ -58,6 +58,10 @@ FVector UDWMinimapMarkerComponent::GetMarkerWorldPosition() const
 
 FLinearColor UDWMinimapMarkerComponent::GetMarkerColor() const
 {
+    // Formal disposition wins over inherited enemy class / an authored red marker.
+    if(const auto* Creature=Cast<ADWEnemyCharacter>(GetOwner());Creature&&Creature->CreatureDefinition&&
+       Creature->CreatureDefinition->Disposition==EDWCreatureDisposition::Neutral)
+        return DWMinimapMath::CategoryColor(EDWMinimapMarkerKind::NPC);
     return bUseCategoryColor ? DWMinimapMath::CategoryColor(Kind) : MarkerColor;
 }
 
@@ -206,6 +210,7 @@ FLinearColor DWMinimapMath::CategoryColor(EDWMinimapMarkerKind Kind)
     // FColor is sRGB; Slate/material consumers receive linear colors exactly once.
     switch (Kind)
     {
+        case EDWMinimapMarkerKind::NPC: return FLinearColor(FColor(77, 157, 235));
         case EDWMinimapMarkerKind::Enemy: return FLinearColor(FColor(237, 87, 97));
         case EDWMinimapMarkerKind::Resource: return FLinearColor(FColor(223, 168, 57));
         case EDWMinimapMarkerKind::Landmark:

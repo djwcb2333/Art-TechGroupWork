@@ -693,76 +693,25 @@ bool UDWMinimapComponent::CanShow(bool bIgnoreCinematic,bool bIgnoreMenu) const
     const UDWLoadingTransitionSubsystem* Loading=GI?GI->GetSubsystem<UDWLoadingTransitionSubsystem>():nullptr;
     return !GI||(!GI->IsPlayerRestorePending()&&(!Loading||!Loading->IsTransitionActive()));
 }
+UDWMapImageResource* UDWMinimapComponent::GetImageResource()
+{
+    if(!ImageResource)ImageResource=NewObject<UDWMapImageResource>(this);
+    ImageResource->Request(ImageMap);return ImageResource;
+}
 bool UDWMinimapComponent::EnsureCapture()
 {
-    if(IsValid(Widget)&&IsValid(CaptureActor)&&IsValid(DepthTarget)&&IsValid(DisplayMaterial))return true;
-    APawn* Pawn=Cast<APawn>(GetOwner());
-    APlayerController* PC=Pawn?Cast<APlayerController>(Pawn->GetController()):nullptr;
+    // Compatibility name only: this path creates a widget and requests a 2D texture, never a capture.
+    APawn* Pawn=Cast<APawn>(GetOwner());APlayerController* PC=Pawn?Cast<APlayerController>(Pawn->GetController()):nullptr;
     if(!PC)return false;
-    UMaterialInterface* Material=MapMaterial.LoadSynchronous();
-    if(!Material)
-    {
-        UE_LOG(LogTemp,Error,TEXT("DW Minimap: missing dedicated UI material %s; capture disabled."),*MapMaterial.ToString());
-        SetComponentTickInterval(1.f);
-        return false;
-    }
-    // Missing-material retry throttling must not persist after the material becomes available.
-    SetComponentTickInterval(0.f);
-    if(!IsValid(DepthTarget))
-    {
-        DepthTarget=NewObject<UTextureRenderTarget2D>(this,NAME_None,RF_Transient);
-        DepthTarget->ClearColor=FLinearColor::Black;
-        DepthTarget->RenderTargetFormat=RTF_R32f;
-        DepthTarget->bAutoGenerateMips=false;
-        DepthTarget->Filter=TF_Bilinear;
-        const int32 Size=FMath::Clamp(CaptureResolution,128,1024);
-        DepthTarget->InitAutoFormat(Size,Size);
-        DepthTarget->UpdateResourceImmediate(true);
-        CaptureElapsed=100.f;
-    }
-    if(!IsValid(CaptureActor))
-    {
-        FActorSpawnParameters Params;
-        Params.Owner=GetOwner();Params.ObjectFlags|=RF_Transient;
-        Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-        CaptureActor=GetWorld()->SpawnActor<ASceneCapture2D>(Params);
-        if(!CaptureActor)return false;
-        CaptureActor->SetActorEnableCollision(false);
-        USceneCaptureComponent2D* Capture=CaptureActor->GetCaptureComponent2D();
-        Capture->bCaptureEveryFrame=false;Capture->bCaptureOnMovement=false;
-        Capture->bAlwaysPersistRenderingState=false;
-        Capture->ProjectionType=ECameraProjectionMode::Orthographic;
-        Capture->CaptureSource=ESceneCaptureSource::SCS_SceneDepth;
-        Capture->bAutoCalculateOrthoPlanes=false;Capture->bUpdateOrthoPlanes=false;
-        Capture->TextureTarget=DepthTarget;
-        Capture->PostProcessBlendWeight=0.f;
-        Capture->ShowFlags.SetPostProcessing(false);
-        Capture->ShowFlags.SetAtmosphere(false);Capture->ShowFlags.SetFog(false);Capture->ShowFlags.SetVolumetricFog(false);
-        Capture->ShowFlags.SetDynamicShadows(false);Capture->ShowFlags.SetMotionBlur(false);
-        Capture->ShowFlags.SetParticles(false);Capture->ShowFlags.SetNiagara(false);
-        ScanElapsed=CaptureElapsed=100.f;
-    }
-    // A recreated render target must also replace the surviving capture's target.
-    CaptureActor->GetCaptureComponent2D()->TextureTarget=DepthTarget;
-    if(!IsValid(DisplayMaterial))DisplayMaterial=UMaterialInstanceDynamic::Create(Material,this);
-    if(!DisplayMaterial){Cleanup();return false;}
-    DisplayMaterial->SetTextureParameterValue(TEXT("MinimapDepth"),DepthTarget);
-    // Reuse any surviving UI when only the capture actor needs replacement.
+    bool Ready=false;FString Error;GetImageResource()->Poll(Ready,Error);
     if(!IsValid(Widget))
     {
-        UClass* Class=WidgetClass.LoadSynchronous();
-        if(!Class)Class=UDWMinimapWidget::StaticClass();
+        UClass* Class=WidgetClass.LoadSynchronous();if(!Class)Class=UDWMinimapWidget::StaticClass();
         Widget=CreateWidget<UDWMinimapWidget>(PC,Class);
+        if(!Widget)return false;Widget->InitializeMinimap(this);
     }
-    if(!Widget){Cleanup();return false;}
-    Widget->InitializeMinimap(this);
     Widget->SetVisibility(ESlateVisibility::HitTestInvisible);
     if(!Widget->IsInViewport())Widget->AddToPlayerScreen(55);
-    Widget->SetDesiredSizeInViewport(FVector2D(Diameter,Diameter+Widget->GetFooterHeight()));
-    Widget->SetPositionInViewport(-BottomRightMargin,false);
-    // UE viewport size/position setters reset anchors to top-left. Restore bottom-right last.
-    Widget->SetAnchorsInViewport(FAnchors(1.f,1.f));
-    Widget->SetAlignmentInViewport(FVector2D(1.f,1.f));
     return true;
 }
 void UDWMinimapComponent::TickComponent(float Dt,ELevelTick Type,FActorComponentTickFunction* F)
@@ -848,18 +797,9 @@ void UDWMinimapComponent::TickComponent(float Dt,ELevelTick Type,FActorComponent
     Widget->UpdateNavigationFeedback(Dt,true);
     ScanElapsed+=Dt;CaptureElapsed+=Dt;
     if(ScanElapsed>=2.f||!WasVisible){ScanActors();ScanElapsed=0.f;}
-    // A rotated depth image and its marker projection must be updated together.
-    // PostUpdateWork runs after the player's camera update; recapture while turning,
-    // then return to the configured low-frequency cadence when the camera stops.
-    const bool bViewTurned=FMath::Abs(FMath::FindDeltaAngleDegrees(CapturedYaw,ResolveCaptureYaw()))>.05f;
-    if(CaptureElapsed>=FMath::Max(.05f,CaptureInterval)||!WasVisible||bViewTurned){CaptureNow();CaptureElapsed=0.f;}
-    // Recenter cached geometry between captures. Icons receive the exact same translation.
-    const FVector2D Shift=Projection.Project(GetPlayerLocation());
-    DisplayMaterial->SetVectorParameterValue(TEXT("PlayerOffset"),FLinearColor(Shift.X,Shift.Y,0,0));
-    DisplayMaterial->SetVectorParameterValue(TEXT("GroundTint"),GroundTint);
-    DisplayMaterial->SetVectorParameterValue(TEXT("SurfaceTint"),SurfaceTint);
-    DisplayMaterial->SetVectorParameterValue(TEXT("WallTint"),WallTint);
-    DisplayMaterial->SetScalarParameterValue(TEXT("EdgeSamples"),float(FMath::Clamp(EdgeSampleGrid,1,3)));
+    // Image UVs and markers use the same horizontal view every frame; no GPU capture request.
+    CaptureNow();
+
 }
 void UDWMinimapComponent::RefreshMinimap()
 {
@@ -868,16 +808,12 @@ void UDWMinimapComponent::RefreshMinimap()
 void UDWMinimapComponent::ScanActors()
 {
     CachedActors.Reset();
-    auto* Capture=CaptureActor?CaptureActor->GetCaptureComponent2D():nullptr;
-    if(Capture)Capture->HiddenActors.Reset();
     for(TActorIterator<AActor> It(GetWorld());It;++It)
     {
         AActor* Actor=*It;
         if(Actor==CaptureActor||!IsValid(Actor))continue;
         if(Actor->FindComponentByClass<UDWMinimapMarkerComponent>()||Actor->IsA<ADWResourceNode>()||Actor->IsA<ADWGatheringResource>()
             ||Actor->IsA<ADWEnemyCharacter>()||Actor->IsA<ADWEnemyNest>())CachedActors.Add(Actor);
-        // Exclude moving character geometry from this capture only. Original visibility never changes.
-        if(Capture&&Actor->IsA<APawn>())Capture->HiddenActors.Add(Actor);
     }
 }
 float UDWMinimapComponent::ResolveCaptureYaw() const
@@ -889,32 +825,13 @@ float UDWMinimapComponent::ResolveCaptureYaw() const
 }
 void UDWMinimapComponent::CaptureNow()
 {
-    if(!CaptureActor||!DisplayMaterial)return;
-    USceneCaptureComponent2D* Capture=CaptureActor->GetCaptureComponent2D();
     CapturedYaw=ResolveCaptureYaw();
-    const FRotator Rotation(FMath::Clamp(CapturePitch,-90.f,-45.f),CapturedYaw,0.f);
-    const FRotationMatrix Basis(Rotation);
-    Projection.Center=GetPlayerLocation();
-    Projection.Right=Basis.GetUnitAxis(EAxis::Y);Projection.Up=Basis.GetUnitAxis(EAxis::Z);
-    Projection.Width=FMath::Clamp(ViewRadius,500.f,100000.f)*2.f;
-    Projection.NorthScale=FMath::Max(.5f,FMath::Abs(FMath::Sin(FMath::DegreesToRadians(Rotation.Pitch))));
-    const FVector Forward=Rotation.Vector();
-    const FVector Origin=Projection.Center-Forward*(Projection.Width*2.f);
-    CaptureActor->SetActorLocationAndRotation(Origin,Rotation);
-    Capture->OrthoWidth=Projection.Width;
-    Capture->MaxViewDistanceOverride=Projection.Width*4.f;
-    DisplayMaterial->SetVectorParameterValue(TEXT("CaptureRight"),FLinearColor(Projection.Right.X,Projection.Right.Y,Projection.Right.Z,0));
-    DisplayMaterial->SetVectorParameterValue(TEXT("CaptureUp"),FLinearColor(Projection.Up.X,Projection.Up.Y,Projection.Up.Z,0));
-    DisplayMaterial->SetVectorParameterValue(TEXT("CaptureForward"),FLinearColor(Forward.X,Forward.Y,Forward.Z,0));
-    const auto* Hero=Cast<ADWPlayerCharacter>(GetOwner());
-    const float GroundZ=Projection.Center.Z-(Hero?Hero->GetCapsuleComponent()->GetScaledCapsuleHalfHeight():0.f);
-    DisplayMaterial->SetVectorParameterValue(TEXT("CaptureInfo"),FLinearColor(Projection.Width,Projection.NorthScale,Origin.Z,GroundZ));
-    DisplayMaterial->SetVectorParameterValue(TEXT("PlayerOffset"),FLinearColor::Transparent);
-    Capture->CaptureScene();
-    ++CaptureRequestCount;
+    const FVector North=FRotator(0.f,CapturedYaw,0.f).Vector();
+    Projection.Center=GetPlayerLocation();Projection.Right=FVector(-North.Y,North.X,0.);Projection.Up=North;
+    Projection.Width=FMath::Clamp(ViewRadius,500.f,100000.f)*2.f;Projection.NorthScale=1.f;
 }
-const USceneCaptureComponent2D* UDWMinimapComponent::GetMotionCaptureComponent() const
-{return IsValid(CaptureActor)?CaptureActor->GetCaptureComponent2D():nullptr;}
+const USceneCaptureComponent2D* UDWMinimapComponent::GetMotionCaptureComponent() const {return nullptr;}
+
 FVector UDWMinimapComponent::GetPlayerLocation() const {return GetOwner()?GetOwner()->GetActorLocation():FVector::ZeroVector;}
 FVector2D UDWMinimapComponent::GetPlayerForwardOnMap() const
 {
@@ -943,7 +860,9 @@ void UDWMinimapComponent::GatherDisplayMarkers(TArray<FDWMinimapDisplayMarker>& 
         }
         if(Actor->IsHidden())continue;
         if(const auto* Enemy=Cast<ADWEnemyCharacter>(Actor))
-        {if(bShowExistingEnemies&&Enemy->IsAlive())Out.Add({Actor->GetActorLocation(),DWMinimapMath::CategoryColor(EDWMinimapMarkerKind::Enemy),EDWMinimapMarkerShape::Circle,150});}
+        {if(bShowExistingEnemies&&Enemy->IsAlive())
+            {const auto Kind=DWMinimapMath::CreatureMarkerKind(Enemy->CreatureDefinition?Enemy->CreatureDefinition->Disposition:EDWCreatureDisposition::InheritExisting);
+             Out.Add({Actor->GetActorLocation(),DWMinimapMath::CategoryColor(Kind),EDWMinimapMarkerShape::Circle,150});}}
         else if(const auto* Nest=Cast<ADWEnemyNest>(Actor))
         {if(bShowExistingEnemies&&Nest->IsAlive())Out.Add({Actor->GetActorLocation(),DWMinimapMath::CategoryColor(EDWMinimapMarkerKind::Enemy),EDWMinimapMarkerShape::Diamond,140});}
         else if(const auto* Resource=Cast<ADWResourceNode>(Actor))
@@ -960,6 +879,7 @@ void UDWMinimapComponent::Cleanup()
     if(CaptureActor)CaptureActor->Destroy();CaptureActor=nullptr;
     DisplayMaterial=nullptr;
     if(DepthTarget)DepthTarget->ReleaseResource();DepthTarget=nullptr;
+    if(ImageResource)ImageResource->Cancel();ImageResource=nullptr;
     CachedActors.Reset();
 }
 void UDWMinimapComponent::EndPlay(const EEndPlayReason::Type Reason)

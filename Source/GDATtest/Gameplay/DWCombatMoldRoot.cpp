@@ -29,6 +29,7 @@ bool FDWMoldRootConfig::Build(const FDWCombatRules& Rules,FDWMoldRootConfig& Out
         {TEXT("mold.root.enter_visual_s"),EDWCombatRuleUnit::Seconds,&C.EnterVisualSeconds},
         {TEXT("mold.root.exit_visual_s"),EDWCombatRuleUnit::Seconds,&C.ExitVisualSeconds}};
     for(const FRead& R:Reads)if(!Rules.TryGetNumber(R.Key,R.Unit,*R.Value,Error))return false;
+    C.SpecialGainPerSecond=0.; // Current Root uses A01 corruption with regeneration suppressed, never legacy Special income.
     if(!C.IsValid()){Error=TEXT("Root stance requires finite valid rates and exactly zero autonomous movement.");return false;}
     Out=C;Error.Reset();return true;
 }

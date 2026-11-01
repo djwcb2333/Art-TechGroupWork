@@ -32,6 +32,7 @@ bool ADWPlayerCharacter::CanRequestCoreInjection(const FDWInventorySlotSnapshot&
 {
     const auto* World=GetWorld();const auto* GI=GetGameInstance<UDWGameInstance>();
     const bool A01=CharacterA01&&CharacterA01->IsEnabled();
+    if(!A01)return false; // Retired form rules are compatibility data, not a runtime fallback.
     if(IsCoreInjecting())return false; // Repeated essence requests never restart the pending action.
     if(!World||World->bIsTearingDown||IsActorBeingDestroyed()||IsDead()||bRestoringSave||
         !HasCombatVitalsReady()||(!A01&&GetCombatBaseForm()!=EDWCombatBaseForm::Normal)||(A01&&!CharacterA01->CanUseShortcuts())||!Inventory||
@@ -92,7 +93,7 @@ bool ADWPlayerCharacter::IsCoreInjectionCurrent() const
     const auto& S=CoreInjection;auto* A=UDWCombatAuthoritySubsystem::Get(this);
     return S.Plan.IsPending()&&S.Action.Id&&S.Config.IsValid()&&A&&A->GetWorldEpoch()==S.WorldEpoch&&
         DWCoreInjection::SameLife(A->CaptureActorLife(const_cast<ADWPlayerCharacter*>(this)),S.Life)&&
-        !IsDead()&&!bRestoringSave&&!IsActorBeingDestroyed()&&((CharacterA01&&CharacterA01->IsEnabled())||GetCombatBaseForm()==EDWCombatBaseForm::Normal)&&
+        !IsDead()&&!bRestoringSave&&!IsActorBeingDestroyed()&&(CharacterA01&&CharacterA01->IsEnabled())&&
         CombatDamageRevision==S.DamageRevision&&Inventory&&S.Inventory.Get()==Inventory.Get()&&
         Inventory->IsSlotSnapshotCurrent(S.Slot)&&S.Slot.Quantity>=S.Config.CoreCost&&
         GetActorLocation().Equals(S.StationaryLocation,UE_SMALL_NUMBER);

@@ -9,6 +9,11 @@
 #include "Serialization/JsonSerializer.h"
 #include "Misc/Guid.h"
 #include "Engine/World.h"
+#include "DWCombatSandboxContext.h"
+#include "DWCombatAuthoritySubsystem.h"
+#include "DWGameInstance.h"
+#include "DWGameplayConfig.h"
+#include "Kismet/GameplayStatics.h"
 
 namespace DWLanguageRequests
 {
@@ -69,9 +74,42 @@ bool UDWLanguageSubsystem::IsTrialWorld()const
     return UWorld::RemovePIEPrefix(World->GetOutermost()->GetName())==TEXT("/Game/DoughWorld/Maps/Gameplay/Levels/L_DoughWorld_LanguagePlaytest");
 }
 bool UDWLanguageSubsystem::IsFormalSession()const{return FDWFormalLanguagePersistence::IsCurrent(*this);}
+bool UDWLanguageSubsystem::IsCombatSandboxSession()const
+{
+ auto* P=SandboxPlayer.Get();auto* W=SandboxWorld.Get();auto* GI=Cast<UDWGameInstance>(GetGameInstance());
+ auto* A=UDWCombatAuthoritySubsystem::Get(P);
+ if(!DWCombatSandbox::IsWorld(W)||W!=GetWorld()||!SandboxIdentity.IsValid()||SandboxGeneration!=SessionGeneration||FormalSession||!GI||GI->HasActiveSlot()||!GI->IsNonPersistentCombatSandboxContext()||
+  !IsValid(P)||P->IsActorBeingDestroyed()||P->GetWorld()!=W||P->GetGameInstance()!=GI||ActivePlayer.Get()!=P||
+  UGameplayStatics::GetPlayerPawn(GI,0)!=P||P->IsCombatRestoreInProgress()||GI->GetConfig()!=SandboxProfile.Get()||!A||A->GetWorldEpoch()!=SandboxEpoch)return false;
+ const auto Life=A->FindRegisteredActorLife(P);
+ return Life.Entity&&Life.Entity==SandboxEntity&&Life.Life==SandboxLife;
+}
+bool UDWLanguageSubsystem::HasCurrentA01Context(const ADWPlayerCharacter* ExpectedPlayer)const
+{
+ const auto* P=ActivePlayer.Get();
+ if(!bInitialized||!Model||!Model->IsReady()||!IsValid(P)||P->IsActorBeingDestroyed()||P->GetWorld()!=GetWorld()||
+  P->GetGameInstance()!=GetGameInstance()||(ExpectedPlayer&&ExpectedPlayer!=P))return false;
+ return (IsTrialWorld()&&!FormalSession)||FDWFormalLanguagePersistence::IsCurrent(*this,true)||IsCombatSandboxSession();
+}
+bool UDWLanguageSubsystem::StartCombatSandbox(ADWPlayerCharacter* P,FString& Error)
+{
+ auto* GI=Cast<UDWGameInstance>(GetGameInstance());auto* A=UDWCombatAuthoritySubsystem::Get(P);
+ if(!IsInGameThread()||!DWCombatSandbox::IsWorld(GetWorld())||FormalSession||!GI||GI->HasActiveSlot()||!GI->IsNonPersistentCombatSandboxContext()||
+  !IsValid(P)||P->IsActorBeingDestroyed()||P->GetWorld()!=GetWorld()||P->GetGameInstance()!=GI||
+  UGameplayStatics::GetPlayerPawn(GI,0)!=P||P->IsCombatRestoreInProgress()||!A)
+ {Error=TEXT("CombatSandbox requires its exact non-persistent editor world and current pawn.");return false;}
+ if(SandboxIdentity.IsValid())
+ {if(IsCombatSandboxSession()&&SandboxPlayer.Get()==P){Error.Reset();return true;}Error=TEXT("CombatSandbox owner expired; restart PIE.");return false;}
+ if(!bInitialized||!Model||!Model->IsReady())return false;
+ auto Fresh=MakeUnique<DWLanguage::FModel>();if(!Fresh->Initialize(Model->GetCatalog(),{},Error))return false;
+ const auto Life=A->CaptureActorLife(P);if(!Life.Entity||!Life.Life||!A->GetWorldEpoch())return false;
+ Model=MoveTemp(Fresh);ActivePlayer=P;SandboxPlayer=P;SandboxWorld=GetWorld();SandboxProfile=GI->GetConfig();
+ SandboxEpoch=A->GetWorldEpoch();SandboxEntity=Life.Entity;SandboxLife=Life.Life;SandboxIdentity=FGuid::NewGuid();
+ StarterGrant.Reset();PlaythroughId.Reset();++SessionGeneration;SandboxGeneration=SessionGeneration;Error.Reset();return true;
+}
 bool UDWLanguageSubsystem::IsReady()const
 {
-    const auto* Player=ActivePlayer.Get();return bInitialized&&Model&&Model->IsReady()&&((IsTrialWorld()&&!FormalSession.IsValid())||IsFormalSession())&&IsValid(Player)&&
+    const auto* Player=ActivePlayer.Get();return bInitialized&&Model&&Model->IsReady()&&((IsTrialWorld()&&!FormalSession.IsValid())||IsFormalSession()||IsCombatSandboxSession())&&IsValid(Player)&&
         !Player->IsActorBeingDestroyed()&&Player->GetWorld()==GetWorld()&&Player->GetGameInstance()==GetGameInstance();
 }
 bool UDWLanguageSubsystem::StartPlaytest(ADWPlayerCharacter* Player,FString& Error)
@@ -80,11 +118,11 @@ bool UDWLanguageSubsystem::StartPlaytest(ADWPlayerCharacter* Player,FString& Err
         Player->GetGameInstance()!=GetGameInstance())return DWLanguageRequests::Fail(Error,TEXT("Language trial requires the exact trial map and its current valid player."));
     if(!bInitialized||!Model||!Model->IsReady())
     {if(!LoadDefinitions(Error))return false;bInitialized=true;}
-    if(FormalSession)
+    if(FormalSession||SandboxIdentity.IsValid())
     {
-        // A deliberate formal -> trial transition starts a separate trial owner.
+        // A deliberate context transition starts a separate trial owner; transient sandbox facts do not travel.
         auto Fresh=MakeUnique<DWLanguage::FModel>();if(!Fresh->Initialize(Model->GetCatalog(),{},Error))return false;
-        Model=MoveTemp(Fresh);FormalSession.Reset();StarterGrant.Reset();PlaythroughId.Reset();TrialContainerVersion=4;++SessionGeneration;
+        Model=MoveTemp(Fresh);FormalSession.Reset();SandboxIdentity.Invalidate();SandboxPlayer.Reset();SandboxWorld.Reset();SandboxProfile.Reset();StarterGrant.Reset();PlaythroughId.Reset();TrialContainerVersion=4;++SessionGeneration;
     }
     // Pawn replacement/respawn never creates a new playthrough or clears paid-cost/reward facts.
     ActivePlayer=Player;if(PlaythroughId.IsEmpty())PlaythroughId=FGuid::NewGuid().ToString(EGuidFormats::Digits);

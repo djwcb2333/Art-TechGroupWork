@@ -26,6 +26,7 @@ bool ADWPlayerCharacter::TryStartFormalDash(const FDWCombatInputPress& Press,FVe
         (!LaterContext&&(NewContext!=OldContext||Press.Edge.Sequence<=LastFormalDashEdge.Sequence)))return false;
     LastFormalDashEdge=Press.Edge;++LastFormalDashRequestOrdinal; // Failed physical requests never queue themselves.
     if(CharacterA01&&CharacterA01->IsEnabled())return CharacterA01->HandleSpacePressed(Press);
+    if(!CharacterA01||!CharacterA01->IsEnabled())return false; // No legacy form ability without a current A01 owner.
     if(WeaponAnimationComponent&&!WeaponAnimationComponent->AllowsFormalSwordDashInterruption())return false;
     if(!IsCombatActionAllowed()||bGameplayActionInProgress||bAdvancingGameplayClocks||CombatKnockback.bActive||
         GetCombatBaseForm()!=EDWCombatBaseForm::Yeast||Move.ContainsNaN()||Aim.ContainsNaN())return false;

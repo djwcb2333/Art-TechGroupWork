@@ -22,7 +22,7 @@ namespace
 {
 bool SameGuid(const FString& Text,const FGuid& Id)
 {FGuid Parsed;return FGuid::ParseExact(Text,EGuidFormats::Digits,Parsed)&&Parsed.IsValid()&&Parsed==Id;}
-bool SameLife(DWCombatCommit::FEntityLife A,DWCombatCommit::FEntityLife B)
+bool SameFormalLanguageSessionLife(DWCombatCommit::FEntityLife A,DWCombatCommit::FEntityLife B)
 {return A.Entity&&A.Entity==B.Entity&&A.Life==B.Life;}
 bool Fail(FString& E,const TCHAR* M){E=M;return false;}
 }
@@ -57,8 +57,8 @@ bool FDWFormalLanguagePersistence::IsCurrent(const UDWLanguageSubsystem& L,bool 
   GI->ActiveSlot==S->Slot&&GI->CombatSaveGeneration==S->Generation&&GI->GetConfig()==S->Profile.Get()&&
   GI->ActiveSaveVersion==DWFormalSaveVersionPolicy::FormalVersion&&GI->AdventureFlow.Schema==1&&SameGuid(GI->AdventureFlow.PlaythroughId,S->Playthrough)&&SameGuid(L.PlaythroughId,S->Playthrough)&&
   GI->FormalStarterGrant&&GI->FormalStarterGrant->bGranted&&SameGuid(GI->FormalStarterGrant->PlaythroughId,S->Playthrough)&&
-  (GI->AdventureFlow.bStarterGranted||(bAllowPendingCheckpoint&&GI->bPreparingFormalFirstCheckpoint&&GI->OpeningStartupIsCurrent(P)))&&
-  A&&A->GetWorldEpoch()==S->Epoch&&SameLife(A->FindRegisteredActorLife(P),S->Life);
+  (GI->AdventureFlow.bStarterGranted||(bAllowPendingCheckpoint&&GI->bPreparingFormalFirstCheckpoint&&GI->OpeningStartupIdentityIsCurrent(P)))&&
+  A&&A->GetWorldEpoch()==S->Epoch&&SameFormalLanguageSessionLife(A->FindRegisteredActorLife(P),S->Life);
 }
 void FDWFormalLanguagePersistence::Suspend(UDWGameInstance& GI)
 {
@@ -81,7 +81,7 @@ bool FDWFormalLanguagePersistence::ResumeAfterTravelFailure(UDWGameInstance& GI,
   Previous->FormalLanguage.SlotIndex!=Binding->Slot||!SameGuid(Previous->AdventureFlow.PlaythroughId,Binding->Playthrough)||
   Previous->AdventureFlow.Phase==EDWAdventureOpeningPhase::CompletedPendingDestination||
   UWorld::RemovePIEPrefix(W->GetOutermost()->GetName())!=Previous->MapPackage||GI.GetConfig()!=Binding->Profile.Get()||
-  !A||A->GetWorldEpoch()!=Binding->Epoch||!SameLife(A->FindRegisteredActorLife(P),Binding->Life)||
+  !A||A->GetWorldEpoch()!=Binding->Epoch||!SameFormalLanguageSessionLife(A->FindRegisteredActorLife(P),Binding->Life)||
   !GI.FormalStarterGrant||!GI.FormalStarterGrant->bGranted||!SameGuid(GI.FormalStarterGrant->PlaythroughId,Binding->Playthrough))return false;
  // A failed request left this exact world/pawn/life and private model untouched.
  // Rebind only its accepted request generation; do not load disk progress over it.
@@ -130,7 +130,7 @@ bool FDWFormalLanguagePersistence::CanCommit(const FDWLanguageProgressRestorePla
   GI->ActiveSaveVersion==DWFormalSaveVersionPolicy::FormalVersion&&GI->ActiveSlot==Plan.ExpectedSlot&&GI->CombatSaveGeneration==Plan.ExpectedGeneration&&GI->GetConfig()==S.Profile.Get()&&
   GI->FormalStarterGrant==Plan.ExpectedFormalStarter&&GI->FormalStarterGrant&&GI->FormalStarterGrant->Revision==Plan.ExpectedStarterRevision&&
   FDWAdventureFlowSave::StaticStruct()->CompareScriptStruct(&GI->AdventureFlow,&Plan.ExpectedOwnerFlow,PPF_None)&&
-  A->GetWorldEpoch()==Plan.ExpectedEpoch&&SameLife(A->FindRegisteredActorLife(P),Plan.ExpectedLife)&&
+  A->GetWorldEpoch()==Plan.ExpectedEpoch&&SameFormalLanguageSessionLife(A->FindRegisteredActorLife(P),Plan.ExpectedLife)&&
   Plan.Owner->Model&&Plan.Owner->Model->CanCommit(Plan.Prepared);
 }
 void FDWFormalLanguagePersistence::Adopt(FDWLanguageProgressRestorePlan& Plan)
@@ -201,7 +201,7 @@ bool FDWFormalLanguagePersistence::IsCaptureCurrent(const FDWFormalCaptureStamp&
  auto* A=UDWCombatAuthoritySubsystem::Get(P);
  return GI->OpeningStartupIsCurrent(P)&&!GI->AdventureFlow.bStarterGranted&&GI->ActiveSlot==S.Session->Slot&&
   GI->CombatSaveGeneration==S.Session->Generation&&P->GetWorld()==S.Session->World.Get()&&GI->GetConfig()==S.Session->Profile.Get()&&
-  A&&A->GetWorldEpoch()==S.Session->Epoch&&SameLife(A->FindRegisteredActorLife(P),S.Session->Life);
+  A&&A->GetWorldEpoch()==S.Session->Epoch&&SameFormalLanguageSessionLife(A->FindRegisteredActorLife(P),S.Session->Life);
 }
 bool FDWFormalLanguagePersistence::CaptureFirstStarter(UDWGameInstance& GI,ADWPlayerCharacter& P,UDWSaveGame& Out,FDWFormalCaptureStamp& Stamp,FString& Error)
 {
@@ -258,7 +258,7 @@ bool FDWFormalLanguagePersistence::CanCommitRespawn(const FDWFormalRespawnPlan& 
 void FDWFormalLanguagePersistence::AdoptRespawnUnchecked(FDWFormalRespawnPlan& Plan)
 {
  auto* P=Plan.Stamp.Player.Get();auto* L=Plan.Stamp.Language.Get();auto* A=UDWCombatAuthoritySubsystem::Get(P);
- check(P&&L&&A&&!Plan.bAdopted&&Plan.NewSession&&SameLife(A->FindRegisteredActorLife(P),Plan.NewSession->Life));
+ check(P&&L&&A&&!Plan.bAdopted&&Plan.NewSession&&SameFormalLanguageSessionLife(A->FindRegisteredActorLife(P),Plan.NewSession->Life));
  // Existing PlayerRespawn receipt, actor life, resources, model and binding are
  // adopted before the recovery notice. No grant/refund/clock advance or callback.
  P->CharacterA01->AdoptFormalStateUnchecked(MoveTemp(Plan.Runtime),MoveTemp(Plan.Ability),Plan.Cooldown);

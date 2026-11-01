@@ -4,6 +4,8 @@
 #include "DWGameInstance.h"
 #include "DWPlayerCharacter.h"
 #include "DWCombatFeedbackComponent.h"
+#include "DWCombatPresentationComponent.h"
+#include "DWCombatGroundAreaSubsystem.h"
 #include "Animation/AnimSequenceBase.h"
 #include "Engine/World.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -36,7 +38,7 @@ bool UDWWeaponAnimationComponent::BeginFormalSword(FVector Target)
     ActiveSet=GetSelectedSet();const auto* Clip=ActiveSet?ActiveSet->FindClip(TEXT("Attack")):nullptr;
     ActiveClip=Clip?*Clip:FDWWeaponAnimationClip();ActiveClip.Role=TEXT("Attack");
     // Source duration remains authored; sampling maps each native phase into its full source interval.
-    bSwordSlamFeedbackPlayed=bSwordSweepFeedbackPlayed=false;
+    bSwordSlamFeedbackPlayed=bSwordSweepFeedbackPlayed=bSwordSlamEffectPublished=false;
     ElapsedSeconds=0.;FiredEvents.Reset();++ActionSerial;
     bOldOrient=P->GetCharacterMovement()->bOrientRotationToMovement;
     SwordPriorAttackLock=NextAttackTime;
@@ -140,6 +142,14 @@ void UDWWeaponAnimationComponent::ResolveFormalSwordWindow(DWCombatCommit::FActi
     auto* P=Player();auto* A=UDWCombatAuthoritySubsystem::Get(P);if(!A)return;
     const auto Tuning=SwordPlan.GetTuning();const uint64 Phase=SwordPlan.GetDamagePhase();
     const double Arc=SwordPlan.GetArc(),Damage=SwordPlan.GetDamage();
+    if(Phase==1&&!bSwordSlamEffectPublished)
+    {
+        bSwordSlamEffectPublished=true; // Once per accepted phase, including a whiff, never per target.
+        FVector Ground;const FTransform Pose(SwordForward.Rotation(),P->GetActorLocation());
+        if(P->CombatPresentation&&UDWCombatGroundAreaSubsystem::FindLegalGround(GetWorld(),Pose.GetLocation()+SwordForward*100.,P,Ground))
+            P->CombatPresentation->PublishCommitted(EDWCombatPresentationKind::GreatswordSlam,Action.Epoch,Action.Id,FTransform(Pose.GetRotation(),Ground));
+        if(!IsCurrentFormalSword(Action)||SwordPlan.GetDamagePhase()!=Phase)return;
+    }
     TArray<FDWSpearHitCandidate> Targets;FDWSpearHitQuery::CollectSector(GetWorld(),P,P->GetActorLocation(),SwordForward,Tuning.RangeCm,Arc,Targets);
     for(const auto& Candidate:Targets)
     {

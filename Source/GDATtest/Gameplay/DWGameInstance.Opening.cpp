@@ -123,12 +123,13 @@ bool UDWGameInstance::IsOpeningPersistenceBlocked()const
 {return HasActiveSlot()&&AdventureFlow.Schema==1&&GetWorld()&&
  (AdventureFlow.Phase==EDWAdventureOpeningPhase::Pending||AdventureFlow.Phase==EDWAdventureOpeningPhase::CompletedPendingDestination)&&
  UWorld::RemovePIEPrefix(GetWorld()->GetOutermost()->GetName())==AdventureFlow.OpeningMap;}
-bool UDWGameInstance::CanGrantFormalStarter(const ADWPlayerCharacter* P,const FString& Id)const
+bool UDWGameInstance::HasFormalStarterIdentity(const ADWPlayerCharacter* P,const FString& Id)const
 {
+ // Owner/source/slot/generation/world/life checks only; no derived A01/vitals query.
  if(!IsInGameThread()||!bCombatSaveAlive||bCombatRestoreFailure||!HasActiveSlotSourceOwner()||AdventureFlow.Schema!=1||
   !DWOpeningSave::ExactGuid(Id)||Id!=FormalPlaythroughId||Id!=AdventureFlow.PlaythroughId||!FormalStarterGrant||FormalStarterGrant->PlaythroughId!=Id||
-  !IsValid(P)||P->IsActorBeingDestroyed()||P->IsDead()||P->IsCombatRestoreInProgress()||!GetWorld()||GetWorld()->bIsTearingDown||
-  P->GetWorld()!=GetWorld()||P->GetGameInstance()!=this||UGameplayStatics::GetPlayerPawn(this,0)!=P||!P->HasCombatVitalsReady()||
+  !IsValid(P)||P->IsActorBeingDestroyed()||P->IsCombatRestoreInProgress()||!GetWorld()||GetWorld()->bIsTearingDown||
+  P->GetWorld()!=GetWorld()||P->GetGameInstance()!=this||UGameplayStatics::GetPlayerPawn(this,0)!=P||
   UWorld::RemovePIEPrefix(GetWorld()->GetOutermost()->GetName())==TEXT("/Game/DoughWorld/Maps/Gameplay/Levels/L_DoughWorld_LanguagePlaytest"))return false;
  auto* A=UDWCombatAuthoritySubsystem::Get(P);if(!A)return false;
  const FString CurrentMap=UWorld::RemovePIEPrefix(GetWorld()->GetOutermost()->GetName());
@@ -137,6 +138,19 @@ bool UDWGameInstance::CanGrantFormalStarter(const ADWPlayerCharacter* P,const FS
  return IsOpeningPending()&&bOpeningStartupReady&&OpeningStartupPlayer.Get()==P&&OpeningStartupWorld.Get()==GetWorld()&&
   OpeningStartupSlot==ActiveSlot&&OpeningStartupGeneration==CombatSaveGeneration&&OpeningStartupEpoch==A->GetWorldEpoch()&&
   DWOpeningSave::Same(OpeningStartupLife,A->FindRegisteredActorLife(P));
+}
+bool UDWGameInstance::CanGrantFormalStarter(const ADWPlayerCharacter* P,const FString& Id)const
+{
+ // Identity/session validation must not call vitals predicates that depend on that session.
+ // The actual starter admission still requires the unchanged death and readiness gates.
+ return HasFormalStarterIdentity(P,Id)&&!P->IsDead()&&P->HasCombatVitalsReady();
+}
+bool UDWGameInstance::OpeningStartupIdentityIsCurrent(const ADWPlayerCharacter* P)const
+{
+ auto* A=UDWCombatAuthoritySubsystem::Get(P);
+ return A&&HasFormalStarterIdentity(P,FormalPlaythroughId)&&bOpeningStartupReady&&OpeningStartupPlayer.Get()==P&&
+  OpeningStartupWorld.Get()==GetWorld()&&OpeningStartupSlot==ActiveSlot&&OpeningStartupGeneration==CombatSaveGeneration&&
+  OpeningStartupEpoch==A->GetWorldEpoch()&&DWOpeningSave::Same(OpeningStartupLife,A->FindRegisteredActorLife(P));
 }
 bool UDWGameInstance::OpeningStartupIsCurrent(const ADWPlayerCharacter* P)const
 {

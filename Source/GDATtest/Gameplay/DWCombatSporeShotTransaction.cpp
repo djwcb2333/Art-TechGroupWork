@@ -48,6 +48,7 @@ bool FDWCombatSporeShotTransaction::Commit(UDWWeaponAnimationComponent& W,double
     {Ledger->Resolve(Admission.Receipt.Handle,EOutcome::Rejected);Discard();return false;}
     FDWCombatWeaponResourceNotice Notice;Notice.Inventory=I;Notice.Weapon=&W;Notice.Owner=P;Notice.OwnerLife=Life;
     Notice.Receipt=Admission.Receipt.Handle;Notice.Operation=EDWWeaponResourceOperation::InventoryShot;
+    Notice.bSporePresentation=true;Notice.CommittedMuzzleTransform=FTransform(W.SporeForward.Rotation(),P->GetActorLocation()+W.SporeForward*80.+FVector(0,0,30));
     Notice.WeaponRevision=Revision+1;Notice.InventoryRevision=Prepared.GetExpectedRevision()+1;Notice.WeaponRestoreEpoch=Restore;
     Notice.LoadedBefore=Notice.LoadedAfter=W.CombatWeaponResources.Snapshot.LoadedShotgunShells;Notice.bInventoryChanged=true;
     const auto Emission=Ledger->CommitWeaponUseWithEmitter(Admission.Receipt.Handle,1);

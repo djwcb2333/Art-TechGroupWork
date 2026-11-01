@@ -11,7 +11,7 @@
 bool UDWCharacterA01Component::IsPersistenceSettled(FString& Error)const
 {
  auto* P=Player();auto* A=UDWCombatAuthoritySubsystem::Get(this);
- if(!IsEnabled()||!P||!A||PaidMotion.bPending||IsAbilityActive()||Ability.GetState().Phase==EDWA01AbilityPhase::Pending||P->IsCoreInjecting()||
+ if((Language()&&Language()->IsCombatSandboxSession())||!IsEnabled()||!P||!A||PaidMotion.bPending||IsAbilityActive()||Ability.GetState().Phase==EDWA01AbilityPhase::Pending||P->IsCoreInjecting()||
   P->CombatKnockback.bActive||P->bAdvancingGameplayClocks||P->bApplyingCombatDamage||P->bGameplayActionInProgress)
  {Error=TEXT("A01 capture requires a settled resource/action boundary.");return false;}
  Error.Reset();return true;
@@ -24,7 +24,7 @@ bool UDWCharacterA01Component::CaptureTrialStateJson(FString& Out,FString& Error
 }
 bool UDWCharacterA01Component::PrepareTrialStateJson(const FString& Json,const FDWCharacterA01Config& C,FDWCharacterA01Runtime& Out,double& Cooldown,FString& Error)const
 {
- const auto* L=Language();if(!IsEnabled()||!L){Error=TEXT("A01 restore requires the exact trial world.");return false;}
+ const auto* L=Language();if(!IsEnabled()||!L||L->IsCombatSandboxSession()){Error=TEXT("A01 restore requires the exact trial world.");return false;}
  if(!DWCharacterA01SaveBridge::StateFromJson(Json,C,L->Parameter(TEXT("yeast.dash.cooldown_s"),-1.),Out,Cooldown,Error))return false;
  const double MaximumEntry=FMath::Max(L->Parameter(TEXT("yeast.duration_s"),0.),L->Parameter(TEXT("mold.duration_s"),0.))+L->Parameter(TEXT("talent.b3.duration_add_s"),0.);
  if(Out.GetState().EntryDurationSeconds>MaximumEntry){Error=TEXT("Saved A01 entry duration exceeds the configured possible maximum.");return false;}return true;

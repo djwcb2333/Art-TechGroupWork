@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "DWMinimapNavigation.h"
+#include "DWMapImage.h"
 #include "DWMinimap.generated.h"
 
 class USceneCaptureComponent2D;
@@ -39,19 +40,23 @@ struct FDWMinimapDisplayMarker
     int32 Priority=0;
 };
 
-/** Local-player map capture and independent HUD. Never changes original meshes, lighting or saves. */
+/** Shared calibrated 2D image and independent HUD. Never captures the scene or changes saves. */
 UCLASS(BlueprintType,Blueprintable,ClassGroup=(DoughWorld),meta=(BlueprintSpawnableComponent))
 class GDATTEST_API UDWMinimapComponent : public UActorComponent
 {
     GENERATED_BODY()
 public:
     UDWMinimapComponent();
+    /** Shared background for BOTH maps. Replace this image and calibrate its world coverage here. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Map Image") FDWMapImageSettings ImageMap;
+    UDWMapImageResource* GetImageResource();
+    UTexture2D* GetMapImage() const {return ImageResource?ImageResource->GetReadyTexture():nullptr;}
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap") bool bMinimapEnabled=true;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|View",meta=(ClampMin="500",ClampMax="100000",Units="cm")) float ViewRadius=5000.f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|View",meta=(ClampMin="-90",ClampMax="-45",Units="deg")) float CapturePitch=-70.f;
-    /** Rotate the map with the owning player's camera yaw. Pitch stays at CapturePitch for legibility. */
+    /** Rotate the horizontal 2D map view with the owning player's camera yaw. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|View",meta=(DisplayName="Follow Camera Yaw")) bool bFollowCameraYaw=true;
-    /** World north used by compass labels and bearings; also the fixed capture yaw when follow is disabled. */
+    /** World north used by compass labels and bearings; also the fixed view yaw when follow is disabled. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|View",meta=(Units="deg")) float NorthYaw=0.f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap|View",meta=(ClampMin="128",ClampMax="1024")) int32 CaptureResolution=1024;
     /** Color-space coverage samples per axis. 3 gives nine samples; 2 gives four; 1 disables supersampling. */
@@ -94,6 +99,7 @@ protected:
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
     virtual void OnUnregister() override;
 private:
+    UPROPERTY(Transient) TObjectPtr<UDWMapImageResource> ImageResource;
     UPROPERTY(Transient) TObjectPtr<ASceneCapture2D> CaptureActor;
     UPROPERTY(Transient) TObjectPtr<UTextureRenderTarget2D> DepthTarget;
     UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> DisplayMaterial;

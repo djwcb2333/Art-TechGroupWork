@@ -44,6 +44,7 @@
 #include "Components/OverlaySlot.h"
 #include "Brushes/SlateRoundedBoxBrush.h"
 #include "Engine/Font.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "Widgets/SCompoundWidget.h"
 #include "Rendering/DrawElements.h"
 #include "Rendering/SlateRenderer.h"
@@ -104,7 +105,7 @@ void UDWHandbookButton::UpdateSelection(bool bSelected)
  else Selection=FMath::FInterpConstantTo(Selection,Target,FMath::Min(float(Now-LastSelectionTick),.1f),1.f/FMath::Max(.001f,Screen?Screen->C01FocusSeconds:.18f));
  LastSelectionTick=Now;InvalidateLayoutAndVolatility();
  if(Screen)Screen->StyleC01Button(this,C01BaseColor,bSelected,bC01TransparentRest);
- if(auto* T=Cast<UTextBlock>(GetContent()))T->SetColorAndOpacity(!bSelected&&C01BaseColor.Equals(DWC01UI::Danger(),.0001f)?FLinearColor::White:DWHandbook::Ink);
+ if(auto* T=Cast<UTextBlock>(GetContent()))T->SetColorAndOpacity((GetFName()==TEXT("HandbookTalentEntry")||(!bSelected&&C01BaseColor.Equals(DWC01UI::Danger(),.0001f)))?FLinearColor::White:DWHandbook::Ink);
 }
 
 void UDWGameplayWidget::RegisterHandbookLabel(UTextBlock* Label,const TCHAR* Chinese,const TCHAR* English)
@@ -134,15 +135,19 @@ void UDWGameplayWidget::InitializeHandbook()
   {
    const FLinearColor Fill[]={FLinearColor::FromSRGBColor(FColor(185,99,69)),FLinearColor::FromSRGBColor(FColor(143,156,141)),FLinearColor::FromSRGBColor(FColor(146,150,104)),FLinearColor::FromSRGBColor(FColor(196,161,96))};
    const TSoftObjectPtr<UTexture2D>* Icons[]={&C01StatusIconHealth,&C01StatusIconWater,&C01StatusIconFood,&C01StatusIconSpecial};
+   UMaterialInterface* WhiteIconMaterial=CharacterStatusWhiteMaterial.LoadSynchronous();
    for(int32 I=0;I<4;++I)
    {
     auto* Layers=D.Make<UOverlay>();auto* Bar=D.Make<UProgressBar>();FProgressBarStyle Style=Bar->GetWidgetStyle();
     Style.BackgroundImage=FSlateRoundedBoxBrush(DWC01UI::Muted(),18.f,FVector2D(390,82));Style.FillImage=FSlateRoundedBoxBrush(FLinearColor::White,18.f,FVector2D(390,82));
     Bar->SetWidgetStyle(Style);Bar->SetFillColorAndOpacity(Fill[I]);
     auto* Background=Layers->AddChildToOverlay(Bar);Background->SetHorizontalAlignment(HAlign_Fill);Background->SetVerticalAlignment(VAlign_Fill);
-    auto* Row=D.Make<UHorizontalBox>();auto* Icon=D.Make<UImage>();Icon->SetBrushFromTexture(Icons[I]->LoadSynchronous(),false);Icon->SetVisibility(ESlateVisibility::HitTestInvisible);
+    auto* Row=D.Make<UHorizontalBox>();auto* Icon=D.Make<UImage>();auto* SourceIcon=Icons[I]->LoadSynchronous();Icon->SetBrushFromTexture(SourceIcon,false);
+    if(SourceIcon&&WhiteIconMaterial)if(auto* WhiteIcon=UMaterialInstanceDynamic::Create(WhiteIconMaterial,Icon))
+    {WhiteIcon->SetTextureParameterValue(TEXT("SourceIcon"),SourceIcon);Icon->SetBrushFromMaterial(WhiteIcon);}
+    Icon->SetColorAndOpacity(FLinearColor::White);Icon->SetVisibility(ESlateVisibility::HitTestInvisible);
     D.H(Row,D.FitImage(Icon,42,42),0,12)->SetVerticalAlignment(VAlign_Center);
-    auto* Label=D.Text(FText::GetEmpty(),17);Label->SetAutoWrapText(false);D.H(Row,Label,1,4)->SetVerticalAlignment(VAlign_Center);
+    auto* Label=D.Text(FText::GetEmpty(),17);Label->SetColorAndOpacity(FLinearColor::White);Label->SetAutoWrapText(false);D.H(Row,Label,1,4)->SetVerticalAlignment(VAlign_Center);
     auto* Foreground=Layers->AddChildToOverlay(Row);Foreground->SetHorizontalAlignment(HAlign_Fill);Foreground->SetVerticalAlignment(VAlign_Center);
     D.At(Character,Layers,(I%2)*406.f,90.f+(I/2)*130.f,390.f,114.f);
     HandbookResourceLabels.Add(Label);HandbookResourceBars.Add(Bar);
@@ -166,7 +171,9 @@ void UDWGameplayWidget::InitializeHandbook()
   HandbookPreviewImage=D.Make<UImage>();HandbookPreviewImage->SetVisibility(ESlateVisibility::Hidden);
   D.At(Character,HandbookPreviewImage,PreviewImageX,PreviewY,PreviewImageW,PreviewH);
   D.At(Character,D.LocalText(TEXT("角色属性"),TEXT("Character attributes"),24),0,0,570,64);
-  D.At(Character,D.LocalButton(TEXT("天赋"),TEXT("Talents"),40,SlotColor),406,EquipmentY,390,EquipmentSize);
+  auto* TalentEntry=D.LocalButton(TEXT("天赋"),TEXT("Talents"),40,SlotColor,false,TEXT("HandbookTalentEntry"));
+  if(auto* Label=Cast<UTextBlock>(TalentEntry->GetContent()))Label->SetColorAndOpacity(FLinearColor::White);
+  D.At(Character,TalentEntry,406,EquipmentY,390,EquipmentSize);
 
  auto* Inventory=D.Make<UCanvasPanel>();HandbookPages->AddChild(Inventory);
  InventoryGrid=D.Make<UUniformGridPanel>(TEXT("HandbookInventoryGrid"));InventoryGrid->SetSlotPadding(FMargin(4));InventoryGrid->SetMinDesiredSlotWidth(96);InventoryGrid->SetMinDesiredSlotHeight(96);InventoryColumns=6;

@@ -22,6 +22,8 @@ struct FDWCombatWeaponResourceNotice
     uint64 WeaponRestoreEpoch=0;
     int32 LoadedBefore=0,LoadedAfter=0;
     bool bInventoryChanged=false;
+    bool bSporePresentation=false,bShotgunPresentation=false;
+    FTransform CommittedMuzzleTransform=FTransform::Identity;
     bool bPublishCommittedAttack=false;
     uint8 CommittedWeapon=0;FName CommittedRole;int32 CommittedEvent=0;
 };

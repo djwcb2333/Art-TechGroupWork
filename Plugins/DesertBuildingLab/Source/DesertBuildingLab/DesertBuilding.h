@@ -6,6 +6,7 @@
 #include "DesertBuildingRoofDecorations.h"
 #include "DesertBuilding.generated.h"
 
+class UDesertBuildingCutoutComponent;
 class UDesertBuildingStyle;
 class UDesertBuildingDesign;
 class UInstancedStaticMeshComponent;
@@ -202,6 +203,7 @@ class DESERTBUILDINGLAB_API ADesertBuilding : public AActor
 
 public:
     ADesertBuilding();
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Building|Cutout") TObjectPtr<UDesertBuildingCutoutComponent> PlayerCutout;
     virtual void PostActorCreated() override;
     virtual void OnConstruction(const FTransform& Transform) override;
     virtual void BeginPlay() override;

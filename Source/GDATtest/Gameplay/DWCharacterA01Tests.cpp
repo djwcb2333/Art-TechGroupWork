@@ -31,7 +31,9 @@ FTotals Advance(FDWCharacterA01Runtime& R,double Seconds,const FDWCharacterA01Ac
 }
 void Run(const FSink& Check)
 {
-    FDWCharacterA01Config C;FDWCharacterA01Runtime R;std::string Error;
+    // Preserve coverage for old explicitly authored recovery/regen configs, still legal for old data.
+    FDWCharacterA01Config C;C.CapRecoveryIntervalSeconds=2.;C.NormalRegenAmount=1.;
+    FDWCharacterA01Runtime R;std::string Error;
     Check("trial config is valid",C.IsValid(&Error));
     Check("new character starts with configured resources",R.Initialize(C)&&Near(R.GetState().CurrentHealth,100.)&&Near(R.GetState().Water,100.)&&Near(R.GetState().Satiety,100.));
     Check("normal has independent uninitialized energies",R.GetState().Gas==0.&&R.GetState().Corruption==0.&&!R.GetState().bCorruptionInitialized);

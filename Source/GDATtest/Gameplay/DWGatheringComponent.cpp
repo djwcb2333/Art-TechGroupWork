@@ -42,6 +42,8 @@ UDWGatheringComponent* UDWGatheringComponent::Find(const UDWInventoryComponent& 
 void UDWGatheringComponent::InitializeGathering()
 {
     if(!IsGatheringEnabled()||!Player()||!Player()->GetGameplayConfig()||!Player()->GetInventory())return;
+    // Pay owner resource time before a gathering contact at the same game timestamp.
+    PrimaryComponentTick.AddPrerequisite(Player(),Player()->PrimaryActorTick);
     const TWeakObjectPtr<UDWGatheringComponent> Weak(this);
     Player()->GetInventory()->SetCraftingContextValidator([Weak](FName Recipe,FName Station,FName Building)
     {return Weak.IsValid()&&Weak->HasCraftingContext(Recipe,Station,Building);});
@@ -188,23 +190,6 @@ bool UDWGatheringComponent::HandlePrimaryClick()
     }
     if(auto* Pond=Cast<ADWGatheringPond>(Target))if(Pond->IsWaterSurfaceHit(Hit)&&Pond->IsUsableWaterStation(Player())){InteractWith(Pond,true);return true;}
     return false;
-}
-bool UDWGatheringComponent::HasCraftingContext(FName Recipe,FName Station,FName Building) const
-{
-    auto* User=Player();const auto* Config=User?User->GetGameplayConfig():nullptr;
-    if(!Config||!User||User->IsDead()||User->IsActorBeingDestroyed()||!GetWorld()||GetWorld()->bIsTearingDown)return false;
-    bool Found=Station.IsNone();
-    if(Station==TEXT("GatherStation_WaterPond"))
-    {
-        for(TActorIterator<ADWGatheringPond> It(GetWorld());It;++It)if(It->IsUsableWaterStation(User)){Found=true;break;}
-        if(!Found)if(auto* L=User->GetGameInstance()->GetSubsystem<UDWLanguageSubsystem>();L&&L->IsReady())
-            for(TActorIterator<ADWLanguageCarrier> It(GetWorld());It;++It)if(It->Kind==EDWLanguageCarrierKind::WaterSource&&It->IsInReach(User)){Found=true;break;}
-    }
-    else if(!Station.IsNone())
-    {for(TActorIterator<ADWGatheringStation> It(GetWorld());It;++It)if(It->StationId==Station&&It->IsInteractionAvailable()&&It->IsWithinReach(User)){Found=true;break;}}
-    if(!Found)return false;
-    if(!Building.IsNone()){FTransform Placement;return FindBuildingPlacement(Building,Placement);}
-    return true;
 }
 bool UDWGatheringComponent::FindBuildingPlacement(FName Building,FTransform& Out) const
 {
@@ -386,12 +371,16 @@ void UDWGatheringComponent::UpdateGatheringToolVisual()
     }
     Grip=ToolGripAdjustment*Grip;
     const bool bPickaxe=SwingToolType==TEXT("Pickaxe"),bHammer=SwingToolType==TEXT("Hammer");
-    auto* Mesh=bHammer?HammerMesh.Get():(bPickaxe?PickaxeMesh.Get():AxeMesh.Get());
+    const auto* Binding=ItemModelBindings.Find(SwingToolId);
+    auto* Mesh=Binding&&Binding->Mesh?Binding->Mesh.Get():(bHammer?HammerMesh.Get():(bPickaxe?PickaxeMesh.Get():AxeMesh.Get()));
     if(Mesh)
     {
         Create(GatheringAuthoredTool,TEXT("GatheringAuthoredTool"));GatheringAuthoredTool->SetStaticMesh(Mesh);
-        GatheringAuthoredTool->SetRelativeTransform((bHammer?HammerMeshAdjustment:(bPickaxe?PickaxeMeshAdjustment:AxeMeshAdjustment))*Grip);
-        if(ToolHeadMaterial)GatheringAuthoredTool->SetMaterial(0,ToolHeadMaterial);
+        GatheringAuthoredTool->SetRelativeTransform((Binding&&Binding->Mesh?Binding->GripAdjustment:(bHammer?HammerMeshAdjustment:(bPickaxe?PickaxeMeshAdjustment:AxeMeshAdjustment)))*Grip);
+        GatheringAuthoredTool->EmptyOverrideMaterials();
+        if(Binding&&Binding->Mesh)
+        {for(int32 I=0;I<Binding->MaterialOverrides.Num();++I)if(Binding->MaterialOverrides[I])GatheringAuthoredTool->SetMaterial(I,Binding->MaterialOverrides[I]);}
+        else if(ToolHeadMaterial)GatheringAuthoredTool->SetMaterial(0,ToolHeadMaterial);
         HideGatheringToolVisual();GatheringAuthoredTool->SetVisibility(true);
     }
     else

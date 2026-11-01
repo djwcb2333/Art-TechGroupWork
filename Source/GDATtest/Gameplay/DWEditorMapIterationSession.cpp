@@ -53,7 +53,9 @@ TSharedPtr<FDWEditorMapIterationSession> FDWEditorMapIterationSession::Start(con
  HANDLE Handle=CreateFileW(*(Root/TEXT(".writer.lock")),GENERIC_READ|GENERIC_WRITE,0,nullptr,OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,nullptr);
  if(Handle==INVALID_HANDLE_VALUE){Error=TEXT("本测试轮已有写入会话，请先结束另一轮 PIE；未读取正式存档。");return nullptr;}
  Session->Lease=Handle;
- if(!DWEditorIterationRoundStore::Select(Root,ProjectId,Signature,Session->Bound,Error))return nullptr;
+ FString Context;
+ if(!DWEditorIterationRoundStore::MakeContextKey(Session->EntryPackage,C.GetPathName(),Context,Error))return nullptr;
+ if(!DWEditorIterationRoundStore::Select(Root,ProjectId,Context,Signature,Session->Bound,Error))return nullptr;
  Session->SignatureCache=MoveTemp(Signature);
  const TWeakPtr<FDWEditorMapIterationSession> Weak=Session;
  Session->PreSaveHandle=FCoreUObjectDelegates::OnObjectPreSave.AddLambda([Weak](UObject* Object,FObjectPreSaveContext)
@@ -62,7 +64,7 @@ TSharedPtr<FDWEditorMapIterationSession> FDWEditorMapIterationSession::Start(con
   const FString Name=Object->GetOutermost()->GetName();
   if(P->SignatureCache.Files.Contains(Name))P->InvalidatedPackages.Add(Name);
  });
- UE_LOG(LogTemp,Display,TEXT("DW_EDITOR_ITERATION_BOUND identity=%s directory=%s"),*Session->Identity(),*Session->Directory());
+ UE_LOG(LogTemp,Display,TEXT("DW_EDITOR_ITERATION_BOUND identity=%s directory=%s context=%s entry=%s config=%s"),*Session->Identity(),*Session->Directory(),*Session->Bound.ContextKey,*Session->EntryPackage,*C.GetPathName());
  return Session;
 #else
  Error=TEXT("Editor iteration storage is unavailable for this executable; no fallback.");return nullptr;

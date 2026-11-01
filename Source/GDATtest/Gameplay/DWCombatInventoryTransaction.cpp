@@ -4,6 +4,7 @@
 #include "DWInventoryComponent.h"
 #include "DWWeaponAnimationComponent.h"
 #include "DWPlayerCharacter.h"
+#include "DWCombatPresentationComponent.h"
 #include "Engine/World.h"
 
 FDWCombatWeaponResourceResult FDWCombatInventoryTransaction::CommitReloadShell(UDWWeaponAnimationComponent& Weapon)
@@ -89,6 +90,13 @@ void FDWCombatInventoryTransaction::PublishWeaponResourceNotice(const FDWCombatW
         return Life.Entity==Notice.OwnerLife.Entity&&Life.Life==Notice.OwnerLife.Life;
     };
     if(!IsCurrent())return;
+    if(Notice.bSporePresentation||Notice.bShotgunPresentation)
+    {
+        if(auto* P=Cast<ADWPlayerCharacter>(Notice.Owner.Get());P&&P->CombatPresentation)
+            P->CombatPresentation->PublishCommitted(Notice.bSporePresentation?EDWCombatPresentationKind::SporeShot:EDWCombatPresentationKind::ShotgunShot,
+                Notice.Receipt.Epoch,Notice.Receipt.Id,Notice.CommittedMuzzleTransform);
+        if(!IsCurrent())return;
+    }
     if(Notice.bInventoryChanged)
     {
         auto* Inventory=Notice.Inventory.Get();

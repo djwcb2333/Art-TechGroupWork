@@ -1,4 +1,5 @@
 #include "DesertBuilding.h"
+#include "DesertBuildingCutoutComponent.h"
 
 #include "DesertBuildingStyle.h"
 #include "DesertBuildingDesign.h"
@@ -71,6 +72,7 @@ namespace DesertBuildingRules
 
 ADesertBuilding::ADesertBuilding()
 {
+    PlayerCutout=CreateDefaultSubobject<UDesertBuildingCutoutComponent>(TEXT("DesertPlayerCutout"));
     SelectedBlock.PotPlacement=EDesertPotPlacement::Automatic;
     SelectedBlock.StairConnection=EDesertStairConnection::AdjacentFloors;
     PrimaryActorTick.bCanEverTick = false;
@@ -1068,6 +1070,7 @@ bool ADesertBuilding::ResolveEntranceCandidate(const TSet<FIntVector>& Bodies,
 void ADesertBuilding::Rebuild()
 {
     if (!WallParts || !CubeMesh) return;
+    if(PlayerCutout)PlayerCutout->ReleaseEligibility();
     CellSize = FMath::IsFinite(CellSize) ? FMath::Clamp(CellSize, 100.0f, 1000.0f) : 300.0f;
     FloorHeight = FMath::IsFinite(FloorHeight) ? FMath::Clamp(FloorHeight, 100.0f, 1000.0f) : 300.0f;
     FoundationDepth = FMath::IsFinite(FoundationDepth) ? FMath::Clamp(FoundationDepth, 10.0f, 10000.0f) : 80.0f;
@@ -1189,4 +1192,5 @@ void ADesertBuilding::Rebuild()
     // 满显示的编辑状态保留持久材质资产引用，避免关卡中无谓保存动态实例。
     ApplyOcclusionMaterials();
     UpdateBuildingMaterialCoordinates();
+    if(PlayerCutout)PlayerCutout->RefreshEligibility();
 }

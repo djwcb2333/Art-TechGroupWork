@@ -25,6 +25,7 @@
 #include "DWEnemyCharacter.h"
 #include "DWEnemyNest.h"
 #include "DWPlayerCharacter.h"
+#include "DWCombatPresentationComponent.h"
 #include "DWLanguageSubsystem.h"
 #include "DWGameInstance.h"
 #include "DWCombatFeedbackComponent.h"
@@ -104,7 +105,7 @@ struct FDamageSnapshot
     bool bForcedFallDropPoint=false;
     FReceiptId ForcedFallReceipt;
     FVector ForcedFallDropPoint=FVector::ZeroVector;
-    bool bDaggerBackstab=false;FVector DaggerVictimOrigin=FVector::ZeroVector;
+    bool bDaggerBackstab=false;FVector DaggerVictimOrigin=FVector::ZeroVector;FTransform DaggerVictimPresentation=FTransform::Identity;
     double DaggerRefreshRadius=0.,DaggerGraceSeconds=0.;
     bool bShieldDeferred=false,bShieldPerfectNow=false,bImpactRooted=false,bOrdinaryShieldBlock=false;
     double ShieldImpactTime=0.,ShieldDeadline=0.;FVector ShieldImpactDirection=FVector::ZeroVector;
@@ -566,7 +567,7 @@ FDWCombatDamageResult UDWCombatAuthoritySubsystem::CommitPending(DWCombatCommit:
     }
     FDWPreparedCoreDrop CoreDrop;
     UDWCombatCoreDropSubsystem* CoreDrops=nullptr;
-    if(After<=HealthFloor)if(auto* Enemy=Cast<ADWEnemyCharacter>(Target);Enemy&&Enemy->IsFormalCombatReady())
+    if(After<=HealthFloor)if(auto* Enemy=Cast<ADWEnemyCharacter>(Target);Enemy&&(Enemy->IsFormalCombatReady()||(Enemy->CreatureDefinition&&Enemy->CreatureDefinition->DropPolicy==EDWCreatureDropPolicy::ConfiguredItems)))
     {
         CoreDrops=UDWCombatCoreDropSubsystem::Get(Enemy);
         if(!CoreDrops||!CoreDrops->PrepareFatal(*Enemy,Receipt,Snapshot->Command.TargetLife,
@@ -764,7 +765,8 @@ void UDWCombatAuthoritySubsystem::DrainNotifications()
         if(!Notice.bVitalsDamage&&!Notice.bFatal&&FMath::IsFinite(Notice.Applied)&&Notice.Applied>0.f)
         {
             if(auto* Player=Cast<ADWPlayerCharacter>(Target);Player&&Player->CommittedHitFeedback)
-                Player->CommittedHitFeedback->PublishCommittedDamage(Notice.Applied);
+                Player->CommittedHitFeedback->PublishCommittedDamage(Notice.Applied,
+                    (Cast<ADWEnemyCharacter>(Notice.Command.Source.Get())&&Cast<ADWEnemyCharacter>(Notice.Command.Source.Get())->UsesGiantContactAnimation())?Notice.Command.Identity.Action:DWCombatCommit::FActionId{});
             else if(auto* Enemy=Cast<ADWEnemyCharacter>(Target);Enemy&&Enemy->CommittedHitFeedback)
                 Enemy->CommittedHitFeedback->PublishCommittedDamage(Notice.Applied);
             if(!Current())continue;
@@ -820,6 +822,10 @@ void UDWCombatAuthoritySubsystem::DrainNotifications()
         if (auto* Enemy = Cast<ADWEnemyCharacter>(Target))
         {
             if(Notice.bPurePush){if(Enemy->IsAlive())Enemy->StopAIMovement();continue;}
+            if(Notice.bDaggerBackstab&&Notice.bFatal&&Notice.Applied>0.f)
+                if(auto* P=Cast<ADWPlayerCharacter>(Notice.Command.Source.Get());P&&P->CombatPresentation&&DWCombatAuthority::Same(CaptureActorLife(P),Notice.SourceLife))
+                    P->CombatPresentation->PublishCommitted(EDWCombatPresentationKind::DaggerAssassination,Notice.Receipt.Epoch,Notice.Receipt.Id,Notice.DaggerVictimPresentation);
+            if(!Current())continue;
             if (Notice.bFatal) Enemy->PublishCombatDeathEffects();
             else
             {
@@ -899,6 +905,7 @@ bool UDWCombatAuthoritySubsystem::CommitFormalShotgun(UDWWeaponAnimationComponen
     }
     FDWCombatWeaponResourceNotice Notice;Notice.Owner=P;Notice.Weapon=&W;Notice.Inventory=P->GetInventory();Notice.OwnerLife=SourceLife;
     Notice.Operation=EDWWeaponResourceOperation::MagazineShot;Notice.Receipt=Resource.Receipt.Handle;
+    Notice.bShotgunPresentation=true;Notice.CommittedMuzzleTransform=FTransform(W.ShotgunForward.Rotation(),P->GetActorLocation()+W.ShotgunForward*80.+FVector(0,0,30));
     Notice.WeaponRestoreEpoch=W.CombatWeaponResources.RestoreEpoch;Notice.WeaponRevision=W.CombatWeaponResources.Revision+1;
     Notice.LoadedBefore=Before;Notice.LoadedAfter=Before-Cost;
     Notice.bPublishCommittedAttack=true;Notice.CommittedWeapon=static_cast<uint8>(EDWAnimatedWeapon::Shotgun);Notice.CommittedRole=TEXT("Attack");Notice.CommittedEvent=0;
@@ -955,12 +962,12 @@ FDWCombatDamageResult UDWCombatAuthoritySubsystem::SubmitDaggerBackstab(UDWWeapo
     FDWCombatDamageCommand C;C.Identity={Action,1,EActionDamageKind::Melee,1};C.Source=P;C.Target=&Enemy;
     C.TargetLife=CaptureActorLife(&Enemy);C.Instigator=P->GetController();C.Amount=static_cast<float>(Final);
     C.KnockbackDistance=0.f;C.KnockbackSeconds=static_cast<float>(T.Attack.KnockbackSeconds);C.KnockbackDirection=W.DaggerForward;
-    const FVector Origin=Enemy.GetActorLocation();FDamageEvent Event(UDamageType::StaticClass());
+    const FVector Origin=Enemy.GetActorLocation();const FTransform VictimPresentation(Enemy.GetActorQuat(),Origin,FVector::OneVector);FDamageEvent Event(UDamageType::StaticClass());
     const auto Admitted=AdmitPrepared(C,Event,false,nullptr,{},nullptr,true);
     if(Admitted.Admission!=EAdmission::Admitted||Admitted.Receipt.State!=EReceiptState::Pending)return Admitted;
     // No overridable hook is called for final backstab damage. Freeze refresh before committing health.
     auto* Snapshot=State->Damage.Find(Admitted.Receipt.Handle.Id);if(!Snapshot)return {};
-    Snapshot->DaggerVictimOrigin=Origin;Snapshot->DaggerRefreshRadius=T.RefreshRadiusCm;Snapshot->DaggerGraceSeconds=T.GraceSeconds;
+    Snapshot->DaggerVictimOrigin=Origin;Snapshot->DaggerVictimPresentation=VictimPresentation;Snapshot->DaggerRefreshRadius=T.RefreshRadiusCm;Snapshot->DaggerGraceSeconds=T.GraceSeconds;
     const auto Result=CommitPending(Admitted.Receipt.Handle,EOutcome::Committed);DrainNotifications();return Result;
 }
 

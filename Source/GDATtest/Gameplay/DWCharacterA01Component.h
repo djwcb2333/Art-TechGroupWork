@@ -19,9 +19,10 @@ class GDATTEST_API UDWCharacterA01Component : public UActorComponent
 public:
  UDWCharacterA01Component();
  bool InitializeForTrial(FString& Error);
+ bool InitializeForCombatSandbox(FString& Error);
  bool PrepareFormalAbility(FDWA01AbilityPlan& Out,FString& Error)const;
  void AdoptFormalStateUnchecked(FDWCharacterA01Runtime&&,FDWA01AbilityPlan&&,double Cooldown);
- UFUNCTION(BlueprintPure) bool IsEnabled()const{return bEnabled&&Runtime.IsReady();}
+ UFUNCTION(BlueprintPure) bool IsEnabled()const;
  const FDWCharacterA01Runtime& GetRuntime()const{return Runtime;}
  const FDWA01AbilityPlan& GetAbility()const{return Ability;}
  uint64 GetResourceRevision()const{return ResourceRevision;}
@@ -59,6 +60,7 @@ public:
  double AddWater(double Amount);
  double AddSatiety(double Amount);
  bool PrepareSurvivalRefill(double Water,double Satiety,FDWCharacterA01Runtime& OutCandidate)const;
+ bool PrepareRootCost(double Cost,FDWCharacterA01Runtime& Out)const;
  bool PrepareCorruption(uint64 ParentActionId,FName ItemId,bool bHarvest,FDWCharacterA01Runtime& OutCandidate,FDWA01CorruptionResult& OutResult)const;
  void EndToolAction(uint64 ParentActionId);
  bool IsPersistenceSettled(FString& Error)const;
@@ -68,6 +70,7 @@ public:
  bool BuildConfigForLearned(const TSet<FName>& Learned,FDWCharacterA01Config& Out,FString& Error)const;
  bool BuildLegacyMirror(const FDWCharacterA01Runtime& Candidate,FDWCombatPlayerVitalsConfig& OutConfig,FDWCombatPlayerVitalsSnapshot& OutSnapshot,FString& Error)const;
 private:
+ bool InitializeTransientRuntime(FString& Error);
  ADWPlayerCharacter* Player()const;
  UDWLanguageSubsystem* Language()const;
  bool BuildConfig(const TFunctionRef<bool(FName)>& Learned,FDWCharacterA01Config& Out,FString& Error)const;

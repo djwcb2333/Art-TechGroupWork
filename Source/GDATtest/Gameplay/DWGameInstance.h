@@ -59,6 +59,7 @@ public:
 
     UFUNCTION(BlueprintPure, Category="DoughWorld|Save")
     bool HasActiveSlot() const { return ActiveSlot >= 0 && ActiveSlot < SaveSlotCount; }
+    bool IsNonPersistentCombatSandboxContext()const;
     UFUNCTION(BlueprintPure,Category="DoughWorld|Save") bool IsPlayerRestorePending()const{return PendingSave!=nullptr&&!bCombatRestoreFailure;}
     bool HasPlayerRestoreFailure()const{return bCombatRestoreFailure;}
 
@@ -127,6 +128,8 @@ private:
     bool ValidateAdventureFlow(const UDWSaveGame&);
     bool ResolveAdventureTravelMap(UDWSaveGame&,FString& Map,FString& Error);
     bool PendingSaveMatchesWorld(const UDWSaveGame&,const UWorld&)const;
+    bool HasFormalStarterIdentity(const ADWPlayerCharacter*,const FString& PlaythroughId)const;
+    bool OpeningStartupIdentityIsCurrent(const ADWPlayerCharacter*)const;
     bool OpeningStartupIsCurrent(const ADWPlayerCharacter*)const;
     bool FinishOpeningPlayerRestore(ADWPlayerCharacter&,const UDWSaveGame&,FString&);
     bool ExecuteOpeningFreshDestination(ADWPlayerCharacter&,const UDWSaveGame&,bool& Committed,FString&);

@@ -110,7 +110,7 @@ void UDWGameplayWidget::StyleC01Button(UButton* B,FLinearColor BaseColor,bool Se
   V.Current=V.Start=V.Target=BaseColor;V.Started=FPlatformTime::Seconds();V.bInitialized=true;
  }
  if(auto* Label=Cast<UTextBlock>(B->GetContent()))
-  Label->SetColorAndOpacity(V.bBrushFill||(!Selected&&BaseColor.Equals(DWC01UI::Danger(),.0001f))?FLinearColor::White:DWC01UI::Ink());
+  Label->SetColorAndOpacity(B->GetFName()==TEXT("HandbookTalentEntry")||V.bBrushFill||(!Selected&&BaseColor.Equals(DWC01UI::Danger(),.0001f))?FLinearColor::White:DWC01UI::Ink());
  if(V.bBrushFill)B->SetBackgroundColor(FLinearColor::Transparent);
  DWC01UI::CenterButtonLabel(B,C01ButtonLatinOpticalOffsetEm);
 }
@@ -139,7 +139,7 @@ void UDWGameplayWidget::TickC01Buttons()
   const float A=V.Duration>SMALL_NUMBER?FMath::Clamp(float((Now-V.Started)/V.Duration),0.f,1.f):1.f;
   // LayoutSlot hover is explicitly linear, independent of the execution-button color curve.
   V.Current=FMath::Lerp(V.Start,V.Target,V.bItemSlot?A:DWC01UI::Ease(A));B->SetBackgroundColor(V.Current);
-  if(auto* Label=Cast<UTextBlock>(B->GetContent()))Label->SetColorAndOpacity(bDanger?FLinearColor::White:DWC01UI::Ink());
+  if(auto* Label=Cast<UTextBlock>(B->GetContent()))Label->SetColorAndOpacity(B->GetFName()==TEXT("HandbookTalentEntry")||bDanger?FLinearColor::White:DWC01UI::Ink());
  }
 }
 

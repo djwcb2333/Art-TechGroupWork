@@ -136,6 +136,11 @@ bool FDWCharacterA01Runtime::EnterForm(EDWA01Form Form)
 }
 bool FDWCharacterA01Runtime::ExitForm()
 { if(!bReady||State.Form==EDWA01Form::Normal)return false;EndFormFacts();return true; }
+bool FDWCharacterA01Runtime::SpendCorruption(double Cost)
+{
+ if(!bReady||State.CurrentHealth<=0.||State.Form!=EDWA01Form::Mold||!A01ResourceNonnegative(Cost)||State.Corruption<Cost)return false;
+ State.Corruption-=Cost;return true;
+}
 bool FDWCharacterA01Runtime::SpendGas(double Cost)
 {
     if(!bReady||State.CurrentHealth<=0.||State.Form!=EDWA01Form::Yeast||!A01ResourceNonnegative(Cost)||Cost>State.Gas)return false;
@@ -155,6 +160,7 @@ bool FDWCharacterA01Runtime::AdvanceNext(double Maximum,const FDWCharacterA01Act
 {
     Out={};if(!bReady||State.CurrentHealth<=0.||!A01ResourcePositive(Maximum)||!A01ResourceNonnegative(Activity.GasSpendPerSecond))return false;
     if(Activity.GasSpendPerSecond>0.&&State.Form!=EDWA01Form::Yeast)return false;
+    if(!A01ResourceNonnegative(Activity.CorruptionSpendPerSecond)||(Activity.CorruptionSpendPerSecond>0.&&State.Form!=EDWA01Form::Mold))return false;
     const bool bInoculated=State.Form!=EDWA01Form::Normal;
     const double SatietyMultiplier=State.Form==EDWA01Form::Yeast?Config.YeastSatietyMultiplier:State.Form==EDWA01Form::Mold?Config.MoldSatietyMultiplier:1.;
     const double WaterMultiplier=State.Form==EDWA01Form::Yeast?Config.YeastWaterMultiplier:State.Form==EDWA01Form::Mold?Config.MoldWaterMultiplier:1.;
@@ -171,6 +177,7 @@ bool FDWCharacterA01Runtime::AdvanceNext(double Maximum,const FDWCharacterA01Act
     if(State.Water>0.&&WaterRate>0.)Seconds=std::min(Seconds,State.Water/WaterRate);
     if(State.Satiety<=0.&&Config.StarvationDamagePerSecond>0.)Seconds=std::min(Seconds,State.CurrentHealth/Config.StarvationDamagePerSecond);
     if(Activity.GasSpendPerSecond>0.)Seconds=std::min(Seconds,State.Gas/Activity.GasSpendPerSecond);
+    if(Activity.CorruptionSpendPerSecond>0.)Seconds=std::min(Seconds,State.Corruption/Activity.CorruptionSpendPerSecond);
     if(State.Satiety<=0.&&Config.StarvationDamagePerSecond>0.&&State.StarvationOrdinal>=std::numeric_limits<std::uint64_t>::max()-1)return false;
     if(Seconds<=0.){Out.bGasExhausted=State.Gas<=0.&&Activity.GasSpendPerSecond>0.;return Out.bGasExhausted;}
     const double HealthBefore=State.CurrentHealth;
@@ -183,7 +190,8 @@ bool FDWCharacterA01Runtime::AdvanceNext(double Maximum,const FDWCharacterA01Act
         if(Activity.GasSpendPerSecond>0.)State.Gas=A01ResourceDrain(State.Gas,Activity.GasSpendPerSecond,Seconds);
         else if(!Activity.bSuppressGasRegeneration)State.Gas=std::min(Config.GasMax,State.Gas+Config.GasRegenPerSecond*Seconds);
     }
-    if(State.Form==EDWA01Form::Mold&&!Activity.bToolActionActive&&ToolActions.empty())
+    if(Activity.CorruptionSpendPerSecond>0.)State.Corruption=A01ResourceDrain(State.Corruption,Activity.CorruptionSpendPerSecond,Seconds);
+    if(State.Form==EDWA01Form::Mold&&!Activity.bSuppressCorruptionRegeneration&&Activity.CorruptionSpendPerSecond==0.&&!Activity.bToolActionActive&&ToolActions.empty())
         State.Corruption=std::min(Config.CorruptionMax,State.Corruption+Config.CorruptionRegenPerSecond*Seconds);
     Out.bGasExhausted=Activity.GasSpendPerSecond>0.&&State.Gas<=0.;
     if(bInoculated&&A01ResourceAdvanceClock(State.CapLossElapsedSeconds,Seconds,Config.CapLossIntervalSeconds))

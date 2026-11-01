@@ -4,6 +4,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "DWCombatAuthoringLibrary.generated.h"
 
+class UBlueprint;
 class UAnimBlueprint;
 class UAnimSequenceBase;
 class USkeleton;
@@ -28,6 +29,20 @@ public:
         Does not compile or save: inspect the report, then compile and save from the caller. */
     UFUNCTION(BlueprintCallable, Category="DoughWorld|Editor|Combat", meta=(DevelopmentOnly))
     static bool RepairCombatAnimationBlueprintTransitions(UAnimBlueprint* Blueprint, FString& OutReport);
+
+    /** Exact two Thug BPs only: raw read-only SCS attachment report; never Modify/compile/save. */
+    UFUNCTION(BlueprintPure, Category="DoughWorld|Editor|Combat", meta=(DevelopmentOnly))
+    static FString InspectSharedClubR05(UBlueprint* Blueprint);
+
+    /** Exact two Definition-backed Thug BPs only; create/reuse one native-mesh/Spear club SCS node.
+        Fixed imported club mesh, finite calibrated relative transform; no compile/save or skeleton editing. */
+    UFUNCTION(BlueprintCallable, Category="DoughWorld|Editor|Combat", meta=(DevelopmentOnly))
+    static bool ConfigureR05ThugClub(UBlueprint* Blueprint, const FTransform& RelativeTransform, FString& OutReport);
+
+    /** Exact R05 Thug only: replace its Alert player with the shared explicit clock evaluator in place.
+        Exact R05 Neutral is validation-only. Refuses old/unexpected graphs. Does not compile or save. */
+    UFUNCTION(BlueprintCallable, Category="DoughWorld|Editor|Combat", meta=(DevelopmentOnly))
+    static bool ConfigureR05CreatureAlertClock(UAnimBlueprint* Blueprint, FString& OutReport);
 
     /** Configure only this integration's three new combat graphs; preserve states, links and existing assets. */
     UFUNCTION(BlueprintCallable, Category="DoughWorld|Editor|Combat", meta=(DevelopmentOnly))

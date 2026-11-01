@@ -1,7 +1,7 @@
 {
   "payload_schema_version": 1,
-  "design_version": "角色战斗_已裁定_revision105_追加试玩反馈20261022_第三轮",
-  "source_sha256": "5f3436dfa002a1167478f5741c4121ec2316ee9327ae268ec32722621f709a6c",
+  "design_version": "角色战斗_已裁定_revision105_追加试玩反馈20261022_第三轮_Root试玩20261031",
+  "source_sha256": "306e3a0f17c29965e333312496903418dbd91cac4708f1c656b72e194c0c92cb",
   "parameters": [
     {
       "id": "ai.alert_delay_s",
@@ -395,7 +395,7 @@
     },
     {
       "id": "mold.mine.deploy_cooldown_s",
-      "value": 12,
+      "value": 18,
       "unit": "秒"
     },
     {
@@ -435,7 +435,7 @@
     },
     {
       "id": "mold.root.damage_multiplier",
-      "value": 1.35,
+      "value": 1.1,
       "unit": "倍率"
     },
     {
@@ -450,7 +450,7 @@
     },
     {
       "id": "mold.root.incoming_multiplier",
-      "value": 0.45,
+      "value": 0.7,
       "unit": "倍率"
     },
     {
@@ -460,17 +460,17 @@
     },
     {
       "id": "mold.root.ranged_rate_multiplier",
-      "value": 1.6,
+      "value": 1.2,
       "unit": "倍率"
     },
     {
       "id": "mold.root.spend_per_second",
-      "value": 16,
+      "value": 3,
       "unit": "点/秒"
     },
     {
       "id": "mold.root.start_cost",
-      "value": 10,
+      "value": 8,
       "unit": "点"
     },
     {

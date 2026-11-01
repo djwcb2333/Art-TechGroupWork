@@ -37,17 +37,24 @@ public:
     UFUNCTION(BlueprintPure,Category="Damage Feedback") float GetCombatHitRemainingSeconds()const;
     /** Presentation identity only; native uint64 because Blueprint does not expose uint64. */
     uint64 GetCombatHitSerial()const{return CombatHitSerial;}
+    void QueueCommittedImpact(DWCombatCommit::FActionId,const FDWGameplayCameraPulseSettings&,float Weight=1.f);
     virtual void TickComponent(float DeltaTime,ELevelTick TickType,FActorComponentTickFunction* TickFunction)override;
 protected:
     virtual void EndPlay(const EEndPlayReason::Type Reason)override;
 private:
     friend class UDWCombatAuthoritySubsystem;
-    void PublishCommittedDamage(float Applied);
-    void ClearFeedback();
+    void PublishCommittedDamage(float Applied,DWCombatCommit::FActionId Impact={});
+    void ClearFeedback(bool StopPulse=true);
     bool IsEpisodeCurrent()const;
     void ApplyEnemyOverlay();
     void StopDamageShake();
-    void TryPlayDamageShake();
+    void TryPlayDamageShake(const FDWGameplayCameraPulseSettings* Override=nullptr);
+    bool IsPulseOwnerCurrent()const;
+    FDWGameplayCameraPulseSettings PendingImpactPulse;
+    DWCombatCommit::FActionId PendingImpactAction{};
+    DWCombatCommit::FEntityLife PendingImpactLife{},PulseLife{};
+    uint64 PendingImpactEpoch=0,PulseEpoch=0;
+    bool bPendingImpact=false;
     UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> FlashInstance;
     UPROPERTY(Transient) TArray<FDWEnemyHitOverlayBinding> Bindings;
     UPROPERTY(Transient) TObjectPtr<UCameraShakeBase> ActiveDamageShake;

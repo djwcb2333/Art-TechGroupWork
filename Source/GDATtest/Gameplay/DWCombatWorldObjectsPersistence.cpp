@@ -6,6 +6,8 @@
 #include "DWCombatCorePickup.h"
 #include "DWCombatRules.h"
 #include "DWGameInstance.h"
+#include "DWGameplayConfig.h"
+#include "DWCombatItemRegistry.h"
 #include "DWEnemyCharacter.h"
 #include "DWLanguageCombatArena.h"
 #include "DWLanguageSubsystem.h"
@@ -62,6 +64,15 @@ bool LegacyEqual(const TArray<FDWPersistedActorState>& A,const TArray<FDWPersist
     {const auto& X=A[I];const auto& Y=B[I];if(!X.ActorId.Equals(Y.ActorId,ESearchCase::CaseSensitive)||!X.ActorPath.Equals(Y.ActorPath,ESearchCase::CaseSensitive)||X.Health!=Y.Health||X.SpawnProgress!=Y.SpawnProgress||X.bDestroyed!=Y.bDestroyed||!X.Transform.Equals(Y.Transform,0.))return false;}return true;
 }
 }
+namespace
+{
+bool ValidateCreatureDefaultRestoreSource(const ADWEnemyCharacter& E,float SavedMax,FString& Error)
+{
+ const auto* D=E.GetClass()->GetDefaultObject<ADWEnemyCharacter>();
+ return D&&(!E.CreatureDefinition||E.bCreatureDefinitionValid)&&
+  DWCreaturePersistencePolicy::ValidateSource(E.CreatureDefinition.Get(),D->CreatureDefinition.Get(),E.CombatProfile,SavedMax,E.MaxHealth,E.MoveSpeed,Error);
+}
+}
 void FDWCombatWorldObjectsRestoreStateDeleter::operator()(FDWCombatWorldObjectsRestoreState* P)const{delete P;}
 FDWCombatWorldObjectsRestorePlan::FDWCombatWorldObjectsRestorePlan()=default;
 FDWCombatWorldObjectsRestorePlan::~FDWCombatWorldObjectsRestorePlan(){DiscardStagedObjects();}
@@ -97,6 +108,8 @@ bool FDWCombatWorldObjectsRestorePlan::IsStagingIntact(FString& Error)const
 bool FDWCombatWorldObjectsRestorePlan::CanCommit(FString& Error)const
 {
     if(!IsStagingIntact(Error)||!State->bPrepared){if(Error.IsEmpty())Error=TEXT("World facts are not prepared");return false;}
+    for(const auto& Row:State->Enemies)
+    {const auto* E=Row.Actor.Get();if(!E||!ValidateCreatureDefaultRestoreSource(*E,Row.Saved.MaxHealth,Error))return false;}
     FDWCombatWorldObjectsSave Live;TArray<FDWPersistedActorState> Legacy;TArray<FDWCombatObjectBinding>B;TArray<uint8>Bytes;
     if(!FDWCombatWorldObjectsPersistence::CaptureInternal(*State->World.Get(),*State->Player.Get(),Live,Legacy,B,Error,State->Ignored)||
         !DWCombatWorldObjectsSave::Encode(Live,Bytes,Error,FormalEssences(State->World.Get()))||Bytes!=State->BeforeBytes||!LegacyEqual(Legacy,State->BeforeLegacy))
@@ -156,6 +169,7 @@ bool FDWCombatWorldObjectsPersistence::PrepareWorldObjects(UWorld& W,ADWPlayerCh
             E->SetActorHiddenInGame(true);E->SetActorEnableCollision(false);E->SetActorTickEnabled(false);
             if(!Plan.IsStagingIntact(Error))return false;
         }
+        if(!ValidateCreatureDefaultRestoreSource(*E,V.MaxHealth,Error))return false;
         Used.Add(E);FDWWorldEnemyPrepared Row;Row.Saved=V;Row.Actor=E;
         if(V.Profile!=EDWEnemyCombatProfile::Legacy)
         {if(!E->IsFormalCombatReady()||!DWEnemyFormal::BuildConfig(*Rules,V.Profile,Row.Config,Error)||!DWEnemyFormal::BuildCoreDropConfig(*Rules,Row.DropConfig,Error)||V.Health>static_cast<float>(Row.Config.Health)||V.MaxHealth!=static_cast<float>(Row.Config.Health)||
@@ -209,6 +223,7 @@ bool FDWCombatWorldObjectsPersistence::PrepareWorldFacts(FDWCombatWorldObjectsRe
     for(auto& Row:C.Enemies)
     {
         auto& S=Row.Saved;auto* E=Row.Actor.Get();if(!ActorCurrent(E,C.World.Get()))return Bad(TEXT("Enemy ended during fact preparation"));
+        if(!ValidateCreatureDefaultRestoreSource(*E,S.MaxHealth,Error))return false;
         for(double V:{S.PhaseRemaining,S.AttackCooldown,S.AlertRemaining,S.PatrolRemaining,S.PathRemaining,S.KnockbackSeconds,S.Dagger.GraceRemainingSeconds})
             if(!FMath::IsFinite(C.At+V)||C.At+V>MAX_flt)return Bad(TEXT("Enemy clock cannot be represented in destination world"));
         if(!FMath::IsFinite(C.At-S.AttackAge)||C.At-S.AttackAge<-MAX_flt)return Bad(TEXT("Enemy animation clock cannot be represented"));
@@ -231,6 +246,8 @@ bool FDWCombatWorldObjectsPersistence::PrepareWorldFacts(FDWCombatWorldObjectsRe
     }
     for(const auto& D:C.Saved.CoreDrops)
     {
+        if(D.Schema==2&&!D.ItemId.IsNone())
+        {auto* GI=C.World->GetGameInstance<UDWGameInstance>();const auto* Config=GI?GI->GetConfigForMap(C.Saved.MapPackage):nullptr;if(!Config||!Config->IsInventoryItem(D.ItemId)||D.Count>Config->GetConfiguredStackLimit(D.ItemId)||FDWCombatItemRegistry::GetItemRole(D.ItemId)==EDWCombatItemRole::PermanentWeapon)return Bad(TEXT("Generic death drop item/stack/role is not supported by the current catalog"));}
         const auto Receipt=Authority.FindReceipt(D.FatalReceipt);const auto Life=Authority.FindLife(D.EnemyEntity);
         if(!Receipt||Receipt->State!=DWCombatCommit::EReceiptState::Committed||Life.Entity!=D.EnemyEntity||Life.Life<D.EnemyLife||
             (D.PlayerEntity&&Authority.FindLife(D.PlayerEntity).Life<D.PlayerLife))return Bad(TEXT("Core drop has no committed historical fatal identity"));
@@ -254,7 +271,7 @@ void FDWCombatWorldObjectsPersistence::AdoptNativeFacts(FDWCombatWorldObjectsRes
         Saved.FatalEpoch=C.NewEpoch; // Receipt numeric IDs are preserved in the candidate ledger.
         UDWCombatCoreDropSubsystem::FRecord Record;Record.Save=Saved;Record.PickupRadiusCm=C.DropConfig.PickupRadiusCm;
         Record.bRestored=true;Record.bMayMaterialize=Saved.Decision==EDWEnemyCoreDropDecision::SpawnPending||Saved.Decision==EDWEnemyCoreDropDecision::Spawned;
-        for(const auto& Row:C.Enemies)if(Row.Saved.Formal.StableEnemyId==Saved.StableEnemyId){Record.Origin=Row.Actor;break;}
+        for(const auto& Row:C.Enemies)if(Saved.Schema==2?Row.Saved.StableId==Saved.SourceStableId:Row.Saved.Formal.StableEnemyId==Saved.StableEnemyId){Record.Origin=Row.Actor;break;}
         D->Records.Add(Saved.DeathId,MoveTemp(Record));
     }
     R->State=C.Saved.Recovery;R->BoundPlayer=C.Player;R->Physical.Reset();R->bInitialized=true;R->bRestoredCold=false;R->bPlacementPending=false;
@@ -271,7 +288,11 @@ void FDWCombatWorldObjectsPersistence::AdoptNativeFacts(FDWCombatWorldObjectsRes
     for(auto& Row:C.Enemies)
     {
         auto* E=Row.Actor.Get();check(E);const auto& S=Row.Saved;
-        E->bCombatWorldStaged=true;E->Health=S.Health;E->MaxHealth=S.MaxHealth;E->State=static_cast<EDWEnemyState>(S.State);E->AttackPhase=static_cast<EDWCombatPhase>(S.Phase);E->AttackSerial=S.AttackSerial;
+        E->bCombatWorldStaged=true;E->Health=S.Health;
+        // DefinitionLegacyHost keeps the verified current class projection; old no-definition Legacy keeps saved MaxHealth.
+        if(!E->CreatureDefinition||E->CreatureDefinition->NumericSource!=EDWCreatureNumericSource::DefinitionLegacyHost)E->MaxHealth=S.MaxHealth;
+        E->State=static_cast<EDWEnemyState>(S.State);E->AttackPhase=static_cast<EDWCombatPhase>(S.Phase);E->AttackSerial=S.AttackSerial;
+        E->GenericDropGroup=S.GenericDropGroup;E->GenericDropRows=S.GenericDropRows;E->bGenericDropsCommitted=S.bGenericDropsCommitted;
         E->CombatProfile=S.Profile;E->PersistentId=S.PersistentId;E->CombatWorldStableId=S.StableId;E->bHealthRestoredFromSave=true;
         E->bCombatDeathEffectsPending=false;E->bCombatRestoreInProgress=false;E->bStartingMeleeAttack=false;E->bDamageInProgress=false;E->bDeathTransitionInProgress=false;
         E->SourceNest=Cast<ADWEnemyNest>(Find(C.Restored,S.SourceNestId));if(E->SourceNest)E->SourceNest->SpawnedEnemies.Add(E);

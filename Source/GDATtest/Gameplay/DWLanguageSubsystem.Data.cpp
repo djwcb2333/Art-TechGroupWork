@@ -178,7 +178,7 @@ bool UDWLanguageSubsystem::LoadDefinitions(FString& Error)
 int64 UDWLanguageSubsystem::GetRevision()const{return Model&&Model->IsReady()?Model->GetState().Revision:0;}
 int32 UDWLanguageSubsystem::GetGuessCharacterLimit()const{return Model&&Model->IsReady()?Model->GetCatalog().MaxGuessCharacters:40;}
 int32 UDWLanguageSubsystem::GetTalentPoints()const{return IsReady()?Model->GetState().AvailableTalentPoints:0;}
-bool UDWLanguageSubsystem::HasTalent(FName Id)const{return Model&&Model->IsReady()&&((IsTrialWorld()&&!FormalSession)||IsFormalSession())&&Model->GetState().LearnedTalentPaidCosts.Contains(Id);}
+bool UDWLanguageSubsystem::HasTalent(FName Id)const{return Model&&Model->IsReady()&&((IsTrialWorld()&&!FormalSession)||IsFormalSession()||IsCombatSandboxSession())&&Model->GetState().LearnedTalentPaidCosts.Contains(Id);}
 bool UDWLanguageSubsystem::IsRuntimeConsumable(FName Id)const
 {const TSharedPtr<FJsonObject>* Uses=nullptr;const TSharedPtr<FJsonObject>* Row=nullptr;return IsReady()&&TrialConfig&&TrialConfig->TryGetObjectField(TEXT("runtime_consumables"),Uses)&&Uses&&(*Uses)->TryGetObjectField(Id.ToString(),Row)&&Row&&Row->IsValid();}
 double UDWLanguageSubsystem::Parameter(const FString& Id,double Fallback)const{return DWLanguageData::Parameter(TrialConfig,Id,Fallback);}

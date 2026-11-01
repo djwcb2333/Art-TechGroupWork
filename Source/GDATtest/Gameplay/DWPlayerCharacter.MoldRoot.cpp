@@ -11,8 +11,7 @@
 
 bool ADWPlayerCharacter::PrepareFormalRootEntry(FDWMoldRootConfig& Out) const
 {
-    if(CharacterA01&&CharacterA01->IsEnabled())return false;
-    if(!HasCombatVitalsReady()||!IsCombatActionAllowed()||IsFormallyRooted()||
+    if(!CharacterA01||!CharacterA01->IsEnabled()||!HasCombatVitalsReady()||!IsCombatActionAllowed()||IsFormallyRooted()||
         GetCombatBaseForm()!=EDWCombatBaseForm::Mold)return false;
     const auto* GI=GetGameInstance<UDWGameInstance>();FString Error;
     auto* Movement=GetCharacterMovement();
@@ -23,7 +22,6 @@ bool ADWPlayerCharacter::PrepareFormalRootEntry(FDWMoldRootConfig& Out) const
 }
 bool ADWPlayerCharacter::TryToggleFormalRoot()
 {
-    if(CharacterA01&&CharacterA01->IsEnabled())return false; // A01 replaces rooted fortress/mines.
     if(!IsCombatActionAllowed()||bGameplayActionInProgress||!HasCombatVitalsReady())return false;
     auto* A=UDWCombatAuthoritySubsystem::Get(this);if(!A)return false;
     const auto Life=A->CaptureActorLife(this);const uint64 Epoch=A->GetWorldEpoch();
@@ -46,8 +44,10 @@ bool ADWPlayerCharacter::TryToggleFormalRoot()
     FDWMoldRootConfig Config;if(!PrepareFormalRootEntry(Config))return false; // Invalid E never cancels an action.
     TGuardValue<bool> Guard(bGameplayActionInProgress,true);
     const uint64 Revision=CombatVitals.GetMutationRevision(),DamageRevision=CombatDamageRevision;
+    const uint64 A01Revision=CharacterA01?CharacterA01->GetResourceRevision():0;
     CancelCombatActions();if(!Current())return false;
     if(CombatVitals.GetMutationRevision()!=Revision||CombatDamageRevision!=DamageRevision||
+        (CharacterA01&&CharacterA01->GetResourceRevision()!=A01Revision)||
         (WeaponAnimationComponent&&WeaponAnimationComponent->IsBusy()))return false;
     TGuardValue<bool> Due(bRootEntryDue,true);
     return A->CommitFormalRootEntry(this);

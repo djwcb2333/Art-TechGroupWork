@@ -8,6 +8,7 @@
 #include "DWWeaponAnimationSet.h"
 #include "DWDialogueSequence.h"
 #include "DWOpeningStepCore.h"
+#include "DWOpeningHoldSkipCore.h"
 #include "DWOpeningPrototype.generated.h"
 
 class ADWOpeningExitVolume;
@@ -75,6 +76,7 @@ public:
  void ShowCombatPrompt(ADWPlayerController* Controller,bool bBlock,bool bDash);
  void ShowTitle(const FString& Small,const FString& Big,float Seconds);
  void HideTitle(){if(TitleTime<TitleSeconds)TitleSeconds=FMath::Min(TitleSeconds,TitleTime+1.4f);}
+ void SetHoldSkipHint(bool Active,float Progress,float Seconds);
  void SetDialogueHint(bool Active){SkipVisible=Active?1.f:0.f;if(!Active)SkipAlpha=0.f;}
  const FString& GetObjective()const{return Objective.Wanted;}
  /** Game title that burns in: a fire front sweeps across, leaving the letters behind it, embers rising off the edge. */
@@ -82,6 +84,7 @@ public:
  bool IsBurnTitleDone()const{return BurnSeconds<=0||BurnTime>=BurnSeconds;}
 protected:
  virtual void NativeOnInitialized() override;
+ virtual int32 NativePaint(const FPaintArgs& Args,const FGeometry& AllottedGeometry,const FSlateRect& MyCullingRect,FSlateWindowElementList& OutDrawElements,int32 LayerId,const FWidgetStyle& InWidgetStyle,bool bParentEnabled) const override;
 private:
  UPROPERTY() TObjectPtr<UFont> PromptInputFont;
  UPROPERTY() TObjectPtr<UHorizontalBox> PromptKeyRow;
@@ -101,8 +104,8 @@ private:
  UPROPERTY() TObjectPtr<UImage> TitleRule;
  UPROPERTY() TObjectPtr<UTextBlock> SkipText;
  UPROPERTY() TObjectPtr<UDWInputGlyphWidget> NextLineGlyph;
- UPROPERTY() TObjectPtr<UImage> SkipTrack;
- UPROPERTY() TObjectPtr<UImage> SkipFill;
+ UPROPERTY() TObjectPtr<UTextBlock> HoldSkipText;
+ UPROPERTY() TObjectPtr<UDWInputGlyphWidget> HoldSkipGlyph;
  UPROPERTY() TObjectPtr<UTextBlock> BurnBig;
  UPROPERTY() TObjectPtr<UTextBlock> BurnSmall;
  UPROPERTY() TObjectPtr<UMaterialInstanceDynamic> BurnMaterial;
@@ -113,10 +116,10 @@ private:
  void AdvanceBurn(float Dt);
  UCanvasPanelSlot* TopSlot=nullptr;
  UCanvasPanelSlot* BottomSlot=nullptr;
- UCanvasPanelSlot* SkipFillSlot=nullptr;
  FDWOpeningFadeText Subtitle,Center,Objective,Prompt;
  float LetterboxTarget=0,LetterboxSpeed=1.6f,Letterbox=0,BlackAlpha=0,FlashAlpha=0,DipTime=10;
  float ObjectiveAlpha=0,TitleTime=0,TitleSeconds=0,SkipVisible=0,SkipAlpha=0,SkipProgress=0;
+ float HoldSkipVisible=0,HoldSkipAlpha=0;
 };
 
 /** One camera move. Positions are absolute world values resolved when the beat starts. */
@@ -267,8 +270,10 @@ public:
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Opening|Dialogue",meta=(DisplayName="04 观察馊团 / Creature Reveal")) TArray<FDWDialogueLine> RevealThoughtLines;
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Opening|Dialogue",meta=(DisplayName="05 尝试交谈 / Encounter Spoken")) TArray<FDWDialogueLine> EncounterSpokenLines;
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Opening|Dialogue",meta=(DisplayName="06 离开独白 / Exit Thought")) TArray<FDWDialogueLine> ExitThoughtLines;
- /** Retained as a no-op for old Blueprint references; only subtitles may be skipped. */
- UFUNCTION(BlueprintCallable,Category="Opening",meta=(DeprecatedFunction,DeprecationMessage="Whole-shot skipping is disabled; left click advances subtitles only.")) void SkipCurrentShot();
+ UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Opening|Skip",meta=(DisplayName="允许长按跳过 / Allow Hold To Skip")) bool bAllowHoldToSkip=true;
+ UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Opening|Skip",meta=(DisplayName="跳过所需按住秒数 / Hold To Skip Seconds",ClampMin="0.1",ClampMax="30",Units="s",ToolTip="默认空格连续按住1秒；不受世界慢动作影响，暂停/失焦清零且必须松开重按。只跳当前演出，不跳战斗或整关。")) float HoldToSkipSeconds=1.f;
+ /** Legacy unconditional Blueprint entry remains a no-op; Space has a separate guarded hold path. */
+ UFUNCTION(BlueprintCallable,Category="Opening",meta=(DeprecatedFunction,DeprecationMessage="Legacy unguarded skip is disabled. Hold Space to safely skip the current presentation; left click advances one subtitle.")) void SkipCurrentShot();
  float GetShakeAmount()const{return Trauma*Trauma;}
  /** Presentation only, called under the loader's opaque cover after exact pending-opening admission. */
  bool PrepareArrivalCover(APlayerController* InController);
@@ -304,6 +309,24 @@ private:
  bool PrepareSequenceStep();
  void CompleteSequenceDialogue(bool bSuccess);
  bool ValidSequenceParameters()const;
+ DWOpeningHoldSkip::Clock HoldSkipClock;
+ uint64 HoldSkipGeneration=0;
+ FDelegateHandle HoldSkipActivationHandle,HoldSkipFocusHandle;
+ UPROPERTY(Transient) TObjectPtr<UInputComponent> OpeningSkipInput;
+ TWeakObjectPtr<ADWPlayerController> HoldSkipLeaseController;
+ bool bHoldSkipInputPushed=false,bHoldSkipPressHeld=false;
+ float StretchCrumbsApplied=0.f,StretchFloorApplied=0.f,RevealBiteApplied=0.f;
+ TWeakObjectPtr<AActor> RevealBiteGround;
+ DWOpeningHoldSkip::Segment HoldSkipSegment()const;
+ bool HoldSkipFocused()const;
+ bool HoldSkipEligible()const;
+ void InvalidateOpeningHoldSkip();
+ void ResetOpeningHoldSkipForStage();
+ void OpeningSkipPressed();
+ void OpeningSkipReleased();
+ bool TickOpeningHoldSkip();
+ bool CompleteHeldOpeningScene();
+ void ShutdownOpeningHoldSkip();
  FName TimingActiveBeat;
  TArray<FName> PendingDialogueBeats;
  FAnchorData OriginalSubtitleLayout;

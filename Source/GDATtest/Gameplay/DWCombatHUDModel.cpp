@@ -6,6 +6,7 @@
 #include "DWCharacterA01Component.h"
 #include "DWLanguageSubsystem.h"
 #include "DWEnemyCharacter.h"
+#include "DWCreatureDefinition.h"
 #include "DWWeaponAnimationComponent.h"
 #include "DWCombatMineSubsystem.h"
 #include "DWCombatItemRegistry.h"
@@ -120,17 +121,25 @@ bool DWCombatHUD::Build(const ADWPlayerCharacter* P,const FDWCombatHUDConfig& C,
     if(const auto* Mines=UDWCombatMineSubsystem::Get(P)){S.MineCooldown=Mines->GetCooldownRemaining(P);S.LiveMines=Mines->GetLiveMineCount(P);}
     return true;
 }
+namespace
+{
+// Shared presentation eligibility only; health visibility must not govern dagger cues.
+bool IsLivingCombatHUDCandidate(const ADWEnemyCharacter* E,const ADWPlayerCharacter* P)
+{
+    return IsValid(E)&&!E->IsActorBeingDestroyed()&&!E->IsHidden()&&E->IsAlive()&&IsValid(P)&&
+        !P->IsActorBeingDestroyed()&&!P->IsDead()&&E->GetWorld()==P->GetWorld()&&FMath::IsFinite(E->MaxHealth)&&E->MaxHealth>0.f;
+}
+}
 bool DWCombatHUD::ShouldShowEnemyHealth(const AActor* Actor,const ADWPlayerCharacter* P,bool Enabled)
 {
-    // Combat characters only. Generic actors, resources, nests and future townsfolk are not inferred from a Health property.
     const auto* E=Cast<ADWEnemyCharacter>(Actor);
-    return Enabled&&IsValid(E)&&!E->IsActorBeingDestroyed()&&!E->IsHidden()&&E->IsAlive()&&IsValid(P)&&
-        !P->IsActorBeingDestroyed()&&!P->IsDead()&&E->GetWorld()==P->GetWorld()&&FMath::IsFinite(E->MaxHealth)&&E->MaxHealth>0.f;
+    return Enabled&&IsLivingCombatHUDCandidate(E,P)&&
+        !(E->CreatureDefinition&&E->CreatureDefinition->Disposition==EDWCreatureDisposition::Neutral);
 }
 bool DWCombatHUD::ShouldShowDaggerCircle(const ADWEnemyCharacter* E,const ADWPlayerCharacter* P)
 {
     const auto* W=IsValid(P)?P->WeaponAnimationComponent.Get():nullptr;
-    return ShouldShowEnemyHealth(E,P,true)&&P->HasCombatVitalsReady()&&W&&W->IsEnabled()&&
+    return IsLivingCombatHUDCandidate(E,P)&&P->HasCombatVitalsReady()&&W&&W->IsEnabled()&&
         W->GetCurrentEquipmentId()==TEXT("DWWeapon_DualDaggers")&&FMath::IsFinite(E->GetDaggerAlertRadius())&&E->GetDaggerAlertRadius()>0.;
 }
 bool DWCombatHUD::ShouldShowShotgunOverhead(const ADWPlayerCharacter* P)

@@ -13,6 +13,7 @@
 #include "DWPlayerCharacter.generated.h"
 
 class UDWGatheringComponent;
+class UDWCombatPresentationComponent;
 class UDWBuildingPlacementComponent;
 class UDWWeaponAnimationComponent;
 class UDWCombatFeedbackComponent;
@@ -21,6 +22,7 @@ class UDWGameplayCameraShakeComponent;
 class UDWGameplayConfig; class UDWInventoryComponent; class UDWSaveGame;
 class ADWResourceNode; class ADWAlcoholProjectile; class UAnimationAsset;
 class USpringArmComponent; class USoundBase; class UCameraShakeBase; class UNiagaraSystem;
+class UDWDesertCutoutViewComponent;
 class UStaticMeshComponent; class UAudioComponent; class UNiagaraComponent;
 class UBoxComponent;
 class ADWGatheringPond;
@@ -34,6 +36,7 @@ public:
     /** Settle the spring arm before the loading cover is removed, even while paused. */
     UFUNCTION(BlueprintCallable,Category="DoughWorld|Camera") void PrepareCameraForReveal();
     ADWPlayerCharacter();
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Designer Cutout") TObjectPtr<UDWDesertCutoutViewComponent> DesignerCutoutView;
     /** Editor PIE, exact CombatTest map and no adventure slot only. No shipping/adventure grant. */
     /** Grant missing permanent test weapons once; independent of the ammo toggle. Editor CombatTest without an adventure slot only. */
     UPROPERTY(EditAnywhere,Category="DoughWorld|Combat|Testing") bool GiveCombatTestWeapons=true;
@@ -42,7 +45,7 @@ public:
     UPROPERTY(EditAnywhere,Category="DoughWorld|Combat|Testing",meta=(ClampMin="0",ClampMax="1000")) int32 CombatTestCoresPerType=10;
     UPROPERTY(EditAnywhere,Category="DoughWorld|Combat|Testing") bool GiveCombatTestAmmo=true;
     UPROPERTY(EditAnywhere,Category="DoughWorld|Combat|Testing",meta=(ClampMin="0",ClampMax="1000")) int32 CombatTestAmmoPerType=100;
-    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Root") bool IsFormallyRooted()const{return !(CharacterA01&&CharacterA01->IsEnabled())&&FormalRoot.IsActive();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Root") bool IsFormallyRooted()const{return CharacterA01&&CharacterA01->IsEnabled()&&FormalRoot.IsActive();}
     bool TryToggleFormalRoot();
     bool IsFormallyRootedAtFrameOffset(double Seconds)const;
     bool GetFormalRootIdentity(FDWMoldRootIdentity& Out)const;
@@ -65,6 +68,7 @@ public:
     virtual void Tick(float DeltaSeconds) override;
     virtual float TakeDamage(float Amount,const FDamageEvent& Event,AController* InstigatorController,AActor* Causer) override;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Inventory") TObjectPtr<UDWInventoryComponent> Inventory;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Combat") TObjectPtr<UDWCombatPresentationComponent> CombatPresentation;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|Gathering") TObjectPtr<UDWGatheringComponent> GatheringComponent;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="DoughWorld|A01") TObjectPtr<UDWCharacterA01Component> CharacterA01;
     bool CanUseMainHandShortcut(int32 InventoryIndex)const;
@@ -340,11 +344,11 @@ public:
     void TickGameplayClocks(float DeltaSeconds,bool bActuallySprinting);
     bool TryApplySaveData(const UDWSaveGame* Save);
     UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") bool HasCombatVitalsReady() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetRuntime().IsReady():CombatVitals.IsReady();}
-    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") EDWCombatBaseForm GetCombatBaseForm() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetBaseForm():CombatVitals.GetForm();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") EDWCombatBaseForm GetCombatBaseForm() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetBaseForm():EDWCombatBaseForm::Normal;}
     UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatWater() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetRuntime().GetState().Water:CombatVitals.GetWater();}
     UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatSatiety() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetRuntime().GetState().Satiety:CombatVitals.GetSatiety();}
-    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatSpecial() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetSpecial():CombatVitals.GetSpecial();}
-    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatFormRemaining() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetRuntime().GetState().FormRemainingSeconds:CombatVitals.GetFormRemaining();}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatSpecial() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetSpecial():0.;}
+    UFUNCTION(BlueprintPure,Category="DoughWorld|Combat|Resources") double GetCombatFormRemaining() const {return CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetRuntime().GetState().FormRemainingSeconds:0.;}
     EDWCombatBaseForm GetCombatBaseFormAtFrameOffset(double Seconds) const;
     double GetCombatFrameSliceStartWorldSeconds(double DeltaSeconds) const;
     uint64 GetCombatDamageRevision() const {return CombatDamageRevision;}

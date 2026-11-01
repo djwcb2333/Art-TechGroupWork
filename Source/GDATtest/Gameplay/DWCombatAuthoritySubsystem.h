@@ -81,6 +81,9 @@ class GDATTEST_API UDWCombatAuthoritySubsystem : public UTickableWorldSubsystem
 {
     GENERATED_BODY()
 public:
+    /** Read-only presentation qualification; never admits or mutates an action. */
+    bool IsCurrentPresentationAction(DWCombatCommit::FActionId Action,AActor* Owner)const
+    {return IsOperational()&&Action.Epoch==GetWorldEpoch()&&IsActionOwnedBy(Action,Owner);}
     UDWCombatAuthoritySubsystem();
     virtual ~UDWCombatAuthoritySubsystem() override;
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;

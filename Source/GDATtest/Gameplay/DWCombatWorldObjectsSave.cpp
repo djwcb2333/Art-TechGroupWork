@@ -5,7 +5,7 @@
 #include "Serialization/MemoryWriter.h"
 namespace
 {
-constexpr uint32 Magic=0x4457574f,Version=1,MaxCount=65536;
+constexpr uint32 Magic=0x4457574f,Version=2,MaxCount=65536;
 constexpr int32 MaxBytes=64*1024*1024;
 bool Fin(double V){return FMath::IsFinite(V);}
 bool Nonnegative(double V){return Fin(V)&&V>=0.;}
@@ -64,11 +64,19 @@ void Recovery(FArchive& A,FDWCombatRecoverySave& S)
 }
 void Serialize(FArchive& A,FDWCombatWorldObjectsSave& S)
 {
-    uint32 M=Magic,V=Version;A<<M<<V<<S.Schema;if(M!=Magic||V!=Version||S.Schema!=1){A.SetError();return;}
+    bool Extended=false;for(const auto& E:S.Enemies)Extended|=E.bGenericDropsCommitted;for(const auto& D:S.CoreDrops)Extended|=D.Schema==2;
+    uint32 M=Magic,V=Extended?Version:1;A<<M<<V<<S.Schema;if(M!=Magic||(V!=1&&V!=Version)||S.Schema!=1){A.SetError();return;}
     String(A,S.MapPackage);Items(A,S.Enemies,Enemy);Items(A,S.NestClocks,[](FArchive& R,FDWCombatNestClockSave& N){String(R,N.StableId);R<<N.SampledInterval;});Items(A,S.CoreDrops,Drop);Recovery(A,S.Recovery);
+    if(V>=2)
+    {
+        for(auto& E:S.Enemies){A<<E.GenericDropGroup<<E.GenericDropRows;Flag(A,E.bGenericDropsCommitted);}
+        for(auto& D:S.CoreDrops){String(A,D.SourceStableId);A<<D.GenericGroup<<D.GenericOrdinal;}
+    }
 }
 bool ValidDrop(const FDWCombatCoreDropSave& S,const FString& MapPackage,bool bFormal)
 {
+    if(S.Schema==2)return DWCreatureDropPolicy::ValidateGenericShape(S);
+    if(!S.SourceStableId.IsEmpty()||S.GenericGroup.IsValid()||S.GenericOrdinal)return false;
     if(S.Schema!=1||!S.DeathId.IsValid()||!S.StableEnemyId.IsValid()||S.Location.ContainsNaN()||!S.FatalEpoch||!S.FatalReceipt||!S.EnemyEntity||!S.EnemyLife||
         S.Profile<EDWEnemyCombatProfile::MoldGrunt||S.Profile>EDWEnemyCombatProfile::DoughElite||(S.PlayerEntity==0)!=(S.PlayerLife==0)||(S.ForcedFallReceiptEpoch==0)!=(S.ForcedFallReceiptId==0))return false;
     const bool Eligible=(S.Profile==EDWEnemyCombatProfile::MoldGrunt||S.Profile==EDWEnemyCombatProfile::YeastGrunt)&&S.PlayerEntity;
@@ -82,8 +90,8 @@ bool DWCombatWorldObjectsSave::Validate(const FDWCombatWorldObjectsSave& S,FStri
 {
     const auto Bad=[&](const TCHAR* M){Error=M;return false;};
     if(S.Schema!=1||!Text(S.MapPackage)||!FPackageName::IsValidLongPackageName(S.MapPackage)||S.Enemies.Num()>MaxCount||S.NestClocks.Num()>MaxCount||S.CoreDrops.Num()>MaxCount||!DWCombatRecovery::Validate(S.Recovery,Error))return Bad(TEXT("Invalid world object schema/map/recovery/count"));
-    TSet<FString> Ids,Paths,Deaths,Receipts;TSet<uint64> Entities;TSet<FGuid> FormalIds,DeathIds,PickupIds;TMap<FGuid,const FDWCombatCoreDropSave*> Drops;
-    for(const auto& D:S.CoreDrops){const FString Death=FString::Printf(TEXT("%llu/%llu/%llu"),D.FatalEpoch,D.EnemyEntity,D.EnemyLife),Receipt=FString::Printf(TEXT("%llu/%llu"),D.FatalEpoch,D.FatalReceipt);
+    TSet<FString> Ids,Paths,Deaths,Receipts;TSet<uint64> Entities;TSet<FGuid> FormalIds,DeathIds,PickupIds,GenericGroups;TMap<FGuid,const FDWCombatCoreDropSave*> Drops;
+    for(const auto& D:S.CoreDrops){const FString Death=FString::Printf(TEXT("%llu/%llu/%llu"),D.FatalEpoch,D.EnemyEntity,D.EnemyLife)+(D.Schema==2?FString::Printf(TEXT("/generic/%d"),D.GenericOrdinal):TEXT("")),Receipt=FString::Printf(TEXT("%llu/%llu"),D.FatalEpoch,D.FatalReceipt)+(D.Schema==2?FString::Printf(TEXT("/generic/%d"),D.GenericOrdinal):TEXT(""));
         if(!ValidDrop(D,S.MapPackage,bValidatedFormalSession)||DeathIds.Contains(D.DeathId)||Deaths.Contains(Death)||Receipts.Contains(Receipt)||(D.PickupId.IsValid()&&PickupIds.Contains(D.PickupId)))return Bad(TEXT("Invalid/duplicate core death record"));DeathIds.Add(D.DeathId);Deaths.Add(Death);Receipts.Add(Receipt);if(D.PickupId.IsValid())PickupIds.Add(D.PickupId);Drops.Add(D.DeathId,&D);}
     for(const auto& E:S.Enemies)
     {
@@ -101,13 +109,29 @@ bool DWCombatWorldObjectsSave::Validate(const FDWCombatWorldObjectsSave& S,FStri
             (E.bFacingLocked&&!FMath::IsNearlyEqual(E.LockedDirection.SizeSquared(),1.,1.e-5))||(!E.bHasObservation&&E.ObservationAge!=0.)||(E.ForcedFall.Stage!=EDWForcedFallStage::None&&!E.KnockbackRevision)||E.LegacySlows.Num()>MaxCount)return Bad(TEXT("Contradictory enemy phase/driver facts"));
         for(auto V:E.LegacySlows)if(!Fin(V.X)||V.X<0.||V.X>100.||!Nonnegative(V.Y))return Bad(TEXT("Invalid slow"));
         for(double V:{E.CurrentWindup,E.CurrentActive,E.CurrentRecovery,E.CurrentRange,E.CurrentDamage,E.KnockbackDistance,E.KnockbackSeconds,E.KnockbackSpeed,E.DeathCleanupRemaining,E.LifeSpanRemaining})if(V>MAX_flt)return Bad(TEXT("Enemy scalar cannot be represented by native float"));
+        if(E.bGenericDropsCommitted!=(E.GenericDropGroup.IsValid())||E.GenericDropRows<0||E.GenericDropRows>16||(!E.bGenericDropsCommitted&&E.GenericDropRows!=0)||
+            (E.bGenericDropsCommitted&&E.Health!=0.f))return Bad(TEXT("Invalid generic death group"));
+        if(E.bGenericDropsCommitted)
+        {
+            if(GenericGroups.Contains(E.GenericDropGroup))return Bad(TEXT("Duplicate generic death group"));GenericGroups.Add(E.GenericDropGroup);
+            TSet<int32> Ordinals;const FDWCombatCoreDropSave* First=nullptr;int64 Budget=0;
+            for(const auto& D:S.CoreDrops)if(D.Schema==2&&D.GenericGroup==E.GenericDropGroup)
+            {
+                if(D.SourceStableId!=E.StableId||D.Profile!=E.Profile||D.GenericOrdinal>E.GenericDropRows||Ordinals.Contains(D.GenericOrdinal))return Bad(TEXT("Generic drop source/group/ordinal mismatch"));
+                if(First&&(D.FatalEpoch!=First->FatalEpoch||D.FatalReceipt!=First->FatalReceipt||D.EnemyEntity!=First->EnemyEntity||D.EnemyLife!=First->EnemyLife||D.PlayerEntity!=First->PlayerEntity||D.PlayerLife!=First->PlayerLife))return Bad(TEXT("Generic group mixes fatal identities"));
+                Ordinals.Add(D.GenericOrdinal);Budget+=D.Count;First=&D;
+            }
+            if(Ordinals.Num()!=E.GenericDropRows||Budget>10000)return Bad(TEXT("Incomplete generic drop group or budget overflow"));
+        }
         if(E.Profile!=EDWEnemyCombatProfile::Legacy)
         {
             const auto& F=E.Formal;if(F.Schema!=1||F.Profile!=E.Profile||!F.StableEnemyId.IsValid()||FormalIds.Contains(F.StableEnemyId)||F.BirthLocation!=E.Home||F.bPlayerDeathReturn!=E.bPlayerDeathReturn||
                 (F.bEngaged&&F.bReturningHome)||!Nonnegative(F.DisengageElapsedSeconds)||(!F.bDisengageCandidate&&F.DisengageElapsedSeconds!=0.)||(F.bDisengageCandidate&&!F.bEngaged)||
                 !Nonnegative(F.AlertRemainingSeconds)||!Nonnegative(F.AttackCooldownRemainingSeconds)||F.DropDecision>EDWEnemyCoreDropDecision::Claimed||
                 !E.StableId.Equals(TEXT("enemy:")+F.StableEnemyId.ToString(EGuidFormats::Digits),ESearchCase::CaseSensitive))return Bad(TEXT("Invalid formal enemy memory"));
-            if(F.DropDecision==EDWEnemyCoreDropDecision::Unresolved)
+            if(E.bGenericDropsCommitted)
+            {if(F.DropDecision!=EDWEnemyCoreDropDecision::Unresolved||F.CoreDropDeathId.IsValid()||F.PickupId.IsValid()||!F.CoreItemId.IsNone()||F.CoreCount)return Bad(TEXT("Mixed generic and core death policies"));}
+            else if(F.DropDecision==EDWEnemyCoreDropDecision::Unresolved)
             {if(E.Health==0.f||F.CoreDropDeathId.IsValid()||F.FatalReceiptId||F.FatalReceiptEpoch||F.DeathEntityId||F.DeathLife||F.CreditedPlayerEntityId||F.CreditedPlayerLife||F.PickupId.IsValid()||!F.CoreItemId.IsNone()||F.CoreCount)return Bad(TEXT("Invalid unresolved drop"));}
             else
             {const auto* const* D=Drops.Find(F.CoreDropDeathId);if(E.Health!=0.f||!D||(*D)->StableEnemyId!=F.StableEnemyId||(*D)->Profile!=F.Profile||(*D)->Decision!=F.DropDecision||(*D)->FatalEpoch!=F.FatalReceiptEpoch||(*D)->FatalReceipt!=F.FatalReceiptId||(*D)->EnemyEntity!=F.DeathEntityId||(*D)->EnemyLife!=F.DeathLife||(*D)->PlayerEntity!=F.CreditedPlayerEntityId||(*D)->PlayerLife!=F.CreditedPlayerLife||(*D)->PickupId!=F.PickupId||(*D)->ItemId!=F.CoreItemId||(*D)->Count!=F.CoreCount)return Bad(TEXT("Enemy and core drop disagree"));}
@@ -116,7 +140,13 @@ bool DWCombatWorldObjectsSave::Validate(const FDWCombatWorldObjectsSave& S,FStri
         else if(E.Formal.Schema||E.MeleeAction.Id||E.ForcedFall.Stage!=EDWForcedFallStage::None)return Bad(TEXT("Legacy enemy has formal identity"));
         Ids.Add(E.StableId);Entities.Add(E.Life.Entity);if(!E.bRuntimeSpawned)Paths.Add(E.ActorPath);
     }
-    for(const auto& D:S.CoreDrops)if(!FormalIds.Contains(D.StableEnemyId))return Bad(TEXT("Destroyed formal enemy has no world tombstone"));
+    for(const auto& D:S.CoreDrops)
+    {
+        if(D.Schema==2)
+        {const auto* E=S.Enemies.FindByPredicate([&](const auto& X){return X.StableId==D.SourceStableId&&X.bGenericDropsCommitted&&X.GenericDropGroup==D.GenericGroup;});if(!E)return Bad(TEXT("Generic death has no retained source tombstone"));}
+        else
+        {const auto* E=S.Enemies.FindByPredicate([&](const auto& X){return X.Formal.StableEnemyId==D.StableEnemyId;});if(!E||E->bGenericDropsCommitted||!FormalIds.Contains(D.StableEnemyId))return Bad(TEXT("Destroyed formal enemy has no exclusive core tombstone"));}
+    }
     for(const auto& N:S.NestClocks){if(!Text(N.StableId)||!N.StableId.StartsWith(TEXT("nest:"),ESearchCase::CaseSensitive)||Ids.Contains(N.StableId)||!Fin(N.SampledInterval)||N.SampledInterval<=0.)return Bad(TEXT("Invalid nest clock"));Ids.Add(N.StableId);}
     Error.Reset();return true;
 }

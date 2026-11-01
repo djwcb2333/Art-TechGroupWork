@@ -181,7 +181,7 @@ bool FDWCombatPlayerPersistence::Validate(const FDWCombatRules& Rules,const UDWS
         !FDWMoldRootPlan::ValidateSnapshot(RC,{S.bRooted,S.RootAnchor},V.BaseForm,V.Special-V.SpecialGrowthCarry,V.FormRemainingSeconds-V.FormTimeCarry))
     {if(Error.IsEmpty())Error=TEXT("Invalid shield, dash or rooted resource snapshot.");return false;}
     if(DWCharacterA01SaveBridge::HasTrialFields(Save)||Save.FormalLanguage.Schema==2)
-    {FDWA01SavedProjection Projection;if(!DWCharacterA01SaveBridge::ValidateProjection(Rules,Save,Projection,Error)||FMath::Abs(Projection.CooldownRemaining-S.DashCooldownRemaining)>1.e-8||S.bRooted)
+    {FDWA01SavedProjection Projection;if(!DWCharacterA01SaveBridge::ValidateProjection(Rules,Save,Projection,Error)||FMath::Abs(Projection.CooldownRemaining-S.DashCooldownRemaining)>1.e-8)
         {Error=TEXT("A01 saved cooldown/root state disagrees with its independent state block.");return false;}}
     if(Save.FormalLanguage.Schema==2)
     {

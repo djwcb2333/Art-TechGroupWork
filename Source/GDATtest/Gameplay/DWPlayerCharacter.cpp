@@ -1,6 +1,9 @@
 #include "DWPlayerCharacter.h"
+#include "DWDesertCutoutViewComponent.h"
+#include "DWCombatSandboxContext.h"
 #include "DWRetiredSaveProjection.h"
 #include "DWGatheringComponent.h"
+#include "DWCombatPresentationComponent.h"
 #include "DWBuildingPlacementComponent.h"
 #include "DWCombatHUDModel.h"
 #include "DWCombatEquipment.h"
@@ -69,8 +72,10 @@
 
 ADWPlayerCharacter::ADWPlayerCharacter()
 {
+    DesignerCutoutView=CreateDefaultSubobject<UDWDesertCutoutViewComponent>(TEXT("DesignerCutoutView"));
     GameplayCameraShake=CreateDefaultSubobject<UDWGameplayCameraShakeComponent>(TEXT("GameplayCameraShake"));
     Inventory=CreateDefaultSubobject<UDWInventoryComponent>(TEXT("DoughWorldInventory"));
+    CombatPresentation=CreateDefaultSubobject<UDWCombatPresentationComponent>(TEXT("CombatPresentation"));
     GatheringComponent=CreateDefaultSubobject<UDWGatheringComponent>(TEXT("GatheringComponent"));
     CharacterA01=CreateDefaultSubobject<UDWCharacterA01Component>(TEXT("CharacterA01"));
     BuildingPlacement=CreateDefaultSubobject<UDWBuildingPlacementComponent>(TEXT("BuildingPlacement"));
@@ -184,6 +189,8 @@ void ADWPlayerCharacter::UnPossessed()
 
 void ADWPlayerCharacter::Tick(float Dt)
 {
+    if(DWCombatSandbox::IsWorld(GetWorld())&&CharacterA01&&!CharacterA01->IsEnabled())
+    {FString Error;if(!CharacterA01->InitializeForCombatSandbox(Error)){EndFormalRootFacts(EDWMoldRootEnd::Restore);CancelCombatActions();UE_LOG(LogTemp,Error,TEXT("CombatSandbox unavailable: %s"),*Error);return;}}
     if(auto* PC=Cast<ADWPlayerController>(GetController()))PC->PrepareCombatInputForSimulation();
 #if WITH_EDITOR && WITH_DEV_AUTOMATION_TESTS
     if(!TryGiveCombatTestWeapons())return;
@@ -248,16 +255,17 @@ void ADWPlayerCharacter::SyncCombatVitalsCompatibility()
 void ADWPlayerCharacter::RefreshCombatMovementSpeed()
 {
     if(!HasCombatVitalsReady()||!GetCharacterMovement())return;
-    const double FormSpeed=CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetWalkSpeedCmPerSecond():CombatVitals.GetConfig().BaseMoveCentimetersPerSecond*
-        (IsFormallyRooted()?0.:(GetCombatBaseForm()==EDWCombatBaseForm::Yeast?CombatVitals.GetConfig().YeastMoveMultiplier:1.));
+    const double FormSpeed=IsFormallyRooted()?0.:(CharacterA01&&CharacterA01->IsEnabled()?CharacterA01->GetWalkSpeedCmPerSecond():CombatVitals.GetConfig().BaseMoveCentimetersPerSecond*
+        (GetCombatBaseForm()==EDWCombatBaseForm::Yeast?CombatVitals.GetConfig().YeastMoveMultiplier:1.));
     const double ReloadMultiplier=WeaponAnimationComponent?WeaponAnimationComponent->GetReloadMovementMultiplier():1.;
     GetCharacterMovement()->MaxWalkSpeed=static_cast<float>(FormSpeed*ReloadMultiplier*GetGatheringEnvironmentMovementMultiplier());
 }
 double ADWPlayerCharacter::GetCombatIncomingMultiplier() const
 {
+    // Root is an independent retained stance. A01 suppresses legacy base-form bonuses, not this committed stance.
+    if(IsFormallyRooted())return FormalRoot.GetConfig().IncomingMultiplier;
     if(CharacterA01&&CharacterA01->IsEnabled())return 1.;
     const auto& C=CombatVitals.GetConfig();
-    if(IsFormallyRooted())return FormalRoot.GetConfig().IncomingMultiplier;
     if(GetCombatBaseForm()==EDWCombatBaseForm::Yeast)return C.YeastIncomingMultiplier;
     if(GetCombatBaseForm()==EDWCombatBaseForm::Mold)return C.MoldIncomingMultiplier;
     return C.NormalIncomingMultiplier;
@@ -267,6 +275,7 @@ bool ADWPlayerCharacter::CanReceiveCombatDamage() const
     !IsCombatSimulationSuspended()&&!UDWWorldEventSubsystem::IsPlaying(this);}
 EDWCombatBaseForm ADWPlayerCharacter::GetCombatBaseFormAtFrameOffset(double Seconds) const
 {
+    if(!CharacterA01||!CharacterA01->IsEnabled())return EDWCombatBaseForm::Normal;
     if(!bHasCombatFormFrameSlice||!FMath::IsFinite(Seconds)||Seconds<0.)return GetCombatBaseForm();
     auto* A=UDWCombatAuthoritySubsystem::Get(this);
     if(!A)return GetCombatBaseForm();

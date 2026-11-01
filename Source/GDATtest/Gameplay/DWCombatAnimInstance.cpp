@@ -33,7 +33,7 @@ void UDWCombatAnimInstance::ResetInputs()
     IdleSequence=CompatibleSequence(PreviewIdleSequence);
     MoveSequence=AlertSequence=ThrowSequence=TransformSequence=DashSequence=MeleeSequence=AttackSequence=DeathSequence=IdleSequence;
     MovePlayRate=TransformPlayRate=MeleePlayRate=AttackPlayRate=1.f;
-    ThrowPositionSeconds=MeleePositionSeconds=AttackPositionSeconds=0.f;
+    ThrowPositionSeconds=MeleePositionSeconds=AttackPositionSeconds=AlertPositionSeconds=0.f;
 }
 
 void UDWCombatAnimInstance::NativeInitializeAnimation()
@@ -94,6 +94,7 @@ void UDWCombatAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
         MeleeSequence=ResolveSequence(CurrentMeleeAnimation,IdleSequence);
         DeathSequence=ResolveSequence(Player->DeathAnimation,IdleSequence);
         AlertSequence=AttackSequence=IdleSequence;
+        AlertPositionSeconds=0.f;
         MovePlayRate=Player->bSprinting && Player->GameplayConfig
             ? DWCombatAnimation::SafePositive(Player->GameplayConfig->SprintSpeedMultiplier) : 1.f;
         // Match the previous player transformation playback convention.
@@ -138,6 +139,8 @@ void UDWCombatAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
         IdleSequence=ResolveSequence(Enemy->IdleAnimation,CompatibleSequence(PreviewIdleSequence));
         MoveSequence=ResolveSequence(Enemy->MoveAnimation,IdleSequence);
         AlertSequence=ResolveSequence(Enemy->AlertAnimation,IdleSequence);
+        AlertPositionSeconds=CompatibleSequence(Enemy->AlertAnimation)
+            ? Enemy->GetCombatAlertSourceSeconds(AlertSequence->GetPlayLength()) : 0.f;
         UAnimationAsset* CurrentEnemyAttackAnimation=Enemy->GetCurrentAttackAnimation();
         AttackSequence=ResolveSequence(CurrentEnemyAttackAnimation,IdleSequence);
         DeathSequence=ResolveSequence(Enemy->DeathAnimation,IdleSequence);
@@ -149,7 +152,7 @@ void UDWCombatAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
             ? DWCombatAnimation::RateForDuration(AttackSequence,Enemy->GetCombatAttackDuration()) : 1.f;
         if (!AttackSequence || !CompatibleSequence(CurrentEnemyAttackAnimation)) AttackPositionSeconds=0.f;
         else if (Enemy->AttackPhase!=EDWCombatPhase::None)
-            AttackPositionSeconds=AttackSequence->GetPlayLength()*FMath::Clamp(Enemy->GetCombatAttackElapsedSeconds()/FMath::Max(.001f,Enemy->GetCombatAttackDuration()),0.f,1.f);
+            AttackPositionSeconds=Enemy->GetCombatAttackSourceSeconds(AttackSequence->GetPlayLength());
         // Keep the last sampled pose while this state's remaining blend weight fades out.
         ThrowPositionSeconds=MeleePositionSeconds=0.f;
         switch (AnimationState)

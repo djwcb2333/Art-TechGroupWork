@@ -140,8 +140,10 @@ bool ValidateRelationships(const TMap<FName,FDWCombatRules::FValue>& Values,FStr
     if(N(TEXT("special.floor"))>N(TEXT("special.max"))||N(TEXT("special.initial"))<N(TEXT("special.floor"))||N(TEXT("special.initial"))>N(TEXT("special.max"))||N(TEXT("special.normal"))<N(TEXT("special.floor"))||N(TEXT("special.normal"))>N(TEXT("special.max")))
         return Fail(Error,TEXT("special: initial/normal/floor/max inconsistent"));
     const double Gain=N(TEXT("special.gain_per_second"));
-    if(N(TEXT("yeast.dash.spend_per_second"))<=Gain||N(TEXT("mold.root.spend_per_second"))<=Gain)
-        return Fail(Error,TEXT("ability spend per second must exceed special growth"));
+    if(N(TEXT("yeast.dash.spend_per_second"))<=Gain)
+        return Fail(Error,TEXT("legacy dash spend per second must exceed special growth"));
+    // Root is funded by the A01 corruption pool, whose regeneration is suppressed while rooted.
+    // The retired legacy Special growth is not a Root income and cannot constrain its drain.
     const double MinimumDash=N(TEXT("yeast.dash.start_cost"))+(N(TEXT("yeast.dash.spend_per_second"))-Gain)*N(TEXT("yeast.dash.min_duration_s"));
     if(!FMath::IsFinite(MinimumDash)||MinimumDash>N(TEXT("special.max"))-N(TEXT("special.floor"))||N(TEXT("mold.root.start_cost"))>=N(TEXT("special.max"))-N(TEXT("special.floor")))
         return Fail(Error,TEXT("ability cannot have a positive affordable duration"));

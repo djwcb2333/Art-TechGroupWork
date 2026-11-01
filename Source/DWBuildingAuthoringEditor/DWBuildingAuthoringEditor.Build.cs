@@ -5,6 +5,6 @@ public class DWBuildingAuthoringEditor : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         PublicDependencyModuleNames.AddRange(new[] { "Core", "CoreUObject", "Engine", "GDATtest" });
-        PrivateDependencyModuleNames.AddRange(new[] { "UnrealEd", "Slate", "SlateCore", "InputCore", "ToolMenus", "PropertyEditor", "AssetTools", "AssetRegistry", "ContentBrowser", "AdvancedPreviewScene", "Kismet", "KismetCompiler", "BlueprintGraph", "DesktopPlatform", "ApplicationCore", "Json", "JsonUtilities", "RenderCore", "Landscape", "PhysicsCore" });
+        PrivateDependencyModuleNames.AddRange(new[] { "UnrealEd", "Slate", "SlateCore", "InputCore", "ToolMenus", "PropertyEditor", "AssetTools", "AssetRegistry", "ContentBrowser", "AdvancedPreviewScene", "Kismet", "KismetCompiler", "BlueprintGraph", "DesktopPlatform", "ApplicationCore", "Json", "JsonUtilities", "RenderCore", "Landscape", "PhysicsCore", "Niagara", "NiagaraEditor", "ProceduralMeshComponent" });
     }
 }

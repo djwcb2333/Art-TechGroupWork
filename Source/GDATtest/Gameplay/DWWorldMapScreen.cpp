@@ -42,6 +42,7 @@ void UDWWorldMapScreen::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
     SetIsFocusable(true);
+    SetClipping(EWidgetClipping::ClipToBoundsAlways); // Expanding circle stays inside this local player's viewport.
     if(WidgetTree&&!WidgetTree->RootWidget)
         WidgetTree->RootWidget=WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass(),TEXT("WorldMapRoot"));
 }
@@ -78,25 +79,19 @@ bool UDWWorldMapScreen::InitializeMap(ADWGameplayHUD* InHUD,FString& OutError)
     if(MiniTarget.bIsActorTarget)MiniTarget=FDWMinimapNavigationTarget();
     MiniMarkers.StableSort([](const FDWMinimapDisplayMarker& A,const FDWMinimapDisplayMarker& B){return A.Priority<B.Priority;});
     MiniPlayer=Mini->GetPlayerLocation();MiniForward=Pawn->GetActorForwardVector();MiniNorth=FRotator(0.f,Mini->NorthYaw,0.f).Vector();
-    auto* Base=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/DoughWorld/UI/M_DWMapMotionClay.M_DWMapMotionClay"));
     VertexTintMaterial=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/DoughWorld/UI/M_DWMapVertexTint.M_DWMapVertexTint"));
-    if(!Current()){OutError=TEXT("地图加载期间状态改变。 / Map state changed during material load.");return false;}
-    InitialMiniMaterial=Base?UMaterialInstanceDynamic::Create(Base,this):nullptr;
-    if(!Current()){OutError=TEXT("地图材质创建期间状态改变。 / Map state changed during material creation.");return false;}
-    if(!InitialMiniMaterial||!VertexTintMaterial||!DWMapMotionAdapter::CopyMiniSnapshotToWorldMaterial(Mini,InitialMiniMaterial,OutError))
-    {if(OutError.IsEmpty())OutError=TEXT("地图过渡材质不可用。 / Map transition material unavailable.");return false;}
-    if(!Current()){OutError=TEXT("地图打开前状态改变，请重试。 / Map state changed; retry.");return false;}
-    if(!Subsystem->OpenMap(PC,Initial,OutError))return false;
+    if(!Current()){OutError=TEXT("Map state changed during image setup.");return false;}
+    InitialMiniImage=Mini->GetMapImage();InitialImageSettings=Mini->ImageMap;
+    if(!VertexTintMaterial){OutError=TEXT("Map transition tint material unavailable.");return false;}
+
+    if(!Subsystem->OpenMapDeferred(PC,Initial,OutError))return false;
     if(!WeakWorld.IsValid()||WeakWorld->bIsTearingDown||!WeakPC.IsValid()||WeakPC->IsActorBeingDestroyed()||!WeakPawn.IsValid()||WeakPawn->IsActorBeingDestroyed()||!WeakMini.IsValid()||!WeakHUD.IsValid()||WeakHUD->IsActorBeingDestroyed()||!WeakMap.IsValid()||!WeakMapPC.IsValid()||!WeakMapPC->OwnsWorldMapPause()||WeakHUD->GetMenuPage()!=EDWMenuPage::None||WeakPC->GetPawn()!=WeakPawn.Get()||WeakMini->GetOwner()!=WeakPawn.Get()||WeakPC->GetWorld()!=WeakWorld.Get())
     {if(WeakMap.IsValid())WeakMap->CloseMap();OutError=TEXT("地图打开期间状态改变。 / Map owner changed.");return false;}
-    Map=Subsystem;MiniComponent=Mini;MapMaterial=Subsystem->GetMapMaterial();
-    if(!MapMaterial||!DWMapMotionAdapter::SnapshotFullMap(Subsystem,Pawn->GetActorLocation().Z,FVector2D::ZeroVector,Initial,EndFrame,OutError))
-    {Subsystem->CloseMap();Map.Reset();return false;}
-    TransitionCapture=NewObject<UDWMapTransitionCapture>(this);
-    if(!TransitionCapture||!TransitionCapture->Initialize(PC,Mini,Subsystem,StartFrame,EndFrame,TransitionResolution,OutError))
-    {Subsystem->CloseMap();Map.Reset();TransitionCapture=nullptr;return false;}
-    TransitionCapture->SetDirection(1);DisplayFrame=StartFrame;DisplayAlpha=0.f;bDisplayCommitted=false;
-    MapBrush.DrawAs=ESlateBrushDrawType::Image;MapBrush.SetResourceObject(MapMaterial);
+    Map=Subsystem;MiniComponent=Mini;MapImage=nullptr;TransitionCapture=nullptr;
+    bCaptureStarted=false;bMapCaptureReady=false;
+    OpeningTimeline.Reset(MiniFadeSeconds,ExpandSeconds,FullFadeSeconds);OpeningSample=OpeningTimeline.Read(false);
+    DisplayFrame=StartFrame;DisplayAlpha=0.f;bDisplayCommitted=false;
+    MapBrush.DrawAs=ESlateBrushDrawType::Image;
     CloseArt=LoadObject<UTexture2D>(nullptr,TEXT("/Game/DoughWorld/UI/Image/T_DW_C04_CloseBrush.T_DW_C04_CloseBrush"));
     CloseBrush.DrawAs=ESlateBrushDrawType::Image;CloseBrush.SetResourceObject(CloseArt);
     bOpen=true;bClosing=false;bDragging=false;bMoved=false;bSettingsOverlayActive=false;
@@ -109,7 +104,7 @@ void UDWWorldMapScreen::SetSettingsOverlayActive(bool bActive)
 {
     const double Now=FPlatformTime::Seconds();
     if(bActive&&!bSettingsOverlayActive)PauseAt=Now;
-    if(!bActive&&bSettingsOverlayActive&&TransitionCapture)TransitionCapture->PauseDeadline(Now-PauseAt);
+    if(!bActive&&bSettingsOverlayActive)if(auto* Subsystem=Map.Get())Subsystem->PauseCaptureDeadline(Now-PauseAt);
     bSettingsOverlayActive=bActive;bDragging=false;MotionTime=Now;
     SetVisibility(bActive?ESlateVisibility::Collapsed:ESlateVisibility::Visible);
 }
@@ -117,25 +112,23 @@ void UDWWorldMapScreen::SetSettingsOverlayActive(bool bActive)
 void UDWWorldMapScreen::CloseMapView()
 {
     bDragging=false;bOpen=false;
-    if(TransitionCapture)TransitionCapture->Release();TransitionCapture=nullptr;InitialMiniMaterial=nullptr;VertexTintMaterial=nullptr;MiniComponent.Reset();
+    if(TransitionCapture)TransitionCapture->Release();TransitionCapture=nullptr;InitialMiniImage=nullptr;VertexTintMaterial=nullptr;MiniComponent.Reset();
     if(auto* Subsystem=Map.Get())Subsystem->CloseMap();
-    Map.Reset();MapMaterial=nullptr;CloseArt=nullptr;MapBrush.SetResourceObject(nullptr);CloseBrush.SetResourceObject(nullptr);
+    Map.Reset();MapImage=nullptr;CloseArt=nullptr;MapBrush.SetResourceObject(nullptr);CloseBrush.SetResourceObject(nullptr);
     RemoveFromParent();
 }
 
 void UDWWorldMapScreen::RequestClose()
 {
     if(!bOpen||bSettingsOverlayActive)return;
-    // Reverse from what was actually shown, not from a newer requested frame.
-    MotionProgress=1.-FMath::Pow(1.-FMath::Clamp(double(DisplayAlpha),0.,1.),1./3.);
+    // Reverse the same displayed phase clock; no recapture or endpoint snap.
     bClosing=!bClosing;bDragging=false;MotionTime=FPlatformTime::Seconds();
-    if(TransitionCapture)TransitionCapture->SetDirection(bClosing?-1:1);
 }
 
 void UDWWorldMapScreen::NativeDestruct()
 {
-    if(TransitionCapture)TransitionCapture->Release();TransitionCapture=nullptr;InitialMiniMaterial=nullptr;VertexTintMaterial=nullptr;MiniComponent.Reset();
-    if(bOpen){bOpen=false;bDragging=false;if(auto* Subsystem=Map.Get())Subsystem->CloseMap();Map.Reset();MapMaterial=nullptr;CloseArt=nullptr;}
+    if(TransitionCapture)TransitionCapture->Release();TransitionCapture=nullptr;InitialMiniImage=nullptr;VertexTintMaterial=nullptr;MiniComponent.Reset();
+    if(bOpen){bOpen=false;bDragging=false;if(auto* Subsystem=Map.Get())Subsystem->CloseMap();Map.Reset();MapImage=nullptr;CloseArt=nullptr;}
     Super::NativeDestruct();
 }
 
@@ -194,39 +187,20 @@ void UDWWorldMapScreen::NativeTick(const FGeometry& Geometry,float DeltaSeconds)
     Super::NativeTick(Geometry,DeltaSeconds);const double Now=FPlatformTime::Seconds();
     if(!bOpen||bSettingsOverlayActive){MotionTime=Now;return;}
     auto* Subsystem=Map.Get();auto* PC=GetOwningPlayer();APawn* Pawn=PC?PC->GetPawn():nullptr;
-    if(!Subsystem||!Pawn||!TransitionCapture){AbortTransition(TEXT("地图已失效。 / Map unavailable."));return;}
+    if(!Subsystem||!Pawn||!Subsystem->IsMapOpen()){AbortTransition(TEXT("地图已失效。 / Map unavailable."));return;}
     const FVector2D Size=Geometry.GetLocalSize();if(!Finite(Size)||Size.X<=1.||Size.Y<=1.)return;
     FString Error;
     if(!Size.Equals(LastViewportSize,.1))
-    {
-        bDragging=false;
-        MiniOrigin+=Size-LastViewportSize;
-        StartFrame.View.Frame.X=MiniOrigin.X;StartFrame.View.Frame.Y=MiniOrigin.Y;
-        if(!Subsystem->SetViewportSize(Size)){AbortTransition(TEXT("地图尺寸无效。 / Invalid map size."));return;}
-        TransitionCapture->SetDirection(0);TransitionCapture->SetDirection(bClosing?-1:1);LastViewportSize=Size;
-    }
-    if(!DWMapMotionAdapter::SnapshotFullMap(Subsystem,Pawn->GetActorLocation().Z,FVector2D::ZeroVector,Size,EndFrame,Error))
-    {AbortTransition(Error);return;}
-    TransitionCapture->SetEndFrame(EndFrame);
-    if(!TransitionCapture->Poll(Error)){AbortTransition(Error);return;}
-    if(TransitionCapture->GetMiniMaterial()&&TransitionCapture->GetFullMaterial())
-    {DisplayFrame=TransitionCapture->GetCommittedFrame();DisplayAlpha=float(TransitionCapture->GetCommittedAlpha());bDisplayCommitted=true;}
-    if(DisplayAlpha>=.9999f)DisplayFrame=EndFrame;
-    const double Duration=FMath::IsFinite(ExpandSeconds)?FMath::Max(.01f,ExpandSeconds):.28;
-    // Rendering can take longer than a game tick. Never advance the desired
-    // timeline while a frame is in flight: slow GPUs extend the animation
-    // instead of skipping directly from an old frame to the endpoint.
-    if(!TransitionCapture->HasPending())
-        MotionProgress=FMath::Clamp(MotionProgress+(bClosing?-1.:1.)*FMath::Clamp(Now-MotionTime,0.,.1)/Duration,0.,1.);
-    MotionTime=Now;
-    const float Eased=float(1.-FMath::Pow(1.-MotionProgress,3.));
-    DWMapVisualMath::Rect Bounds;double Radius=0.;
-    if(!DWMapVisualMath::Morph({MiniOrigin.X,MiniOrigin.Y,MiniOrigin.X+MiniSize.X,MiniOrigin.Y+MiniSize.Y},{Size.X,Size.Y},Eased,Bounds,Radius))return;
-    DWMapMotionAdapter::FFrame Desired;
-    if(!DWMapMotionAdapter::Interpolate(StartFrame,EndFrame,FVector2D(Bounds.Left,Bounds.Top),FVector2D(Bounds.Right-Bounds.Left,Bounds.Bottom-Bounds.Top),Eased,Desired))return;
-    if(!TransitionCapture->Request(Desired,Eased,Now,MotionProgress==0.||MotionProgress==1.,Error)){AbortTransition(Error);return;}
-    if(bClosing&&MotionProgress<=0.&&DisplayAlpha<=.0001f&&!TransitionCapture->HasPending())
-        if(auto* Owner=HUD.Get())Owner->FinishWorldMapClose(this);
+    {bDragging=false;MiniOrigin+=Size-LastViewportSize;StartFrame.View.Frame.X=MiniOrigin.X;StartFrame.View.Frame.Y=MiniOrigin.Y;
+     if(!Subsystem->SetViewportSize(Size)){AbortTransition(TEXT("地图尺寸无效。 / Invalid map size."));return;}LastViewportSize=Size;}
+    if(bCaptureStarted&&!Subsystem->PollCaptureReadiness(bMapCaptureReady,Error)){AbortTransition(Error);return;}
+    OpeningTimeline.Advance(FMath::Clamp(Now-MotionTime,0.,.1),bClosing,bMapCaptureReady);MotionTime=Now;OpeningSample=OpeningTimeline.Read(bMapCaptureReady);
+    if(OpeningSample.NeedCapture&&!bCaptureStarted&&!bClosing)
+    {if(!Subsystem->CaptureDeferredMap(Size,Error)){AbortTransition(Error);return;}bCaptureStarted=true;MapImage=Subsystem->GetMapImage();MapBrush.SetResourceObject(MapImage);}
+    DisplayAlpha=float(OpeningSample.Full);MotionProgress=OpeningSample.Complete?1.:0.;
+    if(bMapCaptureReady)
+    {MapImage=Subsystem->GetMapImage();if(!DWMapMotionAdapter::SnapshotFullMap(Subsystem,Pawn->GetActorLocation().Z,FVector2D::ZeroVector,Size,EndFrame,Error)){AbortTransition(Error);return;}DisplayFrame=EndFrame;}
+    if(bClosing&&OpeningSample.Closed)if(auto* Owner=HUD.Get())Owner->FinishWorldMapClose(this);
 }
 
 int32 UDWWorldMapScreen::NativePaint(const FPaintArgs& Args,const FGeometry& Geometry,const FSlateRect& CullingRect,
@@ -236,14 +210,17 @@ int32 UDWWorldMapScreen::NativePaint(const FPaintArgs& Args,const FGeometry& Geo
     if(!bOpen||bSettingsOverlayActive)return LayerId;
     auto* Subsystem=Map.Get();if(!Subsystem)return LayerId;
     const FVector2D Size=Geometry.GetLocalSize();
+    // Stage 1 fades only the old content; stage 2 is a blank circular shell; stage 3 shows only a ready shared image resource.
     const FVector2D FramePos(DisplayFrame.View.Frame.X,DisplayFrame.View.Frame.Y),FrameSize(DisplayFrame.View.Frame.W,DisplayFrame.View.Frame.H);
-    UMaterialInterface* MiniMaterial=bDisplayCommitted&&TransitionCapture?TransitionCapture->GetMiniMaterial():InitialMiniMaterial.Get();
-    if(DisplayAlpha>=.9999f) { MiniMaterial=MapMaterial; }
-    if(!DWMapMaskPaint::Paint(DrawElements,++LayerId,Geometry,MiniMaterial,MiniOrigin,MiniSize,FramePos,FrameSize,DisplayAlpha,false,1.f))return LayerId;
+    if(!DWMapMaskPaint::Paint(DrawElements,++LayerId,Geometry,VertexTintMaterial,MiniOrigin,MiniSize,FVector2D::ZeroVector,Size,float(OpeningSample.Shell),false,1.f,true))return LayerId;
     LayerId+=2;
-    LayerId=DWMapMiniSnapshotPaint::Paint(DrawElements,LayerId,Geometry,VertexTintMaterial,DisplayFrame,MiniMarkers,MiniTarget,MiniPlayer,MiniForward,MiniNorth,float(MiniSize.X),1.f-DisplayAlpha);
-    DWMapVisualMath::Rect Bounds;double Radius=0.;
-    DWMapVisualMath::Morph({MiniOrigin.X,MiniOrigin.Y,MiniOrigin.X+MiniSize.X,MiniOrigin.Y+MiniSize.Y},{Size.X,Size.Y},DisplayAlpha,Bounds,Radius);
+    if(OpeningSample.Mini>0.)
+    {DWMapMaskPaint::PaintImage(DrawElements,++LayerId,Geometry,InitialMiniImage,InitialImageSettings,StartFrame.View,MiniOrigin,MiniSize,0.f,float(OpeningSample.Mini));
+     LayerId=DWMapMiniSnapshotPaint::Paint(DrawElements,LayerId+2,Geometry,VertexTintMaterial,StartFrame,MiniMarkers,MiniTarget,MiniPlayer,MiniForward,MiniNorth,float(MiniSize.X),float(OpeningSample.Mini));}
+    if(DisplayAlpha<=0.f||!bMapCaptureReady||!MapImage)return LayerId;
+    DWMapMaskPaint::PaintImage(DrawElements,++LayerId,Geometry,MapImage,Subsystem->GetImageSettings(),DisplayFrame.View,MiniOrigin,MiniSize,1.f,DisplayAlpha);LayerId+=2;
+    DWMapOpenPhases::Circle Circle;DWMapOpenPhases::RevealCircle(MiniOrigin.X,MiniOrigin.Y,MiniSize.X,MiniSize.Y,Size.X,Size.Y,1.,Circle);
+    const DWMapVisualMath::Rect Bounds{Circle.X-Circle.Radius,Circle.Y-Circle.Radius,Circle.X+Circle.Radius,Circle.Y+Circle.Radius};const double Radius=Circle.Radius;
     const FGuid Selected=Subsystem->GetSelectedMarkerId();
     for(const FDWWorldMapMarker& Marker:Subsystem->GetMarkers())
     {
@@ -297,7 +274,7 @@ int32 UDWWorldMapScreen::NativePaint(const FPaintArgs& Args,const FGeometry& Geo
 FReply UDWWorldMapScreen::NativeOnMouseButtonDown(const FGeometry& Geometry,const FPointerEvent& Event)
 {
     FVector2D Point;auto* Subsystem=Map.Get();
-    if(!bOpen||bClosing||bSettingsOverlayActive||!Subsystem||DisplayAlpha<.9999f||MotionProgress<1.||TransitionCapture->HasPending())return FReply::Handled();
+    if(!bOpen||bClosing||bSettingsOverlayActive||!Subsystem||DisplayAlpha<.9999f||MotionProgress<1.||!bMapCaptureReady)return FReply::Handled();
     const FVector2D Local=Geometry.AbsoluteToLocal(Event.GetScreenSpacePosition()),ClosePos=CloseOrigin(Geometry.GetLocalSize());
     if(Event.GetEffectingButton()==EKeys::LeftMouseButton&&Local.X>=ClosePos.X&&Local.Y>=ClosePos.Y&&Local.X<ClosePos.X+36.&&Local.Y<ClosePos.Y+36.)
     {RequestClose();return FReply::Handled();}
@@ -317,13 +294,13 @@ FReply UDWWorldMapScreen::NativeOnMouseButtonUp(const FGeometry& Geometry,const 
 }
 FReply UDWWorldMapScreen::NativeOnMouseMove(const FGeometry& Geometry,const FPointerEvent& Event)
 {
-    FVector2D Point;if(bDragging&&!bClosing&&MotionProgress>=1.&&DisplayAlpha>=.9999f&&TransitionCapture&&!TransitionCapture->HasPending()&&Map.IsValid())
+    FVector2D Point;if(bDragging&&!bClosing&&MotionProgress>=1.&&DisplayAlpha>=.9999f&&bMapCaptureReady&&Map.IsValid())
     {Point=Geometry.AbsoluteToLocal(Event.GetScreenSpacePosition());bMoved|=FVector2D::Distance(Point,PressStart)>5.;if(FMath::IsFinite(Point.X)&&FMath::IsFinite(Point.Y)){Map->PanPixels(Point-PreviousDrag);PreviousDrag=Point;}}
     return FReply::Handled();
 }
 FReply UDWWorldMapScreen::NativeOnMouseWheel(const FGeometry& Geometry,const FPointerEvent& Event)
 {
-    FVector2D Point;if(!bClosing&&MotionProgress>=1.&&DisplayAlpha>=.9999f&&TransitionCapture&&!TransitionCapture->HasPending()&&Map.IsValid()&&LocalPoint(Geometry,Event.GetScreenSpacePosition(),Point)&&FMath::IsFinite(Event.GetWheelDelta()))
+    FVector2D Point;if(!bClosing&&MotionProgress>=1.&&DisplayAlpha>=.9999f&&bMapCaptureReady&&Map.IsValid()&&LocalPoint(Geometry,Event.GetScreenSpacePosition(),Point)&&FMath::IsFinite(Event.GetWheelDelta()))
         Map->ZoomAtPixel(FMath::Pow(1.15f,Event.GetWheelDelta()),Point);
     return FReply::Handled();
 }

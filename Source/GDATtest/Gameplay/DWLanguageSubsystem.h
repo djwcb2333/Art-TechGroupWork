@@ -59,6 +59,9 @@ public:
  bool HasTalent(FName TalentId)const;
  bool IsTrialWorld()const;
  bool IsFormalSession()const;
+ bool IsCombatSandboxSession()const;
+ bool HasCurrentA01Context(const ADWPlayerCharacter* ExpectedPlayer=nullptr)const;
+ bool StartCombatSandbox(ADWPlayerCharacter* Player,FString& Error);
  bool IsRuntimeConsumable(FName ItemId)const;
  uint64 GetSessionGeneration()const{return SessionGeneration;}
  double Parameter(const FString& Id,double Fallback)const;
@@ -77,6 +80,11 @@ private:
  friend class FDWFormalLanguagePersistence;
  TSharedPtr<FDWFormalLanguageSession> FormalSession;
  uint64 SessionGeneration=1;
+ TWeakObjectPtr<ADWPlayerCharacter> SandboxPlayer;
+ TWeakObjectPtr<UWorld> SandboxWorld;
+ TWeakObjectPtr<const UObject> SandboxProfile;
+ FGuid SandboxIdentity;
+ uint64 SandboxEpoch=0,SandboxEntity=0,SandboxLife=0,SandboxGeneration=0;
  friend class FDWLanguageInventoryTransaction;
  TUniquePtr<DWLanguage::FModel> Model;
  TSharedPtr<FDWLanguageSelectionStore> Selections;

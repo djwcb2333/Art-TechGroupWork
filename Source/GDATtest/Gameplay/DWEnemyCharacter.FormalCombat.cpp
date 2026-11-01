@@ -14,6 +14,36 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
+#include "Animation/AnimSequenceBase.h"
+#include "Animation/AnimMontage.h"
+#include "Animation/Skeleton.h"
+#include "Engine/SkeletalMesh.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "DWGiantAttackTiming.h"
+
+namespace DWCreatureFormalAnimation
+{
+ // Presentation only. No asset loading, callbacks, clock changes, or gameplay commit.
+ UAnimSequenceBase* ResolveConfiguredAttack(const UDWCreatureDefinition* Definition,bool bValidDefinition,
+  EDWEnemyCombatProfile Profile,UAnimationAsset* Configured,const USkeletalMesh* Mesh)
+ {
+  if(!bValidDefinition||!IsValid(Definition)||
+   Definition->NumericSource!=EDWCreatureNumericSource::ExistingFormalProfile||Definition->FormalProfile!=Profile||
+   (Profile!=EDWEnemyCombatProfile::MoldGrunt&&Profile!=EDWEnemyCombatProfile::YeastGrunt)||
+   (!Definition->AttackAnimation.IsNull()&&Definition->AttackAnimation.Get()!=Configured))return nullptr;
+  auto* Sequence=Cast<UAnimSequenceBase>(Configured);
+  if(!IsValid(Sequence)||Sequence->IsA<UAnimMontage>()||!IsValid(Mesh)||
+   Sequence->FindMetaDataByClass(UDWGiantAttackTiming::StaticClass()))return nullptr;
+  const auto* Target=Mesh->GetSkeleton(); const auto* Source=Sequence->GetSkeleton();
+  if(!IsValid(Target)||!IsValid(Source))return nullptr;
+  if(Target==Source)return Sequence;
+  // Same directional compatibility contract as DWCombatAnimInstance::CompatibleSequence.
+  for(const TSoftObjectPtr<USkeleton>& Compatible:Target->GetCompatibleSkeletons())
+   if(Compatible.ToSoftObjectPath()==FSoftObjectPath(Source))return Sequence;
+  return nullptr;
+ }
+}
+
 
 bool ADWEnemyCharacter::InitializeFormalCombat(const FDWCombatRules& Rules,FString& Error)
 {
@@ -21,7 +51,7 @@ bool ADWEnemyCharacter::InitializeFormalCombat(const FDWCombatRules& Rules,FStri
         CombatProfile==EDWEnemyCombatProfile::Legacy||bFormalCombatReady||AttackPhase!=EDWCombatPhase::None)
     {Error=TEXT("Formal combat initialization requires an uninitialized opt-in enemy.");return false;}
     // These are old authored attacks. Never clear them or silently remap their timings.
-    if(!AttackVariants.IsEmpty()||AttackAnimation)
+    if(!AttackVariants.IsEmpty()||(AttackAnimation&&!CreatureDefinition))
     {Error=TEXT("New profiles require empty attack slots until new enemy art/timing is coordinated; existing art was preserved.");return false;}
     FDWEnemyCombatConfig Candidate;FDWEnemyCoreDropConfig Drops;
     if(!DWEnemyFormal::BuildConfig(Rules,CombatProfile,Candidate,Error)||!DWEnemyFormal::BuildCoreDropConfig(Rules,Drops,Error))return false;
@@ -55,6 +85,13 @@ bool ADWEnemyCharacter::FormalCombatOperational() const
 bool ADWEnemyCharacter::IsHostileToCombatPlayer(const ADWPlayerCharacter* Player) const
 {
     if(!IsValid(Player)||Player->IsActorBeingDestroyed()||Player->IsDead())return false;
+    if(!bCreatureDefinitionValid)return false;
+    if(CreatureDefinition)
+    {
+        if(CreatureDefinition->Disposition==EDWCreatureDisposition::Neutral)return false;
+        if(CreatureDefinition->Disposition==EDWCreatureDisposition::AlwaysHostile)
+            return CombatProfile==EDWEnemyCombatProfile::Legacy||FormalCombatOperational();
+    }
     if(CombatProfile==EDWEnemyCombatProfile::Legacy)return true;
     return FormalCombatOperational()&&Player->HasCombatVitalsReady()&&
         DWEnemyFormal::IsHostile(CombatProfile,Player->GetCombatBaseForm(),FormalMemory.bEngaged);
@@ -151,6 +188,7 @@ void ADWEnemyCharacter::TickFormalCombat(float Dt)
         else MoveToward(HomeLocation,Dt);
         return;
     }
+    if(TickAmbientPatrol(Dt))return;
     // New profiles wait at their birth point when not engaged. Legacy patrol settings are not new ecology rules.
     StopAIMovement();SetAIState(EDWEnemyState::Patrol);
 }
@@ -170,7 +208,11 @@ bool ADWEnemyCharacter::TryStartFormalMeleeAttack(AActor* Target)
     FormalNextAttackTime=FormalAttackStartedTime+FormalCombatConfig.AttackCycleSeconds();
     CurrentAttackWindup=FormalCombatConfig.WindupSeconds;CurrentAttackActiveDuration=FormalCombatConfig.ActiveSeconds;
     CurrentAttackRecovery=FormalCombatConfig.RecoverySeconds;CurrentAttackRange=FormalCombatConfig.RangeCm;CurrentAttackDamage=FormalCombatConfig.Damage;
-    CurrentAttackAnimation=nullptr;CurrentAttackVariantIndex=INDEX_NONE;bHasAttackSnapshot=true;
+    // Freeze only an explicitly configured compatible opt-in Thug sequence at this accepted action boundary.
+    // The existing normalized source sampler plays the full sequence over the frozen W+A+R duration.
+    CurrentAttackAnimation=DWCreatureFormalAnimation::ResolveConfiguredAttack(CreatureDefinition,bCreatureDefinitionValid,
+        CombatProfile,AttackAnimation,GetMesh()?GetMesh()->GetSkeletalMeshAsset():nullptr);
+    CurrentAttackVariantIndex=INDEX_NONE;bHasAttackSnapshot=true;
     AttackStartedTime=FormalAttackStartedTime;AttackPhaseEndTime=FormalPhaseEndTime;NextAttackTime=FormalNextAttackTime;
     AttackPhase=EDWCombatPhase::Windup;bAttackResolved=false;bFormalFacingLocked=FormalCombatConfig.WindupLockFraction<=0.;
     AttackSerial=AttackSerial==MAX_int32?1:AttackSerial+1;const int32 Serial=AttackSerial;
@@ -309,7 +351,7 @@ void ADWEnemyCharacter::RecordFormalDamageFacts(AActor* PlayerSource,DWCombatCom
 {
     if(!bFormalCombatReady||CombatProfile!=FormalCombatConfig.Profile)return;
     FormalMemory.RecordDamage();
-    if(auto* Player=Cast<ADWPlayerCharacter>(PlayerSource);bSourceWasPlayer&&Player&&SourceLife.Entity&&SourceLife.Life)
+    if(auto* Player=Cast<ADWPlayerCharacter>(PlayerSource);bSourceWasPlayer&&Player&&SourceLife.Entity&&SourceLife.Life&&(!CreatureDefinition||CreatureDefinition->Disposition!=EDWCreatureDisposition::Neutral))
     {
         FormalMemory.Engage();TargetPawn=Player;FormalAlertEndTime=GetWorld()->GetTimeSeconds();
         AlertEndTime=FormalAlertEndTime;bFormalNeedsChaseState=true;

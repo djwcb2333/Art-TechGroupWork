@@ -1,4 +1,7 @@
 #include "DWWorldMap.h"
+#include "DWMapOpenPhases.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "HAL/PlatformTime.h"
 #include "DWGameInstance.h"
 #include "DWLoadingTransition.h"
 #include "DWMinimap.h"
@@ -162,6 +165,10 @@ bool UDWWorldMapSubsystem::CanUseBoundSlot(FString& OutError) const
 }
 
 bool UDWWorldMapSubsystem::OpenMap(APlayerController* LocalPlayer,FVector2D ViewportSize,FString& OutError)
+{return OpenMapInternal(LocalPlayer,ViewportSize,OutError,false);}
+bool UDWWorldMapSubsystem::OpenMapDeferred(APlayerController* LocalPlayer,FVector2D ViewportSize,FString& OutError)
+{return OpenMapInternal(LocalPlayer,ViewportSize,OutError,true);}
+bool UDWWorldMapSubsystem::OpenMapInternal(APlayerController* LocalPlayer,FVector2D ViewportSize,FString& OutError,bool bDeferred)
 {
     if(!CanUseBoundSlot(OutError))return false;
     UWorld* W=GetWorld();
@@ -173,8 +180,8 @@ bool UDWWorldMapSubsystem::OpenMap(APlayerController* LocalPlayer,FVector2D View
     View.NorthYaw=Mini&&FMath::IsFinite(Mini->NorthYaw)?Mini->NorthYaw:0.;View.Viewport=DWWorldMapPrivate::P(ViewportSize);
     auto* Nav=W->GetSubsystem<UDWMinimapNavigationSubsystem>();
     if(Nav)Nav->OnNavigationTargetChanged.AddUniqueDynamic(this,&UDWWorldMapSubsystem::OnNavigationChanged);
-    bOpen=true;
-    if(!RefreshMap(OutError)){CloseMap();return false;}
+    bOpen=true;bDeferredFirstCapture=bDeferred;
+    if(!bDeferred&&!RefreshMap(OutError)){CloseMap();return false;}
     return true;
 }
 
@@ -182,96 +189,54 @@ bool UDWWorldMapSubsystem::RefreshMap(FString& OutError)
 {
     UWorld* W=GetWorld();APlayerController* PC=OwnerPlayer.Get();
     if(!bOpen||!CanUseBoundSlot(OutError)||!IsValid(PC)||PC->GetWorld()!=W||!PC->IsLocalPlayerController())
-    {if(OutError.IsEmpty())OutError=TEXT("地图未打开。 / The map is not open.");return false;}
+    {if(OutError.IsEmpty())OutError=TEXT("The map is not open.");return false;}
+    APawn* Pawn=PC->GetPawn();auto* Mini=Pawn?Pawn->FindComponentByClass<UDWMinimapComponent>():nullptr;
+    if(!Mini||!Mini->ImageMap.IsValidCalibration()){OutError=TEXT("Invalid shared map image calibration.");return false;}
     ADWWorldMapBounds* Config=nullptr;
     for(TActorIterator<ADWWorldMapBounds> It(W);It;++It)
-    {if(!IsValid(*It)||It->IsActorBeingDestroyed())continue;if(Config){OutError=TEXT("本关卡有多个地图范围配置，请只保留一个。 / Use only one world-map bounds actor.");return false;}Config=*It;}
-    const float Padding=Config&&FMath::IsFinite(Config->PaddingCm)?FMath::Clamp(Config->PaddingCm,0.f,100000.f):1000.f;
-    const float MaxExtent=Config&&FMath::IsFinite(Config->MaxNonLandscapeHalfExtentCm)?FMath::Clamp(Config->MaxNonLandscapeHalfExtentCm,1000.f,10000000.f):100000.f;
+    {if(!IsValid(*It)||It->IsActorBeingDestroyed())continue;if(Config){OutError=TEXT("Use only one world-map bounds actor.");return false;}Config=*It;}
     MarkerLimit=Config?FMath::Clamp(Config->MaxMarkers,1,DWWorldMapData::MaxPerMap):128;
     const float MaxZoom=Config&&FMath::IsFinite(Config->MaxZoom)?FMath::Clamp(Config->MaxZoom,1.f,32.f):8.f;
-    const int32 Resolution=Config?FMath::Clamp(Config->Resolution,256,2048):1024;
-    TArray<UPrimitiveComponent*> VisibleGeometry;FBox Scene(ForceInit);
-    for(TActorIterator<AActor> It(W);It;++It)
-    {
-        AActor* Actor=*It;if(!IsValid(Actor)||Actor==CaptureActor)continue;
-        if(Actor->IsA<APawn>()||Actor->IsA<ADWEnemyNest>())continue;
-        TInlineComponentArray<UPrimitiveComponent*> Components(Actor);
-        for(UPrimitiveComponent* C:Components)if(DWWorldMapPrivate::IsMapGeometry(Actor,C,MaxExtent))
-        {VisibleGeometry.Add(C);Scene+=C->Bounds.GetBox();}
-    }
-    FBox Chosen=Scene;
-    if(Config&&Config->bOverrideBounds&&IsValid(Config->BoundsBox))Chosen=Config->BoundsBox->Bounds.GetBox();
-    if(VisibleGeometry.IsEmpty()||!Chosen.IsValid||!DWWorldMapPrivate::FiniteVector(Chosen.Min)||!DWWorldMapPrivate::FiniteVector(Chosen.Max))
-    {OutError=TEXT("未找到可捕获的已加载地形或网格，请检查地图范围。 / No eligible loaded terrain or meshes were found.");return false;}
-    DWWorldMapMath::Point CaptureCenter;double Width=0.;
-    if(!DWWorldMapMath::FitWorldBounds(DWWorldMapPrivate::XY(Chosen.Min),DWWorldMapPrivate::XY(Chosen.Max),View.NorthYaw,Padding,CaptureCenter,Width)||Width<1.||Width>20000000.)
-    {OutError=TEXT("地图范围无效或过大，请调整范围配置。 / World-map bounds are invalid or too large.");return false;}
-    UMaterialInterface* Base=LoadObject<UMaterialInterface>(nullptr,DWWorldMapPrivate::MaterialPath);
-    if(!Base){OutError=TEXT("缺少大地图材质，请联系工程维护者创建。 / The world-map material is missing.");return false;}
-    if(!IsValid(DepthTarget)||DepthTarget->SizeX!=Resolution||DepthTarget->SizeY!=Resolution)
-    {
-        if(IsValid(CaptureActor))CaptureActor->GetCaptureComponent2D()->TextureTarget=nullptr;
-        if(IsValid(DepthTarget))DepthTarget->ReleaseResource();
-        DepthTarget=NewObject<UTextureRenderTarget2D>(this,NAME_None,RF_Transient);
-        DepthTarget->ClearColor=FLinearColor::Black;DepthTarget->RenderTargetFormat=RTF_R32f;DepthTarget->bAutoGenerateMips=false;DepthTarget->Filter=TF_Bilinear;
-        DepthTarget->InitAutoFormat(Resolution,Resolution);DepthTarget->UpdateResourceImmediate(true);
-    }
-    if(!IsValid(CaptureActor))
-    {
-        FActorSpawnParameters Params;Params.Owner=PC;Params.ObjectFlags|=RF_Transient;Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-        CaptureActor=W->SpawnActor<ASceneCapture2D>(Params);
-        if(!CaptureActor){OutError=TEXT("无法创建地图捕获。 / Map capture could not be created.");return false;}
-        CaptureActor->SetActorEnableCollision(false);
-    }
-    auto* Capture=CaptureActor->GetCaptureComponent2D();
-    Capture->TextureTarget=DepthTarget;Capture->bCaptureEveryFrame=false;Capture->bCaptureOnMovement=false;
-    Capture->bAlwaysPersistRenderingState=false;Capture->ProjectionType=ECameraProjectionMode::Orthographic;
-    Capture->CaptureSource=ESceneCaptureSource::SCS_SceneDepth;Capture->bAutoCalculateOrthoPlanes=false;Capture->bUpdateOrthoPlanes=false;
-    Capture->PostProcessBlendWeight=0.f;Capture->ShowFlags.SetPostProcessing(false);Capture->ShowFlags.SetAtmosphere(false);
-    Capture->ShowFlags.SetFog(false);Capture->ShowFlags.SetVolumetricFog(false);Capture->ShowFlags.SetDynamicShadows(false);
-    Capture->ShowFlags.SetMotionBlur(false);Capture->ShowFlags.SetParticles(false);Capture->ShowFlags.SetNiagara(false);
-    Capture->PrimitiveRenderMode=ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;Capture->ClearShowOnlyComponents();
-    for(UPrimitiveComponent* C:VisibleGeometry)Capture->ShowOnlyComponent(C);
-    const double OriginZ=FMath::Max(Scene.Max.Z,Chosen.Max.Z)+FMath::Max(1000.,Width*.05);
-    const double BottomZ=FMath::Min(Scene.Min.Z,Chosen.Min.Z)-1000.;
-    if(!FMath::IsFinite(OriginZ)||!FMath::IsFinite(BottomZ)||OriginZ-BottomZ>20000000.)
-    {OutError=TEXT("地图高度范围过大，请检查天空或地形。 / Map height range is too large.");return false;}
-    GroundZ=float(Chosen.Min.Z);if(const APawn* Pawn=PC->GetPawn())GroundZ=float(Pawn->GetActorLocation().Z);
-    View.CaptureCenter=CaptureCenter;View.Center=CaptureCenter;View.CaptureWidth=Width;View.MinZoom=1.;View.MaxZoom=MaxZoom;View.Zoom=1.;
-    CaptureActor->SetActorLocationAndRotation(FVector(CaptureCenter.X,CaptureCenter.Y,OriginZ),FRotator(-90.f,View.NorthYaw,0.f));
-    Capture->OrthoWidth=float(Width);Capture->MaxViewDistanceOverride=float(OriginZ-BottomZ);
-    if(!IsValid(Material))Material=UMaterialInstanceDynamic::Create(Base,this);
-    if(!Material){OutError=TEXT("无法创建大地图材质实例。 / Failed to create world-map material.");return false;}
-    // Match the local player's current minimap art; invalid colors fall back individually.
-    const APawn* ArtPawn=PC->GetPawn();
-    const auto* Mini=IsValid(ArtPawn)?ArtPawn->FindComponentByClass<UDWMinimapComponent>():nullptr;
-    if(!IsValid(Mini))Mini=nullptr;
-    Material->SetVectorParameterValue(TEXT("GroundTint"),Mini&&DWWorldMapPrivate::FiniteColor(Mini->GroundTint)?Mini->GroundTint:FLinearColor(.48f,.43f,.36f,1.f));
-    Material->SetVectorParameterValue(TEXT("SurfaceTint"),Mini&&DWWorldMapPrivate::FiniteColor(Mini->SurfaceTint)?Mini->SurfaceTint:FLinearColor(.94f,.91f,.85f,1.f));
-    Material->SetVectorParameterValue(TEXT("WallTint"),Mini&&DWWorldMapPrivate::FiniteColor(Mini->WallTint)?Mini->WallTint:FLinearColor(.30f,.27f,.23f,1.f));
-    Material->SetScalarParameterValue(TEXT("EdgeSamples"),1.f);
-    Material->SetTextureParameterValue(TEXT("WorldMapDepth"),DepthTarget);
-    const auto E=DWWorldMapMath::East(View.NorthYaw),N=DWWorldMapMath::North(View.NorthYaw);
-    Material->SetVectorParameterValue(TEXT("CaptureRight"),FLinearColor(E.X,E.Y,0,0));
-    Material->SetVectorParameterValue(TEXT("CaptureUp"),FLinearColor(N.X,N.Y,0,0));
-    Material->SetVectorParameterValue(TEXT("CaptureForward"),FLinearColor(0,0,-1,0));
-    Material->SetVectorParameterValue(TEXT("CaptureInfo"),FLinearColor(Width,1,OriginZ,GroundZ));
-    UpdateMaterialView();
-    // Explicit request works even when game time is paused; this does not wait for a world Tick.
-    Capture->CaptureScene();OutError.Reset();return true;
+    ImageSettings=Mini->ImageMap;ImageResource=Mini->GetImageResource();ImageGeneration=ImageResource->GetGeneration();
+    const double Width=ImageSettings.WidthAtViewYaw(View.NorthYaw);
+    View.CaptureCenter=DWWorldMapPrivate::P(ImageSettings.WorldCenterCm);View.Center=View.CaptureCenter;
+    View.CaptureWidth=Width;View.MinZoom=1.;View.MaxZoom=MaxZoom;View.Zoom=1.;
+    GroundZ=float(Pawn->GetActorLocation().Z);
+    if(!DWWorldMapMath::Valid(View)){OutError=TEXT("Invalid calibrated map view.");return false;}
+    bDeferredFirstCapture=false;bCapturePending=true;CapturePendingAt=FPlatformTime::Seconds();OutError.Reset();return true;
 }
+bool UDWWorldMapSubsystem::CaptureDeferredMap(FVector2D Size,FString& Error)
+{
+    if(!bOpen||!bDeferredFirstCapture||Size.ContainsNaN()||!FMath::IsFinite(Size.X)||!FMath::IsFinite(Size.Y)||Size.X<=0.||Size.Y<=0.)
+    {Error=TEXT("地图图片加载状态无效。 / Invalid deferred map image request.");return false;}
+    View.Viewport=DWWorldMapPrivate::P(Size);return RefreshMap(Error);
+}
+bool UDWWorldMapSubsystem::PollCaptureReadiness(bool& Ready,FString& Error)
+{
+    Ready=false;UWorld* W=GetWorld();
+    if(!bOpen||!W||W->bIsTearingDown||!CanUseBoundSlot(Error))return false;
+    const auto* PC=OwnerPlayer.Get();const APawn* Pawn=PC?PC->GetPawn():nullptr;
+    const auto* Mini=Pawn?Pawn->FindComponentByClass<UDWMinimapComponent>():nullptr;
+    if(!PC||PC->GetWorld()!=W||!PC->IsLocalPlayerController()||!Mini){Error=TEXT("Map image owner changed.");return false;}
+    if(bDeferredFirstCapture){Error.Reset();return true;}
+    if(!ImageResource||ImageGeneration!=ImageResource->GetGeneration()||!ImageSettings.SameAs(Mini->ImageMap))
+    {Error=TEXT("Map image calibration changed; reopen the map.");return false;}
+    if(!ImageResource->Poll(Ready,Error))return false;
+    if(!Ready&&FPlatformTime::Seconds()-CapturePendingAt>15.){Error=TEXT("Map image resource was not ready in time.");return false;}
+    if(Ready)bCapturePending=false;
+    return true;
+}
+void UDWWorldMapSubsystem::PauseCaptureDeadline(double Seconds)
+{if(bCapturePending&&FMath::IsFinite(Seconds)&&Seconds>0.)CapturePendingAt+=Seconds;}
 
 void UDWWorldMapSubsystem::UpdateMaterialView()
 {
-    if(!IsValid(Material))return;DWWorldMapMath::Point Scale,Offset;
-    if(DWWorldMapMath::MaterialView(View,Scale,Offset))
-        Material->SetVectorParameterValue(TEXT("WorldMapView"),FLinearColor(Scale.X,Scale.Y,Offset.X,Offset.Y));
+    // Image UVs are calculated from the same View as markers at paint time; no MID or GPU work.
 }
 bool UDWWorldMapSubsystem::SetViewportSize(FVector2D S)
 {
     if(!bOpen||S.ContainsNaN()||S.X<=0||S.Y<=0)return false;
-    View.Viewport=DWWorldMapPrivate::P(S);if(!DWWorldMapMath::Valid(View))return false;
+    View.Viewport=DWWorldMapPrivate::P(S);if(bDeferredFirstCapture)return true;if(!DWWorldMapMath::Valid(View))return false;
     DWWorldMapMath::ClampCenter(View);UpdateMaterialView();return true;
 }
 bool UDWWorldMapSubsystem::WorldToPixel(FVector Position,FVector2D& OutPixel) const
@@ -294,7 +259,7 @@ FVector2D UDWWorldMapSubsystem::WorldDirectionToScreen(FVector D) const
 UMaterialInterface* UDWWorldMapSubsystem::GetMapMaterial() const{return Material;}
 
 const USceneCaptureComponent2D* UDWWorldMapSubsystem::GetMotionCaptureComponent() const
-{return IsValid(CaptureActor)?CaptureActor->GetCaptureComponent2D():nullptr;}
+{return nullptr;}
 FGuid UDWWorldMapSubsystem::GetSelectedMarkerId() const
 {FString Error;return CanUseBoundSlot(Error)?SelectedMarker:FGuid();}
 bool UDWWorldMapSubsystem::FindMarkerAtPixel(FVector2D Pixel,float Radius,FGuid& OutId) const
@@ -473,9 +438,8 @@ bool UDWWorldMapSubsystem::MergeMarkersForSave(int32 Slot,const FDWWorldMapMarke
 }
 void UDWWorldMapSubsystem::CloseMap()
 {
-    if(IsValid(CaptureActor)){CaptureActor->GetCaptureComponent2D()->TextureTarget=nullptr;CaptureActor->Destroy();}
-    CaptureActor=nullptr;Material=nullptr;if(IsValid(DepthTarget))DepthTarget->ReleaseResource();DepthTarget=nullptr;
-    OwnerPlayer.Reset();bOpen=false;
+    bCapturePending=false;bDeferredFirstCapture=false;ImageResource=nullptr;++ImageGeneration;
+    CaptureActor=nullptr;DepthTarget=nullptr;Material=nullptr;OwnerPlayer.Reset();bOpen=false;
 }
 void UDWWorldMapSubsystem::OnWorldEndPlay(UWorld& W)
 {CloseMap();if(auto* Nav=W.GetSubsystem<UDWMinimapNavigationSubsystem>())Nav->OnNavigationTargetChanged.RemoveDynamic(this,&UDWWorldMapSubsystem::OnNavigationChanged);Markers.Reset();SelectedMarker.Invalidate();bSlotBound=false;BoundSlot=INDEX_NONE;Super::OnWorldEndPlay(W);}

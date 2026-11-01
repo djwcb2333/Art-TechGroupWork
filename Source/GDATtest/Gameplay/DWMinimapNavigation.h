@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "Engine/EngineTypes.h"
 #include "Subsystems/WorldSubsystem.h"
+#include "DWCreatureDefinition.h"
 #include "DWMinimapNavigation.generated.h"
 
 UENUM(BlueprintType)
@@ -11,7 +12,8 @@ enum class EDWMinimapMarkerKind : uint8
 {
     Landmark,
     Enemy,
-    Resource
+    Resource,
+    NPC
 };
 
 UENUM(BlueprintType)
@@ -188,4 +190,6 @@ namespace DWMinimapMath
     /** Clockwise from north, in [0,360). A coincident point returns zero. */
     GDATTEST_API float BearingDegrees(const FVector& From, const FVector& To, float NorthYaw = 0.f);
     GDATTEST_API FLinearColor CategoryColor(EDWMinimapMarkerKind Kind);
+    inline EDWMinimapMarkerKind CreatureMarkerKind(EDWCreatureDisposition Disposition)
+    {return Disposition==EDWCreatureDisposition::Neutral?EDWMinimapMarkerKind::NPC:EDWMinimapMarkerKind::Enemy;}
 }

@@ -27,7 +27,9 @@
 #include "DWSaveSettings.h"
 #include "DWSaveStorage.h"
 #include "DWEditorMapIterationSession.h"
+#include "DWCombatSandboxContext.h"
 #include "Misc/Paths.h"
+#include "Misc/FileHelper.h"
 #include "HAL/FileManager.h"
 
 void UDWGameInstance::Init()
@@ -158,6 +160,10 @@ TArray<FDWSlotSummary> UDWGameInstance::GetSlotSummaries() const
 {
     TArray<FDWSlotSummary> Result;
     Result.Reserve(SaveSlotCount);
+    // Refresh-driven diagnostics only. No validation/projection/restore or slot writes.
+    if(bEditorIterationRequired)
+        UE_LOG(LogTemp,Display,TEXT("DW_PIE_SLOT_LIST initialized=%d directory=%s identity=%s slots=%d init_error=%s"),
+            EditorMapIteration.IsValid()?1:0,*SaveDirectory,*GetSaveStorageIdentity(),SaveSlotCount,*SaveStorageInitializationError);
     for (int32 Index = 0; Index < SaveSlotCount; ++Index)
     {
         FDWSlotSummary Summary;
@@ -167,7 +173,18 @@ TArray<FDWSlotSummary> UDWGameInstance::GetSlotSummaries() const
         if (Summary.bExists)
         {
             // Metadata only: never run compatibility projection merely to list a slot.
-            const UDWSaveGame* Save=Cast<UDWSaveGame>(bUseDocumentsStorage?DWSaveStorage::Read(SaveDirectory,SlotName):UGameplayStatics::LoadGameFromSlot(SlotName,0));
+            const UDWSaveGame* Save=nullptr;
+            if(bEditorIterationRequired)
+            {
+                // Same single raw read + memory decode as DWSaveStorage::Read, with stage reporting.
+                // bExists stays the existence result even if read/decode fails.
+                TArray<uint8> Bytes;
+                const bool bRead=!SaveDirectory.IsEmpty()&&FFileHelper::LoadFileToArray(Bytes,*(SaveDirectory/(SlotName+TEXT(".sav"))));
+                if(bRead)Save=Cast<UDWSaveGame>(UGameplayStatics::LoadGameFromMemory(Bytes));
+                UE_LOG(LogTemp,Display,TEXT("DW_PIE_SLOT_METADATA slot=%s exists=1 status=%s bytes=%d"),*SlotName,
+                    bRead?(Save?TEXT("decoded_metadata"):TEXT("decode_or_type_failed")):TEXT("raw_read_failed"),Bytes.Num());
+            }
+            else Save=Cast<UDWSaveGame>(bUseDocumentsStorage?DWSaveStorage::Read(SaveDirectory,SlotName):UGameplayStatics::LoadGameFromSlot(SlotName,0));
             if (Save)
             {
                 Summary.DisplayName = Save->DisplayName;
@@ -179,6 +196,9 @@ TArray<FDWSlotSummary> UDWGameInstance::GetSlotSummaries() const
                 Summary.DisplayName = DWText(this, TEXT("无法读取存档（原文件保留）"), TEXT("Unreadable save (original file preserved)")).ToString();
             }
         }
+        else if(bEditorIterationRequired)
+            UE_LOG(LogTemp,Display,TEXT("DW_PIE_SLOT_METADATA slot=%s exists=0 status=%s"),*SlotName,
+                EditorMapIteration.IsValid()?TEXT("absent_in_bound_directory"):TEXT("storage_initialization_failed"));
         Result.Add(Summary);
     }
     return Result;
@@ -404,8 +424,12 @@ bool UDWGameInstance::TravelToGameplayMap(TSoftObjectPtr<UWorld> Destination)
 }
 
 
+bool UDWGameInstance::IsNonPersistentCombatSandboxContext()const
+{return DWCombatSandbox::IsWorld(GetWorld())&&VerificationSavePrefix.IsEmpty()&&!HasActiveSlot()&&!PendingSave&&!ActiveSlotSource&&!bSaveTravelInFlight;}
 void UDWGameInstance::InitializeSaveStorage()
 {
+    if(DWCombatSandbox::IsWorld(GetWorld())&&VerificationSavePrefix.IsEmpty())
+    {bEditorIterationRequired=true;bUseDocumentsStorage=true;SaveDirectory.Empty();SaveStorageInitializationError=TEXT("CombatSandbox is non-persistent; save/load/new-game are disabled.");return;}
     bEditorIterationRequired=FDWEditorMapIterationSession::ShouldUse(*this,!VerificationSavePrefix.IsEmpty());
     if(bEditorIterationRequired)
     {
@@ -415,6 +439,7 @@ void UDWGameInstance::InitializeSaveStorage()
         if(!EditorMapIteration)
         {
             if(SaveStorageInitializationError.IsEmpty())SaveStorageInitializationError=TEXT("请保存地图后再试玩：编辑器测试存储未能初始化，未读取正式存档。");
+            UE_LOG(LogTemp,Warning,TEXT("DW_PIE_STORAGE_INIT_FAILED error=%s; formal_fallback=0"),*SaveStorageInitializationError);
             Fail(FText::FromString(SaveStorageInitializationError));return;
         }
         SaveDirectory=EditorMapIteration->Directory();return; // Never imports formal or legacy slots.
@@ -458,6 +483,7 @@ bool UDWGameInstance::RemoveSlot(const FString& Slot) const
 { FString Error;if(!CheckSaveStorageContext(Error))return false;return bUseDocumentsStorage ? DWSaveStorage::Delete(SaveDirectory, Slot) : UGameplayStatics::DeleteGameInSlot(Slot, 0); }
 bool UDWGameInstance::CheckSaveStorageContext(FString& Error)const
 {
+    if(DWCombatSandbox::IsWorld(GetWorld())){Error=TEXT("CombatSandbox does not support save/load/new-game.");return false;}
     if(!bEditorIterationRequired){Error.Reset();return true;}
     if(!EditorMapIteration){Error=SaveStorageInitializationError;return false;}
     return EditorMapIteration->CheckCurrent(Error);

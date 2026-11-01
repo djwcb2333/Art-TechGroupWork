@@ -18,6 +18,8 @@ static bool Ground(EDWEnemyCoreDropDecision D)
 {return D==EDWEnemyCoreDropDecision::SpawnPending||D==EDWEnemyCoreDropDecision::Spawned;}
 static bool ValidSave(const FDWCombatCoreDropSave& S,const FString& MapPackage,bool bFormal=false)
 {
+    if(S.Schema==2)return DWCreatureDropPolicy::ValidateGenericShape(S);
+    if(!S.SourceStableId.IsEmpty()||S.GenericGroup.IsValid()||S.GenericOrdinal)return false;
     if(S.Schema!=1||!S.DeathId.IsValid()||!S.StableEnemyId.IsValid()||S.Location.ContainsNaN()||
         !S.FatalEpoch||!S.FatalReceipt||!S.EnemyEntity||!S.EnemyLife||
         S.Profile<EDWEnemyCombatProfile::MoldGrunt||S.Profile>EDWEnemyCombatProfile::DoughElite||
@@ -56,6 +58,8 @@ bool UDWCombatCoreDropSubsystem::PrepareFatal(ADWEnemyCharacter& Enemy,DWCombatC
     DWCombatCommit::FEntityLife EnemyLife,DWCombatCommit::FEntityLife PlayerLife,FDWPreparedCoreDrop& Out,const FVector* ForcedFallPoint,DWCombatCommit::FReceiptId ForcedFallReceipt)
 {
     Out={};
+    if(Enemy.CreatureDefinition&&Enemy.CreatureDefinition->DropPolicy==EDWCreatureDropPolicy::ConfiguredItems)
+        return PrepareGenericFatal(Enemy,Receipt,EnemyLife,PlayerLife,Out,ForcedFallPoint,ForcedFallReceipt);
     if(ForcedFallPoint?(ForcedFallPoint->ContainsNaN()||!ForcedFallReceipt.Epoch||!ForcedFallReceipt.Id||!PlayerLife.Entity||!PlayerLife.Life):
         (ForcedFallReceipt.Epoch!=0||ForcedFallReceipt.Id!=0))return false;
     if(!Operational()||Revision==MAX_uint64||!Enemy.IsFormalCombatReady()||Enemy.GetWorld()!=GetWorld()||
@@ -76,6 +80,12 @@ bool UDWCombatCoreDropSubsystem::PrepareFatal(ADWEnemyCharacter& Enemy,DWCombatC
             !DWEnemyFormal::ApplyLanguageEssenceDropOverrides(MapPackage,Language->GetTrialConfig(),DropConfig,Error,bFormal))
         {UE_LOG(LogTemp,Warning,TEXT("LANG essence fatal preparation rejected before RNG: %s"),*Error);return false;}
     }
+    if(const auto* D=Enemy.CreatureDefinition.Get())
+    {
+        if(D->DropPolicy==EDWCreatureDropPolicy::None)DropConfig.MoldProbability=DropConfig.YeastProbability=0.;
+        else if(D->DropPolicy==EDWCreatureDropPolicy::ConfiguredFormalCore)
+        {DropConfig.MoldProbability=DropConfig.YeastProbability=D->CoreDropProbability;DropConfig.Count=D->CoreDropCount;}
+    }
     const double Sample=bEligible?FMath::FRand():0.; // One existing draw only; other factions/environment deaths never draw.
     if(!DWEnemyFormal::DecideCoreDrop(P.EnemyRecord,Enemy.CombatProfile,DropConfig,
         Receipt,EnemyLife,PlayerLife,Sample,FGuid::NewGuid()))return false;
@@ -92,6 +102,14 @@ void UDWCombatCoreDropSubsystem::CommitFatalUnchecked(FDWPreparedCoreDrop&& P)
 {
     check(P.bValid&&P.Revision==Revision&&Operational());
     auto* Enemy=P.Enemy.Get();check(Enemy);
+    if(P.bGeneric)
+    {
+        Enemy->GenericDropGroup=P.GenericGroup;Enemy->GenericDropRows=P.GenericRows.Num();Enemy->bGenericDropsCommitted=true;
+        if(Enemy->CombatProfile==EDWEnemyCombatProfile::Legacy)Enemy->CombatWorldStableId=P.GenericSourceStableId;
+        for(auto& S:P.GenericRows)
+        {FRecord R;R.Save=MoveTemp(S);R.Origin=Enemy;R.PickupRadiusCm=P.GenericPickupRadiusCm;R.bMayMaterialize=DWCombatCoreDrop::Ground(R.Save.Decision);Records.Add(R.Save.DeathId,MoveTemp(R));}
+        ++Revision;P.bValid=false;return;
+    }
     FRecord Record;Record.Save=P.Save;Record.Origin=Enemy;Record.PickupRadiusCm=Enemy->FormalCoreDropConfig.PickupRadiusCm;
     Record.bMayMaterialize=DWCombatCoreDrop::Ground(P.Save.Decision);
     Enemy->FormalCoreDrop=P.EnemyRecord;Records.Add(P.Save.DeathId,MoveTemp(Record));++Revision;P.bValid=false;
@@ -171,8 +189,9 @@ bool UDWCombatCoreDropSubsystem::RestoreBeforeBeginPlay(const TArray<FDWCombatCo
     TMap<FGuid,FRecord> Candidate;TSet<FGuid> Pickups;TSet<FString> Deaths,Receipts;
     for(const auto& S:Saved)
     {
-        const FString Death=FString::Printf(TEXT("%llu/%llu/%llu"),S.FatalEpoch,S.EnemyEntity,S.EnemyLife);
-        const FString Receipt=FString::Printf(TEXT("%llu/%llu"),S.FatalEpoch,S.FatalReceipt);
+        if(S.Schema==2){Error=TEXT("Generic death rows require the complete D22 world/player restore transaction");return false;}
+        const FString Death=FString::Printf(TEXT("%llu/%llu/%llu"),S.FatalEpoch,S.EnemyEntity,S.EnemyLife)+(S.Schema==2?FString::Printf(TEXT("/generic/%d"),S.GenericOrdinal):TEXT(""));
+        const FString Receipt=FString::Printf(TEXT("%llu/%llu"),S.FatalEpoch,S.FatalReceipt)+(S.Schema==2?FString::Printf(TEXT("/generic/%d"),S.GenericOrdinal):TEXT(""));
         if(!DWCombatCoreDrop::ValidSave(S,UWorld::RemovePIEPrefix(GetWorld()->GetOutermost()->GetName()))||Candidate.Contains(S.DeathId)||Deaths.Contains(Death)||Receipts.Contains(Receipt)||(S.PickupId.IsValid()&&Pickups.Contains(S.PickupId)))
         {Error=TEXT("Invalid or duplicate core death/pickup identity; no records imported.");return false;}
         FRecord R;R.Save=S;R.PickupRadiusCm=C.PickupRadiusCm;R.bRestored=true;R.bMayMaterialize=DWCombatCoreDrop::Ground(S.Decision);

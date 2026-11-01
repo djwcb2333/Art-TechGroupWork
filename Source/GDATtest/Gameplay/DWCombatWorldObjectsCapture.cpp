@@ -29,11 +29,17 @@ bool FDWCombatWorldObjectsPersistence::CaptureEnemy(ADWEnemyCharacter& E,const T
     {Error=TEXT("Enemy snapshot requested inside an incomplete native transition");return false;}
     const double Now=W->GetTimeSeconds();const bool Formal=E.CombatProfile!=EDWEnemyCombatProfile::Legacy;
     if(Formal&&!E.IsFormalCombatReady()){Error=TEXT("Uninitialized formal enemy cannot be saved");return false;}
+    const auto* ClassDefault=E.GetClass()->GetDefaultObject<ADWEnemyCharacter>();
+    if(!ClassDefault||(E.CreatureDefinition&&!E.bCreatureDefinitionValid)||
+       !DWCreaturePersistencePolicy::ValidateSource(E.CreatureDefinition.Get(),ClassDefault->CreatureDefinition.Get(),E.CombatProfile,E.MaxHealth,E.MaxHealth,E.MoveSpeed,Error))return false;
+    if(!Formal&&E.CombatWorldStableId.IsEmpty())
+        E.CombatWorldStableId=E.SourceNest?TEXT("enemy:runtime:")+FGuid::NewGuid().ToString(EGuidFormats::Digits):TEXT("enemy:scene:")+Path(&E);
     S.StableId=Of(B,&E);if(S.StableId.IsEmpty())S.StableId=Formal?TEXT("enemy:")+E.FormalEnemyId.ToString(EGuidFormats::Digits):E.CombatWorldStableId;
     S.ActorPath=Path(&E);S.ClassPath=E.GetClass()->GetPathName();S.PersistentId=E.PersistentId;S.Transform=E.GetActorTransform();S.Life=A->FindRegisteredActorLife(&E);
     if(!S.Life.Entity&&!E.IsActorBeingDestroyed())S.Life=A->CaptureActorLife(&E);
     S.SourceNestId=Of(B,E.SourceNest.Get());S.bRuntimeSpawned=E.SourceNest!=nullptr;
     if(S.bRuntimeSpawned&&S.SourceNestId.IsEmpty())S.SourceNestId=TEXT("nest:")+Path(E.SourceNest.Get());
+    S.GenericDropGroup=E.GenericDropGroup;S.GenericDropRows=E.GenericDropRows;S.bGenericDropsCommitted=E.bGenericDropsCommitted;
     S.Health=E.Health;S.MaxHealth=E.MaxHealth;S.State=static_cast<uint8>(E.State);S.Phase=static_cast<uint8>(E.AttackPhase);S.AttackSerial=E.AttackSerial;S.VariantIndex=E.CurrentAttackVariantIndex;S.Profile=E.CombatProfile;
     if(Formal)S.Formal=E.CaptureFormalCombatSave();S.Dagger=E.CaptureDaggerAwarenessSave();S.ForcedFall=E.ForcedFall.Saved;
     S.DaggerPlayerLife=E.DaggerPlayerLife;S.ObservedPlayerLife=E.FormalObservedPlayerLife;S.ObservedPlayerDamageRevision=E.FormalObservedPlayerDamageRevision;
@@ -105,7 +111,7 @@ bool FDWCombatWorldObjectsPersistence::CaptureInternal(UWorld& W,ADWPlayerCharac
 }
 void FDWCombatWorldObjectsPersistence::RecordDestroyedEnemy(ADWEnemyCharacter& E)
 {
-    auto* W=E.GetWorld();if(!W||W->bIsTearingDown||E.bCombatWorldStaged||E.CombatProfile==EDWEnemyCombatProfile::Legacy||E.Health>0.f)return;
+    auto* W=E.GetWorld();if(!W||W->bIsTearingDown||E.bCombatWorldStaged||(E.CombatProfile==EDWEnemyCombatProfile::Legacy&&!E.CreatureDefinition)||E.Health>0.f)return;
     auto* R=W->GetSubsystem<UDWCombatWorldObjectsRegistry>();if(!R)return;FDWCombatEnemyObjectSave S;FString Error;
     TArray<FDWCombatObjectBinding>B;
     // Dead snapshots have no future target/action. Retain the native committed drop and provenance.

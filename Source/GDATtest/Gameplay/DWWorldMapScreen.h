@@ -5,6 +5,7 @@
 #include "Input/Reply.h"
 #include "Styling/SlateBrush.h"
 #include "DWWorldMapTransitionMath.h"
+#include "DWMapOpenPhases.h"
 #include "DWMapMotionAdapter.h"
 #include "DWMinimap.h"
 #include "DWWorldMapScreen.generated.h"
@@ -30,7 +31,9 @@ public:
     void CloseMapView();
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Dough World|World Map", meta=(ClampMin="0.0", Units="s"))
-    float ExpandSeconds = .28f;
+    float ExpandSeconds = .32f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Dough World|World Map", meta=(ClampMin="0.01", Units="s")) float MiniFadeSeconds=.14f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Dough World|World Map", meta=(ClampMin="0.01", Units="s")) float FullFadeSeconds=.18f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Dough World|World Map", meta=(ClampMin="256", ClampMax="1024"))
     int32 TransitionResolution = 512;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Dough World|World Map", meta=(ClampMin="1.0", ClampMax="80.0"))
@@ -58,9 +61,10 @@ private:
     void AbortTransition(const FString& Reason);
     TWeakObjectPtr<UDWWorldMapSubsystem> Map;
     TWeakObjectPtr<ADWGameplayHUD> HUD;
-    UPROPERTY(Transient) TObjectPtr<UMaterialInterface> MapMaterial;
+    UPROPERTY(Transient) TObjectPtr<UTexture2D> MapImage;
     UPROPERTY(Transient) TObjectPtr<UTexture2D> CloseArt;
-    UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> InitialMiniMaterial;
+    UPROPERTY(Transient) TObjectPtr<UTexture2D> InitialMiniImage;
+    FDWMapImageSettings InitialImageSettings;
     UPROPERTY(Transient) TObjectPtr<UMaterialInterface> VertexTintMaterial;
     UPROPERTY(Transient) TObjectPtr<UDWMapTransitionCapture> TransitionCapture;
     TWeakObjectPtr<UDWMinimapComponent> MiniComponent;
@@ -71,6 +75,9 @@ private:
     double PulseAt=0.,PauseAt=0.;
     double MotionTime=0.,MotionProgress=0.;
     float DisplayAlpha=0.f;
+    DWMapOpenPhases::Timeline OpeningTimeline;
+    DWMapOpenPhases::Sample OpeningSample;
+    bool bCaptureStarted=false,bMapCaptureReady=false;
     bool bMoved=false,bDisplayCommitted=false;
     TArray<FDWMinimapDisplayMarker> MiniMarkers;
     FDWMinimapNavigationTarget MiniTarget;

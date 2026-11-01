@@ -112,30 +112,30 @@
       "label": "一般形态每次恢复生命上限",
       "value": 1,
       "unit": "生命点",
-      "status": "试玩候选_待最终确认",
-      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
-      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "status": "本轮确定口径",
+      "source": "2026-10-30 最新A01 PDF正文及总调度裁定",
+      "note": "普通形态每5秒恢复1点生命上限，不额外恢复当前HP。",
       "original_value": null,
       "original_status": "待确定"
     },
     "health.cap_recovery.interval_s": {
       "label": "一般形态上限恢复间隔",
-      "value": 2,
+      "value": 5,
       "unit": "秒",
-      "status": "试玩候选_待最终确认",
-      "source": "用户本轮允许补可调试玩默认值；对应原A01缺项",
-      "note": "本轮候选细则见试玩规则与边界.md，不表示正式值已获最终认可。",
+      "status": "本轮确定口径",
+      "source": "2026-10-30 最新A01 PDF正文及总调度裁定",
+      "note": "只恢复生命上限，每5秒1点；不额外恢复当前生命。兼容字段保留。",
       "original_value": null,
       "original_status": "待确定"
     },
     "health.normal_regen.amount": {
       "label": "一般形态每次恢复当前生命",
-      "value": 1,
+      "value": 0,
       "unit": "生命点",
-      "status": "已确认",
-      "source": "用户2026-10-26直接纠正A01 2.2",
-      "note": "",
-      "trial_use": "引用原A01，不修改正式值；原文测试值的边界继续保留。"
+      "status": "本轮确定口径",
+      "source": "2026-10-30 最新A01 PDF正文及总调度裁定",
+      "note": "只恢复生命上限，每5秒1点；不额外恢复当前生命。兼容字段保留。",
+      "trial_use": "本轮按最新PDF正文只恢复生命上限；当前HP再生默认关闭，此字段为旧数据兼容保留。"
     },
     "health.normal_regen.interval_s": {
       "label": "一般形态生命再生间隔",
@@ -1452,50 +1452,44 @@
     {
       "item_id": "SimpleSugarAxe",
       "family": "gathering_swing",
-      "damage": false,
+      "damage": true,
       "harvest": true
     },
     {
       "item_id": "SugarAxe",
       "family": "gathering_swing",
-      "damage": false,
+      "damage": true,
       "harvest": true
     },
     {
       "item_id": "SimpleSugarPickaxe",
       "family": "gathering_swing",
-      "damage": false,
+      "damage": true,
       "harvest": true
     },
     {
       "item_id": "SugarPickaxe",
       "family": "gathering_swing",
-      "damage": false,
+      "damage": true,
       "harvest": true
     },
     {
-      "item_id": "SugarSpear",
-      "family": "melee_weapon_action",
+      "item_id": "SimpleSugarHammer",
+      "family": "gathering_swing",
       "damage": true,
-      "harvest": false
+      "harvest": true
     },
     {
-      "item_id": "DWWeapon_ShieldAxe",
-      "family": "melee_weapon_action",
+      "item_id": "SugarHammer",
+      "family": "gathering_swing",
       "damage": true,
-      "harvest": false
+      "harvest": true
     },
     {
-      "item_id": "DWWeapon_Greatsword",
-      "family": "melee_weapon_action",
+      "item_id": "SimpleSugarSpear",
+      "family": "gathering_swing",
       "damage": true,
-      "harvest": false
-    },
-    {
-      "item_id": "DWWeapon_DualDaggers",
-      "family": "melee_weapon_action",
-      "damage": true,
-      "harvest": false
+      "harvest": true
     }
   ],
   "corruption_excluded": [

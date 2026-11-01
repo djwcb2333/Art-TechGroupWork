@@ -15,6 +15,7 @@ class UDWBuildingPlacementHints;
 class UDWCharacterPreview; class UAnimSequenceBase;
 class UDWGameplayConfig; class UDWGameInstance; class ADWPlayerCharacter; class UDWInventoryComponent;
 class UTexture2D;
+class UMaterialInterface;
 class UButton; class UTextBlock; class UProgressBar; class UBorder; class UWidgetSwitcher; class UUniformGridPanel;
 class UVerticalBox; class UCanvasPanel; class USlider; class UComboBoxString; class UCheckBox; class UImage;
 class UDWSettingsPanel;
@@ -55,6 +56,8 @@ public:
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Quick Slots",meta=(ClampMin="64",ClampMax="128")) float C01QuickSlotSize=92.f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Quick Slots",meta=(ClampMin="0",ClampMax="32")) float C01QuickSlotGap=16.f;
     /** Optional authored status icon textures; empty fields draw no placeholder artwork. */
+    /** Character-page only: texture alpha becomes white, preserving original icon textures. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Character") TSoftObjectPtr<UMaterialInterface> CharacterStatusWhiteMaterial=TSoftObjectPtr<UMaterialInterface>(FSoftObjectPath(TEXT("/Game/DoughWorld/UI/M_DW_CharacterStatusWhiteAlpha.M_DW_CharacterStatusWhiteAlpha")));
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Resource Icons") TSoftObjectPtr<UTexture2D> C01StatusIconSpecial=TSoftObjectPtr<UTexture2D>(FSoftObjectPath(TEXT("/Game/DoughWorld/UI/Image/T_DW_Status_Lightning.T_DW_Status_Lightning")));
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Resource Icons") TSoftObjectPtr<UTexture2D> C01StatusIconHealth=TSoftObjectPtr<UTexture2D>(FSoftObjectPath(TEXT("/Game/DoughWorld/UI/Image/T_DW_Status_Heart.T_DW_Status_Heart")));
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|C01|Resource Icons") TSoftObjectPtr<UTexture2D> C01StatusIconWater=TSoftObjectPtr<UTexture2D>(FSoftObjectPath(TEXT("/Game/DoughWorld/UI/Image/T_DW_Status_Water.T_DW_Status_Water")));
@@ -89,9 +92,9 @@ public:
     UFUNCTION(BlueprintPure,Category="UI|Combat") FDWCombatHUDSnapshot GetCombatHUDSnapshot()const{return CombatHUD;}
     UFUNCTION(BlueprintCallable,Category="UI|Combat") void RefreshCombatHUD();
     /** Presentation only: configure the edge colour and spatial extent, not damage. */
-    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Damage Edge") FLinearColor DamageEdgeColor=FLinearColor(.65f,.06f,.03f,1.f);
-    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Damage Edge",meta=(ClampMin="0",ClampMax="0.4")) float DamageEdgeMaxOpacity=.28f;
-    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Damage Edge",meta=(ClampMin="0.04",ClampMax="0.24")) float DamageEdgeFraction=.14f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Damage Edge") FLinearColor DamageEdgeColor=FLinearColor(.9f,.025f,.015f,1.f);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Damage Edge",meta=(ClampMin="0",ClampMax="0.4")) float DamageEdgeMaxOpacity=.4f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Damage Edge",meta=(ClampMin="0.04",ClampMax="0.24")) float DamageEdgeFraction=.19f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Damage Edge",meta=(ClampMin="0.2",ClampMax="3",Units="s")) float DamageEdgeMaxContinuousSeconds=.85f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Combat|Damage Edge",meta=(ClampMin="0.05",ClampMax="1",Units="s")) float DamageEdgeMinimumClearSeconds=.15f;
     void TickDamageVignette();void SuppressDamageVignette();

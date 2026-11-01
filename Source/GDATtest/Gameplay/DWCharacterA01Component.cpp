@@ -42,14 +42,28 @@ bool UDWCharacterA01Component::BuildConfigForLearned(const TSet<FName>& Learned,
 bool UDWCharacterA01Component::InitializeForTrial(FString& Error)
 {
  auto* L=Language();auto* P=Player();if(!L||!L->IsTrialWorld()){Error.Reset();return true;}
- FDWCharacterA01Config C;if(!P||!BuildConfig([L](FName Id){return L->HasTalent(Id);},C,Error))return false;
+ return InitializeTransientRuntime(Error);
+}
+bool UDWCharacterA01Component::IsEnabled()const
+{const auto* L=Language();return bEnabled&&Runtime.IsReady()&&L&&L->HasCurrentA01Context(Player());}
+bool UDWCharacterA01Component::InitializeForCombatSandbox(FString& Error)
+{
+ auto* L=Language();if(bEnabled)return IsEnabled();
+ if(!L||!L->StartCombatSandbox(Player(),Error))return false;
+ return InitializeTransientRuntime(Error);
+}
+bool UDWCharacterA01Component::InitializeTransientRuntime(FString& Error)
+{
+ auto* L=Language();auto* P=Player();
+ FDWCharacterA01Config C;if(!L||!P||(!L->IsTrialWorld()&&!L->IsCombatSandboxSession())||!BuildConfig([L](FName Id){return L->HasTalent(Id);},C,Error))return false;
  FDWA01AbilityConfig A;A.HoldThresholdSeconds=L->Parameter(TEXT("input.hold_threshold_s"),-1.);
  A.SprintSpeedMultiplier=L->Parameter(TEXT("yeast.sprint.move_multiplier"),-1.);A.DashSpeedMultiplier=L->Parameter(TEXT("yeast.dash.move_multiplier"),-1.);
  A.DashAccelerationSeconds=L->Parameter(TEXT("yeast.dash.accel_s"),-1.);A.DashHoldSeconds=L->Parameter(TEXT("yeast.dash.hold_s"),-1.);
  A.DashDecelerationSeconds=L->Parameter(TEXT("yeast.dash.decel_s"),-1.);A.DashCooldownSeconds=L->Parameter(TEXT("yeast.dash.cooldown_s"),-1.);
- std::string E;if(!Runtime.Initialize(C,&E)||!Ability.Initialize(A,&E)){Error=UTF8_TO_TCHAR(E.c_str());return false;}
+ FDWCharacterA01Runtime Candidate;FDWA01AbilityPlan CandidateAbility;
+ std::string E;if(!Candidate.Initialize(C,&E)||!CandidateAbility.Initialize(A,&E)){Error=UTF8_TO_TCHAR(E.c_str());return false;}
  if(!L->GetNativeModel()||!DWCharacterA01SaveBridge::BindDefinitions(L->GetNativeModel()->GetCatalog(),L->GetTrialConfig(),Error))return false;
- bEnabled=true;++ResourceRevision;P->Health=static_cast<float>(Runtime.GetState().CurrentHealth);
+ Runtime=MoveTemp(Candidate);Ability=MoveTemp(CandidateAbility);bEnabled=true;++ResourceRevision;P->Health=static_cast<float>(Runtime.GetState().CurrentHealth);
  P->SyncCombatVitalsCompatibility();Error.Reset();return true;
 }
 bool UDWCharacterA01Component::RefreshTalents()
@@ -96,7 +110,7 @@ void UDWCharacterA01Component::OnExtraShortcutRemoved()
 EDWCombatBaseForm UDWCharacterA01Component::GetBaseForm()const{return static_cast<EDWCombatBaseForm>(Runtime.GetState().Form);}
 double UDWCharacterA01Component::GetSpecial()const{return GetBaseForm()==EDWCombatBaseForm::Yeast?Runtime.GetState().Gas:GetBaseForm()==EDWCombatBaseForm::Mold?Runtime.GetState().Corruption:0.;}
 double UDWCharacterA01Component::GetWalkSpeedCmPerSecond()const
-{const auto* L=Language();return L?L->Parameter(TEXT("move.base_speed_mps"),0.)*100.*Runtime.MovementMultiplier()*(Ability.IsSprinting()?Ability.GetConfig().SprintSpeedMultiplier:1.):0.;}
+{if(Player()&&Player()->IsFormallyRooted())return 0.;const auto* L=Language();return L?L->Parameter(TEXT("move.base_speed_mps"),0.)*100.*Runtime.MovementMultiplier()*(Ability.IsSprinting()?Ability.GetConfig().SprintSpeedMultiplier:1.):0.;}
 void UDWCharacterA01Component::SyncAuthoritativeHealth(){if(IsEnabled()&&Player())Runtime.SyncCurrentHealth(Player()->Health);}
 void UDWCharacterA01Component::AdoptRuntimeUnchecked(FDWCharacterA01Runtime&& Candidate,bool FormEntry)
 {
@@ -105,6 +119,8 @@ void UDWCharacterA01Component::AdoptRuntimeUnchecked(FDWCharacterA01Runtime&& Ca
  {
   P->Health=FMath::Min(P->Health,static_cast<float>(Runtime.EffectiveMaxHealth()));
   if(OldForm!=Runtime.GetState().Form||FormEntry)CancelAbility();
+  if(P->IsFormallyRooted()&&(Runtime.GetState().Form!=EDWA01Form::Mold||Runtime.GetState().Corruption<=0.))
+   P->EndFormalRootFacts(Runtime.GetState().Form!=EDWA01Form::Mold?EDWMoldRootEnd::FormExpired:EDWMoldRootEnd::SpecialExhausted);
   if(FormEntry)
    if(const auto* PC=Cast<APlayerController>(P->GetController());PC&&InputOrigin.Edge.Key.IsValid()&&PC->IsInputKeyDown(InputOrigin.Edge.Key))Ability.RequireRelease();
   P->SyncCombatVitalsCompatibility();
@@ -130,13 +146,18 @@ bool UDWCharacterA01Component::PrepareSurvivalRefill(double Water,double Satiety
  if(!IsEnabled()||!Language()||!Language()->IsReady()||!Player()||Player()->IsDead()||!FMath::IsFinite(Water)||Water<0.||!FMath::IsFinite(Satiety)||Satiety<0.)return false;
  Out=Runtime;Out.SyncCurrentHealth(Player()->Health);Out.AddWater(Water);Out.AddSatiety(Satiety);return true;
 }
+bool UDWCharacterA01Component::PrepareRootCost(double Cost,FDWCharacterA01Runtime& Out)const
+{
+ if(!IsEnabled()||!Player()||Player()->IsDead())return false;
+ Out=Runtime;Out.SyncCurrentHealth(Player()->Health);return Out.SpendCorruption(Cost);
+}
 bool UDWCharacterA01Component::PrepareCorruption(uint64 Action,FName Item,bool Harvest,FDWCharacterA01Runtime& Out,FDWA01CorruptionResult& Result)const
 {
  Result={};if(!IsEnabled()||!Action||!Player()||Player()->IsDead()||GetBaseForm()!=EDWCombatBaseForm::Mold)return false;
  bool Eligible=false;const TArray<TSharedPtr<FJsonValue>>* Rows=nullptr;auto* L=Language();
  if(L&&L->GetTrialConfig().IsValid()&&L->GetTrialConfig()->TryGetArrayField(TEXT("corruption_whitelist"),Rows))
   for(const auto& Row:*Rows)if(Row.IsValid()&&Row->Type==EJson::Object)
-  {FString Id;bool Allowed=false;const auto J=Row->AsObject();if(J->TryGetStringField(TEXT("item_id"),Id)&&FDWCombatItemRegistry::CanonicalWeaponItemId(FName(*Id))==FDWCombatItemRegistry::CanonicalWeaponItemId(Item)&&J->TryGetBoolField(Harvest?TEXT("harvest"):TEXT("damage"),Allowed)&&Allowed){Eligible=true;break;}}
+  {FString Id;bool Allowed=false;const auto J=Row->AsObject();if(J->TryGetStringField(TEXT("item_id"),Id)&&FName(*Id)==Item&&J->TryGetBoolField(Harvest?TEXT("harvest"):TEXT("damage"),Allowed)&&Allowed){Eligible=true;break;}}
  if(!Eligible)return false;Out=Runtime;Out.SyncCurrentHealth(Player()->Health);
  bool StillInShortcut=true;
  if(!Harvest)
@@ -150,7 +171,9 @@ bool UDWCharacterA01Component::PrepareCorruption(uint64 Action,FName Item,bool H
 void UDWCharacterA01Component::EndToolAction(uint64 Action){if(IsEnabled())Runtime.EndToolAction(Action);}
 bool UDWCharacterA01Component::HandleSpacePressed(const FDWCombatInputPress& Press)
 {
- InputOrigin=Press;auto* P=Player();if(!IsEnabled()||!P||!P->IsCombatActionAllowed()||P->IsCoreInjecting()||P->CombatKnockback.bActive||GetBaseForm()!=EDWCombatBaseForm::Yeast)return false;
+ InputOrigin=Press;auto* P=Player();if(!IsEnabled()||!P||!P->IsCombatActionAllowed()||P->IsCoreInjecting()||P->CombatKnockback.bActive)return false;
+ if(GetBaseForm()==EDWCombatBaseForm::Mold)return P->TryToggleFormalRoot(); // Same deduplicated Space edge; E remains the existing stance shortcut.
+ if(GetBaseForm()!=EDWCombatBaseForm::Yeast)return false;
  if(bReboundPending){Ability.RequireRelease();return false;}
  return Ability.Press();
 }
@@ -213,22 +236,29 @@ double UDWCharacterA01Component::GetNextAbilityBoundary(double Maximum)const
  if(ReboundRemainingSeconds>0.)return Maximum>0.?FMath::Min(Maximum,ReboundRemainingSeconds):std::numeric_limits<double>::infinity();
  if(bReboundPending)return Maximum>0.?Maximum:std::numeric_limits<double>::infinity();
  if(Maximum<=0.)return std::numeric_limits<double>::infinity();auto Copy=Ability;FDWA01AbilityStep Step;
- if(!Copy.AdvanceNext(Maximum,GetWalkSpeedCmPerSecond()/(Ability.IsSprinting()?Ability.GetConfig().SprintSpeedMultiplier:1.),MoveInput.X,MoveInput.Y,Step))return 0.;
+ // The ability clock needs nominal walk tuning even while the separate rooted stance reports zero effective speed.
+ const auto* L=Language();const double Nominal=L?L->Parameter(TEXT("move.base_speed_mps"),0.)*100.*Runtime.MovementMultiplier():0.;
+ if(!Copy.AdvanceNext(Maximum,Nominal,MoveInput.X,MoveInput.Y,Step))return 0.;
  return Step.AdvancedSeconds;
 }
 bool UDWCharacterA01Component::AdvanceSlice(double Maximum,FDWCombatPlayerVitalsStep& Legacy,FDWCharacterA01Step& Step)
 {
  Legacy={};if(!IsEnabled()||!Player()||PaidMotion.bPending)return false;
+ if(Player()->IsFormallyRooted()&&(GetBaseForm()!=EDWCombatBaseForm::Mold||GetSpecial()<=0.))
+  Player()->EndFormalRootFacts(EDWMoldRootEnd::SpecialExhausted);
  auto Candidate=Runtime;Candidate.SyncCurrentHealth(Player()->Health);auto Plan=Ability;
  FDWCharacterA01Activity Activity;Activity.GasSpendPerSecond=Ability.IsSprinting()?Language()->Parameter(TEXT("yeast.sprint.gas_per_s"),-1.):0.;
- Activity.bSuppressGasRegeneration=Ability.IsDashing()||bReboundPending;Activity.bToolActionActive=(Player()->WeaponAnimationComponent&&Player()->WeaponAnimationComponent->IsBusy())||
-  (Player()->GatheringComponent&&Player()->GatheringComponent->IsGatheringSwingActive());
+ Activity.bSuppressGasRegeneration=Ability.IsDashing()||bReboundPending;Activity.bToolActionActive=Player()->GatheringComponent&&Player()->GatheringComponent->IsGatheringSwingActive();
+ if(Player()->IsFormallyRooted())
+ {Activity.CorruptionSpendPerSecond=Player()->FormalRoot.GetConfig().SpendPerSecond;Activity.bSuppressCorruptionRegeneration=true;}
  if(!Candidate.AdvanceNext(Maximum,Activity,Step)||Step.AdvancedSeconds<=0.)return false;
  FDWA01AbilityStep Movement;const bool WasDash=Ability.IsDashing();
  const double Walk=Language()->Parameter(TEXT("move.base_speed_mps"),0.)*100.*Runtime.MovementMultiplier();
  if(bReboundPending)Movement.AdvancedSeconds=Step.AdvancedSeconds;
  else if(!Plan.AdvanceNext(Step.AdvancedSeconds,Walk,MoveInput.X,MoveInput.Y,Movement)||Movement.AdvancedSeconds!=Step.AdvancedSeconds)return false;
  Runtime=MoveTemp(Candidate);Ability=MoveTemp(Plan);++ResourceRevision;
+ if(Player()->IsFormallyRooted()&&(Step.bFormExpired||GetSpecial()<=0.))
+ {Player()->CombatFrameRootExitOffset=Step.AdvancedSeconds;Player()->EndFormalRootFacts(Step.bFormExpired?EDWMoldRootEnd::FormExpired:EDWMoldRootEnd::SpecialExhausted);}
  // Keep the real pre-step HP unchanged. The authority does damage -> downward cap -> regen atomically.
  if(ReboundRemainingSeconds>0.)ReboundRemainingSeconds=FMath::Max(0.,ReboundRemainingSeconds-Step.AdvancedSeconds);
  PaidMotion.bPending=true;PaidMotion.bDash=WasDash;PaidMotion.bFormExpired=Step.bFormExpired;PaidMotion.Step=Movement;

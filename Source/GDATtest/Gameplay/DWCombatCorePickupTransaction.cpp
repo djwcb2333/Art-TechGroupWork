@@ -26,7 +26,7 @@ bool FDWCombatCorePickupTransaction::Commit(ADWCombatCorePickup& P,ADWPlayerChar
         if(const auto* Previous=P.LastFullInventoryRevision.Find(&Player);Previous&&*Previous==Revision)return false;
         P.LastFullInventoryRevision.Add(&Player,Revision);
         if(auto* PC=Cast<APlayerController>(Player.GetController()))if(auto* HUD=Cast<ADWGameplayHUD>(PC->GetHUD()))
-            HUD->ShowCombatToast(DWText(&Player,TEXT("背包空间不足，核心留在地面"),TEXT("Inventory full. The core remains on the ground.")));
+            HUD->ShowCombatToast(DWText(&Player,TEXT("背包空间不足，物品留在地面"),TEXT("Inventory full. The item remains on the ground.")));
         return false; // HUD notification may destroy/restore actors; never continue the old request.
     }
     auto* Ledger=Authority->GetLedgerForResourceTransaction();

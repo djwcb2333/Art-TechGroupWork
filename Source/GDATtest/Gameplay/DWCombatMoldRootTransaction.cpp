@@ -2,17 +2,19 @@
 #include "DWCombatMineSubsystem.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWPlayerCharacter.h"
+#include "DWCharacterA01Component.h"
 
 bool FDWCombatMoldRootTransaction::CommitEntry(ADWPlayerCharacter& P)
 {
     using namespace DWCombatCommit;
     auto* A=UDWCombatAuthoritySubsystem::Get(&P);
-    if(!A||!P.bRootEntryDue||!P.IsCombatActionAllowed()||P.IsFormallyRooted())return false;
+    if(!P.CharacterA01||!P.CharacterA01->IsEnabled()||!A||!P.bRootEntryDue||!P.IsCombatActionAllowed()||P.IsFormallyRooted())return false;
     FDWMoldRootConfig Config;if(!P.PrepareFormalRootEntry(Config))return false;
     auto CandidateVitals=P.CombatVitals;auto CandidateRoot=P.FormalRoot;
     const FVector Anchor=P.GetActorLocation();
+    const bool A01=P.CharacterA01&&P.CharacterA01->IsEnabled();FDWCharacterA01Runtime A01Candidate;
     if(!CandidateRoot.Start(Config,P.GetCombatBaseForm(),P.GetCombatSpecial(),true,Anchor)||
-        !CandidateVitals.DebitSpecialAfterCommittedCost(Config.StartCost))return false;
+        (A01?!P.CharacterA01->PrepareRootCost(Config.StartCost,A01Candidate):!CandidateVitals.DebitSpecialAfterCommittedCost(Config.StartCost)))return false;
     auto* Ledger=A->GetLedgerForResourceTransaction();
     if(!Ledger||!A->ReserveMoldRootNoticeSlot())return false;
     const auto Action=A->BeginAction(&P);if(!Action.Id)return false;
@@ -23,7 +25,8 @@ bool FDWCombatMoldRootTransaction::CommitEntry(ADWPlayerCharacter& P)
     // All candidates and notification capacity exist before the final fallible step.
     if(Ledger->Resolve(Admission.Receipt.Handle,EOutcome::Committed)!=EResolve::Resolved)
     {A->EndAction(Action);return false;}
-    P.CombatVitals=MoveTemp(CandidateVitals);P.FormalRoot=MoveTemp(CandidateRoot);
+    P.FormalRoot=MoveTemp(CandidateRoot);
+    if(A01)P.CharacterA01->AdoptRuntimeUnchecked(MoveTemp(A01Candidate));else P.CombatVitals=MoveTemp(CandidateVitals);
     P.FormalRootIdentity=Notice.Identity;P.bRootEntryDue=false;P.bRootMovementPending=true;
     P.ResetCombatKnockbackFacts();P.SyncCombatVitalsCompatibility();
     A->EnqueueCommittedMoldRoot(Notice);A->DrainNotifications();

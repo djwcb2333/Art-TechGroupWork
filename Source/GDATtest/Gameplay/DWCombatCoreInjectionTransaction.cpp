@@ -7,7 +7,7 @@ bool FDWCombatCoreInjectionTransaction::Commit(ADWPlayerCharacter& P)
 {
     using namespace DWCombatCommit;
     auto* A=UDWCombatAuthoritySubsystem::Get(&P);auto* I=P.Inventory.Get();auto& Session=P.CoreInjection;
-    if(!A||!I||!P.bCoreInjectionCompletionDue||!Session.Plan.IsReady()||!P.IsCoreInjectionCurrent()||
+    if(!P.CharacterA01||!P.CharacterA01->IsEnabled()||!A||!I||!P.bCoreInjectionCompletionDue||!Session.Plan.IsReady()||!P.IsCoreInjectionCurrent()||
         !P.IsCombatActionAllowed()||!I->CanWriteInventory())return false;
     auto CandidateVitals=P.CombatVitals;auto CandidatePlan=Session.Plan;
     const bool A01=P.CharacterA01&&P.CharacterA01->IsEnabled();FDWCharacterA01Runtime A01Candidate;

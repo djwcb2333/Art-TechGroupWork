@@ -1,6 +1,7 @@
 #include "DWCombatGroundAreaSubsystem.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWPlayerCharacter.h"
+#include "DWCombatPresentationComponent.h"
 #include "DWEnemyCharacter.h"
 #include "DWDamageVolumeLibrary.h"
 #include "Components/StaticMeshComponent.h"
@@ -116,6 +117,8 @@ void UDWCombatGroundAreaSubsystem::Materialize(uint64 Id)
     Record=Areas.Find(Id);if(!Operational()||Epoch!=MaterializeEpoch||!Record||!Record->bActive||!IsValid(Marker)||Marker->IsActorBeingDestroyed())
     {if(IsValid(Marker)&&Marker->GetWorld()&&!Marker->GetWorld()->bIsTearingDown)Marker->Destroy();return;}
     Record->Marker=Marker;Marker->ConfigureRadius(Copy.RadiusCm);
+    if(Copy.Damage==0.)if(auto* P=Copy.Source.Get();P&&P->CombatPresentation)
+        P->CombatPresentation->MaterializeBowArea(Marker,Copy.RadiusCm,Copy.Ends-GetWorld()->GetTimeSeconds());
 }
 void UDWCombatGroundAreaSubsystem::RetireExpired(double Through)
 {

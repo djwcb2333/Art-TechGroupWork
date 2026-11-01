@@ -14,6 +14,14 @@ class UStaticMeshComponent;
 class UStaticMesh;
 class UMaterialInterface;
 class UAnimSequenceBase;
+USTRUCT(BlueprintType)
+struct FDWGatheringItemModelBinding
+{
+ GENERATED_BODY()
+ UPROPERTY(EditAnywhere,BlueprintReadWrite) TObjectPtr<UStaticMesh> Mesh;
+ UPROPERTY(EditAnywhere,BlueprintReadWrite) FTransform GripAdjustment=FTransform::Identity;
+ UPROPERTY(EditAnywhere,BlueprintReadWrite) TArray<TObjectPtr<UMaterialInterface>> MaterialOverrides;
+};
 UENUM(BlueprintType)
 enum class EDWGatheringWorkKind : uint8 { None,Demolition };
 UCLASS(ClassGroup=(DoughWorld),meta=(BlueprintSpawnableComponent))
@@ -29,6 +37,13 @@ public:
     bool TryUseTool(FName ItemId);
     bool HandlePrimaryClick();
     bool HasCraftingContext(FName RecipeId,FName StationId,FName BuildingId) const;
+    /** Independent from click interaction reach. All requirements use this same live set. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Crafting|Proximity",meta=(ClampMin="1",Units="cm")) float CraftingStationRadiusCm=250.f;
+    UFUNCTION(BlueprintPure,Category="Crafting|Proximity") TArray<FName> GetNearbyCraftingStations() const;
+    UFUNCTION(BlueprintPure,Category="Crafting|Proximity") TArray<FName> GetRecipeStationRequirements(FName RecipeId) const;
+    UFUNCTION(BlueprintPure,Category="Crafting|Proximity") bool EvaluateRecipeStationRequirements(FName RecipeId,TArray<FName>& MissingStations) const;
+    /** Exact action ItemId wins over old type fallback. Missing IDs retain existing appearance. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Gathering|Tool Visual") TMap<FName,FDWGatheringItemModelBinding> ItemModelBindings;
     bool FindBuildingPlacement(FName BuildingId,FTransform& Out) const;
     UFUNCTION(BlueprintPure,Category="Gathering") FName GetActiveTool() const {return ActiveTool;}
     void RestoreActiveTool(FName ItemId);

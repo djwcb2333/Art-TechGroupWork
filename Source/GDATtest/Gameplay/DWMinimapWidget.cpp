@@ -1,6 +1,7 @@
 #include "DWMinimapWidget.h"
 #include "DWC01UIStyle.h"
 #include "DWMinimap.h"
+#include "DWMapMaskPaint.h"
 #include "DWLocalizationLibrary.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/TextBlock.h"
@@ -245,31 +246,21 @@ public:
         const float MarkerRadius=4.f*Scale;
         const FGeometry MapGeometry=Geometry.MakeChild(FVector2f(Diameter,Diameter),FSlateLayoutTransform());
 
-        if(UMaterialInstanceDynamic* Material=Map?Map->GetDisplayMaterial():nullptr)
+        if(Map)
         {
-            FSlateBrush Brush;
-            Brush.DrawAs=ESlateBrushDrawType::Image;
-            Brush.ImageSize=FVector2f(Diameter,Diameter);
-            Brush.SetResourceObject(Material);
-            FSlateDrawElement::MakeBox(Elements,Layer,MapGeometry.ToPaintGeometry(),&Brush,
-                ESlateDrawEffect::None,Style.GetColorAndOpacityTint());
+            const auto& P=Map->GetProjection();const FVector Player=Map->GetPlayerLocation();DWMapMotionMath::View V;
+            if(DWMapMotionMath::Make({Player.X,Player.Y,Player.Z},{0.,0.,Diameter,Diameter},P.Width/Diameter,Map->GetCaptureYaw(),-90.,V))
+                DWMapMaskPaint::PaintImage(Elements,Layer,MapGeometry,Map->GetMapImage(),Map->ImageMap,V,FVector2D::ZeroVector,FVector2D(Diameter,Diameter),0.f,Style.GetColorAndOpacityTint().A);
         }
-        else
-        {
-            // Diagnostics still show an honest blank map; no fictional texture substitutes for missing capture.
-            DWMinimapSlate::Polygon(Elements,Layer,Geometry,
-                DWMinimapSlate::CirclePoints(Center,Diameter*.5f,96),FLinearColor::White);
-            DWMinimapSlate::Polygon(Elements,Layer+1,Geometry,
-                DWMinimapSlate::CirclePoints(Center,InnerRadius,96),FLinearColor(.64f,.60f,.53f,1.f));
-        }
+        else DWMinimapSlate::Polygon(Elements,Layer,Geometry,DWMinimapSlate::CirclePoints(Center,Diameter*.5f,96),FLinearColor::White);
 
         const bool C01=!Host.IsValid()||Host->bUseC01Appearance;
         if(C01)
         {
             const FSlateBrush Rim=DWC01UI::Texture(TEXT("T_DW_C01_Minimap_WhiteRim"),FVector2D(Diameter,Diameter));
-            FSlateDrawElement::MakeBox(Elements,Layer+1,MapGeometry.ToPaintGeometry(),&Rim);
+            FSlateDrawElement::MakeBox(Elements,Layer+2,MapGeometry.ToPaintGeometry(),&Rim);
         }
-        int32 DrawLayer=Layer+2;
+        int32 DrawLayer=Layer+3;
         if(!Map)
         {
             // Designer has no capture/pawn. Show only a plain, explicitly non-world placeholder.

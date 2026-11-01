@@ -19,6 +19,7 @@ struct FDWCombatEnemyObjectSave
     uint8 State=0,Phase=0,MovementMode=0,CustomMovementMode=0;
     int32 AttackSerial=0,VariantIndex=INDEX_NONE;
     EDWEnemyCombatProfile Profile=EDWEnemyCombatProfile::Legacy;
+    FGuid GenericDropGroup;int32 GenericDropRows=0;bool bGenericDropsCommitted=false;
     FDWEnemyFormalSaveData Formal;
     FDWDaggerAwarenessSave Dagger;
     FDWEnemyForcedFallSave ForcedFall;

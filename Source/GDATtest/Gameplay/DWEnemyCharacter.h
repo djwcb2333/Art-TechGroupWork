@@ -6,8 +6,14 @@
 #include "DWEnemyCombatProfile.h"
 #include "DWCombatDagger.h"
 #include "DWEnemyForcedFall.h"
+#include "DWCreatureDefinition.h"
+#include "DWCreatureInterface.h"
+#include "DWGameplayCameraShake.h"
+#include "NavigationData.h"
+#include "AITypes.h"
 #include "DWEnemyCharacter.generated.h"
 
+class AAIController;
 class USphereComponent;
 class UStaticMeshComponent;
 class USoundBase;
@@ -41,7 +47,7 @@ enum class EDWEnemyState : uint8 { Patrol = 0, Chase = 1, Attack = 2, Dead = 3, 
 
 /** Basic patrol, sight detection, pursuit and melee combat with editable tuning. */
 UCLASS(Blueprintable)
-class GDATTEST_API ADWEnemyCharacter : public ACharacter
+class GDATTEST_API ADWEnemyCharacter : public ACharacter, public IDWCreatureInterface, public IDWCreatureAmbientPatrolHost
 {
     GENERATED_BODY()
 public:
@@ -49,6 +55,34 @@ public:
     UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="Enemy|Save") TObjectPtr<ADWEnemyNest> SourceNest;
 
     ADWEnemyCharacter();
+    UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Creature") TObjectPtr<UDWCreatureDefinition> CreatureDefinition;
+    UFUNCTION(BlueprintPure,Category="Creature") FDWCreatureSnapshot GetCreatureSnapshot() const;
+    UFUNCTION(BlueprintPure,Category="Creature|Patrol") bool CanUseAmbientPatrol(UActorComponent* Requester) const;
+    UFUNCTION(BlueprintPure,Category="Creature|Patrol") FDWAmbientPatrolState GetAmbientPatrolState() const;
+    UFUNCTION(BlueprintCallable,Category="Creature|Patrol") bool TryRequestAmbientPatrolGoal(UActorComponent* Requester,FVector Goal,float WaitSeconds);
+    UFUNCTION(BlueprintCallable,Category="Creature|Patrol") void StopAmbientPatrol(UActorComponent* Requester);
+    virtual FDWCreatureSnapshot ReadCreatureFacts_Implementation() const override {return GetCreatureSnapshot();}
+    virtual bool CanCreatureAmbientPatrol_Implementation(UActorComponent* R) const override {return CanUseAmbientPatrol(R);}
+    virtual FDWAmbientPatrolState ReadCreatureAmbientPatrol_Implementation() const override {return GetAmbientPatrolState();}
+    virtual bool RequestCreatureAmbientGoal_Implementation(UActorComponent* R,FVector G,float Wait) override {return TryRequestAmbientPatrolGoal(R,G,Wait);}
+    virtual void StopCreatureAmbientPatrol_Implementation(UActorComponent* R) override {StopAmbientPatrol(R);}
+    bool ApplyCreatureDefinition(FString& Error);
+    bool bCreatureDefinitionValid=true;
+    FGuid GenericDropGroup;
+    int32 GenericDropRows=0;
+    bool bGenericDropsCommitted=false;
+    TWeakObjectPtr<UActorComponent> AmbientPatrolOwner;
+    /** Presentation only: samples the existing formal Thug alert deadline; does not extend it. */
+    UFUNCTION(BlueprintPure, Category="Enemy|Animation") float GetCombatAlertSourceSeconds(float SourceLength) const;
+    float AmbientWaitSeconds=2.f;
+    double AmbientGoalDeadline=0.;
+    TWeakObjectPtr<UActorComponent> RegisteredAmbientPatrol;
+    bool TickAmbientPatrol(float DeltaSeconds);
+    FNavPathSharedPtr AmbientValidatedPath;
+    FAIRequestID AmbientMoveRequest;
+    TWeakObjectPtr<AAIController> AmbientMoveController;
+    void StopOwnedAmbientMovement();
+
     /** Legacy preserves existing instance/variant tuning. New profiles use only the formal numeric source. */
     UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Enemy|Formal Combat") EDWEnemyCombatProfile CombatProfile=EDWEnemyCombatProfile::Legacy;
     /** Navigation technique, retaining the old 35 cm / 0.35 s values; not an ecology rule. */
@@ -131,6 +165,9 @@ public:
 
     UFUNCTION(BlueprintPure, Category="Enemy") bool IsAlive() const { return FMath::IsFinite(Health) && Health > 0.f && State != EDWEnemyState::Dead; }
     UFUNCTION(BlueprintPure, Category="Enemy|Animation") EDWCombatAnimationState GetCombatAnimationState() const;
+    bool UsesGiantContactAnimation()const;
+    float GetCombatAttackSourceSeconds(float SequenceLength)const;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Enemy|Presentation") FDWGameplayCameraPulseSettings GiantSlamPulse;
     UFUNCTION(BlueprintPure, Category="Enemy|Animation") float GetCombatAttackDuration() const { return CurrentAttackWindup + CurrentAttackActiveDuration + CurrentAttackRecovery; }
     UFUNCTION(BlueprintPure, Category="Enemy|Animation") float GetCombatAttackElapsedSeconds() const;
     /** The selected animation is retained during the outgoing blend and changes only on the next accepted attack/load. */
@@ -239,6 +276,8 @@ private:
     TWeakObjectPtr<AActor> MeleeTarget;
     FVector LockedAttackDirection = FVector::ForwardVector;
     FVector KnockbackDirection = FVector::ZeroVector;
+    void PublishGiantStrike();
+    uint64 LastGiantImpactEpoch=0,LastGiantImpactAction=0;
     float AttackPhaseEndTime = 0.f;
     float AttackStartedTime = 0.f;
     float CurrentAttackWindup = 0.f;

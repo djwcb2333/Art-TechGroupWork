@@ -21,6 +21,7 @@
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWWeaponAnimationComponent.h"
 #include "Blueprint/WidgetTree.h"
+#include "Rendering/DrawElements.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
@@ -151,13 +152,18 @@ void UDWOpeningOverlay::NativeOnInitialized()
  // Subtitles sit inside the lower letterbox bar when it is present.
  Subtitle.Text=AddText(FAnchors(.1f,.895f,.9f,.895f),FMargin(0,14,0,50),25,Cream,ETextJustify::Center);Subtitle.Speed=4.5f;
 
- SkipText=AddText(FAnchors(.965f,.955f),FMargin(-90,-34,90,26),15,FLinearColor(.75f,.73f,.66f),ETextJustify::Right,60);SkipText->SetText(DWText(this,TEXT("下一句"),TEXT("Next line")));
+ SkipText=AddText(FAnchors(.965f,.955f),FMargin(-130,-34,130,26),15,FLinearColor(.75f,.73f,.66f),ETextJustify::Right,60);SkipText->SetText(DWText(this,TEXT("下一句"),TEXT("Next line")));
  NextLineGlyph=WidgetTree->ConstructWidget<UDWInputGlyphWidget>();NextLineGlyph->SetPresentationStyle(Font,UDWLocalizationLibrary::GetLanguage(this)==EDWGameLanguage::English,FVector2D(36,36),18,true);NextLineGlyph->SetInputKey(EKeys::LeftMouseButton,DWText(this,TEXT("左键"),TEXT("LMB")));
- auto* NextSlot=Root->AddChildToCanvas(NextLineGlyph);NextSlot->SetAnchors(FAnchors(.965f,.955f));NextSlot->SetOffsets(FMargin(-142,-41,36,36));NextLineGlyph->SetRenderOpacity(0);
+ auto* NextSlot=Root->AddChildToCanvas(NextLineGlyph);NextSlot->SetAnchors(FAnchors(.965f,.955f));NextSlot->SetOffsets(FMargin(-182,-41,36,36));NextLineGlyph->SetRenderOpacity(0);
 
  BlackImage=AddImage(FAnchors(0,0,1,1),FMargin(0),FLinearColor::Black);BlackImage->SetRenderOpacity(0);
  // Drawn over the black so the first thoughts read in darkness.
  Center.Text=AddText(FAnchors(.1f,.47f,.9f,.47f),FMargin(0,-26,0,60),27,Thought,ETextJustify::Center);Center.WantedColor=Thought;Center.Speed=2.4f;
+ // Independent hold hint above the opaque waking cover; preserve the existing LMB hint.
+ HoldSkipGlyph=WidgetTree->ConstructWidget<UDWInputGlyphWidget>();HoldSkipGlyph->SetPresentationStyle(Font,UDWLocalizationLibrary::GetLanguage(this)==EDWGameLanguage::English,FVector2D(54,36),18,true);HoldSkipGlyph->SetInputKey(EKeys::SpaceBar,DWText(this,TEXT("空格"),TEXT("Space")));
+ auto* HoldGlyphSlot=Root->AddChildToCanvas(HoldSkipGlyph);HoldGlyphSlot->SetAnchors(FAnchors(.965f,.955f));HoldGlyphSlot->SetOffsets(FMargin(-191,-85,54,36));HoldSkipGlyph->SetRenderOpacity(0);
+ HoldSkipText=AddText(FAnchors(.965f,.955f),FMargin(-130,-78,130,28),15,FLinearColor(.75f,.73f,.66f),ETextJustify::Right);
+ HoldSkipText->SetAutoWrapText(false);
  // Game title. The font material reveals the letters behind a ragged fire front (M_SC0101_TitleBurn, param Burn 0..1).
  BurnBig=AddText(FAnchors(.5f,.5f),FMargin(-900,-88,1800,120),88,FLinearColor::White,ETextJustify::Center,150);
  BurnBig->SetAutoWrapText(false);BurnBig->SetShadowColorAndOpacity(FLinearColor::Transparent);
@@ -235,7 +241,52 @@ void UDWOpeningOverlay::Advance(float Dt)
  TitleRule->SetRenderScale(FVector2D(Smooth(TitleTime/1.8f),1));
  SkipAlpha=FMath::FInterpConstantTo(SkipAlpha,SkipVisible,Dt,3.f);
  SkipText->SetRenderOpacity(SkipAlpha*.85f);if(NextLineGlyph)NextLineGlyph->SetRenderOpacity(SkipAlpha);
+ HoldSkipAlpha=FMath::FInterpConstantTo(HoldSkipAlpha,HoldSkipVisible,Dt,5.f);
+ if(HoldSkipText)HoldSkipText->SetRenderOpacity(HoldSkipAlpha*.85f);
+ if(HoldSkipGlyph)HoldSkipGlyph->SetRenderOpacity(HoldSkipAlpha);
  AdvanceBurn(Dt);
+}
+int32 UDWOpeningOverlay::NativePaint(const FPaintArgs& Args,const FGeometry& AllottedGeometry,const FSlateRect& MyCullingRect,FSlateWindowElementList& OutDrawElements,int32 LayerId,const FWidgetStyle& InWidgetStyle,bool bParentEnabled) const
+{
+ const int32 LastLayer=Super::NativePaint(Args,AllottedGeometry,MyCullingRect,OutDrawElements,LayerId,InWidgetStyle,bParentEnabled);
+ if(!HoldSkipGlyph||HoldSkipAlpha<=.001f||SkipProgress<=0.f)return LastLayer;
+ // Follow this keycap's actual cached geometry, including viewport DPI scaling.
+ const FGeometry& G=HoldSkipGlyph->GetCachedGeometry();const FVector2D Size=G.GetLocalSize();
+ if(Size.ContainsNaN()||Size.X<4.||Size.Y<4.)return LastLayer;
+ constexpr float Inset=1.f,Radius=7.f; // Existing cap radius 8, inset by half the 2px stroke.
+ TArray<FVector2D> Path;Path.Reserve(39);Path.Add(FVector2D(Size.X*.5,Inset));Path.Add(FVector2D(Size.X-Inset-Radius,Inset));
+ auto Corner=[&](const FVector2D& Center,float StartDegrees)
+ {
+  for(int32 I=1;I<=8;++I){const float A=FMath::DegreesToRadians(StartDegrees+90.f*float(I)/8.f);Path.Add(Center+FVector2D(FMath::Cos(A),FMath::Sin(A))*Radius);}
+ };
+ Corner(FVector2D(Size.X-Inset-Radius,Inset+Radius),-90.f);
+ Path.Add(FVector2D(Size.X-Inset,Size.Y-Inset-Radius));Corner(FVector2D(Size.X-Inset-Radius,Size.Y-Inset-Radius),0.f);
+ Path.Add(FVector2D(Inset+Radius,Size.Y-Inset));Corner(FVector2D(Inset+Radius,Size.Y-Inset-Radius),90.f);
+ Path.Add(FVector2D(Inset,Inset+Radius));Corner(FVector2D(Inset+Radius,Inset+Radius),180.f);
+ const FVector2D StartPoint=Path[0];Path.Add(StartPoint); // Never pass an element reference back into its owning TArray.
+ float Length=0.f;for(int32 I=1;I<Path.Num();++I)Length+=FVector2D::Distance(Path[I-1],Path[I]);
+ float Left=Length*FMath::Clamp(SkipProgress,0.f,1.f);
+ TArray<FVector2f> Stroke;Stroke.Reserve(Path.Num());
+ auto Local=[&](const FVector2D& P){return FVector2f(AllottedGeometry.AbsoluteToLocal(G.LocalToAbsolute(P)));};
+ Stroke.Add(Local(Path[0]));
+ for(int32 I=1;I<Path.Num()&&Left>KINDA_SMALL_NUMBER;++I)
+ {
+  const float Span=FVector2D::Distance(Path[I-1],Path[I]);if(Span<=SMALL_NUMBER)continue;
+  if(Left>=Span){Stroke.Add(Local(Path[I]));Left-=Span;}
+  else{Stroke.Add(Local(FMath::Lerp(Path[I-1],Path[I],Left/Span)));break;}
+ }
+ if(Stroke.Num()<2)return LastLayer;
+ FSlateDrawElement::MakeLines(OutDrawElements,LastLayer+1,AllottedGeometry.ToPaintGeometry(),MoveTemp(Stroke),ESlateDrawEffect::None,FLinearColor(1,1,1,HoldSkipAlpha*InWidgetStyle.GetColorAndOpacityTint().A),true,2.f);
+ return LastLayer+1;
+}
+
+void UDWOpeningOverlay::SetHoldSkipHint(bool Active,float Progress,float /*Seconds*/)
+{
+ const float NewVisible=Active?1.f:0.f,NewProgress=FMath::Clamp(Progress,0.f,1.f);
+ const bool Repaint=HoldSkipVisible!=NewVisible||SkipProgress!=NewProgress;
+ HoldSkipVisible=NewVisible;SkipProgress=NewProgress;
+ if(Repaint)Invalidate(EInvalidateWidgetReason::Paint); // Native stroke depends on these values, not a Slate attribute.
+ if(HoldSkipText&&Active)HoldSkipText->SetText(DWText(this,TEXT("长按跳过"),TEXT("Hold to skip")));
 }
 void UDWOpeningOverlay::BurnTitle(const FString& Big,const FString& Small,float Seconds,float ChapterGap)
 {
@@ -473,6 +524,7 @@ void ADWOpeningPrototype::CancelArrivalCover()
 }
 void ADWOpeningPrototype::CleanupPresentation(bool bKeepBlackCover)
 {
+ ShutdownOpeningHoldSkip();
  if(bLocked&&InputGate){bLocked=false;InputGate->EndExternalControl(bKeepBlackCover);}
  bLocked=false;StopOpeningDialogue();
  if(bPresentationCleaned)
@@ -832,6 +884,7 @@ void ADWOpeningPrototype::Enter(EDWOpeningStage Next)
  const bool Lock=Next==EDWOpeningStage::Wake||Next==EDWOpeningStage::StretchPrompt||Next==EDWOpeningStage::Stretch||Next==EDWOpeningStage::Reveal||Next==EDWOpeningStage::Encounter;
  if(!SetLocked(Lock))return; // No stage advance, shots or cues without our lease.
  Stage=Next;Age=PrevAge=0;bShotTaken=false;Visited.Add(Next);RequestOpeningAspect(Lock);
+ ResetOpeningHoldSkipForStage();
  TimingActiveBeat=NAME_None;
  OpeningSequence.Reset();PreparedSequenceStep=DWOpeningSteps::Step::Done;
  if(Next==EDWOpeningStage::Wake||Next==EDWOpeningStage::Reveal||Next==EDWOpeningStage::Encounter)
@@ -902,8 +955,8 @@ void ADWOpeningPrototype::Enter(EDWOpeningStage Next)
 }
 void ADWOpeningPrototype::SkipCurrentShot()
 {
- // Preserve old Blueprint references without allowing a whole-shot/camera skip.
- UE_LOG(LogTemp,Display,TEXT("SC0101 whole-shot skipping is disabled; left click advances subtitles only."));
+ // Legacy unconditional Blueprint entry stays disabled; guarded Space-hold uses CompleteHeldOpeningScene.
+ UE_LOG(LogTemp,Display,TEXT("SC0101 legacy unguarded skip is disabled; hold Space for a safe scene skip. Left click advances one line."));
 }
 
 // ---- Bodies
@@ -1416,7 +1469,8 @@ void ADWOpeningPrototype::Tick(float Dt)
  Super::Tick(Dt);
  const float RealDt=GetWorld()->DeltaRealTimeSeconds;
  TickOpeningDialogue();if(bDialogueFailure)return;
- if(TickFormalFlow(RealDt))return;
+ if(TickFormalFlow(RealDt)){InvalidateOpeningHoldSkip();return;}
+ if(TickOpeningHoldSkip())return;
  if(Stage==EDWOpeningStage::Waiting)
  {
   auto* ArrivalGI=GetGameInstance<UDWGameInstance>();
@@ -1615,9 +1669,17 @@ void ADWOpeningPrototype::Tick(float Dt)
   if(Cue(1.3f)){Play(EDWOpeningAudioEvent::SplashPush,.9f,1.1f);Play(EDWOpeningAudioEvent::StretchPush,.7f,1.25f);AddRipple(DoubleCenter,210*Unit,1.f,1.9f);}
   if(Cue(2.45f))AddRipple(Feet(Player.Get()),130*Unit,.8f);
   if(Cue(3.2f)){AddTrauma(.55f);Play(EDWOpeningAudioEvent::GroundCollapse,.9f);}
-  if(Between(3.2f,4.4f))for(int32 I=0;I<Crumbs.Num();++I)if(IsValid(Crumbs[I]))
-   Crumbs[I]->AddActorWorldOffset((PitCenter-CrumbHome[I]).GetSafeNormal2D()*Dt*9+FVector(0,0,-Dt*15));
-  if(Between(3.2f,4.2f))for(auto A:PitFloor)if(IsValid(A))A->AddActorWorldOffset(FVector(0,0,-Dt*9));
+  if(Between(3.2f,4.4f))
+  {
+   StretchCrumbsApplied+=Dt;
+   for(int32 I=0;I<Crumbs.Num();++I)if(IsValid(Crumbs[I]))
+    Crumbs[I]->AddActorWorldOffset((PitCenter-CrumbHome[I]).GetSafeNormal2D()*Dt*9+FVector(0,0,-Dt*15));
+  }
+  if(Between(3.2f,4.2f))
+  {
+   StretchFloorApplied+=Dt;
+   for(auto A:PitFloor)if(IsValid(A))A->AddActorWorldOffset(FVector(0,0,-Dt*9));
+  }
   if(Cue(3.5f)&&!QueueDialogueBeat(TEXT("SinkThought")))return;
   if(Cue(3.6f))RequestOpeningAspect(false);
   // The location card lands as the camera settles into gameplay height.
@@ -1647,7 +1709,7 @@ void ADWOpeningPrototype::Tick(float Dt)
   if(SinkStep>0)
   {
    AActor* Nearest=nullptr;for(auto A:FeedingGround)if(IsValid(A)&&(!Nearest||FVector::Dist2D(A->GetActorLocation(),First)<FVector::Dist2D(Nearest->GetActorLocation(),First)))Nearest=A;
-   if(Nearest)Nearest->AddActorWorldOffset(FVector(0,0,-SinkStep*40));
+   if(Nearest){Nearest->AddActorWorldOffset(FVector(0,0,-SinkStep*40));RevealBiteApplied+=SinkStep;RevealBiteGround=Nearest;}
   }
   break;
  }
