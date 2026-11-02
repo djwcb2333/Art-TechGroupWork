@@ -1,0 +1,1159 @@
+{
+  "baseline": "c9b3e9851e0d79ed1ddce96fceef39a66736b358",
+  "snapshot": "20261102-02",
+  "engineering_changes": [
+    {
+      "path": "Content/DoughWorld/Characters/Enemies/Materials/MI_DWCreature_MoldNPC_R01.uasset",
+      "status": "M",
+      "bytes": 11541,
+      "sha256": "f6a15ee9a544613372bb60b7d3ce88939c0d123a437d4ef966604175a9f09cad",
+      "baseline_blob": "501bb06cd372fdca1bef14a86252a28137e998e6",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Characters/Enemies/Materials/MI_DWCreature_MoldThug_R01.uasset",
+      "status": "M",
+      "bytes": 11555,
+      "sha256": "487d57dd296175d1bfe0c5ede9de099e20ac48fb3a1ba9384e704020e78e714c",
+      "baseline_blob": "c425609e8814390ac411a3bbede8264c5578c15e",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Characters/Enemies/MoldNPC/Animations/AN_DWMoldNPC_Death_R05_24fps.uasset",
+      "status": "M",
+      "bytes": 96274,
+      "sha256": "faa238b5973b5ae911da951f41f5f583de230b1185eaa59b97f9e197813ecd27",
+      "baseline_blob": "f6d5b865a2bd0456d530f7f8ecb3852cb713901c",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Characters/Enemies/MoldNPC/Animations/AN_DWMoldNPC_Idle_R05_24fps.uasset",
+      "status": "M",
+      "bytes": 75980,
+      "sha256": "0bbbda792a7f14fe55cb53b37a1d54a62b948e5c43a87cd3502da6dcea50d3e5",
+      "baseline_blob": "97b9c867a4fbb9c7b0caacf0123ea4af4277e07b",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Characters/Enemies/MoldNPC/Animations/AN_DWMoldNPC_Move_R05_24fps.uasset",
+      "status": "M",
+      "bytes": 64982,
+      "sha256": "3e1d665a531bc55162fcf18cc4ca86a2f46eed5c3eca87b727cd73583fb83711",
+      "baseline_blob": "8c7301d1ba44ea896de776b390a778b32aa58505",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Characters/Enemies/MoldNPC/Meshes/SK_DWMoldNPC_HeroRig_R05.uasset",
+      "status": "M",
+      "bytes": 2239536,
+      "sha256": "780c769ca88e6714d438a141885a9f5bbca00c1d30d1b767369b42b9c813fbfc",
+      "baseline_blob": "594c3f5462043d7341f6194c3a91ea3216a4c1ef",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Characters/Enemies/MoldThug/Animations/AN_DWMoldThug_Alert_R05_24fps.uasset",
+      "status": "M",
+      "bytes": 97514,
+      "sha256": "d73afa609f32f7ee1e84ed14dc80ecb7510db81f85174affa6915ce2bbfc7b10",
+      "baseline_blob": "80960949bc6856f80f89f9e7e1a351a1967b5f1b",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Characters/Enemies/MoldThug/Animations/AN_DWMoldThug_Attack_R05_24fps.uasset",
+      "status": "M",
+      "bytes": 51053,
+      "sha256": "5995f5fc30dbc5827bddee9968610c9a2cdbffcb0e33bf4c5a1214a33e11c7a4",
+      "baseline_blob": "f3cffea28dcdd48973d7b11fbdb87e988c05fd85",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Characters/Enemies/MoldThug/Animations/AN_DWMoldThug_Death_R05_24fps.uasset",
+      "status": "M",
+      "bytes": 96526,
+      "sha256": "c61157b1ecb6d9af1098ef4cfa98bf16484011b7021efbb13b240bcfa1e1787a",
+      "baseline_blob": "ad7b1b2289260ab881b122e93f7162553bd51bdc",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Characters/Enemies/MoldThug/Animations/AN_DWMoldThug_Idle_R05_24fps.uasset",
+      "status": "M",
+      "bytes": 75868,
+      "sha256": "8bdfb71f28e186e523ccfd388f7f1aad99d6f19d1ae368dff124d97ff283f9d8",
+      "baseline_blob": "a163879b37e4228a88bc814256dc93fa879b5588",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Characters/Enemies/MoldThug/Animations/AN_DWMoldThug_Move_R05_24fps.uasset",
+      "status": "M",
+      "bytes": 47415,
+      "sha256": "8949ed5ad9ded653c831c84cd876a94c18926b7e60b8c2a753dfa043e521d3f2",
+      "baseline_blob": "bfea14959945a28cee71e43a9752d57ad7ba7ca6",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Characters/Enemies/MoldThug/Meshes/SK_DWMoldThug_HeroRig_R05.uasset",
+      "status": "M",
+      "bytes": 2131903,
+      "sha256": "2363d41b162769584eaf81813e777fbd8be962baea98e2bd3b289a462fdb3409",
+      "baseline_blob": "893e306bf0c6c15d3fcf78546d3f409346ceb536",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Characters/Enemies/Textures/T_DWCreature_MoldNPC_BaseColor_R01.uasset",
+      "status": "M",
+      "bytes": 8205864,
+      "sha256": "4c10e9ae730043e524c05da590e071f8134cdfdbb033580b14e7111d9ba1a856",
+      "baseline_blob": "ca6bef7dc7bcfef6bc47713b3d33794d84aed93a",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Characters/Enemies/Textures/T_DWCreature_MoldThug_BaseColor_R01.uasset",
+      "status": "M",
+      "bytes": 6548200,
+      "sha256": "9142d4ec9efe61af502a867befd5a429e853ff9a0fdc6e37e9ae0fec95be5951",
+      "baseline_blob": "9a375850e360c4b0a6a40cf9ae9fc936b0e898b8",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Characters/Hero/Animations/Weapons/MoldBow/AN_DWHero_Bow_Draw_Release.uasset",
+      "status": "M",
+      "bytes": 136096,
+      "sha256": "e6f366ca939f6ab621980cc39b6c33227200efe1a6ec2d314cf1740e9dc76750",
+      "baseline_blob": "b6f081dfc0c3af2e627340839cbd3459b838a832",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Core/Data/DA_DWAttackVfx_Weapon_MoldBow.uasset",
+      "status": "M",
+      "bytes": 2539,
+      "sha256": "34d04be539e70a2f5d5cd7637fa2ca2f6ec0027f1849391e714c9c38bdff255f",
+      "baseline_blob": "4635bec266cb5f07f83bb26485be23bbc39b10ec",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Core/Data/DA_DWCreature_MoldNPC.uasset",
+      "status": "M",
+      "bytes": 2032,
+      "sha256": "602cbfd306f511af8b36f019d8da0a2bf80583b8510b518da9ef2f910b4cc934",
+      "baseline_blob": "368fbd48374b9e83d91dc5a4dec7da0a7922c1f1",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Core/Data/DA_DWCreature_MoldThug.uasset",
+      "status": "M",
+      "bytes": 3272,
+      "sha256": "9cfb11a8f27af68a9248d4281c028f5c23fcf2180f83556bf81c877b836bd08d",
+      "baseline_blob": "6884ae3ee626680d98cc1bb62778c106b619dfcd",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Environment/Materials/CameraFade/MF_DWDesertPlayerCutout.uasset",
+      "status": "M",
+      "bytes": 15222,
+      "sha256": "403a0ce2391d0c2d5e100477ca2e0c93b1c93cba719715ea7e0bf3f810e60423",
+      "baseline_blob": "21da0c186cafacda51bf3d45b5806056559e53cf",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Environment/Materials/CameraFade/MPC_DWDesertPlayerCutout.uasset",
+      "status": "M",
+      "bytes": 3132,
+      "sha256": "12a3fd0be6178f4b6a25125483e940cfd9628c47eaa4a879e1b8a0f96c2a3165",
+      "baseline_blob": "72daa265455c70067031801d471585699b86dac0",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Environment/Materials/M_DWCreature_Mold_Green.uasset",
+      "status": "M",
+      "bytes": 10089,
+      "sha256": "78013e9a5fee2c8af22323853fe255d849b69a9bb825996d264a7d23b916bc4e",
+      "baseline_blob": "3f731b4aaa4d7bb83cb8546f4f0e3ea17d40b40b",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Environment/Whitebox/Materials/M_WB_MoldMesa.uasset",
+      "status": "M",
+      "bytes": 9873,
+      "sha256": "593c9341b57bf5cf892c527e009fdc36d31bc40d7bbd487b03c1aa29002983e7",
+      "baseline_blob": "b93dad35aff050b5e3d71ff5416d0c2cd879a296",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_BoulderCubic01.uasset",
+      "status": "M",
+      "bytes": 29558,
+      "sha256": "07651073c4afdf03cd27909538c61befeffff86f45601107602e1a924c67c84b",
+      "baseline_blob": "7fccb52632375db9e102158c27675b893caa15b3",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_BoulderCubic02.uasset",
+      "status": "M",
+      "bytes": 45331,
+      "sha256": "ea28087383dcbc3d1cf14d9001b7d8c45b8cacce472919f37f2afe5b42d26225",
+      "baseline_blob": "38cdacf88a5e5cdaaa3ef711b59c0e89cf4d04e3",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_BoulderCubic03.uasset",
+      "status": "M",
+      "bytes": 30381,
+      "sha256": "5937a6e11268c2f58ba94d9eb2e42265e7db97d17f0c4ab542109caa46b0e40a",
+      "baseline_blob": "7de69852ad81b9f6f410392cd3ec47aec6cbe212",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_BoulderCubic04.uasset",
+      "status": "M",
+      "bytes": 36910,
+      "sha256": "51908951d82cf1a47918229f77d4a30091ee95f37e53deb205626679f9d71e7b",
+      "baseline_blob": "44af8663fabaaaac183a1d314782cd60c8bf2ce5",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_BoulderCubic05.uasset",
+      "status": "M",
+      "bytes": 32907,
+      "sha256": "eea801370558628a579db3bb99a545bd3806a06d567f3cc15f9b799d1bb817a8",
+      "baseline_blob": "7081751bd15cd82b0baf899f9aa4111b00516fb9",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff01.uasset",
+      "status": "M",
+      "bytes": 61145,
+      "sha256": "b871b03954d9ad3383918b7558fa0c83deffaf6b7ba7eefcac953376fbfd3b79",
+      "baseline_blob": "17bd11eebb91c3399e81ee0a39efb7f574427860",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff02.uasset",
+      "status": "M",
+      "bytes": 48309,
+      "sha256": "dacf21e3a8a7fac41e15adcbc126ee7c15bb81e70a47c32f17694397eaf98c24",
+      "baseline_blob": "11b863561ffc0e33cf6bd4b20ef4a44d1d96db49",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff03.uasset",
+      "status": "M",
+      "bytes": 103999,
+      "sha256": "92cc1f060f8792e32396d170b7eb944c59f19c141abaedb0c7c9d5f8e8f1d062",
+      "baseline_blob": "26890a88af744e47d03b66c4b2254282a6e7c4c2",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff04.uasset",
+      "status": "M",
+      "bytes": 68795,
+      "sha256": "82bda695cb4682cb8d52fadbbe4bd47bcf1801e07acfd41c7277e112d4e24852",
+      "baseline_blob": "468b828ecd801039acccc5cc978fb33c106d85bb",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff05.uasset",
+      "status": "M",
+      "bytes": 73243,
+      "sha256": "5ac6039dc0c3797cdf4b22495f5aa0154ea45ee592b7deb0c80d9816cdb4068c",
+      "baseline_blob": "71f3b030c61175ea521faf5962f61b491f5f2579",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff06.uasset",
+      "status": "M",
+      "bytes": 107905,
+      "sha256": "72d1408342eac14d8bdaefd5bfe5c3f8ff059fb2ba47931153de61eb52b9e820",
+      "baseline_blob": "9560ae4b8b316be80f66137cb68fb115b3c48552",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff07.uasset",
+      "status": "M",
+      "bytes": 99256,
+      "sha256": "bbc8e42fdbfd5d9391e1ef78794dab8b798fcbfa32e0c9a90f9e0ac0381abc61",
+      "baseline_blob": "6a75fd283a461c260ae9e31f7f5386c30829980b",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff08.uasset",
+      "status": "M",
+      "bytes": 80154,
+      "sha256": "d59a4a5cf65ec849b674f7871f8520983299edd09d9388fbd32af723f2513312",
+      "baseline_blob": "5a567ab4a379c876862758a0d18757130c0bf625",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff09.uasset",
+      "status": "M",
+      "bytes": 122695,
+      "sha256": "73b6436ce84a96dbf038ee686fa82da9a82b861474923bb279976e1d99e0567f",
+      "baseline_blob": "59e2b821bc7fc37d9be4e14cdc2909dc6ad7f076",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff10.uasset",
+      "status": "M",
+      "bytes": 120603,
+      "sha256": "e79ea6b5ebf7c03d9448619e6b956a05b64779d079a7de08e3a89ea80a1af666",
+      "baseline_blob": "e679523040ce58276913004a3e516cf9ae98d1ac",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff11.uasset",
+      "status": "M",
+      "bytes": 59804,
+      "sha256": "d5064402413b7455611cc271ce43de47e0e909fbdb7a0e41baac655ff154c150",
+      "baseline_blob": "d280631704ebbe0b8ad80832688995b3af0dbe7b",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff12.uasset",
+      "status": "M",
+      "bytes": 45412,
+      "sha256": "8942e7959baa8d0ecdfecf59e34af5c3eb38779dbda9ff92cce2b1997ab902f8",
+      "baseline_blob": "59c9b28c825903cd642329fd87db6c07127ac37f",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff13.uasset",
+      "status": "M",
+      "bytes": 92104,
+      "sha256": "06fada4c0dca88060af04c562e813edf2feb87a119f4963a495d409aa7b1aeda",
+      "baseline_blob": "c13f2a5c55b0433b555662bfcaa2e76317e22094",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff14.uasset",
+      "status": "M",
+      "bytes": 94099,
+      "sha256": "ec5e51beb494b33c172dd3f404adffc27586a26e60837c9b7cd52a4d4ae97da3",
+      "baseline_blob": "25a4262432e97b5ea827382ec9bc0806db76fb9d",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff15.uasset",
+      "status": "M",
+      "bytes": 151651,
+      "sha256": "a77d7fc6cff55605dd7c088ab2def96e34ce20f5f3df38c053cd8b5dbbcefbc6",
+      "baseline_blob": "2fe3caae7cb04d8aa5d378cb5401104694970e90",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff16.uasset",
+      "status": "M",
+      "bytes": 166408,
+      "sha256": "2851ab4b929370d64af69a1bd517bd7f0edf7b2e9462096d3cc4c8c4dce6371b",
+      "baseline_blob": "3bab61243ae4a8ca19644056ca85fecf4f351a80",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces01.uasset",
+      "status": "M",
+      "bytes": 25113,
+      "sha256": "7e9584ab592f6ede606e18015626c579df6f55ce0d4d65f1e7c80372433c53bf",
+      "baseline_blob": "a121a47a6d7e8b261eac297e4bed436d6d8c252c",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces02.uasset",
+      "status": "M",
+      "bytes": 29564,
+      "sha256": "46d093256ba22556d57cdbe997ad5b2b13ae37db87fdaddd156a4818f089de4f",
+      "baseline_blob": "90ec095ed47e43d758701777da7eff4c1efae749",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces03.uasset",
+      "status": "M",
+      "bytes": 28691,
+      "sha256": "6e92b80d7bbccfd671895f025db3208418627337395172552bf7023ce17ac067",
+      "baseline_blob": "2395561a752c6be6c4aaff945149f4bae5e9aee3",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces04.uasset",
+      "status": "M",
+      "bytes": 22200,
+      "sha256": "c9337b61f2630a886a1bbeedd411045cc53f57b924ee6ccf090fe9468eb0c6e3",
+      "baseline_blob": "5ff874bf9441f0e9e854de9328cec2902a947cf4",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces05.uasset",
+      "status": "M",
+      "bytes": 24032,
+      "sha256": "e23f098b481f45a0d35ec0622f11876b6ad6b56cd9f8d243a6d0a9508f3ff9b4",
+      "baseline_blob": "07fcfd1bb8e3b5d744010858d72ee60ef6ba3a95",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces06.uasset",
+      "status": "M",
+      "bytes": 23964,
+      "sha256": "b62ab5cc9d7b834dfbea75d92bfb8d30b5ef19c4b9ae68deaebacf8813aa73be",
+      "baseline_blob": "8cf93f9cc2d11625c635e777f4084569ab448955",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces07.uasset",
+      "status": "M",
+      "bytes": 22982,
+      "sha256": "ca8773625cd6de5b9b21a6d209b9862ae88afb6b33f196ffdd9d597adbd0e4fa",
+      "baseline_blob": "e464e1d7671b5d2efd665cc5ec33bd71814f2979",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces08.uasset",
+      "status": "M",
+      "bytes": 28589,
+      "sha256": "a13ce1a1c7df92756754a34fcb9b1d934fc4d4121db1baab7ada53060a06f7c6",
+      "baseline_blob": "f5d297e29b923876f8e3a94e88b7cd95589e407d",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces09.uasset",
+      "status": "M",
+      "bytes": 23966,
+      "sha256": "0498015aaac75a646717c30978daef1f8d58141998b0db93155c41fb4d6634b9",
+      "baseline_blob": "37a9e72a6f5a7981a7bd980546a43d7dde4634a5",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces10.uasset",
+      "status": "M",
+      "bytes": 29352,
+      "sha256": "178a859abbbfe52c832e0386d37a81acb5810833c0cad6f8c081d0181290f05a",
+      "baseline_blob": "1376d545d39b9fcd988dc4421e285dd16e4bcf72",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces11.uasset",
+      "status": "M",
+      "bytes": 29151,
+      "sha256": "812af1ef9adb273874c5bf3c3b5d268eb7693f07a5f59b42c205c9fd1e777992",
+      "baseline_blob": "e4e34f80f3aaf6fd9692876fde63f97f733c990d",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces12.uasset",
+      "status": "M",
+      "bytes": 28006,
+      "sha256": "87df8aec98d41b415a27b49e82d7b565b8444d4e23bd1660f0d9abbc372d51c8",
+      "baseline_blob": "cee0311b0774dc5f55ad025f58731c26fa662871",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces13.uasset",
+      "status": "M",
+      "bytes": 23163,
+      "sha256": "6b59370e63ab75247ca971d03fc94ecb2c95005c4b8a2067adb123bcc298b692",
+      "baseline_blob": "0c444b3df5c51c68482ed2d103deda141154004d",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces14.uasset",
+      "status": "M",
+      "bytes": 24521,
+      "sha256": "b4ce771efaa404ca8dd6823b2fb38e55a5f7af9c93133e48dbe947a5406e6433",
+      "baseline_blob": "26063cbde24210ed2d5c6fa1ab2ff8e3ec8376e6",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces15.uasset",
+      "status": "M",
+      "bytes": 25387,
+      "sha256": "90ae842c9337ba3265e9c7680456c4332c8d3f5451a5dbe5a44bd436ab4c0b68",
+      "baseline_blob": "63698d4d8dd0f846c8001162930b88c89129bb5c",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces16.uasset",
+      "status": "M",
+      "bytes": 33134,
+      "sha256": "b815377d6a3e92ed35034b3cd5fcf253877281cda13e3e52b287a5306158a21a",
+      "baseline_blob": "801186fcf786dcb0c199ac3160ce8b9b1cc5552a",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces17.uasset",
+      "status": "M",
+      "bytes": 39017,
+      "sha256": "57223b5dc56e5b7bd366c9759a4c795808cb673b9616669f27d5c03d800a0e3c",
+      "baseline_blob": "8b716747fab43129618bbada1cdbe0d399c98b92",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces18.uasset",
+      "status": "M",
+      "bytes": 32885,
+      "sha256": "a339f4a817a129a41d92e2dc71097e5da2ce3bdf6b1c53ef78731dd65338103c",
+      "baseline_blob": "a40dda435472a10de6d9673e33591022207c4183",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces19.uasset",
+      "status": "M",
+      "bytes": 35489,
+      "sha256": "08a17a4734e13aa3fb3877d8f337634afb85bd039bd3987c145805565f567126",
+      "baseline_blob": "0972637e2bc09e655085e01a40f4b4e0122b35a6",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic01.uasset",
+      "status": "M",
+      "bytes": 23850,
+      "sha256": "a221b80f1e2184476325e6d367fa856800fef6afe46764fff6d5bb7a2fda408c",
+      "baseline_blob": "d802c2614c50599ec62a969dd9d110989d6cab25",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic02.uasset",
+      "status": "M",
+      "bytes": 25131,
+      "sha256": "66d9c8381d49c7d1263202e27bc25106063e7552ca785eb3b1a4fd8b7d8c2f9f",
+      "baseline_blob": "7dcb64547b47a9e18eb6ba04524bec30dbe39732",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic03.uasset",
+      "status": "M",
+      "bytes": 24873,
+      "sha256": "8c7f48c6d66b35e7bddbc4a4f41d3a4f4995a646762ad4d015289ca95039dea4",
+      "baseline_blob": "2e199f1ca856343e229030b382ccef536fa45092",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic04.uasset",
+      "status": "M",
+      "bytes": 24299,
+      "sha256": "8cf4f98c238364544ee0f95ea0fe45782381c7102e821d4f2273104832c81a0f",
+      "baseline_blob": "6f107f39ea5713ba31831477a8ab1eeb6237ab15",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic05.uasset",
+      "status": "M",
+      "bytes": 25530,
+      "sha256": "43412876aa61110a450dfc868b3559db7bd4cc4fd082cbab1bf15073eba17385",
+      "baseline_blob": "457c32f42016d4c897b348d5af59d9dcb8ab858e",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic06.uasset",
+      "status": "M",
+      "bytes": 26426,
+      "sha256": "c7ded910410a14dcb5bbf1eb19b0c2305cdea4663cd27ced4afca432d1ea554e",
+      "baseline_blob": "f0b96ef016c54f6e1f189c81b0b834a605971e78",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic07.uasset",
+      "status": "M",
+      "bytes": 26160,
+      "sha256": "2f48a871fd4195d593f1a3c66c7d05b08a69f20f15b3e625853ec3d62179c250",
+      "baseline_blob": "e94107f22a9d6856d93748cf15a0214798714848",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic08.uasset",
+      "status": "M",
+      "bytes": 25623,
+      "sha256": "ac1e8ad56078e92d45f3d36b0f6a44941d6a6d007fafd7f50a48d89e5f6f7ff3",
+      "baseline_blob": "c1b16b1f78785f4e3cb970d34e70a529643db7e6",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic09.uasset",
+      "status": "M",
+      "bytes": 27558,
+      "sha256": "f7d5132235d1bcadf9d95984582df3549e589d56284eb6ae2be028e6b26ce9e9",
+      "baseline_blob": "cf00c1ac0b4641a27d6a90f8d4a00a5406215f87",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic10.uasset",
+      "status": "M",
+      "bytes": 27989,
+      "sha256": "eb25d7c4e04a6a0ed77e73a6a7e5b1f3e7bebfdc0ab4c6ae946ca968d85f7767",
+      "baseline_blob": "79cd792d9b2be95f1eb01e27f2a582251ecfdeba",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic11.uasset",
+      "status": "M",
+      "bytes": 29201,
+      "sha256": "88864d9c4e5a766f46e6f7f317380b05c3df0fa89a5ea19b03720600b3fba382",
+      "baseline_blob": "c5095b3b94182d8058d3aeeedcf2c58bbe9a0cdc",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic12.uasset",
+      "status": "M",
+      "bytes": 25592,
+      "sha256": "3041907edbd1b0c6ff62cb708143b31f0b158f647ef937abf974e200f810874b",
+      "baseline_blob": "7c380e80e945151402c5897740bdb8ce8844ea76",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic13.uasset",
+      "status": "M",
+      "bytes": 29517,
+      "sha256": "3e7071c5538520bbee40fb27560bfdfd317bd43b0d9e695f2f9686dae21298e7",
+      "baseline_blob": "29bdb9fa16f1d115e1cc0d58e438d7250315b0b6",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_1x1.uasset",
+      "status": "M",
+      "bytes": 25444,
+      "sha256": "ee077367a9e877545b8cb46b746406f35e6ba89ae861aefd75fbe9a7e1e9b0c5",
+      "baseline_blob": "07058f2a87e84fdbc6d5275046b6c63217068853",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_1x1x2.uasset",
+      "status": "M",
+      "bytes": 25637,
+      "sha256": "15dbfe1b2e40b5c0676ed859c226bce1fe0feafcd05d596da8267d23a7d3c8a1",
+      "baseline_blob": "7bb57833063629cfce35b133451e6819f4df5389",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_2x2.uasset",
+      "status": "M",
+      "bytes": 25316,
+      "sha256": "63cdfae54908edb94fe4288b04e8b552b3d0faa4852d4bda835ddb57ca4aa32b",
+      "baseline_blob": "41c867920b1c23152e62f406ff3fdcca6e962eed",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_2x2x1.uasset",
+      "status": "M",
+      "bytes": 26348,
+      "sha256": "0ba81cdbecc469b43c9d526915e4a6775d5b5c33411f389cd6da7f53fe80b0f9",
+      "baseline_blob": "b4db2d04d106da36b853a3c19a2a20e640e5e806",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_2x2x4.uasset",
+      "status": "M",
+      "bytes": 27627,
+      "sha256": "e4ca5a224675264ba2f886d4bc9556f7dae9ae0c10324e65c24ce3e3a02c8a6e",
+      "baseline_blob": "66738baebed219924e5d5c2170d642e0d3590802",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_4x4x2.uasset",
+      "status": "M",
+      "bytes": 31685,
+      "sha256": "7376be585b9962c95a1ad60aea5f87fc574db98d0440f5ab5c98e427718597d2",
+      "baseline_blob": "923975984d27b24afd15eb3509475517db3d51c5",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_8x8x2.uasset",
+      "status": "M",
+      "bytes": 102533,
+      "sha256": "fb273b3e6cff0e3eb6455923f601d5eebca4ab01033d251db43493406a123859",
+      "baseline_blob": "923bd74bcfddff6e9d97670491ab0b1500c8002c",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_8x8x3.uasset",
+      "status": "M",
+      "bytes": 67862,
+      "sha256": "829c2979a3e6e1f815e02bd99fbbad9128fb5b088197802d4d4c23cce5d16292",
+      "baseline_blob": "a967849161cbf55cfe64eda39f6d1456f90346dd",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Gameplay/Combat/DWA01TrialDefaults.json",
+      "status": "M",
+      "bytes": 73343,
+      "sha256": "71278f831c99f8adaf02dee75f935f9201d04a664de88adf3ec5c8198f6863a9",
+      "baseline_blob": "bd09606dc6979582163251c23255060a41c5a699",
+      "lfs": false
+    },
+    {
+      "path": "Content/DoughWorld/Gameplay/Combat/Weapons/DA_DWHeroWeapon_MoldBow.uasset",
+      "status": "M",
+      "bytes": 107280,
+      "sha256": "f162110c6393f0b73a568513924d576c2e6e314c89ab3e55608e0f45f21c588e",
+      "baseline_blob": "24a1b7dad2b2be8638a73a124ab3d2cb28571418",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Gameplay/Resources/Art/LootWorld_R01/SM_Loot_mold_arrow.uasset",
+      "status": "M",
+      "bytes": 19881,
+      "sha256": "476ed82085a65bd15c74f673da97162da62cea905ab2609a96a7ed61651bea45",
+      "baseline_blob": "424f7c00f26f022f343d5bbb6895c35829c24e7d",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Gameplay/Resources/Art/LootWorld_R01/SM_Loot_mold_bow.uasset",
+      "status": "M",
+      "bytes": 39262,
+      "sha256": "eda6e3b2e69ea132bd5314dd81fec357428e93c7f5157439b809b2177b8138d5",
+      "baseline_blob": "5e604215a58df644f1d1ab819fe011739a9825ca",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Gameplay/Resources/Art/LootWorld_R01/SM_Loot_mold_core_legacy.uasset",
+      "status": "M",
+      "bytes": 32826,
+      "sha256": "01926917d569079da29ad54bb1786d8e62b77db0d363bb6070551799f6e9687e",
+      "baseline_blob": "77f3ae4ed6a9bdc6e90ff657ed9a0ccec09135fc",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Gameplay/Resources/Art/LootWorld_R01/SM_Loot_mold_essence.uasset",
+      "status": "M",
+      "bytes": 25181,
+      "sha256": "ab5ec6db51f2ea462857c19ec72e9c63fab1cd62bb420a32a88e5dc582ea7552",
+      "baseline_blob": "aca0476018c07623b5b2200a791d3caaa672e627",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Maps/CrumbFrontier/Foliage/Types/FT_Grass_MoldSwamp.uasset",
+      "status": "M",
+      "bytes": 9766,
+      "sha256": "e97792597c0b47bb63a9ff42d35c8293aa429bbd9dbc85a529859881f3919e32",
+      "baseline_blob": "3e93375d7916b7b33d615c6405f7b9998a474b3a",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Maps/CrumbFrontier/Foliage/Types/FT_Grass_MoldSwamp1.uasset",
+      "status": "M",
+      "bytes": 9570,
+      "sha256": "7ca2885eba07623ecb82d81ee79396a5758825ab642c65c19d508ba8368fe321",
+      "baseline_blob": "326647ee10cdc16691fafe0cc6f9753e6812b194",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Maps/CrumbFrontier/Placeholders/Characters/BP_PH_MoldPerson.uasset",
+      "status": "M",
+      "bytes": 38759,
+      "sha256": "ff20b17256038a00fa577280d0c233c413be7a81426b12c9e87a015ced212b77",
+      "baseline_blob": "5fac9147d4d3eae6609b506a579e277efc844e1d",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Maps/CrumbFrontier/Placeholders/Vegetation/BP_PH_MoldReeds.uasset",
+      "status": "M",
+      "bytes": 37196,
+      "sha256": "333934364dddfd6def7fe0921bcde437320b1426f4376fbf5adec73e87224e21",
+      "baseline_blob": "2e2bde56b2515c0f38169267461e1fa54c5a2ad0",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/Maps/Gameplay/Levels/L_DoughWorld_StormLandscape_Test_v03.umap",
+      "status": "M",
+      "bytes": 104815632,
+      "sha256": "34a0c418b96e913fc2f2674c46415051b2037840b9329b8cf529751b3606f280",
+      "baseline_blob": "62a2850d99c3603d2b6d0558eeb3eac5db5ea9a2",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/UI/Image/T_LangIcon_mold_arrow.uasset",
+      "status": "M",
+      "bytes": 40566,
+      "sha256": "db47c8f8e64cc5f365be4116dd7b71286aa600647e7a83b953bd8c7e158c646c",
+      "baseline_blob": "fc7ed83aeb540d634c84c7c6113610d868dddc46",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/UI/Image/T_LangIcon_mold_bow.uasset",
+      "status": "M",
+      "bytes": 41315,
+      "sha256": "ea975da27c5ac3572f87e2bb1827267e9e8860358095333c1afb643e0860d153",
+      "baseline_blob": "48284c561abd84ac50fc8f39d7c84a1b3be28f26",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/UI/Image/T_LangIcon_mold_core_legacy.uasset",
+      "status": "M",
+      "bytes": 68847,
+      "sha256": "3d96284689c771ddce891c50aec8b43979b9a97429ac61e2c72e279e424fcd55",
+      "baseline_blob": "d8de8c23ef99140096f45408e0395a6603f47db0",
+      "lfs": true
+    },
+    {
+      "path": "Content/DoughWorld/UI/Image/T_LangIcon_mold_essence.uasset",
+      "status": "M",
+      "bytes": 60527,
+      "sha256": "439ccce497b85b54f2c803d19f9124f5dc40acb6807ac723ffe8d75ec13f3027",
+      "baseline_blob": "d21e36838204e73d7ba7b33f4cb746dda7c65cb9",
+      "lfs": true
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWAdventureFlowSave.h",
+      "status": "M",
+      "bytes": 847,
+      "sha256": "29af5d0dd19f85b0cab0fb07d14c115a894b5b21d4203e399ec13e02e6816f17",
+      "baseline_blob": "260ed22fb6c3c2733995b723f62cdaaeb5083013",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWC04SettingsPresentation.h",
+      "status": "M",
+      "bytes": 4951,
+      "sha256": "699ef044125e6f7ca2128b79308651c0b8a68588d098aec45e26335b8933209c",
+      "baseline_blob": "148c7c68cde541421ec643ff127c000209ff6083",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWCombatAuthoritySubsystem.cpp",
+      "status": "M",
+      "bytes": 93065,
+      "sha256": "23d4016674b0ff508de503479d1a46b931f7cf7cf82ead4de0dae5402da35a4a",
+      "baseline_blob": "dfa6ba0a77be2d9df5fa04ebffa955fa2e7bb4f3",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWCombatEquipment.cpp",
+      "status": "M",
+      "bytes": 31063,
+      "sha256": "b76fcc63b7ac7a68bdc535c99cba56b839a12897fb7aaafe424972ebdf92495b",
+      "baseline_blob": "0140913c4e0f5cdade34f1281a71990759c2b21e",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWCombatEquipment.h",
+      "status": "M",
+      "bytes": 3746,
+      "sha256": "a77b07ed4d93d5f1609502ffd4d9537e654c013de00b4340dcdd1373db4a57d6",
+      "baseline_blob": "2ba94ee14aeac61e6b86f05d169d9d810189f270",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWDesertCutoutViewComponent.cpp",
+      "status": "M",
+      "bytes": 5337,
+      "sha256": "4e60954355b7941bd1d408e0c8fe7b459097a158c1d4e5534dc3005e06a265ea",
+      "baseline_blob": "6fa484715f9afefb1c5909fb8dc15cba1324ff05",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWEnemyNest.cpp",
+      "status": "M",
+      "bytes": 18271,
+      "sha256": "9f1a5c489581ada0e6e6b0a1bd1f53cde4d7d0c271838eae88ddfd176d69e47f",
+      "baseline_blob": "edc24201ac58cc3719a13e5e59b1b5e1d85ce66c",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWEnemyNest.h",
+      "status": "M",
+      "bytes": 8987,
+      "sha256": "423c940b37ee43647b7b63a9cbd92bfc19ea9b4ac262227a10e0f65b0782a5d8",
+      "baseline_blob": "0bc61df41fb07f9ec7250c93b52379c861218fa0",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWFormalLanguagePersistence.cpp",
+      "status": "M",
+      "bytes": 22418,
+      "sha256": "4bd2e27417315b396ddd4472587aec8c5e91c8dc9e1b2dac6d8e7bee8b070be3",
+      "baseline_blob": "97023355171271f7983261bba312eacf59497f72",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWFormalLanguageProjection.cpp",
+      "status": "M",
+      "bytes": 17000,
+      "sha256": "315db7a5042dac12142fbd15ed1b773741c77bc3942f2b0659272d3d9b56f1f2",
+      "baseline_blob": "021e97343d087157ab3441eb3220261de9aa0ed6",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWFormalSaveVersionPolicy.h",
+      "status": "M",
+      "bytes": 2237,
+      "sha256": "6119a14d848c5f6ec90497747b423476c1eaf30b2db588cde16783f13841b2ea",
+      "baseline_blob": "e900c10b57586e46fdf2e8db56a1a328fda84aee",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWGameInstance.Opening.cpp",
+      "status": "M",
+      "bytes": 23930,
+      "sha256": "f808918bf8a842e552fcd40abd3d3cfd2857c878c567e5b7cce7f995566d18c2",
+      "baseline_blob": "6f30dbae151eb5af1188ff095e11d732da9fc0a8",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWGatheringComponent.cpp",
+      "status": "M",
+      "bytes": 31697,
+      "sha256": "dfc44f681c94bb3b5656bc25546c3a1fb87c92fc0237775632825c428d45af31",
+      "baseline_blob": "268a1535f7bc2fd8fdf889d58a08e155c58411bc",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWGatheringComponent.h",
+      "status": "M",
+      "bytes": 13598,
+      "sha256": "58acdb6851d9a55c77da3a96534805e20b5da9496e68e54ed463028709e1899c",
+      "baseline_blob": "2c60885681edc91db9bcaf50b66d485f443f1203",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWLanguagePlaytestGameMode.cpp",
+      "status": "M",
+      "bytes": 3393,
+      "sha256": "95f9666d2b4cafd1f2e2f6d62675192cb8a269182e497b37d7cf5a809a7fa170",
+      "baseline_blob": "56348b5e9d756219080391755854a1c3387b8423",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWPlayerCharacter.GatheringEnvironment.cpp",
+      "status": "M",
+      "bytes": 4075,
+      "sha256": "4b5ed6064a5df87be809e0db55038b78723998bd1eb25061620a0989d6fcc636",
+      "baseline_blob": "483c94db26497b70a70e111a346fe60dbc84b45b",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWSettingsBook.cpp",
+      "status": "M",
+      "bytes": 17465,
+      "sha256": "22b45fdd3b3c2cea61cf036e677c6e0e55a5b69e0181ef65614a1610e020a267",
+      "baseline_blob": "17a13ab85f937e9e5730f04dab53a2c031f492a9",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWWeaponAnimationComponent.Equipment.cpp",
+      "status": "M",
+      "bytes": 3459,
+      "sha256": "7c5d8cff5480af0828b0613452260776a348cc61052eefe140dd1fae0c37337d",
+      "baseline_blob": "9d65a849d77a7a9f92b5cebd6e6afbc1b961c082",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWWeaponAnimationComponent.InventoryEquip.cpp",
+      "status": "M",
+      "bytes": 10901,
+      "sha256": "b79520efd807827c7625e33c4d7acff5a981b5711002f5a4b8f6cb5a6ec63104",
+      "baseline_blob": "3eb9c3c2350166e7141526f541bf72a3eb0ad1cd",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWWeaponAnimationComponent.PresentationTiming.cpp",
+      "status": "M",
+      "bytes": 7367,
+      "sha256": "529ba4247ad8fac5d5191ede63f191f58c332c73e17a3d26c59cb10e68292247",
+      "baseline_blob": "9e089580b83548396e3ba769d552c51c1f4a20fc",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWWeaponAnimationComponent.Unarmed.cpp",
+      "status": "M",
+      "bytes": 9225,
+      "sha256": "fa380536ef6f9d0b7a6249b3fe6194c19628685fa737d71378bfdf7d25eaaf5a",
+      "baseline_blob": "0de4bbd65da45697495a4498748f415e26558ac1",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWWeaponAnimationComponent.cpp",
+      "status": "M",
+      "bytes": 54864,
+      "sha256": "b7a3dd924ba6e5a1a1a899183b6de57ca2661b8a637466b20b7de79ab0021eae",
+      "baseline_blob": "e280d8d22268c0cdb5307011ea9ba6e022038cb8",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWWeaponAnimationComponent.h",
+      "status": "M",
+      "bytes": 29329,
+      "sha256": "e68f8617b4eadff0d5c90624ca9abc10887fd7143df2f40c947ac614ef24b2a2",
+      "baseline_blob": "58b0ffa3a955c5614d0431bc40987fcfca1cc00e",
+      "lfs": false
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWEnemyNest.Visual.cpp",
+      "status": "A",
+      "bytes": 7746,
+      "sha256": "41f178a1f76f877301403cf5987cf2a6f67612190e34b6a4471c049de34ddffa"
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWGatheringComponent.Visual.cpp",
+      "status": "A",
+      "bytes": 17383,
+      "sha256": "3b4ad73e4722210a2a458f95d65816293f1a437fff9c9e8e71b3bb935bd81cbd"
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWSimpleSpearPolicy.h",
+      "status": "A",
+      "bytes": 2021,
+      "sha256": "a947fd8c932a6ae0a8de45e882e0c3330c5ce8c9954cfb310616168a47058086"
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWSimpleSpearPolicyTests.cpp",
+      "status": "A",
+      "bytes": 4102,
+      "sha256": "586220a00a2b42ce66c38c0af9bba2f5af91705880d64dee5bdb3a80cf4e440a"
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWStarterPolicy.h",
+      "status": "A",
+      "bytes": 3382,
+      "sha256": "82f24e111562f1a8e6acbecfb012143d1b9cc4a04207d6a60b2e09c7d941ffea"
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWStarterPolicyTests.cpp",
+      "status": "A",
+      "bytes": 6462,
+      "sha256": "e03de550a862bd59d7807d094a20190c884fa1cf8b7cedb250c903b09d0c25e5"
+    },
+    {
+      "path": "Source/GDATtest/Gameplay/DWWeaponAnimationComponent.SimpleSpear.cpp",
+      "status": "A",
+      "bytes": 9753,
+      "sha256": "66a85069e3d8b5721db3cb44040f7bac9f16224a5f41ac8785268390d58935f7"
+    }
+  ],
+  "documentation_paths": [
+    "版本记录.md",
+    "版本记录.html",
+    "README_GDATtest.md",
+    "更新说明_20261102_02.md",
+    "变更文件清单_20261102_02.json"
+  ],
+  "all_commit_paths": [
+    "Content/DoughWorld/Characters/Enemies/Materials/MI_DWCreature_MoldNPC_R01.uasset",
+    "Content/DoughWorld/Characters/Enemies/Materials/MI_DWCreature_MoldThug_R01.uasset",
+    "Content/DoughWorld/Characters/Enemies/MoldNPC/Animations/AN_DWMoldNPC_Death_R05_24fps.uasset",
+    "Content/DoughWorld/Characters/Enemies/MoldNPC/Animations/AN_DWMoldNPC_Idle_R05_24fps.uasset",
+    "Content/DoughWorld/Characters/Enemies/MoldNPC/Animations/AN_DWMoldNPC_Move_R05_24fps.uasset",
+    "Content/DoughWorld/Characters/Enemies/MoldNPC/Meshes/SK_DWMoldNPC_HeroRig_R05.uasset",
+    "Content/DoughWorld/Characters/Enemies/MoldThug/Animations/AN_DWMoldThug_Alert_R05_24fps.uasset",
+    "Content/DoughWorld/Characters/Enemies/MoldThug/Animations/AN_DWMoldThug_Attack_R05_24fps.uasset",
+    "Content/DoughWorld/Characters/Enemies/MoldThug/Animations/AN_DWMoldThug_Death_R05_24fps.uasset",
+    "Content/DoughWorld/Characters/Enemies/MoldThug/Animations/AN_DWMoldThug_Idle_R05_24fps.uasset",
+    "Content/DoughWorld/Characters/Enemies/MoldThug/Animations/AN_DWMoldThug_Move_R05_24fps.uasset",
+    "Content/DoughWorld/Characters/Enemies/MoldThug/Meshes/SK_DWMoldThug_HeroRig_R05.uasset",
+    "Content/DoughWorld/Characters/Enemies/Textures/T_DWCreature_MoldNPC_BaseColor_R01.uasset",
+    "Content/DoughWorld/Characters/Enemies/Textures/T_DWCreature_MoldThug_BaseColor_R01.uasset",
+    "Content/DoughWorld/Characters/Hero/Animations/Weapons/MoldBow/AN_DWHero_Bow_Draw_Release.uasset",
+    "Content/DoughWorld/Core/Data/DA_DWAttackVfx_Weapon_MoldBow.uasset",
+    "Content/DoughWorld/Core/Data/DA_DWCreature_MoldNPC.uasset",
+    "Content/DoughWorld/Core/Data/DA_DWCreature_MoldThug.uasset",
+    "Content/DoughWorld/Environment/Materials/CameraFade/MF_DWDesertPlayerCutout.uasset",
+    "Content/DoughWorld/Environment/Materials/CameraFade/MPC_DWDesertPlayerCutout.uasset",
+    "Content/DoughWorld/Environment/Materials/M_DWCreature_Mold_Green.uasset",
+    "Content/DoughWorld/Environment/Whitebox/Materials/M_WB_MoldMesa.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_BoulderCubic01.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_BoulderCubic02.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_BoulderCubic03.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_BoulderCubic04.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_BoulderCubic05.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff01.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff02.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff03.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff04.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff05.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff06.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff07.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff08.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff09.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff10.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff11.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff12.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff13.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff14.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff15.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliff16.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces01.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces02.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces03.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces04.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces05.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces06.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces07.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces08.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces09.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces10.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces11.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces12.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces13.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces14.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces15.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces16.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces17.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces18.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_CubicCliffPieces19.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic01.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic02.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic03.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic04.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic05.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic06.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic07.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic08.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic09.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic10.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic11.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic12.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic13.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_1x1.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_1x1x2.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_2x2.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_2x2x1.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_2x2x4.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_4x4x2.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_8x8x2.uasset",
+    "Content/DoughWorld/Fab/SoStylized/Environment/Rocks/Cubic/SM_RockCubic_Metric_8x8x3.uasset",
+    "Content/DoughWorld/Gameplay/Combat/DWA01TrialDefaults.json",
+    "Content/DoughWorld/Gameplay/Combat/Weapons/DA_DWHeroWeapon_MoldBow.uasset",
+    "Content/DoughWorld/Gameplay/Resources/Art/LootWorld_R01/SM_Loot_mold_arrow.uasset",
+    "Content/DoughWorld/Gameplay/Resources/Art/LootWorld_R01/SM_Loot_mold_bow.uasset",
+    "Content/DoughWorld/Gameplay/Resources/Art/LootWorld_R01/SM_Loot_mold_core_legacy.uasset",
+    "Content/DoughWorld/Gameplay/Resources/Art/LootWorld_R01/SM_Loot_mold_essence.uasset",
+    "Content/DoughWorld/Maps/CrumbFrontier/Foliage/Types/FT_Grass_MoldSwamp.uasset",
+    "Content/DoughWorld/Maps/CrumbFrontier/Foliage/Types/FT_Grass_MoldSwamp1.uasset",
+    "Content/DoughWorld/Maps/CrumbFrontier/Placeholders/Characters/BP_PH_MoldPerson.uasset",
+    "Content/DoughWorld/Maps/CrumbFrontier/Placeholders/Vegetation/BP_PH_MoldReeds.uasset",
+    "Content/DoughWorld/Maps/Gameplay/Levels/L_DoughWorld_StormLandscape_Test_v03.umap",
+    "Content/DoughWorld/UI/Image/T_LangIcon_mold_arrow.uasset",
+    "Content/DoughWorld/UI/Image/T_LangIcon_mold_bow.uasset",
+    "Content/DoughWorld/UI/Image/T_LangIcon_mold_core_legacy.uasset",
+    "Content/DoughWorld/UI/Image/T_LangIcon_mold_essence.uasset",
+    "README_GDATtest.md",
+    "Source/GDATtest/Gameplay/DWAdventureFlowSave.h",
+    "Source/GDATtest/Gameplay/DWC04SettingsPresentation.h",
+    "Source/GDATtest/Gameplay/DWCombatAuthoritySubsystem.cpp",
+    "Source/GDATtest/Gameplay/DWCombatEquipment.cpp",
+    "Source/GDATtest/Gameplay/DWCombatEquipment.h",
+    "Source/GDATtest/Gameplay/DWDesertCutoutViewComponent.cpp",
+    "Source/GDATtest/Gameplay/DWEnemyNest.Visual.cpp",
+    "Source/GDATtest/Gameplay/DWEnemyNest.cpp",
+    "Source/GDATtest/Gameplay/DWEnemyNest.h",
+    "Source/GDATtest/Gameplay/DWFormalLanguagePersistence.cpp",
+    "Source/GDATtest/Gameplay/DWFormalLanguageProjection.cpp",
+    "Source/GDATtest/Gameplay/DWFormalSaveVersionPolicy.h",
+    "Source/GDATtest/Gameplay/DWGameInstance.Opening.cpp",
+    "Source/GDATtest/Gameplay/DWGatheringComponent.Visual.cpp",
+    "Source/GDATtest/Gameplay/DWGatheringComponent.cpp",
+    "Source/GDATtest/Gameplay/DWGatheringComponent.h",
+    "Source/GDATtest/Gameplay/DWLanguagePlaytestGameMode.cpp",
+    "Source/GDATtest/Gameplay/DWPlayerCharacter.GatheringEnvironment.cpp",
+    "Source/GDATtest/Gameplay/DWSettingsBook.cpp",
+    "Source/GDATtest/Gameplay/DWSimpleSpearPolicy.h",
+    "Source/GDATtest/Gameplay/DWSimpleSpearPolicyTests.cpp",
+    "Source/GDATtest/Gameplay/DWStarterPolicy.h",
+    "Source/GDATtest/Gameplay/DWStarterPolicyTests.cpp",
+    "Source/GDATtest/Gameplay/DWWeaponAnimationComponent.Equipment.cpp",
+    "Source/GDATtest/Gameplay/DWWeaponAnimationComponent.InventoryEquip.cpp",
+    "Source/GDATtest/Gameplay/DWWeaponAnimationComponent.PresentationTiming.cpp",
+    "Source/GDATtest/Gameplay/DWWeaponAnimationComponent.SimpleSpear.cpp",
+    "Source/GDATtest/Gameplay/DWWeaponAnimationComponent.Unarmed.cpp",
+    "Source/GDATtest/Gameplay/DWWeaponAnimationComponent.cpp",
+    "Source/GDATtest/Gameplay/DWWeaponAnimationComponent.h",
+    "变更文件清单_20261102_02.json",
+    "更新说明_20261102_02.md",
+    "版本记录.html",
+    "版本记录.md"
+  ],
+  "note": "Inventory intentionally does not include its own content hash. All paths are exact relative paths; no saves or generated cache included."
+}

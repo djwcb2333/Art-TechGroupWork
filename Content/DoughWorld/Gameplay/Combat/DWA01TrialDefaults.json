@@ -1522,8 +1522,9 @@
     "recipe_source": "StormAreaWhitebox_20261013/ItemsTable_20261026_逐项核对.json中合成表第18行；现配方数量/材料/工位不改",
     "spear_crafting_transaction": "扣原料、产出SugarSpear、登记spear身份同成败；不再同时Grant一个DWWeapon_Spear；物品使用走孢子长枪动作/距离衰减机制。",
     "historical_example_recipe_policy": "七条GatherCraft_DWWeapon_*_CraftingTable均保留历史定义，不作为本试玩可见/可执行的正式配方或解锁门槛；重复长枪示例也停用，不新增第二条长枪制作路径。",
-    "starter_scope": "仅新建的隔离试玩资料一次性初始化；旧档不自动塞物，不每次开背包/死亡/重载发一套",
-    "starter_items": [
+    "starter_scope": "新建正式周目与新隔离语言试玩仅简易糖矛、简易糖斧、简易糖镐各1；旧档与旧策略0不补发不清除；CombatTest专门武器测试保持",
+    "starter_policy_version": 1,
+    "legacy_starter_items": [
       {
         "item_id": "DWWeapon_ShieldAxe",
         "count_parameter": "weapon.starter_permanent_count"
@@ -1563,6 +1564,20 @@
       {
         "item_id": "DWAmmo_BreadShell",
         "count_parameter": "weapon.starter_shell_count"
+      }
+    ],
+    "starter_items": [
+      {
+        "item_id": "SimpleSugarSpear",
+        "count_parameter": "weapon.starter_permanent_count"
+      },
+      {
+        "item_id": "SimpleSugarAxe",
+        "count_parameter": "weapon.starter_permanent_count"
+      },
+      {
+        "item_id": "SimpleSugarPickaxe",
+        "count_parameter": "weapon.starter_permanent_count"
       }
     ],
     "spear_given_at_start": false,

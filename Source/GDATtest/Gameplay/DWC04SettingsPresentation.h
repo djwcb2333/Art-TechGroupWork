@@ -10,6 +10,7 @@
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"
 #include "DWC01UIStyle.h"
+#include "Brushes/SlateColorBrush.h"
 
 namespace DWC04Settings
 {
@@ -28,7 +29,7 @@ inline void Label(UTextBlock* Text,int32 Size=20,bool bLight=true)
 inline UBorder* Card(UWidgetTree* Tree,const FString& Name,UWidget* Content)
 {
     auto* Border=Tree->ConstructWidget<UBorder>(UBorder::StaticClass(),FName(*Name));
-    Border->SetBrush(DWC01UI::Surface(RowColor(),FVector2D(920,68)));
+    Border->SetBrush(FSlateColorBrush(RowColor()));
     Border->SetBrushColor(FLinearColor::White);Border->SetPadding(FMargin(18,8));
     Border->SetHorizontalAlignment(HAlign_Fill);Border->SetVerticalAlignment(VAlign_Center);
     Border->SetContent(Content);return Border;

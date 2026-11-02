@@ -1,5 +1,6 @@
 #include "DWPlayerCharacter.h"
 #include "DWGatheringPond.h"
+#include "DWCharacterA01Component.h"
 #include "DWGatheringProfile.h"
 #include "Engine/World.h"
 #include <cmath>
@@ -13,6 +14,24 @@ bool ADWPlayerCharacter::TryReceiveGatheringWater(ADWGatheringPond& Source,doubl
         !Source.IsWetAndOperational()||!Source.ContainsActor(this)||
         !std::isfinite(RequestedAmount)||RequestedAmount<=0.)return false;
     const double Offered=FMath::Min(RequestedAmount,Source.GetRemainingWater());
+    if(CharacterA01&&CharacterA01->IsEnabled())
+    {
+        auto* A01=CharacterA01.Get();
+        const uint64 Revision=A01->GetResourceRevision();
+        const double ExpectedHealth=Health;
+        if(Revision==MAX_uint64)return false;
+        // Prepare on a copy of the same authoritative model read by HUD and saves.
+        auto Candidate=A01->GetRuntime();
+        Candidate.SyncCurrentHealth(ExpectedHealth);
+        const double Added=Candidate.AddWater(Offered);
+        if(!std::isfinite(Added)||Added<=0.||!A01->CanAdoptRuntime(Revision,ExpectedHealth))return false;
+        // No callback between the finite source debit and authoritative player commit.
+        // Rejection changes neither owner; full players do not drain the pond.
+        if(!Source.DebitRefillWater(Added))return false;
+        OutAdded=Added;
+        A01->AdoptRuntimeUnchecked(MoveTemp(Candidate));
+        return true;
+    }
     auto Candidate=CombatVitals;
     double Added=0.;
     if(!Candidate.AddWater(Offered,Health,Added)||Added<=0.)return false;

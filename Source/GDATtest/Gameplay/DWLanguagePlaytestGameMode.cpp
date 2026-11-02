@@ -8,6 +8,7 @@
 #include "DWGameInstance.h"
 #include "DWInventoryComponent.h"
 #include "DWCombatEquipment.h"
+#include "DWStarterPolicy.h"
 #include "DWGatheringProfile.h"
 #include "DWGatheringComponent.h"
 #include "DWWeaponAnimationComponent.h"
@@ -32,22 +33,13 @@ void ADWLanguagePlaytestGameMode::StartPlay()
  FString Error;
  if(!GI||GI->HasActiveSlot()||!S||!P||!PC||!HUD||!S->StartPlaytest(P,Error)||!Cast<UDWGatheringProfile>(P->GetGameplayConfig()))
  {UE_LOG(LogTemp,Error,TEXT("LANG01 bootstrap rejected: %s"),*Error);return;}
- const auto& Trial=S->GetTrialConfig();const TSharedPtr<FJsonObject>* Policy=nullptr;
- const TArray<TSharedPtr<FJsonValue>>* Items=nullptr;TArray<FDWItemStack> Starter;
- if(!Trial||!Trial->TryGetObjectField(TEXT("weapon_policy"),Policy)||!Policy||!(*Policy)->TryGetArrayField(TEXT("starter_items"),Items))
- {UE_LOG(LogTemp,Error,TEXT("LANG01 starter policy is missing."));return;}
- for(const auto& V:*Items)
- {
-  const auto O=V->AsObject();if(!O){UE_LOG(LogTemp,Error,TEXT("LANG01 malformed starter item."));return;}
-  const FString Id=O->GetStringField(TEXT("item_id")),Parameter=O->GetStringField(TEXT("count_parameter"));const double Quantity=S->Parameter(Parameter,-1.);
-  if(!FMath::IsFinite(Quantity)||Quantity<1||Quantity>MAX_int32||FMath::FloorToDouble(Quantity)!=Quantity)
-  {UE_LOG(LogTemp,Error,TEXT("LANG01 invalid starter amount: %s"),*Parameter);return;}
-  Starter.Emplace(FName(*Id),static_cast<int32>(Quantity));
- }
+ TArray<FDWItemStack> Starter;
+ if(!DWStarterPolicy::ReadBasicBatch(S->GetTrialConfig(),Starter,Error))
+ {UE_LOG(LogTemp,Error,TEXT("LANG01 starter rejected: %s"),*Error);return;}
  // Inventory, owned set and the per-playthrough receipt are one typed native commit.
  auto* Weapon=P->WeaponAnimationComponent.Get();
  if(!Weapon){UE_LOG(LogTemp,Error,TEXT("LANG01 weapon owner is missing."));return;}
- const auto Grant=FDWCombatEquipmentTransaction::GrantStarterBatch(*Weapon,Starter,S->GetPlaythroughId(),S->GetStarterGrantState());
+ const auto Grant=FDWCombatEquipmentTransaction::GrantStarterBatch(*Weapon,Starter,S->GetPlaythroughId(),S->GetStarterGrantState(),DWStarterPolicy::BasicTools);
  if(!Grant.bCommittedThisCall&&!Grant.bAlreadyGranted)
  {UE_LOG(LogTemp,Error,TEXT("LANG01 initial acquisition failed; no partial starter grant accepted."));return;}
  HUD->SetSessionStarted(true);HUD->ClosePanels();PC->SetPause(false);

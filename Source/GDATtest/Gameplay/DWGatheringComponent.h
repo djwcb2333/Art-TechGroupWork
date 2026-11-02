@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "CoreMinimal.h"
 #include "DWCombatCommitLedger.h"
 #include "Components/ActorComponent.h"
@@ -21,6 +21,9 @@ struct FDWGatheringItemModelBinding
  UPROPERTY(EditAnywhere,BlueprintReadWrite) TObjectPtr<UStaticMesh> Mesh;
  UPROPERTY(EditAnywhere,BlueprintReadWrite) FTransform GripAdjustment=FTransform::Identity;
  UPROPERTY(EditAnywhere,BlueprintReadWrite) TArray<TObjectPtr<UMaterialInterface>> MaterialOverrides;
+ /** Model calibration remains GripAdjustment. These adjustments operate in the current visible-hand frame. */
+ UPROPERTY(EditAnywhere,BlueprintReadWrite) FTransform HandAdjustment=FTransform::Identity;
+ UPROPERTY(EditAnywhere,BlueprintReadWrite) FTransform IdleHandAdjustment=FTransform::Identity;
 };
 UENUM(BlueprintType)
 enum class EDWGatheringWorkKind : uint8 { None,Demolition };
@@ -36,6 +39,12 @@ public:
     bool HasAvailableInteractionTarget()const{return FindTarget()!=nullptr;}
     bool TryUseTool(FName ItemId);
     bool HandlePrimaryClick();
+    void UpdateSimpleSpearVisual(const FTransform& GripToOwner,bool Show);
+    /** Single post-mesh render submission; does not advance any action or grant a source. */
+    bool UpdateSelectedToolVisual(const FTransform* SimpleSpearGrip);
+    bool GetToolHandFrame(FTransform& Out)const;
+    void ClearToolCarryPresentation(){bToolCarrySelected=false;HideGatheringToolVisual();}
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Gathering|Tool Visual") bool bShowSelectedToolInHand=true;
     bool HasCraftingContext(FName RecipeId,FName StationId,FName BuildingId) const;
     /** Independent from click interaction reach. All requirements use this same live set. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Crafting|Proximity",meta=(ClampMin="1",Units="cm")) float CraftingStationRadiusCm=250.f;
@@ -132,8 +141,14 @@ private:
     bool bDemolitionSwing=false;
     bool IsPendingHitCurrent() const;
     void UpdateGatheringToolVisual();
+    bool UpdateIdleSelectedToolVisual();
+    FTransform ApplyToolHandAdjustment(FName Id,const FTransform& ModelToOwner,bool Idle)const;
+    bool bToolCarrySelected=true;
     void HideGatheringToolVisual();
     UPROPERTY(Transient) FName ActiveTool;
+    UPROPERTY(Transient) TObjectPtr<UStaticMesh> SimpleSpearFallbackMesh;
+    UPROPERTY(Transient) TMap<int32,TObjectPtr<UMaterialInterface>> SimpleSpearFallbackMaterials;
+    bool bSimpleSpearVisualShown=false,bSimpleSpearVisualLookupAttempted=false;
     UPROPERTY(Transient) TObjectPtr<UAnimSequenceBase> ActiveGatheringSequence;
     UPROPERTY(Transient) TObjectPtr<UStaticMesh> ProxyCube;
     UPROPERTY(Transient) TObjectPtr<UStaticMeshComponent> GatheringToolHandle;

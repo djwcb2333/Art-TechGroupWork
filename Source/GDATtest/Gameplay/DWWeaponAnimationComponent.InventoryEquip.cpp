@@ -9,6 +9,7 @@
 #include "DWGameplayWidget.h"
 #include "DWGameInstance.h"
 #include "DWInventoryComponent.h"
+#include "DWGameplayConfig.h"
 #include "DWCharacterA01Component.h"
 #include "DWLanguageUIBridgeComponent.h"
 #include "DWLoadingTransition.h"
@@ -106,7 +107,31 @@ bool UDWWeaponAnimationComponent::EquipInventoryItem(const FDWInventorySlotSnaps
     NextAttackTime=FMath::Max(NextAttackTime,Now+EquipmentSwitchLockSeconds);
     bPrimaryHeld=bSecondaryHeld=false;PrimaryInputOrigin.Reset();SecondaryInputOrigin.Reset();ActiveSet=nullptr;ActiveClip={};
     if(Claim){LastWeaponResourceReceipt=Admission.Receipt.Handle;A->EnqueueCommittedWeaponResource(Notice);}End();
-    RefreshDaggerEquipmentFacts();UpdateVisuals();
+    ClearSimpleSpearToolSelection();RefreshDaggerEquipmentFacts();UpdateVisuals();
     if(Claim&&Authority.IsValid()&&A->GetWorldEpoch()==Epoch)A->DrainNotifications();
     return true;
+}
+
+bool UDWWeaponAnimationComponent::EquipSimpleSpearInventory(const FDWInventorySlotSnapshot& Slot)
+{
+ auto* P=Player();auto* Bag=P?P->GetInventory():nullptr;auto* A=UDWCombatAuthoritySubsystem::Get(P);
+ const auto* Config=P?P->GetGameplayConfig():nullptr;
+ if(!P||!Bag||!A||!A->IsOperational()||!Config||Slot.ItemId!=TEXT("SimpleSugarSpear")||Slot.Quantity<1||
+    !Bag->IsSlotSnapshotCurrent(Slot)||!Config->Tools.Contains(Slot.ItemId)||!bEnabled||!HasCurrentEquipmentIdentity()||
+    CombatWeaponResources.Revision==MAX_int64||(!DWInventoryEquipment::Context(P,this)&&!P->IsCombatActionAllowed()))return false;
+ if(HasSimpleSpearSelected())return true; // No free cooldown/action reset on selecting the same tool.
+ const auto Life=A->CaptureActorLife(P);const uint64 Epoch=A->GetWorldEpoch(),Restore=CombatWeaponResources.RestoreEpoch;
+ const int64 Revision=CombatWeaponResources.Revision;const TWeakObjectPtr<UWorld> World(GetWorld());
+ const TWeakObjectPtr<UDWInventoryComponent> KeepBag(Bag);const double Now=GetCombatActionWorldSeconds();if(!FMath::IsFinite(Now))return false;
+ P->CancelCombatActions();A=UDWCombatAuthoritySubsystem::Get(P);
+ if(!IsValid(P)||P->IsActorBeingDestroyed()||P->IsDead()||Player()!=P||!IsValid(this)||IsBeingDestroyed()||
+    !A||A->GetWorldEpoch()!=Epoch||!World.IsValid()||GetWorld()!=World.Get()||World->bIsTearingDown||
+    !KeepBag.IsValid()||P->GetInventory()!=Bag||!Bag->IsSlotSnapshotCurrent(Slot)||
+    CombatWeaponResources.Revision!=Revision||CombatWeaponResources.RestoreEpoch!=Restore||P->GetGameplayConfig()!=Config||
+    (!DWInventoryEquipment::Context(P,this)&&!P->IsCombatActionAllowed()))return false;
+ const auto Live=A->CaptureActorLife(P);if(Live.Entity!=Life.Entity||Live.Life!=Life.Life)return false;
+ ClearShieldCounterFacts();CombatWeaponResources.Snapshot.CurrentEquipmentId=NAME_None;++CombatWeaponResources.Revision;
+ SelectedWeapon=EDWAnimatedWeapon::Unarmed;AmmoInMagazine=0;NextAttackTime=FMath::Max(NextAttackTime,Now+EquipmentSwitchLockSeconds);
+ bPrimaryHeld=bSecondaryHeld=false;PrimaryInputOrigin.Reset();SecondaryInputOrigin.Reset();ActiveSet=nullptr;ActiveClip={};
+ RefreshDaggerEquipmentFacts();UpdateVisuals();return true;
 }

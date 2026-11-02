@@ -1,4 +1,4 @@
-#include "DWWeaponAnimationComponent.h"
+﻿#include "DWWeaponAnimationComponent.h"
 #include "DWWeaponVisualSampler.h"
 #include "DWAttackVfxResolver.h"
 #include "DWCombatPresentationComponent.h"
@@ -671,7 +671,13 @@ void UDWWeaponAnimationComponent::UpdateVisuals()
     TRACE_CPUPROFILER_EVENT_SCOPE(DWWeapon_UpdateVisuals);
     auto* P=Player();auto* Set=GetSelectedSet();
     if(!P)return;
-    if(!bEnabled||!Set||!IsEnabled()||SelectedWeapon==EDWAnimatedWeapon::Unarmed||(P->GatheringComponent&&P->GatheringComponent->IsGatheringSwingActive()))
+    bool ToolVisualShown=false;
+    if(P->GatheringComponent)
+    {
+        FTransform ToolGrip;const bool Show=GetSimpleSpearVisualGrip(ToolGrip);
+        ToolVisualShown=P->GatheringComponent->UpdateSelectedToolVisual(Show?&ToolGrip:nullptr);
+    }
+    if(!bEnabled||!Set||!IsEnabled()||ToolVisualShown||SelectedWeapon==EDWAnimatedWeapon::Unarmed||(P->GatheringComponent&&P->GatheringComponent->IsGatheringSwingActive()))
     {
         for(USceneComponent* C:{static_cast<USceneComponent*>(PrimaryVisual.Get()),static_cast<USceneComponent*>(SecondaryVisual.Get()),static_cast<USceneComponent*>(PrimaryDeformedVisual.Get()),static_cast<USceneComponent*>(SecondaryDeformedVisual.Get()),static_cast<USceneComponent*>(PrimaryTrailVisual.Get()),static_cast<USceneComponent*>(SecondaryTrailVisual.Get())})if(C)C->SetVisibility(false);
         if(SelectedWeapon==EDWAnimatedWeapon::Unarmed&&P->SwordPlaceholder)P->SwordPlaceholder->SetVisibility(false);

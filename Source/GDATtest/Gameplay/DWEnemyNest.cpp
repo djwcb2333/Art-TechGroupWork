@@ -1,4 +1,4 @@
-#include "DWEnemyNest.h"
+﻿#include "DWEnemyNest.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWEnemyCharacter.h"
 #include "Components/CapsuleComponent.h"
@@ -126,11 +126,13 @@ void ADWEnemyNest::BeginPlay()
     if (!bHealthRestoredFromSave) Health = FMath::Max(1.f, MaxHealth);
     UpdateAmbientPresentation();
     SampleNextSpawnInterval();
+    InitializeNestVisual();
 }
 
 void ADWEnemyNest::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+    UpdateNestVisual(DeltaSeconds);
     UpdateAmbientPresentation();
     if (!IsAlive()) return;
     const APawn* Player = UGameplayStatics::GetPlayerPawn(this, 0);
@@ -253,6 +255,7 @@ ADWEnemyCharacter* ADWEnemyNest::SpawnEnemy()
             { Spawned->Destroy(); continue; }
             Spawned->SourceNest=this;
             SpawnedEnemies.Add(Spawned);
+            StartNestSpawnVisual();
             OnEnemySpawned(Spawned);
             return Spawned;
         }
@@ -315,6 +318,7 @@ void ADWEnemyNest::SetHealthForLoad(float NewHealth)
     if (bCombatDeathTransition || !FMath::IsFinite(NewHealth)) return;
     if (auto* Authority = UDWCombatAuthoritySubsystem::Get(this)) Authority->NotifyActorRestored(this);
     bCombatDeathEffectsPending = false;
+    ResetNestVisual();
     bHealthRestoredFromSave = true;
     SampleNextSpawnInterval();
     Health = FMath::Clamp(NewHealth, 0.f, FMath::Max(1.f, MaxHealth));
@@ -351,6 +355,7 @@ void ADWEnemyNest::PublishCombatDeathEffects(bool bFromSave)
     if (!bCombatDeathEffectsPending || bCombatDeathTransition || IsActorBeingDestroyed()) return;
     bCombatDeathEffectsPending = false;
     TGuardValue<bool> DeathGuard(bCombatDeathTransition, true);
+    ResetNestVisual();
     if (!bFromSave && bCombatDeathRangeNotice) OnPlayerRangeChanged(false);
     if (!CanContinue()) return;
     SetActorEnableCollision(false);

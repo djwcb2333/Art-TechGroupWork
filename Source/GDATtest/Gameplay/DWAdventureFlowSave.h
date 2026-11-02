@@ -15,4 +15,6 @@ USTRUCT() struct FDWAdventureFlowSave
  UPROPERTY(SaveGame) FString DestinationMap;
  UPROPERTY(SaveGame) EDWAdventureOpeningPhase Phase=EDWAdventureOpeningPhase::Legacy;
  UPROPERTY(SaveGame) bool bStarterGranted=false;
+ // Missing in deployed saves -> legacy 0. Only genuinely new formal slots choose basic-tools 1.
+ UPROPERTY(SaveGame) int32 StarterPolicyVersion=0;
 };

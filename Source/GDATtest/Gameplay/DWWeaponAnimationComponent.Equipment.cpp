@@ -24,7 +24,7 @@ bool UDWWeaponAnimationComponent::SelectWeapon(EDWAnimatedWeapon Weapon)
     if(!CanSelectCombatEquipment(Weapon))return false;
     FName Id;if(!DWCombatEquipment::ToItemId(Weapon,Id))return false;
     // Selecting the existing item is a no-op, not a free action cancellation or cooldown reset.
-    if(Id==CombatWeaponResources.Snapshot.CurrentEquipmentId&&SelectedWeapon==Weapon)return true;
+    if(Id==CombatWeaponResources.Snapshot.CurrentEquipmentId&&SelectedWeapon==Weapon){ClearSimpleSpearToolSelection();return true;}
     auto* P=Player();auto* Authority=UDWCombatAuthoritySubsystem::Get(P);if(!Authority)return false;
     const TWeakObjectPtr<UWorld> World(GetWorld());const auto Life=Authority->CaptureActorLife(P);
     const uint64 Epoch=Authority->GetWorldEpoch(),Restore=CombatWeaponResources.RestoreEpoch;
@@ -46,6 +46,6 @@ bool UDWWeaponAnimationComponent::SelectWeapon(EDWAnimatedWeapon Weapon)
     NextAttackTime=FMath::Max(NextAttackTime,Now+EquipmentSwitchLockSeconds);
     bPrimaryHeld=bSecondaryHeld=false;PrimaryInputOrigin.Reset();SecondaryInputOrigin.Reset();
     ActiveSet=nullptr;ActiveClip={};
-    RefreshDaggerEquipmentFacts();
+    ClearSimpleSpearToolSelection();RefreshDaggerEquipmentFacts();
     UpdateVisuals();return true; // Native selection is complete before any presentation notification.
 }

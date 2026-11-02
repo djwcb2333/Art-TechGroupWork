@@ -546,7 +546,10 @@ FDWCombatDamageResult UDWCombatAuthoritySubsystem::CommitPending(DWCombatCommit:
         if(auto* Source=Cast<ADWPlayerCharacter>(Snapshot->Command.Source.Get());Source&&Source->CharacterA01&&Source->CharacterA01->IsEnabled()&&Source->WeaponAnimationComponent)
         {
             FDWA01CorruptionResult Enhancement;auto* C=Source->CharacterA01.Get();CorruptionRevision=C->GetResourceRevision();
-            if(C->PrepareCorruption(Snapshot->Command.Identity.Action.Id,Source->WeaponAnimationComponent->GetCombatWeaponStateSnapshot().CurrentEquipmentId,false,CorruptionCandidate,Enhancement))
+            FName AttackItem=Source->WeaponAnimationComponent->GetCombatWeaponStateSnapshot().CurrentEquipmentId;
+            FName ToolItem;
+            if(Source->WeaponAnimationComponent->GetCommittedToolAttackSource(Snapshot->Command.Identity.Action,ToolItem))AttackItem=ToolItem;
+            if(C->PrepareCorruption(Snapshot->Command.Identity.Action.Id,AttackItem,false,CorruptionCandidate,Enhancement))
             {
                 const double Amount=Snapshot->PreparedDamageAmount*Enhancement.DamageMultiplier;
                 if(!FMath::IsFinite(Amount)||Amount>MAX_flt)return Result;

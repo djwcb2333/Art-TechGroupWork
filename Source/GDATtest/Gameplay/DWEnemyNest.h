@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -62,6 +62,15 @@ public:
     /** Current sampled interval; it is resampled on load, while SpawnProgress retains its saved seconds. */
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Transient, Category="Nest|Spawning") float CurrentSpawnInterval = 0.f;
 
+    /** Presentation only. Original root/collision and spawn rules remain unchanged. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Nest|Visual") bool bEnableThugNestVisuals=true;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Nest|Visual") FLinearColor MoldNestColor=FLinearColor(.12f,.65f,.08f,1.f);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Nest|Visual") FLinearColor YeastNestColor=FLinearColor(.85f,.55f,.04f,1.f);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Nest|Visual") FName NestColorParameter=TEXT("Emissive Color");
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Nest|Visual") bool bEnableSpawnBounce=true;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Nest|Visual",meta=(ClampMin="0.05",ClampMax="3",Units="s")) float SpawnBounceSeconds=.4f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Nest|Visual",meta=(ClampMin="0",ClampMax="100",Units="cm")) float SpawnBounceHeightCm=18.f;
+
     void RegisterRestoredEnemy(ADWEnemyCharacter* Enemy){SpawnedEnemies.AddUnique(Enemy);}
     UFUNCTION(BlueprintPure, Category="Nest") bool IsAlive() const { return Health > 0.f; }
     UFUNCTION(BlueprintCallable, Category="Nest|Save") void SetHealthForLoad(float NewHealth);
@@ -80,6 +89,18 @@ private:
     void DeactivateNest(bool bFromSave = false);
     void SetPlayerInRange(bool bNewInRange, bool bNotify = true);
     void UpdateAmbientPresentation();
+    void InitializeNestVisual();
+    void UpdateNestVisual(float DeltaSeconds);
+    void StartNestSpawnVisual();
+    void ResetNestVisual();
+    UPROPERTY(Transient) TObjectPtr<UStaticMeshComponent> NestVisualProxy;
+    bool bNestVisualOriginalVisible=true;
+    bool bNestBounceActive=false;
+    double NestBounceAge=0.;
+    uint64 NestBounceEpoch=0;
+    FVector NestBounceStartOffset=FVector::ZeroVector;
+    FVector NestBounceStartScale=FVector::OneVector;
+
     void SampleNextSpawnInterval();
     TArray<TWeakObjectPtr<ADWEnemyCharacter>> SpawnedEnemies;
     bool bHealthRestoredFromSave = false;

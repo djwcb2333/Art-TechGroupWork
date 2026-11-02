@@ -103,7 +103,7 @@ bool FDWFormalLanguagePersistence::Prepare(ADWPlayerCharacter& P,const UDWSaveGa
   UWorld::RemovePIEPrefix(P.GetWorld()->GetOutermost()->GetName())==Flow.DestinationMap;
  if((!GI->bApplyingCombatPending&&!IsCurrent(*L))||Flow.Schema!=SavedFlow.Schema||Flow.ScenarioId!=SavedFlow.ScenarioId||
   Flow.OpeningMap!=SavedFlow.OpeningMap||Flow.DestinationMap!=SavedFlow.DestinationMap||
-  Flow.bStarterGranted!=SavedFlow.bStarterGranted||(!FreshDestination&&Flow.Phase!=SavedFlow.Phase))
+  Flow.bStarterGranted!=SavedFlow.bStarterGranted||Flow.StarterPolicyVersion!=SavedFlow.StarterPolicyVersion||(!FreshDestination&&Flow.Phase!=SavedFlow.Phase))
   return Fail(Error,TEXT("Formal restore is outside its accepted owner/phase transaction."));
  FDWA01SavedProjection Projection;
  if(!DWFormalLanguageProjection::PrepareStored(S,GI->ActiveSlot,L->Model->GetCatalog(),L->TrialConfig,*GI->CombatRules,Projection,Error))return false;

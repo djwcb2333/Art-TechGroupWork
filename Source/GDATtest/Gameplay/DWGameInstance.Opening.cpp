@@ -4,6 +4,7 @@
 #include "DWOpeningMapCompatibility.h"
 #include "DWAdventureFlowSave.h"
 #include "DWCombatEquipment.h"
+#include "DWStarterPolicy.h"
 #include "DWCombatItemRegistry.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWCombatWorldPersistence.h"
@@ -40,12 +41,14 @@ FString Counts(const UDWSaveGame& S)
   static_cast<long long>(N(FName(TEXT("Alcohol")))),static_cast<long long>(N(FName(TEXT("DWAmmo_Spore")))),
   static_cast<long long>(N(FName(TEXT("DWAmmo_MoldArrow")))),static_cast<long long>(N(FName(TEXT("DWAmmo_BreadShell")))));
 }
-bool LoadStarter(TArray<FDWItemStack>& Out,FString& Error)
+bool LoadStarter(int32 PolicyVersion,TArray<FDWItemStack>& Out,FString& Error)
 {
  FString Text;TSharedPtr<FJsonObject> J;const TSharedPtr<FJsonObject>* Parameters=nullptr;
  if(!FFileHelper::LoadFileToString(Text,*(FPaths::ProjectContentDir()/TEXT("DoughWorld/Gameplay/Combat/DWA01TrialDefaults.json")))||
   !FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Text),J)||!J||!J->TryGetObjectField(TEXT("parameters"),Parameters))
  {Error=TEXT("Formal starter quantities are unavailable; no starter batch was committed.");return false;}
+ if(PolicyVersion==DWStarterPolicy::BasicTools)return DWStarterPolicy::ReadBasicBatch(J,Out,Error);
+ if(PolicyVersion!=DWStarterPolicy::Legacy){Error=TEXT("Unknown formal starter policy; no grant.");return false;}
  auto Count=[&](const TCHAR* Key,int32& N){const TSharedPtr<FJsonObject>* Row=nullptr;double V=0.;
   if(!(*Parameters)->TryGetObjectField(Key,Row)||!(*Row)->TryGetNumberField(TEXT("value"),V)||!FMath::IsFinite(V)||V<1.||V>MAX_int32||FMath::FloorToDouble(V)!=V)return false;
   N=static_cast<int32>(V);return true;};
@@ -68,6 +71,7 @@ bool UDWGameInstance::ConfigureOpeningNewGame(UDWSaveGame& Save,FString& Error)
  if(Map==C->GameplayMap||Map==C->MainMenuMap||!FPackageName::IsValidLongPackageName(Map)||!FPackageName::DoesPackageExist(Map)||
   !IsAllowedGameplayMap(Map)||!AreGameplayMapProfilesCompatible(Map,C->GameplayMap))
  {Error=TEXT("Opening map/destination must exist, be registered and share the same gameplay profile.");return false;}
+ Save.AdventureFlow.StarterPolicyVersion=DWStarterPolicy::BasicTools;
  Save.AdventureFlow.Schema=1;Save.AdventureFlow.PlaythroughId=FGuid::NewGuid().ToString(EGuidFormats::Digits);
  Save.AdventureFlow.ScenarioId=TEXT("SC0101");Save.AdventureFlow.OpeningMap=Map;Save.AdventureFlow.DestinationMap=C->GameplayMap;
  Save.AdventureFlow.Phase=EDWAdventureOpeningPhase::Pending;Save.MapPackage=Map;Error.Reset();return true;
@@ -76,14 +80,13 @@ bool UDWGameInstance::ValidateAdventureFlow(const UDWSaveGame& Save)
 {
  const auto& F=Save.AdventureFlow;
  if(F.Schema==0)return F.PlaythroughId.IsEmpty()&&F.ScenarioId.IsNone()&&F.OpeningMap.IsEmpty()&&F.DestinationMap.IsEmpty()&&
-  F.Phase==EDWAdventureOpeningPhase::Legacy&&!F.bStarterGranted;
+  F.Phase==EDWAdventureOpeningPhase::Legacy&&!F.bStarterGranted&&F.StarterPolicyVersion==DWStarterPolicy::Legacy;
  const auto* C=GetDefaultGameplayConfig();
  if(F.Schema!=1||!C||!DWOpeningSave::ExactGuid(F.PlaythroughId)||F.ScenarioId!=TEXT("SC0101")||
   !FPackageName::IsValidLongPackageName(F.OpeningMap)||!FPackageName::IsValidLongPackageName(F.DestinationMap)||
   F.OpeningMap==F.DestinationMap||Save.LanguageTrialSchema!=0||!Save.LanguageProgressJson.IsEmpty()||!Save.A01StateJson.IsEmpty())return false;
- if(F.bStarterGranted)
-  for(const TCHAR* Id:{TEXT("SugarSpear"),TEXT("DWWeapon_ShieldAxe"),TEXT("DWWeapon_Greatsword"),TEXT("DWWeapon_DualDaggers"),TEXT("DWWeapon_SporeGun"),TEXT("DWWeapon_MoldBow"),TEXT("DWWeapon_Shotgun")})
-   if(!Save.CombatPlayerResources.OwnedPermanentWeaponIds.Contains(FDWCombatItemRegistry::CanonicalWeaponItemId(FName(Id))))return false;
+ FString StarterError;
+ if(!DWStarterPolicy::ValidateGrantedOwnership(F,Save.CombatPlayerResources.OwnedPermanentWeaponIds,StarterError))return false;
  if(F.Phase==EDWAdventureOpeningPhase::Completed)
   // Historical opening/destination packages need not still exist or match current configuration.
   // Current-map admission and all original profile/inventory/D22 checks remain in ValidateSave.
@@ -172,7 +175,7 @@ bool UDWGameInstance::FinishOpeningPlayerRestore(ADWPlayerCharacter& P,const UDW
  OpeningStartupGeneration=CombatSaveGeneration;OpeningStartupEpoch=A->GetWorldEpoch();OpeningStartupLife=A->FindRegisteredActorLife(&P);
  if(!FormalStarterGrant->bGranted)
  {
-  TArray<FDWItemStack> Items;if(!DWOpeningSave::LoadStarter(Items,Error)||!P.WeaponAnimationComponent)return false;
+  TArray<FDWItemStack> Items;if(!DWOpeningSave::LoadStarter(Save.AdventureFlow.StarterPolicyVersion,Items,Error)||!P.WeaponAnimationComponent)return false;
   const auto Grant=FDWCombatEquipmentTransaction::GrantFormalStarterBatch(*P.WeaponAnimationComponent,*this,Items,FormalPlaythroughId);
   if(!Grant.bCommittedThisCall&&!Grant.bAlreadyGranted){Error=Grant.Error;return false;}
  }

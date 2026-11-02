@@ -23,6 +23,7 @@ class ADWEnemyCharacter;
 class UAnimSequence;
 class FDWCombatRules;
 struct FDWInventorySlotSnapshot;
+struct FDWSimpleSpearSource;
 class FDWCombatInventoryTransaction;
 class UStaticMeshComponent;
 class UProceduralMeshComponent;
@@ -193,6 +194,11 @@ public:
     uint64 GetCombatBoundaryRevision() const {return CombatBoundaryRevision;}
     // Zero processes an event already due. False stops the old frame after callback interruption.
     bool AdvanceAnimation(double DeltaSeconds);
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapons|Simple Sugar Spear",meta=(ClampMin="0.01"))
+    float SimpleSpearDamage=25.f; // User-approved adjustable trial default, not gathering Sharpness.
+    bool EquipSimpleSpearInventory(const FDWInventorySlotSnapshot&);
+    bool GetCommittedToolAttackSource(DWCombatCommit::FActionId,FName& Out)const;
+    bool IsSimpleSpearAttack()const{return bFormalUnarmedActive&&SimpleSpearSource.IsValid();}
     bool BindObservedInputPress(const FDWCombatInputPress& Press,bool bSecondary);
     bool ApplyObservedInputRelease(const FDWCombatInputPress& Press);
     bool CancelObservedInputAction(const FDWCombatInputPress& Press);
@@ -256,6 +262,14 @@ private:
     friend class FDWCombatPlayerStateTransaction;
     friend class FDWCombatPlayerPersistence;
     bool HasCurrentEquipmentIdentity()const;
+    TSharedPtr<FDWSimpleSpearSource> SimpleSpearSource;
+    bool HasSimpleSpearSelected()const;
+    void ClearSimpleSpearToolSelection();
+    bool PrepareSimpleSpearSource(FDWSpearTuning&,FDWWeaponAnimationClip&,TSharedPtr<FDWSimpleSpearSource>&)const;
+    bool IsSimpleSpearSourceCurrent(const TSharedPtr<FDWSimpleSpearSource>&,bool PresentationOnly=false)const;
+    void AdoptSimpleSpearSource(TSharedPtr<FDWSimpleSpearSource>,DWCombatCommit::FActionId);
+    FVector2D GetSimpleSpearSourceFractions()const;
+    bool GetSimpleSpearVisualGrip(FTransform&)const;
     double EquipmentSwitchLockSeconds=0.;bool bEquipmentRulesReady=false,bAlcoholReleaseEventDue=false;
     FDWCombatUnarmedTuning UnarmedTuning;FDWSpearAttackPlan UnarmedPlan;
     DWCombatCommit::FActionId UnarmedAction,UnarmedPublishedAction;

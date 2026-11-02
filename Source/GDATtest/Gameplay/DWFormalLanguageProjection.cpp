@@ -3,6 +3,7 @@
 #include "DWCombatPlayerSave.h"
 #include "DWSaveGame.h"
 #include "DWFormalSaveVersionPolicy.h"
+#include "DWStarterPolicy.h"
 #include "Dom/JsonObject.h"
 #include "Serialization/JsonSerializer.h"
 #include "Serialization/JsonReader.h"
@@ -27,7 +28,7 @@ bool SameFlow(const FDWAdventureFlowSave& Given,const FDWAdventureFlowSave& Stor
  }
  if(Given.Schema!=Stored.Schema||!SameId||Given.ScenarioId!=Stored.ScenarioId||
   Given.OpeningMap!=Stored.OpeningMap||Given.DestinationMap!=Stored.DestinationMap||
-  Given.Phase!=Stored.Phase||Given.bStarterGranted!=Stored.bStarterGranted)
+  Given.Phase!=Stored.Phase||Given.bStarterGranted!=Stored.bStarterGranted||Given.StarterPolicyVersion!=Stored.StarterPolicyVersion)
   return Fail(Error,TEXT("Supplied adventure flow does not match the saved flow identity and receipt."));
  return true;
 }
@@ -40,7 +41,7 @@ bool Number(const TSharedPtr<FJsonObject>& Trial,const TCHAR* Key,double& Value)
 bool CheckFlow(const FDWAdventureFlowSave& Flow,int32 Slot,const UDWSaveGame& Save,FString& Error)
 {
  FGuid Id;
- if(Save.Version!=DWFormalSaveVersionPolicy::FormalVersion||Slot<0||Slot>=3||Flow.Schema!=1||!FGuid::ParseExact(Flow.PlaythroughId,EGuidFormats::Digits,Id)||!Id.IsValid())
+ if(Save.Version!=DWFormalSaveVersionPolicy::FormalVersion||Slot<0||Slot>=3||Flow.Schema!=1||!DWStarterPolicy::IsKnown(Flow.StarterPolicyVersion)||!FGuid::ParseExact(Flow.PlaythroughId,EGuidFormats::Digits,Id)||!Id.IsValid())
   return Fail(Error,TEXT("Formal slot, adventure schema or playthrough ID is invalid."));
  if(Save.CombatWorld.bNewAdventure)
  {
@@ -145,7 +146,7 @@ bool DWFormalLanguageProjection::InitializeNew(const FDWAdventureFlowSave& Flow,
  using namespace DWFormalProjectionPrivate;
  if(!SameFlow(Flow,Save.AdventureFlow,Error))return false;
  if(!Save.CombatWorld.bNewAdventure||TrialFieldsPresent(Save)||!EmptyFormal(Out)||!CheckFlow(Flow,Slot,Save,Error))
-  return Fail(Error,TEXT("Formal initialization requires an untouched pending new adventure."));
+  return DWFormalProjectionPrivate::Fail(Error,TEXT("Formal initialization requires an untouched pending new adventure."));
  TStrongObjectPtr<UDWSaveGame> Original(NewObject<UDWSaveGame>());
  if(!Original.IsValid()||!DWCombatPlayerSave::MakeNew(Rules,*Original,Error))return false;
  const bool LegacyResources=FDWCombatPlayerResourceSave::StaticStruct()->CompareScriptStruct(&Save.CombatPlayerResources,&Original->CombatPlayerResources,PPF_None);
@@ -155,11 +156,11 @@ bool DWFormalLanguageProjection::InitializeNew(const FDWAdventureFlowSave& Flow,
  if((!LegacyResources&&!FullResources)||
   Save.Health!=Original->Health||Save.Transformation!=Original->Transformation||Save.bYeastForm!=Original->bYeastForm||
   Save.SprintAlcoholElapsed!=Original->SprintAlcoholElapsed||Save.TransformationDecayElapsed!=Original->TransformationDecayElapsed)
-  return Fail(Error,TEXT("Formal initialization refuses a modified new-adventure legacy resource block."));
+  return DWFormalProjectionPrivate::Fail(Error,TEXT("Formal initialization refuses a modified new-adventure legacy resource block."));
  DWLanguage::FState Empty;FDWCharacterA01Config Config;
  if(!DWLanguage::ValidateState(Catalog,Empty,Error)||!DWCharacterA01SaveBridge::BuildDerivedConfig(Trial,{},Config,Error))return false;
  if(FullResources&&(Save.CombatPlayerResources.Vitals.Water!=Config.WaterMax||Save.CombatPlayerResources.Vitals.Satiety!=Config.SatietyMax))
-  return Fail(Error,TEXT("Full new-adventure survival maxima disagree across combat and A01 definitions."));
+  return DWFormalProjectionPrivate::Fail(Error,TEXT("Full new-adventure survival maxima disagree across combat and A01 definitions."));
  FDWCharacterA01Runtime Runtime;std::string NativeError;
  if(!Runtime.Initialize(Config,&NativeError)){Error=UTF8_TO_TCHAR(NativeError.c_str());return false;}
  // Mirror the validated new-slot resource snapshot. Older pending snapshots stay readable.
@@ -207,9 +208,9 @@ bool DWFormalLanguageProjection::Capture(const FDWAdventureFlowSave& Flow,int32 
  using namespace DWFormalProjectionPrivate;
  if(!SameFlow(Flow,Save.AdventureFlow,Error))return false;
  if(&State==&OutProjection.LanguageState||&Runtime==&OutProjection.Runtime)
-  return Fail(Error,TEXT("Formal capture outputs must not alias source model or runtime."));
+  return DWFormalProjectionPrivate::Fail(Error,TEXT("Formal capture outputs must not alias source model or runtime."));
  if(Save.CombatWorld.bNewAdventure||!CheckFlow(Flow,Slot,Save,Error)||!Runtime.IsReady())
-  return Fail(Error,TEXT("Formal capture requires a running adventure with an authentic starter receipt."));
+  return DWFormalProjectionPrivate::Fail(Error,TEXT("Formal capture requires a running adventure with an authentic starter receipt."));
  FDWFormalLanguageSave Candidate;Candidate.Schema=2;Candidate.SlotIndex=Slot;
  if(!Wrap(Catalog,State,Flow.PlaythroughId,Candidate.ProgressJson,Error)||
   !DWCharacterA01SaveBridge::FormalStateToJson(Runtime.Capture(),Cooldown,Candidate.A01StateJson,Error))return false;
@@ -226,11 +227,11 @@ bool DWFormalLanguageProjection::CapturePreparedFirstStarter(const FDWAdventureF
  using namespace DWFormalProjectionPrivate;
  if(&OutPreparedFlow==&Save.AdventureFlow||&OutPreparedFlow==&ExpectedStoredFlow||
   &State==&OutProjection.LanguageState||&Runtime==&OutProjection.Runtime)
-  return Fail(Error,TEXT("Prepared outputs must not alias input flow, model or runtime."));
+  return DWFormalProjectionPrivate::Fail(Error,TEXT("Prepared outputs must not alias input flow, model or runtime."));
  if(!SameFlow(ExpectedStoredFlow,Save.AdventureFlow,Error))return false;
  if(Slot<0||Slot>=3||Save.CombatWorld.bNewAdventure||ExpectedStoredFlow.Schema!=1||
   ExpectedStoredFlow.Phase!=EDWAdventureOpeningPhase::Pending||ExpectedStoredFlow.bStarterGranted||!Runtime.IsReady())
-  return Fail(Error,TEXT("Prepared starter capture requires a pending ungranted flow and unpersisted world capture."));
+  return DWFormalProjectionPrivate::Fail(Error,TEXT("Prepared starter capture requires a pending ungranted flow and unpersisted world capture."));
  FDWAdventureFlowSave CandidateFlow=ExpectedStoredFlow;CandidateFlow.bStarterGranted=true;
  if(!CheckFlow(CandidateFlow,Slot,Save,Error))return false;
  FDWFormalLanguageSave Candidate;Candidate.Schema=2;Candidate.SlotIndex=Slot;

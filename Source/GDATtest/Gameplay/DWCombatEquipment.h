@@ -58,9 +58,9 @@ public:
     static bool TryCraft(UDWWeaponAnimationComponent&,FName RecipeId,bool bYeast);
     /** Stable owner action/ordinal allows native receipt replay tests without replaying acquisition. */
     static FDWCombatEquipmentGrantResult Craft(UDWWeaponAnimationComponent&,const FDWCombatEquipmentGrantRequest&,FName RecipeId,bool bYeast);
-    /** One complete inventory+ownership+stable-playthrough-receipt commit. No spear and no automatic equip/load. */
+    /** Atomic bag/ownership/receipt. Policy0 preserves deployed trial; policy1 only three simple tools. No auto equip/load. */
     static FDWCombatEquipmentStarterResult GrantStarterBatch(UDWWeaponAnimationComponent&,const TArray<FDWItemStack>& Items,
-        const FString& StablePlaythroughId,FDWCombatStarterGrantState& Receipt);
+        const FString& StablePlaythroughId,FDWCombatStarterGrantState& Receipt,int32 StarterPolicyVersion=0);
     /** On-demand compatibility for a real existing item: ownership only, no add/remove/migration or auto-equip. */
     static bool ClaimExistingPermanent(UDWWeaponAnimationComponent&,const FDWInventorySlotSnapshot&);
     /** New formal adventure only: one bag + ownership + durable receipt transaction. */

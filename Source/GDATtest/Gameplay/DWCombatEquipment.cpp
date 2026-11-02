@@ -1,4 +1,5 @@
 #include "DWCombatEquipment.h"
+#include "DWStarterPolicy.h"
 #include "DWCombatItemRegistry.h"
 #include "DWCombatRules.h"
 #include "DWCombatAuthoritySubsystem.h"
@@ -168,9 +169,13 @@ FDWCombatEquipmentGrantResult FDWCombatEquipmentTransaction::Commit(UDWWeaponAni
 }
 
 FDWCombatEquipmentStarterResult FDWCombatEquipmentTransaction::GrantStarterBatch(UDWWeaponAnimationComponent& W,
-    const TArray<FDWItemStack>& Items,const FString& Playthrough,FDWCombatStarterGrantState& Receipt)
+    const TArray<FDWItemStack>& Items,const FString& Playthrough,FDWCombatStarterGrantState& Receipt,int32 StarterPolicyVersion)
 {
     using namespace DWCombatCommit;FDWCombatEquipmentStarterResult Result;FGuid Guid;
+    if(!DWStarterPolicy::IsKnown(StarterPolicyVersion)){Result.Error=TEXT("Unknown trial starter policy.");return Result;}
+    FString StarterPolicyError;
+    if(StarterPolicyVersion==DWStarterPolicy::BasicTools&&!DWStarterPolicy::ValidateBasicBatch(Items,StarterPolicyError))
+    {Result.Error=MoveTemp(StarterPolicyError);return Result;}
     auto* P=W.Player();auto* Inventory=P?P->GetInventory():nullptr;auto* A=UDWCombatAuthoritySubsystem::Get(P);
     auto Invalid=[&](const TCHAR* Error){Result.Error=Error;return Result;};
     if(!FGuid::ParseExact(Playthrough,EGuidFormats::Digits,Guid)||!Guid.IsValid()||Receipt.Revision<0||Receipt.Revision==MAX_int64||
@@ -216,10 +221,13 @@ FDWCombatEquipmentStarterResult FDWCombatEquipmentTransaction::GrantStarterBatch
         }
         if(!Inventory->AddToSlots(Slots,Item.ItemId,Item.Quantity))return Reject(TEXT("Starter batch does not fit in the existing inventory; no partial grant."));
     }
+    if(StarterPolicyVersion==DWStarterPolicy::Legacy)
+    {
     for(const auto& Binding:FDWCombatItemRegistry::GetWeaponBindings())
     {
         if(Binding.Presentation!=EDWAnimatedWeapon::Spear&&!Seen.Contains(Binding.ItemId))return Reject(TEXT("Starter batch omits a required permanent weapon or Alcohol stock."));
         if(!Binding.AmmoItemId.IsNone()&&!Seen.Contains(Binding.AmmoItemId))return Reject(TEXT("Starter batch omits required reserve ammunition."));
+    }
     }
     FDWPreparedInventoryChange InventoryPlan;
     if(!Inventory->MakePrepared(MoveTemp(Slots),InventoryPlan))return Reject(TEXT("Starter inventory candidate is invalid."));
@@ -293,6 +301,10 @@ FDWCombatEquipmentStarterResult FDWCombatEquipmentTransaction::GrantFormalStarte
         !GI.CanGrantFormalStarter(P,Playthrough))
         return Invalid(TEXT("Formal starter request does not belong to the admitted new-adventure owner."));
     if(ReceiptOwner->bGranted){Result.bAlreadyGranted=true;return Result;}
+    const int32 StarterPolicyVersion=GI.AdventureFlow.StarterPolicyVersion;FString StarterPolicyError;
+    if(!DWStarterPolicy::IsKnown(StarterPolicyVersion)||
+        (StarterPolicyVersion==DWStarterPolicy::BasicTools&&!DWStarterPolicy::ValidateBasicBatch(Items,StarterPolicyError)))
+        return Invalid(TEXT("Formal starter manifest does not match the bound policy."));
     if(ReceiptOwner->Revision==MAX_int64||Items.IsEmpty()||!A||!A->IsOperational()||
         !IsValid(&W)||W.IsBeingDestroyed()||P->IsActorBeingDestroyed()||P->IsDead()||
         !P->HasCombatVitalsReady()||P->IsCombatRestoreInProgress()||!Inventory||
@@ -327,7 +339,8 @@ FDWCombatEquipmentStarterResult FDWCombatEquipmentTransaction::GrantFormalStarte
         const FName Canonical=bPermanent?FDWCombatItemRegistry::CanonicalWeaponItemId(Item.ItemId):Item.ItemId;
         const FName InventoryId=bPermanent?FDWCombatItemRegistry::PreferredInventoryItemId(Canonical):Item.ItemId;
         if(Item.ItemId.IsNone()||Item.Quantity<1||Seen.Contains(Canonical)||
-            (!bPermanent&&Role!=EDWCombatItemRole::ReserveAmmo&&Role!=EDWCombatItemRole::ThrowableStock)||
+            (!bPermanent&&Role!=EDWCombatItemRole::ReserveAmmo&&Role!=EDWCombatItemRole::ThrowableStock&&
+                !(StarterPolicyVersion==DWStarterPolicy::BasicTools&&DWStarterPolicy::IsBasicTool(Item.ItemId)))||
             (bPermanent&&Item.Quantity!=1)||!Inventory->GetConfig()->GetItemDefinition(InventoryId))
             return Reject(TEXT("Formal starter manifest contains an unknown, duplicate or invalid weapon/stock row."));
         Seen.Add(Canonical);
@@ -344,12 +357,15 @@ FDWCombatEquipmentStarterResult FDWCombatEquipmentTransaction::GrantFormalStarte
         if(!Inventory->AddToSlots(Slots,InventoryId,Item.Quantity))
             return Reject(TEXT("The complete formal starter batch does not fit; no inventory or ownership changed."));
     }
+    if(StarterPolicyVersion==DWStarterPolicy::Legacy)
+    {
     for(const auto& Binding:FDWCombatItemRegistry::GetWeaponBindings())
     {
         if(!Seen.Contains(FDWCombatItemRegistry::CanonicalWeaponItemId(Binding.ItemId)))
             return Reject(TEXT("Formal starter batch omits a required permanent weapon or Alcohol stock."));
         if(!Binding.AmmoItemId.IsNone()&&!Seen.Contains(Binding.AmmoItemId))
             return Reject(TEXT("Formal starter batch omits required reserve ammunition."));
+    }
     }
     FDWPreparedInventoryChange InventoryPlan;
     if(!Inventory->MakePrepared(MoveTemp(Slots),InventoryPlan))return Reject(TEXT("Formal starter inventory candidate is invalid."));
@@ -371,7 +387,7 @@ FDWCombatEquipmentStarterResult FDWCombatEquipmentTransaction::GrantFormalStarte
         UDWCombatAuthoritySubsystem::Get(P)!=A||A->GetWorldEpoch()!=WorldEpoch||!A->IsActionOwnedBy(Action,P)||
         W.CombatWeaponResources.Revision!=WeaponRevision||W.CombatWeaponResources.RestoreEpoch!=RestoreEpoch||
         Inventory->GetInventoryRevision()!=InventoryPlan.GetExpectedRevision()||
-        GI.FormalStarterGrant!=ReceiptOwner||GI.FormalPlaythroughId!=Playthrough||
+        GI.FormalStarterGrant!=ReceiptOwner||GI.FormalPlaythroughId!=Playthrough||GI.AdventureFlow.StarterPolicyVersion!=StarterPolicyVersion||
         ReceiptOwner->PlaythroughId!=Playthrough||ReceiptOwner->Revision!=ReceiptRevision||ReceiptOwner->bGranted||
         !GI.CanGrantFormalStarter(P,Playthrough))
         return Reject(TEXT("Formal starter owner, admission or resources changed during preparation."));

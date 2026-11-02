@@ -23,7 +23,9 @@ bool UDWWeaponAnimationComponent::BeginFormalUnarmed(FVector Target)
     auto* P=Player();auto* A=UDWCombatAuthoritySubsystem::Get(P);
     if(!A||!P||!IsEnabled()||!bUnarmedConfigured||bActive||SelectedWeapon!=EDWAnimatedWeapon::Unarmed||
         !P->IsCombatActionAllowed()||P->IsFormalDashing()||Target.ContainsNaN()||GetCombatActionWorldSeconds()<NextAttackTime||ActionSerial==MAX_int32)return false;
-    FDWSpearAttackPlan Candidate;
+    FDWSpearAttackPlan Candidate;FDWSpearTuning AttackTuning=UnarmedTuning.Attack;
+    FDWWeaponAnimationClip ToolClip;TSharedPtr<FDWSimpleSpearSource> PreparedSimple;
+    if(HasSimpleSpearSelected()&&!PrepareSimpleSpearSource(AttackTuning,ToolClip,PreparedSimple))return false;
     const TWeakObjectPtr<UWorld> World(GetWorld());const auto Life=A->CaptureActorLife(P);const uint64 Epoch=A->GetWorldEpoch();
     const int64 Revision=CombatWeaponResources.Revision;const uint64 Restore=CombatWeaponResources.RestoreEpoch;
     P->CancelCombatActions();
@@ -32,8 +34,10 @@ bool UDWWeaponAnimationComponent::BeginFormalUnarmed(FVector Target)
         GetWorld()!=World.Get()||World->bIsTearingDown||!A||A->GetWorldEpoch()!=Epoch||!P->IsCombatActionAllowed()||
         Revision!=CombatWeaponResources.Revision||Restore!=CombatWeaponResources.RestoreEpoch||SelectedWeapon!=EDWAnimatedWeapon::Unarmed)return false;
     const auto CurrentLife=A->CaptureActorLife(P);if(CurrentLife.Entity!=Life.Entity||CurrentLife.Life!=Life.Life)return false;
-    if(!Candidate.Start(UnarmedTuning.Attack,ReadFormalSpearForm()))return false;
+    if(PreparedSimple&&!IsSimpleSpearSourceCurrent(PreparedSimple))return false;
+    if(!Candidate.Start(AttackTuning,ReadFormalSpearForm()))return false;
     const auto Action=A->BeginAction(P);if(!Action.Id)return false;
+    AdoptSimpleSpearSource(PreparedSimple,Action);
     UnarmedAction=Action;UnarmedPlan=Candidate;bFormalUnarmedActive=bActive=true;
     bPrimaryHeld=true;bSecondaryHeld=bCharging=bChargeReady=bReloading=false;
     ActiveSet=nullptr;ActiveClip={};ActiveClip.Role=TEXT("Attack");ActiveClip.DurationSeconds=static_cast<float>(UnarmedTuning.Attack.IntervalSeconds);
@@ -49,6 +53,7 @@ bool UDWWeaponAnimationComponent::BeginFormalUnarmed(FVector Target)
                 if(Compatible.ToSoftObjectPath()==FSoftObjectPath(Source)){bCompatible=true;break;}
         if(bCompatible)ActiveClip.Animation=Punch;
     }
+    if(PreparedSimple)ActiveClip=ToolClip;
     ElapsedSeconds=0.;FiredEvents.Reset();++ActionSerial;
     UnarmedForward=(Target-P->GetActorLocation()).GetSafeNormal2D();if(UnarmedForward.IsNearlyZero())UnarmedForward=P->GetActorForwardVector().GetSafeNormal2D();
     bOldOrient=P->GetCharacterMovement()->bOrientRotationToMovement;
@@ -77,14 +82,15 @@ void UDWWeaponAnimationComponent::PublishAcceptedWeaponStartEffects()
 void UDWWeaponAnimationComponent::EndFormalUnarmed()
 {
     if(auto* A=UDWCombatAuthoritySubsystem::Get(this))A->EndAction(UnarmedAction);
-    UnarmedAction={};UnarmedPublishedAction={};UnarmedPlan.Cancel();bFormalUnarmedActive=false;
+    UnarmedAction={};UnarmedPublishedAction={};UnarmedPlan.Cancel();bFormalUnarmedActive=false;SimpleSpearSource.Reset();
 }
 bool UDWWeaponAnimationComponent::IsCurrentFormalUnarmed(DWCombatCommit::FActionId Action)const
 {
     const auto* P=Player();
     return IsValid(this)&&!IsBeingDestroyed()&&bActive&&bFormalUnarmedActive&&Action.Id&&
         Action.Id==UnarmedAction.Id&&Action.Epoch==UnarmedAction.Epoch&&SelectedWeapon==EDWAnimatedWeapon::Unarmed&&
-        CombatWeaponResources.Snapshot.CurrentEquipmentId.IsNone()&&P&&!P->IsActorBeingDestroyed()&&P->IsCombatActionAllowed();
+        CombatWeaponResources.Snapshot.CurrentEquipmentId.IsNone()&&P&&!P->IsActorBeingDestroyed()&&P->IsCombatActionAllowed()&&
+        (!SimpleSpearSource.IsValid()||IsSimpleSpearSourceCurrent(SimpleSpearSource));
 }
 void UDWWeaponAnimationComponent::ResolveFormalUnarmedWindow(DWCombatCommit::FActionId Action)
 {
@@ -106,7 +112,7 @@ void UDWWeaponAnimationComponent::ResolveFormalUnarmedWindow(DWCombatCommit::FAc
 }
 void UDWWeaponAnimationComponent::AdvanceFormalUnarmed(double Dt)
 {
-    const auto Action=UnarmedAction;if(!IsCurrentFormalUnarmed(Action)){bCombatAdvanceInterrupted=true;return;}
+    const auto Action=UnarmedAction;if(!IsCurrentFormalUnarmed(Action)){bCombatAdvanceInterrupted=true;if(SimpleSpearSource.IsValid())FinishAction();return;}
     double Left=Dt,Offset=0.;
     for(int32 Budget=3;Budget>0&&IsCurrentFormalUnarmed(Action)&&UnarmedPlan.IsRunning();--Budget)
     {

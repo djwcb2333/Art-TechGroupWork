@@ -46,6 +46,7 @@ double UDWWeaponAnimationComponent::GetPresentationSourceSeconds()const
     if(bFormalAxeActive)return Melee(AxePlan,Fractions(FVector2D(.3916666666666667/.85,.475/.85)));
     if(bFormalUnarmedActive)
     {
+        if(IsSimpleSpearAttack())return Melee(UnarmedPlan,GetSimpleSpearSourceFractions());
         const FVector2D Authored=UnarmedAttackSourcePhaseEnds;
         const bool bValid=FMath::IsFinite(Authored.X)&&FMath::IsFinite(Authored.Y)&&Authored.X>=0.&&Authored.Y>=Authored.X&&Authored.Y<=1.;
         return Melee(UnarmedPlan,bValid?Authored:FVector2D(.2,1. / 3.));

@@ -18,6 +18,9 @@
 #include "Components/ButtonSlot.h"
 #include "Components/ScrollBoxSlot.h"
 #include "Brushes/SlateColorBrush.h"
+#include "Brushes/SlateRoundedBoxBrush.h"
+#include "Components/WidgetSwitcherSlot.h"
+#include "Components/VerticalBoxSlot.h"
 
 namespace
 {
@@ -72,6 +75,21 @@ void LayoutC04Settings(UDWGameplayWidget* Screen)
         if(UWidget* Pages=Tree->FindWidget(TEXT("SettingsBookPages")))
             if(auto* Cell=Cast<UScrollBoxSlot>(Pages->Slot)){Cell->SetPadding(FMargin(0));Cell->SetHorizontalAlignment(HAlign_Fill);}
     }
+    // Remove only outer horizontal insets; each row keeps its own text/control padding.
+    // The same 920-unit canvas span is used by the tabs and the content above.
+    if(auto* Pages=Cast<UWidgetSwitcher>(Tree->FindWidget(TEXT("SettingsBookPages"))))
+        for(int32 I=0;I<Pages->GetChildrenCount();++I)
+            if(auto* Cell=Cast<UWidgetSwitcherSlot>(Pages->GetChildAt(I)->Slot))
+            {FMargin P=Cell->GetPadding();P.Left=P.Right=0;Cell->SetPadding(P);Cell->SetHorizontalAlignment(HAlign_Fill);}
+    for(const TCHAR* Name:{TEXT("SettingsPage_Scroll"),TEXT("SettingsBookPages"),TEXT("SettingsPage_Body"),
+        TEXT("SettingsBookGeneralPage"),TEXT("SettingsBookMasterVolume"),TEXT("ExtendedSettings")})
+        if(UWidget* Widget=Tree->FindWidget(Name))
+        {
+            if(auto* Cell=Cast<UVerticalBoxSlot>(Widget->Slot))
+            {FMargin P=Cell->GetPadding();P.Left=P.Right=0;Cell->SetPadding(P);Cell->SetHorizontalAlignment(HAlign_Fill);}
+            if(auto* Cell=Cast<UScrollBoxSlot>(Widget->Slot))
+            {FMargin P=Cell->GetPadding();P.Left=P.Right=0;Cell->SetPadding(P);Cell->SetHorizontalAlignment(HAlign_Fill);}
+        }
     DWC04Settings::ExistingPair(Tree,TEXT("SettingsBookResolutionRow"),TEXT("ResolutionLabel"),TEXT("ResolutionCombo"));
     DWC04Settings::ExistingPair(Tree,TEXT("SettingsBookWindowModeRow"),TEXT("WindowModeLabel"),TEXT("WindowModeCombo"));
     DWC04Settings::ExistingPair(Tree,TEXT("SettingsBookQualityRow"),TEXT("QualityLabel"),TEXT("QualityCombo"));
@@ -111,21 +129,23 @@ void StyleSettingsCheck(UCheckBox* Check)
 {
     if(!Check)return;
     FCheckBoxStyle Style=Check->GetWidgetStyle();
-    // Fill-only states: preserve the original checkbox behavior and content.
+    // Explicit white foreground prevents SCheckBox's image tint from darkening the fill.
+    // The latest art direction uses a white block for On, not a check-mark glyph.
+    Style.CheckBoxType=ESlateCheckBoxType::CheckBox;
     Style.UncheckedImage=Style.UncheckedHoveredImage=Style.UncheckedPressedImage=
-        DWC01UI::Surface(DWC01UI::Paper(),FVector2D(28,28));
+        FSlateRoundedBoxBrush(DWC04Settings::RowColor(),0.f,FLinearColor::White,2.f,FVector2D(28,28));
     Style.CheckedImage=Style.CheckedHoveredImage=Style.CheckedPressedImage=
-        DWC01UI::Surface(DWC01UI::Gold(),FVector2D(28,28));
-    Style.UndeterminedImage=Style.UndeterminedHoveredImage=Style.UndeterminedPressedImage=
-        DWC01UI::Surface(DWC01UI::Muted(),FVector2D(28,28));
+        FSlateColorBrush(FLinearColor::White);
+    Style.CheckedImage.ImageSize=Style.CheckedHoveredImage.ImageSize=Style.CheckedPressedImage.ImageSize=FVector2D(28,28);
+    Style.UndeterminedImage=Style.UndeterminedHoveredImage=Style.UndeterminedPressedImage=Style.UncheckedImage;
     Style.BackgroundImage=Style.BackgroundHoveredImage=Style.BackgroundPressedImage=FSlateNoResource();
-    Style.SetForegroundColor(FSlateColor(DWC01UI::Ink()));
-    Style.SetHoveredForegroundColor(FSlateColor(DWC01UI::Ink()));
-    Style.SetPressedForegroundColor(FSlateColor(DWC01UI::Ink()));
-    Style.SetCheckedForegroundColor(FSlateColor(DWC01UI::Ink()));
-    Style.SetCheckedHoveredForegroundColor(FSlateColor(DWC01UI::Ink()));
-    Style.SetCheckedPressedForegroundColor(FSlateColor(DWC01UI::Ink()));
-    Style.SetUndeterminedForegroundColor(FSlateColor(DWC01UI::Ink()));
+    Style.SetForegroundColor(FSlateColor(FLinearColor::White));
+    Style.SetHoveredForegroundColor(FSlateColor(FLinearColor::White));
+    Style.SetPressedForegroundColor(FSlateColor(FLinearColor::White));
+    Style.SetCheckedForegroundColor(FSlateColor(FLinearColor::White));
+    Style.SetCheckedHoveredForegroundColor(FSlateColor(FLinearColor::White));
+    Style.SetCheckedPressedForegroundColor(FSlateColor(FLinearColor::White));
+    Style.SetUndeterminedForegroundColor(FSlateColor(FLinearColor::White));
     Check->SetWidgetStyle(Style);
 }
 
@@ -224,7 +244,8 @@ void UDWGameplayWidget::RefreshSettingsBook()
             if(auto* Cell=Cast<UButtonSlot>(Button->GetContentSlot()))Cell->SetPadding(FMargin(10,4));
         }
         if(auto* Height=Cast<USizeBox>(GetWidgetFromName(FName(*(Name+TEXT("_Height"))))))
-        {Height->SetHeightOverride(44);if(auto* Cell=Cast<UHorizontalBoxSlot>(Height->Slot))Cell->SetPadding(FMargin(0,0,I<4?8:0,0));}
+        {Height->SetHeightOverride(44);if(auto* Cell=Cast<UHorizontalBoxSlot>(Height->Slot))
+         {Cell->SetPadding(FMargin(0,0,I<4?8:0,0));Cell->SetHorizontalAlignment(HAlign_Fill);}}
         if(UWidget* Underline=GetWidgetFromName(FName(*(Name+TEXT("_Underline")))))
             Underline->SetVisibility(ESlateVisibility::Collapsed);
         if(UWidget* UnderlineHeight=GetWidgetFromName(FName(*(Name+TEXT("_UnderlineHeight")))))

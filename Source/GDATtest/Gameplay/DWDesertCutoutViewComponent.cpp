@@ -59,6 +59,15 @@ void UDWDesertCutoutViewComponent::TickComponent(float Dt,ELevelTick Type,FActor
  const float Height=FMath::IsFinite(MinimumHeightAboveFeetCm)?FMath::Max(0.f,MinimumHeightAboveFeetCm):30.f;
  const float Inset=FMath::IsFinite(DepthInsetCm)?FMath::Max(0.f,DepthInsetCm):10.f;
  const float Power=FMath::IsFinite(EdgePower)?FMath::Clamp(EdgePower,.1f,64.f):27.385183334f;
+ // Publish the actual player projection for both camera and shadow passes.
+ // Material ScreenPosition belongs to the current render pass, not always the player.
+ const FMatrix ViewProjection=Projection.ComputeViewProjectionMatrix();
+ const FVector4 ClipOrigin=ViewProjection.TransformFVector4(FVector4(Focus,1.));
+ for(int32 Column=0;Column<4;++Column)
+ {
+  const FName Name(*FString::Printf(TEXT("CutoutClip%d"),Column));
+  I->SetVectorParameterValue(Name,FLinearColor(ViewProjection.M[0][Column],ViewProjection.M[1][Column],ViewProjection.M[2][Column],ClipOrigin[Column]));
+ }
  const FVector Forward=Rotation.Vector();ViewOwners.FindOrAdd(W)=this;
  I->SetVectorParameterValue(TEXT("CutoutView"),FLinearColor(F.X,F.Y,F.RadiusY,F.Aspect));
  I->SetVectorParameterValue(TEXT("CutoutPlayer"),FLinearColor(Focus.X,Focus.Y,Focus.Z,FeetZ));

@@ -1,9 +1,11 @@
-#include "DWGatheringComponent.h"
+﻿#include "DWGatheringComponent.h"
 #include "DWLanguageCarrier.h"
 #include "DWLanguageSubsystem.h"
 #include "DWGatheringWorld.h"
 #include "DWGatheringPond.h"
 #include "DWGatheringProfile.h"
+#include "DWLootVisualCatalog.h"
+#include "UObject/StrongObjectPtr.h"
 #include "DWPlaceableBuilding.h"
 #include "DWBuildingDemolitionTransaction.h"
 #include "DWInventoryComponent.h"
@@ -69,7 +71,16 @@ bool UDWGatheringComponent::TryUseTool(FName Id)
 {
     const auto* Config=Profile();auto* User=Player();
     if(!Config||!IsValid(User)||User->IsDead()||!User->GetInventory()||User->GetInventory()->CountItem(Id)<1||!Config->Tools.Contains(Id))return false;
+    if(Id==TEXT("SimpleSugarSpear"))
+    {
+        FDWInventorySlotSnapshot Slot;bool Found=false;
+        for(int32 Index=0;Index<User->GetInventory()->GetSlots().Num();++Index)
+            if(User->GetInventory()->GetSlots()[Index].ItemId==Id&&User->GetInventory()->CaptureSlotSnapshot(Index,Slot)&&Slot.Quantity>0){Found=true;break;}
+        if(!Found||!User->WeaponAnimationComponent||!User->WeaponAnimationComponent->EquipSimpleSpearInventory(Slot))return false;
+    }
+    else if(ActiveTool==TEXT("SimpleSugarSpear")&&User->WeaponAnimationComponent)User->WeaponAnimationComponent->CancelAction();
     CancelGatheringSwing();
+    bToolCarrySelected=true;
     ActiveTool=Id; // Selecting again must not bypass the shared tool cooldown.
     const auto* Definition=Config->GetItemDefinition(Id);
     const FString CN=Definition?Definition->DisplayName.ToString():Id.ToString();
@@ -85,7 +96,7 @@ void UDWGatheringComponent::RestoreActiveTool(FName Id)
 {
     CancelGatheringSwing();
     ActiveTool=Profile()&&Player()->GetInventory()&&Profile()->Tools.Contains(Id)&&Player()->GetInventory()->CountItem(Id)>0?Id:NAME_None;
-    bWasHeld=false;LastTarget.Reset();NextToolTime=0.;
+    bWasHeld=false;LastTarget.Reset();NextToolTime=0.;bToolCarrySelected=true;
 }
 AActor* UDWGatheringComponent::FindTarget() const
 {
@@ -267,7 +278,7 @@ bool UDWGatheringComponent::StartGatheringSwing(ADWGatheringResource* Resource)
     NextToolTime=GetWorld()->GetTimeSeconds()+Duration;
     const FVector Facing=(Resource->GetActorLocation()-User->GetActorLocation()).GetSafeNormal2D();
     if(!Facing.IsNearlyZero())User->SetActorRotation(Facing.Rotation());
-    SetComponentTickEnabled(true);UpdateGatheringToolVisual();
+    SetComponentTickEnabled(true);
     return true;
 }
 bool UDWGatheringComponent::IsPendingHitCurrent() const
@@ -298,7 +309,7 @@ void UDWGatheringComponent::TickComponent(float DeltaTime,ELevelTick TickType,FA
         ActiveSourceSeconds=bActiveDirectGatheringSource?static_cast<float>(SwingClock.Progress())*SwingSourceDuration:
             static_cast<float>(SwingTiming.SourceSeconds(SwingClock.Progress()));
         if(Step.bFinished){StopGatheringSwingOnly();return;}
-        UpdateGatheringToolVisual();return;
+        return;
     }
     if(!CanAct()||(!SwingClock.bImpactConsumed&&!IsPendingHitCurrent())){CancelGatheringSwing();return;}
     const uint64 Generation=SwingGeneration;
@@ -314,7 +325,7 @@ void UDWGatheringComponent::TickComponent(float DeltaTime,ELevelTick TickType,FA
         if(!IsValid(this)||SwingGeneration!=Generation||!SwingClock.bActive)return;
     }
     if(Step.bFinished){CancelGatheringSwing();return;}
-    UpdateGatheringToolVisual();
+    
 }
 float UDWGatheringComponent::GetGatheringSourceSeconds() const
 {
@@ -343,63 +354,6 @@ void UDWGatheringComponent::Deactivate()
 {
     CancelGatheringSwing();Super::Deactivate();
 }
-void UDWGatheringComponent::HideGatheringToolVisual()
-{
-    for(auto* Visual:{GatheringToolHandle.Get(),GatheringToolHead.Get(),GatheringAuthoredTool.Get()})
-        if(IsValid(Visual))Visual->SetVisibility(false);
-}
-void UDWGatheringComponent::UpdateGatheringToolVisual()
-{
-    auto* User=Player();if(!SwingClock.bActive||!User||ActiveVisualSamples.IsEmpty()){HideGatheringToolVisual();return;}
-    auto Create=[User](TObjectPtr<UStaticMeshComponent>& C,FName Name)
-    {
-        if(IsValid(C.Get()))return;
-        C=NewObject<UStaticMeshComponent>(User,Name,RF_Transient);User->AddInstanceComponent(C);
-        C->SetupAttachment(User->GetRootComponent());C->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-        C->SetGenerateOverlapEvents(false);C->SetCanEverAffectNavigation(false);C->RegisterComponent();
-    };
-    int32 Index=0;
-    while(Index+1<ActiveVisualSamples.Num()&&ActiveVisualSamples[Index+1].TimeSeconds<=ActiveSourceSeconds)++Index;
-    // Entry/exit hand convergence is part of the clean clip; show the tool only while actually held.
-    if(!ActiveVisualSamples[Index].bPrimaryVisible){HideGatheringToolVisual();return;}
-    FTransform Grip=ActiveVisualSamples[Index].PrimaryTransform;
-    if(ActiveVisualSamples.IsValidIndex(Index+1))
-    {
-        const auto& A=ActiveVisualSamples[Index];const auto& B=ActiveVisualSamples[Index+1];
-        Grip.Blend(A.PrimaryTransform,B.PrimaryTransform,FMath::Clamp((ActiveSourceSeconds-A.TimeSeconds)/
-            FMath::Max(.001f,B.TimeSeconds-A.TimeSeconds),0.f,1.f));
-    }
-    Grip=ToolGripAdjustment*Grip;
-    const bool bPickaxe=SwingToolType==TEXT("Pickaxe"),bHammer=SwingToolType==TEXT("Hammer");
-    const auto* Binding=ItemModelBindings.Find(SwingToolId);
-    auto* Mesh=Binding&&Binding->Mesh?Binding->Mesh.Get():(bHammer?HammerMesh.Get():(bPickaxe?PickaxeMesh.Get():AxeMesh.Get()));
-    if(Mesh)
-    {
-        Create(GatheringAuthoredTool,TEXT("GatheringAuthoredTool"));GatheringAuthoredTool->SetStaticMesh(Mesh);
-        GatheringAuthoredTool->SetRelativeTransform((Binding&&Binding->Mesh?Binding->GripAdjustment:(bHammer?HammerMeshAdjustment:(bPickaxe?PickaxeMeshAdjustment:AxeMeshAdjustment)))*Grip);
-        GatheringAuthoredTool->EmptyOverrideMaterials();
-        if(Binding&&Binding->Mesh)
-        {for(int32 I=0;I<Binding->MaterialOverrides.Num();++I)if(Binding->MaterialOverrides[I])GatheringAuthoredTool->SetMaterial(I,Binding->MaterialOverrides[I]);}
-        else if(ToolHeadMaterial)GatheringAuthoredTool->SetMaterial(0,ToolHeadMaterial);
-        HideGatheringToolVisual();GatheringAuthoredTool->SetVisibility(true);
-    }
-    else
-    {
-        Create(GatheringToolHandle,TEXT("GatheringToolHandle"));Create(GatheringToolHead,TEXT("GatheringToolHead"));
-        GatheringToolHandle->SetStaticMesh(ProxyCube);GatheringToolHead->SetStaticMesh(ProxyCube);
-        if(ToolHandleMaterial)GatheringToolHandle->SetMaterial(0,ToolHandleMaterial);
-        if(ToolHeadMaterial)GatheringToolHead->SetMaterial(0,ToolHeadMaterial);
-        const FTransform Handle=bHammer?FTransform(FQuat::Identity,FVector(0,0,-30),FVector(.07,.07,1.6)):
-            (bPickaxe?PickaxeProxyHandleTransform:AxeProxyHandleTransform);
-        const FTransform Head=bHammer?FTransform(FQuat::Identity,FVector(0,0,-110),FVector(.48,.16,.45)):
-            (bPickaxe?PickaxeProxyHeadTransform:AxeProxyHeadTransform);
-        GatheringToolHandle->SetRelativeTransform(Handle*Grip);
-        GatheringToolHead->SetRelativeTransform(Head*Grip);
-        HideGatheringToolVisual();GatheringToolHandle->SetVisibility(true);GatheringToolHead->SetVisibility(true);
-    }
-    if(User->SwordPlaceholder)User->SwordPlaceholder->SetVisibility(false);
-}
-
 // Kept separate from attack/corruption code so the aggregate restores one tool owner.
 bool UDWGatheringComponent::CaptureGatheringPersistence(FName& OutTool,double& OutCooldown,FString& Error)
 {
@@ -418,7 +372,7 @@ void UDWGatheringComponent::AdoptGatheringPersistenceFacts(FName ItemId,double C
 }
 void UDWGatheringComponent::PublishGatheringPersistencePresentation()
 {
-    const TWeakObjectPtr<UDWGatheringComponent> SafeThis(this);EndDemolitionFeedback();if(!SafeThis.IsValid())return;HideGatheringToolVisual();SetComponentTickEnabled(false);
+    const TWeakObjectPtr<UDWGatheringComponent> SafeThis(this);EndDemolitionFeedback();if(!SafeThis.IsValid())return;HideGatheringToolVisual();SetComponentTickEnabled(false);bToolCarrySelected=true;
 }
 
 bool UDWGatheringComponent::IsDemolitionTarget(const ADWGatheringStation* Target) const
@@ -510,7 +464,7 @@ bool UDWGatheringComponent::StartDemolitionSwing()
     NextToolTime=GetWorld()->GetTimeSeconds()+Duration;
     const FVector Facing=(Target->GetActorLocation()-User->GetActorLocation()).GetSafeNormal2D();
     if(!Facing.IsNearlyZero())User->SetActorRotation(Facing.Rotation());
-    SetComponentTickEnabled(true);UpdateGatheringToolVisual();return true;
+    SetComponentTickEnabled(true);return true;
 }
 
 bool UDWGatheringComponent::TryCommitDemolition()
@@ -525,4 +479,5 @@ bool UDWGatheringComponent::TryCommitDemolition()
     if(!Committed&&!Error.IsEmpty())Notify(User,TEXT("拆除未完成，请检查返还配置或背包空间。"),Error);
     return Committed;
 }
+
 

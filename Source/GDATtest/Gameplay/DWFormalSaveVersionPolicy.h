@@ -1,5 +1,6 @@
 #pragma once
 #include "DWSaveGame.h"
+#include "DWStarterPolicy.h"
 
 // Container version is the deployed-format boundary, not a map/slot/name heuristic.
 // Existing v1..v4 saves are never promoted by a capture or by reading a map alias.
@@ -13,6 +14,9 @@ namespace DWFormalSaveVersionPolicy
   const auto Reject=[&](const TCHAR* Reason){Error=Reason;return false;};
   if(S.Version<1||S.Version>UDWSaveGame::CurrentVersion)
    return Reject(TEXT("Unsupported save container version; original file preserved."));
+  if(!DWStarterPolicy::IsKnown(S.AdventureFlow.StarterPolicyVersion)||
+    (S.AdventureFlow.StarterPolicyVersion==DWStarterPolicy::BasicTools&&(S.Version!=FormalVersion||S.AdventureFlow.Schema!=1)))
+   return Reject(TEXT("Starter policy does not belong to this save family/version."));
   const bool Empty=Envelope.Schema==0&&Envelope.SlotIndex==INDEX_NONE&&Envelope.ProgressJson.IsEmpty()&&Envelope.A01StateJson.IsEmpty();
   const bool Trial=S.LanguageTrialSchema!=0||!S.LanguageProgressJson.IsEmpty()||!S.A01StateJson.IsEmpty();
   if(!Empty)
