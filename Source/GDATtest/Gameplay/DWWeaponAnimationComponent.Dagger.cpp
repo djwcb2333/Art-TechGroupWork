@@ -1,4 +1,5 @@
 #include "DWWeaponAnimationComponent.h"
+#include "DWActionSoundSubsystem.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWCombatPresentationTiming.h"
 #include "DWGameInstance.h"
@@ -90,6 +91,7 @@ void UDWWeaponAnimationComponent::PublishFormalDaggerStartEffects()
     const auto Action=DaggerAction;
     if(!IsCurrentFormalDagger(Action)||(Action.Id==DaggerPublishedAction.Id&&Action.Epoch==DaggerPublishedAction.Epoch))return;
     DaggerPublishedAction=Action;auto* P=Player();
+    DWActionSound::Action(P,EDWActionSoundCue::DualDaggers,Action,CombatWeaponResources.RestoreEpoch);
     P->ConsumeMovementInputVector();P->GetCharacterMovement()->StopMovementImmediately();if(!IsCurrentFormalDagger(Action))return;
     P->GetCharacterMovement()->bOrientRotationToMovement=false;P->SetActorRotation(DaggerForward.Rotation());if(!IsCurrentFormalDagger(Action))return;
     P->SetHarvestHeld(false);if(!IsCurrentFormalDagger(Action))return;

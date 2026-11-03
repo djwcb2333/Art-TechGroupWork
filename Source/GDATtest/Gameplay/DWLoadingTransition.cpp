@@ -1,4 +1,10 @@
 #include "DWLoadingTransition.h"
+#include "DWGatheringHitAudioSubsystem.h"
+#include "PipelineStateCache.h"
+#if WITH_DEV_AUTOMATION_TESTS
+#include "Misc/AutomationTest.h"
+#include <limits>
+#endif
 #include "DWPlayerCharacter.h"
 #include "DWOpeningPrototype.h"
 #include "EngineUtils.h"
@@ -219,6 +225,7 @@ bool UDWLoadingTransitionSubsystem::Begin(EMode NewMode,UDWLoadingTransitionSett
  if(!bAlive||IsTransitionActive()||!GetWorld()||!GetGameInstance()->GetGameViewportClient())return false;
  ActiveSettings=Override?Override:GetDefaultSettings();Mode=NewMode;LastError=FText();bFailed=false;bWorkComplete=false;bPreloadComplete=false;ReadyFrames=0;ArrivedWorld.Reset();PreloadedPackage=nullptr;PreloadedWorld=nullptr;++RequestSerial;Progress=0;
  ReadinessTasks.Reset();ReadinessStatus=FText();PeakCompileWork=PeakTextureWork=0;PendingLevels=PendingShaderJobs=PendingAssets=PendingTextures=0;bReadyToDraw=false;bReadinessStalled=false;ReadySince=0;
+ ResetCameraPrime();PSOWarmup.Reset();bPSOWarmupExpiredLogged=false;PendingPSOPrecompiles=0;
  RequestStarted=FPlatformTime::Seconds();LoadingStarted=0;
  PaintState=MakeShared<FDWLoadingPaintState,ESPMode::ThreadSafe>();
  auto& V=PaintState->Visual;const auto* S=ActiveSettings.Get();
@@ -373,7 +380,7 @@ void UDWLoadingTransitionSubsystem::Finish()
  if(Overlay)if(auto* V=GetGameInstance()->GetGameViewportClient())V->RemoveViewportWidgetContent(Overlay.ToSharedRef());
  Overlay.Reset();ReleaseInput();PreloadedPackage=nullptr;PreloadedWorld=nullptr;
  if(bPausedDestination&&ArrivedWorld.IsValid())UGameplayStatics::SetGamePaused(ArrivedWorld.Get(),bDestinationWasPaused);
- bPausedDestination=false;ArrivedWorld.Reset();
+ bPausedDestination=false;ArrivedWorld.Reset();ResetCameraPrime();PSOWarmup.Reset();PendingPSOPrecompiles=0;bPSOWarmupExpiredLogged=false;
  if(bOwnsMovie&&IsMoviePlayerEnabled()){GetMoviePlayer()->StopMovie();GetMoviePlayer()->SetupLoadingScreen(FLoadingScreenAttributes());}bOwnsMovie=false;
  if(TransitionSound){TransitionSound->Stop();TransitionSound->DestroyComponent();TransitionSound=nullptr;}
  PaintState.Reset();ActiveSettings=nullptr;
@@ -402,17 +409,34 @@ bool UDWLoadingTransitionSubsystem::RevealCombatRestoreFailure(UWorld* FailedWor
  // No OnFailed rollback of ActiveSlot/Pending, and no OnLoadingComplete success notification.
  SetPhase(EDWLoadingPhase::Opening);return true;
 }
+void UDWLoadingTransitionSubsystem::ResetCameraPrime()
+{PrimedCameraWorld.Reset();PrimedCameraController.Reset();PrimedCameraPawn.Reset();PrimedCameraTarget.Reset();PrimedCameraManager.Reset();}
 bool UDWLoadingTransitionSubsystem::PrimeDestinationCamera()
 {
  auto* W=ArrivedWorld.Get();auto* PC=GetGameInstance()->GetFirstLocalPlayerController();
- if(!W||!W->HasBegunPlay()||!PC||PC->GetWorld()!=W||!PC->PlayerCameraManager)return false;
+ if(!W||!W->HasBegunPlay()||!PC||PC->GetWorld()!=W||!PC->PlayerCameraManager){ResetCameraPrime();return false;}
  const auto* GI=Cast<UDWGameInstance>(GetGameInstance());
+ ADWPlayerCharacter* Hero=nullptr;
+ AActor* Target=PC->GetViewTarget();
  if(GI&&GI->HasActiveSlot())
  {
-  auto* P=Cast<ADWPlayerCharacter>(PC->GetPawn());if(!P||!P->HasActorBegunPlay())return false;
-  P->PrepareCameraForReveal();if(PC->GetViewTarget()!=P)PC->SetViewTarget(P);
+  Hero=Cast<ADWPlayerCharacter>(PC->GetPawn());
+  if(GI->IsPlayerRestorePending()||!Hero||!Hero->HasActorBegunPlay()){ResetCameraPrime();return false;}
+  Target=Hero;
  }
- PC->UpdateCameraManager(0.f);PC->PlayerCameraManager->SetGameCameraCutThisFrame();
+ if(!IsValid(Target)||Target==PC){ResetCameraPrime();return false;}
+ const bool bNeedsPrime=PrimedCameraWorld.Get()!=W||PrimedCameraController.Get()!=PC||
+  PrimedCameraPawn.Get()!=PC->GetPawn()||PrimedCameraTarget.Get()!=Target||
+  PrimedCameraManager.Get()!=PC->PlayerCameraManager.Get()||PC->GetViewTarget()!=Target;
+ if(bNeedsPrime)
+ {
+  if(Hero)Hero->PrepareCameraForReveal();
+  if(PC->GetViewTarget()!=Target)PC->SetViewTarget(Target);
+  PC->UpdateCameraManager(0.f);PC->PlayerCameraManager->SetGameCameraCutThisFrame();
+  PrimedCameraWorld=W;PrimedCameraController=PC;PrimedCameraPawn=PC->GetPawn();
+  PrimedCameraTarget=Target;PrimedCameraManager=PC->PlayerCameraManager;
+ }
+ else PC->UpdateCameraManager(0.f);
  // Before the iris reveals a pending SC0101 world, its presentation-only cover must already paint opaque.
  // The gameplay director still waits for normal restore admission and the loader to release pause.
  if(GI&&GI->IsOpeningPending()&&!bFailed)
@@ -450,6 +474,16 @@ bool UDWLoadingTransitionSubsystem::CheckDestinationReadiness()
  PeakTextureWork=FMath::Max(PeakTextureWork,PendingTextures);
  if(PendingTextures){Progress=.90f+.07f*(1-float(PendingTextures)/FMath::Max(1,PeakTextureWork));ReadinessStatus=FText::Format(DWText(this,TEXT("准备纹理：剩余 {0}"),TEXT("Streaming textures: {0} pending")),PendingTextures);return false;}
  if(ReadinessTasks.Num()){ReadinessStatus=ReadinessTasks.CreateConstIterator().Value();return false;}
+ // Cosmetic preparation has only a 0.2s GI-wide budget; never spend the transition failure margin.
+ if(FPlatformTime::Seconds()-RequestStarted<FMath::Max(5.f,ActiveSettings->TimeoutSeconds)-1.)
+  if(auto* Audio=GetGameInstance()->GetSubsystem<UDWGatheringHitAudioSubsystem>();Audio&&Audio->ShouldWaitOptionalPreparation(W))
+  {ReadinessStatus=DWText(this,TEXT("准备采集音效"),TEXT("Preparing gathering audio"));return false;}
+ // This optional visual gate cannot admit an unready world, pending restore, or mandatory resource task.
+ PendingPSOPrecompiles=ActiveSettings->bWaitForAssetCompilation?FMath::Max(0,PipelineStateCache::GetNumActivePipelinePrecompileTasks()):0;
+ if(PSOWarmup.ShouldWait(FPlatformTime::Seconds(),PendingPSOPrecompiles,ActiveSettings->MaxPSOPrecacheWaitSeconds))
+ {ReadinessStatus=FText::Format(DWText(this,TEXT("准备画面管线：剩余 {0}"),TEXT("Warming visual pipelines: {0} pending")),PendingPSOPrecompiles);return false;}
+ if(PSOWarmup.bExpired&&PendingPSOPrecompiles>0&&!bPSOWarmupExpiredLogged)
+ {bPSOWarmupExpiredLogged=true;UE_LOG(LogTemp,Warning,TEXT("DW visual PSO warmup budget expired: native remaining=%d; best-effort gate only, mandatory readiness passed."),PendingPSOPrecompiles);}
  Progress=.97f+.02f*FMath::Clamp(float(ReadyFrames)/FMath::Max(3,ActiveSettings->MinimumReadyFrames),0.f,1.f);
  ReadinessStatus=DWText(this,TEXT("确认镜头与最终画面"),TEXT("Verifying camera and rendered frames"));return true;
 }
@@ -472,4 +506,31 @@ static FAutoConsoleCommandWithWorldAndArgs GVerifyDWIris(TEXT("dw.Transition.Ver
   if(FPlatformTime::Seconds()-Started>90){UE_LOG(LogTemp,Error,TEXT("DW Iris standalone verification timed out"));FPlatformMisc::RequestExit(false);return false;}return true;
  }));
 }));
+#endif
+
+#if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDWLoadingVisualPSOWarmupTest,"DoughWorld.Loading.VisualPSOWarmupBounded",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FDWLoadingVisualPSOWarmupTest::RunTest(const FString&)
+{
+ FDWLoadingPSOWarmup Gate;
+ TestFalse(TEXT("No active task does not wait"),Gate.ShouldWait(100.,0,3.f));
+ TestTrue(TEXT("New tasks during stable-frame gate wait within original budget"),Gate.ShouldWait(100.2,4,3.f));
+ TestFalse(TEXT("Drained tasks pass"),Gate.ShouldWait(100.3,0,3.f));
+ TestTrue(TEXT("Reappearing tasks do not get a new deadline"),Gate.ShouldWait(102.9,5,3.f));
+ TestFalse(TEXT("Exact deadline releases optional gate"),Gate.ShouldWait(103.,5,3.f));
+ TestTrue(TEXT("Expiration is visible"),Gate.bExpired);
+ TestFalse(TEXT("Persistent or increasing work cannot reset budget"),Gate.ShouldWait(110.,500,3.f));
+ Gate.Reset();TestTrue(TEXT("New request gets an independent budget"),Gate.ShouldWait(200.,1,3.f));
+ TestFalse(TEXT("New request deadline is independently finite"),Gate.ShouldWait(203.,1,3.f));
+ Gate.Reset();TestFalse(TEXT("Zero budget disables waiting"),Gate.ShouldWait(1.,5,0.f));
+ Gate.Reset();TestFalse(TEXT("Negative budget clamps to zero"),Gate.ShouldWait(1.,5,-1.f));
+ Gate.Reset();TestFalse(TEXT("Negative task count never waits"),Gate.ShouldWait(1.,-1,3.f));
+ Gate.Reset();TestTrue(TEXT("Nonfinite budget uses safe finite default"),Gate.ShouldWait(1.,1,std::numeric_limits<float>::infinity()));
+ TestFalse(TEXT("Nonfinite budget still expires"),Gate.ShouldWait(4.,1,std::numeric_limits<float>::quiet_NaN()));
+ Gate.Reset();TestTrue(TEXT("Oversized budget is clamped"),Gate.ShouldWait(1.,1,999.f));
+ TestFalse(TEXT("Oversized budget cannot exceed thirty seconds"),Gate.ShouldWait(31.,1,999.f));
+ Gate.Reset();TestFalse(TEXT("Nonfinite clock cannot create an infinite optional wait"),Gate.ShouldWait(std::numeric_limits<double>::quiet_NaN(),1,3.f));
+ TestEqual(TEXT("Invalid clock does not initialize deadline"),Gate.StartedAt,-1.);
+ return true;
+}
 #endif

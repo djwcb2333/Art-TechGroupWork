@@ -250,7 +250,7 @@ public:
         {
             const auto& P=Map->GetProjection();const FVector Player=Map->GetPlayerLocation();DWMapMotionMath::View V;
             if(DWMapMotionMath::Make({Player.X,Player.Y,Player.Z},{0.,0.,Diameter,Diameter},P.Width/Diameter,Map->GetCaptureYaw(),-90.,V))
-                DWMapMaskPaint::PaintImage(Elements,Layer,MapGeometry,Map->GetMapImage(),Map->ImageMap,V,FVector2D::ZeroVector,FVector2D(Diameter,Diameter),0.f,Style.GetColorAndOpacityTint().A);
+                DWMapMaskPaint::PaintImage(Elements,Layer,MapGeometry,Map->GetMapImage(),Map->GetEffectiveImageSettings(),V,FVector2D::ZeroVector,FVector2D(Diameter,Diameter),0.f,Style.GetColorAndOpacityTint().A,Map->GetExplorationBrush());
         }
         else DWMinimapSlate::Polygon(Elements,Layer,Geometry,DWMinimapSlate::CirclePoints(Center,Diameter*.5f,96),FLinearColor::White);
 

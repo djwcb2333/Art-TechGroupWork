@@ -144,6 +144,7 @@ void UDWGatheringComponent::UpdateGatheringToolVisual()
         Grip.Blend(A.PrimaryTransform,B.PrimaryTransform,FMath::Clamp((ActiveSourceSeconds-A.TimeSeconds)/
             FMath::Max(.001f,B.TimeSeconds-A.TimeSeconds),0.f,1.f));
     }
+    const FTransform SampledGrip=Grip;
     Grip=ToolGripAdjustment*Grip;
     const bool bPickaxe=SwingToolType==TEXT("Pickaxe"),bHammer=SwingToolType==TEXT("Hammer");
     const auto* Binding=ItemModelBindings.Find(SwingToolId);
@@ -151,7 +152,15 @@ void UDWGatheringComponent::UpdateGatheringToolVisual()
     if(Mesh)
     {
         Create(GatheringAuthoredTool,TEXT("GatheringAuthoredTool"));GatheringAuthoredTool->SetStaticMesh(Mesh);
-        const FTransform Calibrated=(Binding&&Binding->Mesh?Binding->GripAdjustment:(bHammer?HammerMeshAdjustment:(bPickaxe?PickaxeMeshAdjustment:AxeMeshAdjustment)))*DWToolGripVisual::Facing(SwingToolType)*Grip;
+        FTransform AuthoredGrip=Grip;
+        if(SwingToolType==TEXT("Axe")&&Binding&&Binding->Mesh)
+        {
+            // V07 Z scale fits the old procedural handle to the hand gap; it is not a scale for the authored axe.
+            // Strip only that proxy scale before the model's rotated grip calibration, preserving its source pose/time.
+            FTransform RigidSource=SampledGrip;RigidSource.SetScale3D(FVector::OneVector);
+            AuthoredGrip=ToolGripAdjustment*RigidSource;
+        }
+        const FTransform Calibrated=(Binding&&Binding->Mesh?Binding->GripAdjustment:(bHammer?HammerMeshAdjustment:(bPickaxe?PickaxeMeshAdjustment:AxeMeshAdjustment)))*DWToolGripVisual::Facing(SwingToolType)*AuthoredGrip;
         GatheringAuthoredTool->SetRelativeTransform(ApplyToolHandAdjustment(SwingToolId,Calibrated,false));
         GatheringAuthoredTool->EmptyOverrideMaterials();
         if(Binding&&Binding->Mesh)

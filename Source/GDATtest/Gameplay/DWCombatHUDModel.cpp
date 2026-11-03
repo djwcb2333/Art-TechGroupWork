@@ -188,6 +188,7 @@ void DWCombatHUD::NotifyRejected(ADWPlayerCharacter* P,EDWCombatHUDRequest Reque
     if(Reason==EDWCombatHUDReason::None)
         Reason=P->WeaponAnimationComponent&&(P->WeaponAnimationComponent->IsBusy()||P->WeaponAnimationComponent->GetRemainingAttackLockSeconds()>0.)
             ?EDWCombatHUDReason::ActionLocked:EDWCombatHUDReason::Unavailable;
+    if(Reason==EDWCombatHUDReason::ActionLocked)return; // Expected input during an existing action is quiet.
     FText Message=ReasonText(P,Reason);
     if(Reason==EDWCombatHUDReason::SpecialForDash)
     {

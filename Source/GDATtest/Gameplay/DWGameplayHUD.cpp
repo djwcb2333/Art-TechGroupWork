@@ -227,12 +227,16 @@ void ADWGameplayHUD::ShowMenu(EDWMenuPage Page)
         PlayPanelTransitionSound(Page,true);
     }
 }
-void ADWGameplayHUD::ShowToast(const FText& Text){Toast=Text;ToastUntil=FPlatformTime::Seconds()+4.;}
+void ADWGameplayHUD::ShowToast(const FText& Text)
+{Toast=Text;ToastUntil=FPlatformTime::Seconds()+4.;ImportantToastUntil=Text.IsEmpty()?0.:ToastUntil;}
 void ADWGameplayHUD::ShowCombatToast(const FText& Text)
 {
     const auto* GI=GetGameInstance<UDWGameInstance>();double Seconds=0.;FString Error;
     if(!GI||!GI->GetCombatRules()||!GI->GetCombatRules()->TryGetNumber(TEXT("hud.message_duration_s"),EDWCombatRuleUnit::Seconds,Seconds,Error)||Seconds<=0.)return;
-    Toast=Text;ToastUntil=FPlatformTime::Seconds()+Seconds;
+    const double Now=FPlatformTime::Seconds();
+    if(Text.IsEmpty()||Now<ImportantToastUntil)return;
+    if((Now<ToastUntil&&Toast.EqualTo(Text))||(LastCombatToastAt>=0.&&Now-LastCombatToastAt<Seconds&&LastCombatToast.EqualTo(Text)))return;
+    LastCombatToast=Text;LastCombatToastAt=Now;Toast=Text;ToastUntil=Now+Seconds;
 }
 FText ADWGameplayHUD::GetToast()const{return FPlatformTime::Seconds()<ToastUntil?UDWLocalizationLibrary::TranslateLabel(this,Toast):FText();}
 void ADWGameplayHUD::PlayClickSound(){auto* GI=Cast<UDWGameInstance>(GetGameInstance());UDWAudioLibrary::PlayEvent(this,GI?GI->GetConfig():nullptr,EDWAudioEvent::UIClick);}

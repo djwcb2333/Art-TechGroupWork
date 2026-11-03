@@ -1,4 +1,5 @@
 #include "DWWeaponAnimationComponent.h"
+#include "DWActionSoundSubsystem.h"
 #include "DWCombatPresentationComponent.h"
 #include "DWCombatGroundAreaSubsystem.h"
 #include "DWCombatPresentationTiming.h"
@@ -119,5 +120,7 @@ void UDWWeaponAnimationComponent::PublishSwordProgressEffects()
     if(Slam)bSwordSlamFeedbackPlayed=true;else bSwordSweepFeedbackPlayed=true;
     const auto FeedbackAction=SwordAction;
     if(!IsCurrentFormalSword(FeedbackAction))return;
+    if(auto* P=Player();P&&P->CombatFeedback&&P->CombatFeedback->bFeedbackEnabled)
+        DWActionSound::Action(P,Slam?EDWActionSoundCue::SwordSlam:EDWActionSoundCue::SwordSweep,FeedbackAction,CombatWeaponResources.RestoreEpoch);
     if(auto* P=Player();P&&P->CombatFeedback)P->CombatFeedback->PlayFeedback(Slam?EDWCombatFeedbackCue::SwordSlam:EDWCombatFeedbackCue::SwordSweep);
 }

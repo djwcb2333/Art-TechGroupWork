@@ -1,4 +1,5 @@
 #include "DWCombatInventoryTransaction.h"
+#include "DWActionSoundSubsystem.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWCombatItemRegistry.h"
 #include "DWInventoryComponent.h"
@@ -90,6 +91,10 @@ void FDWCombatInventoryTransaction::PublishWeaponResourceNotice(const FDWCombatW
         return Life.Entity==Notice.OwnerLife.Entity&&Life.Life==Notice.OwnerLife.Life;
     };
     if(!IsCurrent())return;
+    const auto AudioCue=Notice.bSporePresentation?EDWActionSoundCue::SporeGun:Notice.bShotgunPresentation?EDWActionSoundCue::Shotgun:static_cast<EDWActionSoundCue>(Notice.CommittedAudioCue);
+    if(AudioCue==EDWActionSoundCue::SporeGun||AudioCue==EDWActionSoundCue::Shotgun||AudioCue==EDWActionSoundCue::MoldBow||AudioCue==EDWActionSoundCue::Alcohol)
+        DWActionSound::Receipt(Notice.Owner.Get(),AudioCue,Notice.Receipt,Notice.WeaponRestoreEpoch,Notice.OwnerLife,
+            Notice.bSporePresentation||Notice.bShotgunPresentation?Notice.CommittedMuzzleTransform.GetLocation():Notice.CommittedAudioLocation);
     if(Notice.bSporePresentation||Notice.bShotgunPresentation)
     {
         if(auto* P=Cast<ADWPlayerCharacter>(Notice.Owner.Get());P&&P->CombatPresentation)

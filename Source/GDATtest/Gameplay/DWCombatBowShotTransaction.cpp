@@ -1,4 +1,5 @@
 #include "DWCombatBowShotTransaction.h"
+#include "DWActionSoundSubsystem.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWCombatInventoryTransaction.h"
 #include "DWCombatBowProjectile.h"
@@ -48,6 +49,7 @@ bool FDWCombatBowShotTransaction::Commit(UDWWeaponAnimationComponent& W,double O
     {Ledger->Resolve(Admission.Receipt.Handle,EOutcome::Rejected);Discard();return false;}
     FDWCombatWeaponResourceNotice Notice;Notice.Inventory=I;Notice.Weapon=&W;Notice.Owner=P;Notice.OwnerLife=Life;
     Notice.Receipt=Admission.Receipt.Handle;Notice.Operation=EDWWeaponResourceOperation::InventoryShot;
+    Notice.CommittedAudioCue=static_cast<uint8>(EDWActionSoundCue::MoldBow);Notice.CommittedAudioLocation=SpawnTransform.GetLocation();
     Notice.WeaponRevision=Revision+1;Notice.InventoryRevision=Prepared.GetExpectedRevision()+1;Notice.WeaponRestoreEpoch=Restore;
     Notice.LoadedBefore=Notice.LoadedAfter=W.CombatWeaponResources.Snapshot.LoadedShotgunShells;Notice.bInventoryChanged=true;
     const auto Emission=Ledger->CommitWeaponUseWithEmitter(Admission.Receipt.Handle,1);

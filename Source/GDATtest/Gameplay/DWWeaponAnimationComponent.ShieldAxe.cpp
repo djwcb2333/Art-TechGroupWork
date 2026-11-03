@@ -1,4 +1,5 @@
 #include "DWWeaponAnimationComponent.h"
+#include "DWActionSoundSubsystem.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWGameInstance.h"
 #include "DWPlayerCharacter.h"
@@ -74,6 +75,7 @@ void UDWWeaponAnimationComponent::PublishFormalAxeStartEffects()
     auto* P=Player();const int32 Serial=AxePendingPresentationSerial;
     if(!Serial||Serial!=ActionSerial||!bActive||!P||!P->IsCombatActionAllowed()||SelectedWeapon!=EDWAnimatedWeapon::ShieldAxe)return;
     AxePendingPresentationSerial=0;
+    if(bFormalAxeActive)DWActionSound::Action(P,EDWActionSoundCue::ShieldAxe,AxeAction,CombatWeaponResources.RestoreEpoch);
     const auto Current=[&](){return IsValid(this)&&!IsBeingDestroyed()&&IsValid(P)&&!P->IsActorBeingDestroyed()&&P==Player()&&P->IsCombatActionAllowed()&&bActive&&ActionSerial==Serial&&SelectedWeapon==EDWAnimatedWeapon::ShieldAxe;};
     P->ConsumeMovementInputVector();P->GetCharacterMovement()->StopMovementImmediately();if(!Current())return;
     P->GetCharacterMovement()->bOrientRotationToMovement=false;

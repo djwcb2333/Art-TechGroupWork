@@ -64,7 +64,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gathering", meta=(ClampMin="1")) double MaxDurability = 100.;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gathering", meta=(ClampMin="0")) double Durability = 100.;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gathering") TArray<FDWItemStack> Drops;
-    /** Minimum reward delay. Animated resources wait at least until their fall/fracture contact. */
+    /** Minimum reward delay after physical contact or bounded presentation settlement. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gathering", meta=(ClampMin="0", Units="s")) float DropDelaySeconds = .35f;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Gathering") bool bDropsReleased = false;
     virtual bool IsInteractionAvailable() const override;
@@ -72,7 +72,8 @@ public:
     bool ReleaseDrops();
     void RestoreResource(double Health, bool Released);
     float GetPendingDropSeconds() const;
-    UFUNCTION() void HandleGatheringPhysicalGroundContact();
+    UFUNCTION() void HandleGatheringPhysicalGroundContact(); // Legacy real-contact entry retained.
+    UFUNCTION() void HandleGatheringSettlementReady();
     /** Pure validated-fact assignment; scene and prompt changes are deferred to publish. */
     void AdoptResourceState(double Health, bool Released, float RemainingDelay);
     bool CanCaptureGatheringPersistence(FString& Error) const;

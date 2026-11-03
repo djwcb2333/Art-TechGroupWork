@@ -36,6 +36,10 @@ class UDWGameplayWidget;
 class UDWWorldEventSubsystem;
 class APlayerCameraManager;
 class APlayerController;
+#if WITH_EDITOR
+struct FStreamableHandle;
+#endif
+
 class UHorizontalBox;
 class UFont;
 class UDWInputGlyphWidget;
@@ -354,6 +358,11 @@ private:
  UPROPERTY() TArray<TObjectPtr<AActor>> PitFloor;
  UPROPERTY() TObjectPtr<UStaticMesh> RippleMesh;
  UPROPERTY() TObjectPtr<UMaterialInterface> RippleMaterial;
+#if WITH_EDITOR
+ // Passive two-resource preparation only; never admits gameplay or extends a loading gate.
+ TSharedPtr<FStreamableHandle> PIEOptionalVisualWarmup;
+#endif
+
  UPROPERTY() TArray<TObjectPtr<UStaticMeshComponent>> RippleDiscs;
  UPROPERTY() TArray<TObjectPtr<UMaterialInstanceDynamic>> RippleMids;
  struct FRipple { float Age=0,Life=1.6f,Radius=120,Strength=1; };

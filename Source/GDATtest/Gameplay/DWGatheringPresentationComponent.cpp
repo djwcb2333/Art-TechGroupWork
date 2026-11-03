@@ -2,6 +2,7 @@
 #include "DWGatheringPresentationMath.h"
 #include "DWGatheringPhysicsRules.h"
 #include "DWGatheringWorld.h"
+#include "DWWorldEvent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/World.h"
@@ -201,6 +202,7 @@ bool UDWGatheringPresentationComponent::BeginExhaustion()
     PhysicsMaterial->Restitution=FMath::Clamp(DWGatheringPhysics::Safe(Restitution,.08f),0.f,1.f);
     Source->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     bExhaustionStarted=true;bContactedGround=bPresentationFinished=false;
+    bUsedSettlementFallback=bSettlementEventPublished=false;
     ++PhysicsGeneration;
     PhysicsElapsed=CurrentDissolve=DustElapsed=0.f;
     GetOwner()->SetActorEnableCollision(true);
@@ -256,7 +258,7 @@ bool UDWGatheringPresentationComponent::IsGroundSurface(AActor* OtherActor,UPrim
 void UDWGatheringPresentationComponent::HandlePhysicsHit(UPrimitiveComponent* HitComponent,AActor* OtherActor,UPrimitiveComponent* OtherComponent,FVector NormalImpulse,const FHitResult& Hit)
 {
     if(!GetWorld()||GetWorld()->bIsTearingDown||!IsValid(GetOwner())||GetOwner()->IsActorBeingDestroyed()||
-        !bExhaustionStarted||bPhysicsSetupFailed||bPresentationFinished||!Hit.bBlockingHit||!IsGroundSurface(OtherActor,OtherComponent,Hit.ImpactNormal))return;
+        GetWorld()->IsPaused()||UDWWorldEventSubsystem::IsPlaying(this)||!bExhaustionStarted||bPhysicsSetupFailed||bPresentationFinished||!Hit.bBlockingHit||!IsGroundSurface(OtherActor,OtherComponent,Hit.ImpactNormal))return;
     for(auto& Piece:Pieces)if(Piece.Component==HitComponent&&!Piece.bFinished)
     {MarkGroundContact(Piece,Hit.ImpactPoint,true);return;}
 }
@@ -273,21 +275,43 @@ bool UDWGatheringPresentationComponent::HasSupportingGround(UStaticMeshComponent
 void UDWGatheringPresentationComponent::MarkGroundContact(FDWGatheringPieceRuntime& Piece,const FVector& Point,bool FromHit)
 {
     if(Piece.ContactElapsed>=0.f||Piece.bFinished)return;
-    Piece.ContactElapsed=0.f;Piece.ContactWorldSeconds=GetWorld()->GetTimeSeconds();++BodyGroundContactCount;
+    Piece.ContactElapsed=0.f;Piece.ContactWorldSeconds=GetWorld()->GetTimeSeconds();Piece.DissolveStartActiveSeconds=PhysicsElapsed;++BodyGroundContactCount;
     if(FromHit)++PhysicsHitEventCount;else ++SettledGroundContactCount;
     if(!bContactedGround)
     {
-        bContactedGround=true;StumpContactWorldSeconds=Piece.ContactWorldSeconds;++GroundContactCount;ContactPoint=Point;DustElapsed=0.f;SpawnDust();
-        // The resource's listener schedules its existing exact-once drop transaction.
-        OnPhysicalGroundContact.Broadcast();
+        bContactedGround=true;StumpDissolveStartActiveSeconds=PhysicsElapsed;++GroundContactCount;ContactPoint=Point;DustElapsed=0.f;SpawnDust();
+        // Common readiness can start the exact-once transaction; real contact stays truthful.
+        const TWeakObjectPtr<UDWGatheringPresentationComponent> WeakThis(this);
+        const uint64 Generation=PhysicsGeneration;
+        PublishSettlementReady();
+        if(WeakThis.IsValid()&&PhysicsGeneration==Generation&&IsValid(GetOwner())&&!GetOwner()->IsActorBeingDestroyed())OnPhysicalGroundContact.Broadcast();
     }
+}
+
+void UDWGatheringPresentationComponent::PublishSettlementReady()
+{
+    if(bSettlementEventPublished||!HasExhaustionSettlementReady())return;
+    bSettlementEventPublished=true; // Claim before any external observer can reenter.
+    OnExhaustionSettlementReady.Broadcast();
+}
+void UDWGatheringPresentationComponent::BeginBoundedSettlement()
+{
+    bool Pending=!bContactedGround;
+    for(const auto& Piece:Pieces)if(!Piece.bFinished&&Piece.ContactElapsed<0.f)Pending=true;
+    if(!Pending)return;
+    bUsedSettlementFallback=true;
+    for(auto& Piece:Pieces)if(!Piece.bFinished&&Piece.ContactElapsed<0.f)
+    {Piece.ContactElapsed=0.f;Piece.DissolveStartActiveSeconds=PhysicsElapsed;}
+    if(StumpDissolveStartActiveSeconds<0.)StumpDissolveStartActiveSeconds=PhysicsElapsed;
+    // No fake hit, dust, ground counter, inventory grant or original actor movement.
+    PublishSettlementReady();
 }
 
 void UDWGatheringPresentationComponent::TickComponent(float DeltaTime,ELevelTick TickType,FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime,TickType,ThisTickFunction);
-    if(!FMath::IsFinite(DeltaTime)||DeltaTime<=0.f||!GetWorld()||GetWorld()->bIsTearingDown||GetWorld()->IsPaused()||
-        !IsValid(GetOwner())||GetOwner()->IsActorBeingDestroyed()||!Source.IsValid())return;
+    if(!FMath::IsFinite(DeltaTime)||DeltaTime<=0.f||!GetWorld()||GetWorld()->bIsTearingDown||GetWorld()->IsPaused()||UDWWorldEventSubsystem::IsPlaying(this)||
+        !IsValid(GetOwner())||GetOwner()->IsActorBeingDestroyed()||(!Source.IsValid()&&!bExhaustionStarted))return;
     if(!bExhaustionStarted)
     {
         HitElapsed+=DeltaTime;
@@ -304,13 +328,15 @@ void UDWGatheringPresentationComponent::TickComponent(float DeltaTime,ELevelTick
     PhysicsElapsed+=DeltaTime;
     const TWeakObjectPtr<UDWGatheringPresentationComponent> WeakThis(this);
     const uint64 Generation=PhysicsGeneration;
+    if(DWGatheringPhysicsRules::SettlementDeadlineReached(PhysicsElapsed,MaxPhysicalWaitSeconds))BeginBoundedSettlement();
+    if(!WeakThis.IsValid()||PhysicsGeneration!=Generation||!IsValid(GetOwner())||GetOwner()->IsActorBeingDestroyed())return;
     bool AllFinished=Pieces.Num()>0;CurrentDissolve=0.f;
     for(auto& Piece:Pieces)
     {
         auto* C=Piece.Component.Get();if(Piece.bFinished)continue;
-        if(!IsValid(C)){AllFinished=false;continue;}
+        if(!IsValid(C)){Piece.Component=nullptr;Piece.DissolveMIDs.Reset();Piece.bFinished=true;continue;}
         // A low-speed body only counts as landed when an actual supporting
-        // non-Pawn surface is within 8 cm. Airborne/apex/timeout is not contact.
+        // non-Pawn surface is within 8 cm. The separate deadline permits settlement, never fake contact.
         if(Piece.ContactElapsed<0.f)
         {
             const bool Slow=C->GetPhysicsLinearVelocity().SizeSquared()<25.&&C->GetPhysicsAngularVelocityInDegrees().SizeSquared()<25.;
@@ -321,7 +347,7 @@ void UDWGatheringPresentationComponent::TickComponent(float DeltaTime,ELevelTick
         }
         if(Piece.ContactElapsed>=0.f)
         {
-            Piece.ContactElapsed=FMath::Max(0.f,float(GetWorld()->GetTimeSeconds()-Piece.ContactWorldSeconds));
+            Piece.ContactElapsed=FMath::Max(0.f,PhysicsElapsed-Piece.DissolveStartActiveSeconds);
             const float Amount=DWGatheringPhysicsRules::DissolveAfterContact(Piece.ContactElapsed,
                 DWGatheringPhysics::Safe(RestBeforeDissolve,2.f),DWGatheringPhysics::Safe(DissolveDuration,1.15f));
             CurrentDissolve=FMath::Max(CurrentDissolve,Amount);
@@ -339,8 +365,8 @@ void UDWGatheringPresentationComponent::TickComponent(float DeltaTime,ELevelTick
     if(Style==EDWGatheringDestructionStyle::TreeFall&&IsValid(Stump))
     {
         // The stump remains anchored while the upper tree physically falls. It
-        // starts the same hold/dissolve curve only after a real ground contact.
-        const float Elapsed=StumpContactWorldSeconds<0.?-1.f:FMath::Max(0.f,float(GetWorld()->GetTimeSeconds()-StumpContactWorldSeconds));
+        // starts the same hold/dissolve curve after contact or explicit bounded settlement.
+        const float Elapsed=StumpDissolveStartActiveSeconds<0.?-1.f:FMath::Max(0.f,float(PhysicsElapsed-StumpDissolveStartActiveSeconds));
         const float Amount=DWGatheringPhysicsRules::DissolveAfterContact(Elapsed,
             DWGatheringPhysics::Safe(RestBeforeDissolve,2.f),DWGatheringPhysics::Safe(DissolveDuration,1.15f));
         for(const auto& MID:StumpDissolve.DissolveMIDs)if(IsValid(MID))MID->SetScalarParameterValue(TEXT("DissolveAmount"),Amount);
@@ -357,10 +383,10 @@ void UDWGatheringPresentationComponent::TickComponent(float DeltaTime,ELevelTick
     }
     if(!IsValid(Stump))StumpDissolve=FDWGatheringPieceRuntime();
     if(bContactedGround){DustElapsed+=DeltaTime;UpdateDust(DustElapsed);}
-    if(AllFinished)
+    if(AllFinished&&HasExhaustionSettlementReady())
     {
         CurrentDissolve=1.f;bPresentationFinished=true;ClearTransientVisuals(true);
-        Source->SetVisibility(false,false);SetComponentTickEnabled(false);
+        if(Source.IsValid())Source->SetVisibility(false,false);SetComponentTickEnabled(false);
         if(auto* Resource=Cast<ADWGatheringResource>(GetOwner()))Resource->PublishInteractionState();
     }
 }
@@ -408,7 +434,8 @@ void UDWGatheringPresentationComponent::ResetPresentation()
     if(Source.IsValid()&&bCaptured)
     {Source->SetWorldTransform(SourceRest);Source->SetVisibility(bOriginalVisible,false);Source->SetCollisionEnabled(SourceCollision);}
     Source.Reset();bCaptured=bExhaustionStarted=bContactedGround=bPresentationFinished=bPhysicsSetupFailed=false;
-    PhysicsElapsed=CurrentDissolve=Progress=DustElapsed=0.f;HitElapsed=1.f;StumpContactWorldSeconds=-1.;
+    bUsedSettlementFallback=bSettlementEventPublished=false;
+    PhysicsElapsed=CurrentDissolve=Progress=DustElapsed=0.f;HitElapsed=1.f;StumpDissolveStartActiveSeconds=-1.;
     AcceptedHitCount=GroundContactCount=BodyGroundContactCount=PhysicsHitEventCount=SettledGroundContactCount=MissingDissolveSlots=0;
 }
 void UDWGatheringPresentationComponent::EndPlay(const EEndPlayReason::Type Reason)

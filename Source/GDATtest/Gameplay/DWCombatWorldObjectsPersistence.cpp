@@ -1,4 +1,5 @@
 #include "DWCombatWorldObjectsPersistence.h"
+#include "DWThugDropPolicy.h"
 #include "DWCombatWorldObjectsRegistry.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWCombatRecoverySubsystem.h"
@@ -272,6 +273,10 @@ void FDWCombatWorldObjectsPersistence::AdoptNativeFacts(FDWCombatWorldObjectsRes
         UDWCombatCoreDropSubsystem::FRecord Record;Record.Save=Saved;Record.PickupRadiusCm=C.DropConfig.PickupRadiusCm;
         Record.bRestored=true;Record.bMayMaterialize=Saved.Decision==EDWEnemyCoreDropDecision::SpawnPending||Saved.Decision==EDWEnemyCoreDropDecision::Spawned;
         for(const auto& Row:C.Enemies)if(Saved.Schema==2?Row.Saved.StableId==Saved.SourceStableId:Row.Saved.Formal.StableEnemyId==Saved.StableEnemyId){Record.Origin=Row.Actor;break;}
+        // Full snapshot validation already binds this row to its retained source, including ended tombstones.
+        if(Saved.Schema==2)
+         if(const auto* Source=C.Saved.Enemies.FindByPredicate([&](const auto& E){return E.StableId==Saved.SourceStableId&&E.bGenericDropsCommitted&&E.GenericDropGroup==Saved.GenericGroup&&E.Profile==Saved.Profile;}))
+          Record.bBoundedSpawnRetry=DWThugDropPolicy::IsTargetSavedClass(Source->ClassPath,Source->Profile);
         D->Records.Add(Saved.DeathId,MoveTemp(Record));
     }
     R->State=C.Saved.Recovery;R->BoundPlayer=C.Player;R->Physical.Reset();R->bInitialized=true;R->bRestoredCold=false;R->bPlacementPending=false;

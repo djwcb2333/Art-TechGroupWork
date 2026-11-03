@@ -1,4 +1,7 @@
 #include "DWWorldMap.h"
+#include "ProfilingDebugging/CpuProfilerTrace.h"
+#include "ProfilingDebugging/MiscTrace.h"
+#include "DWMapExploration.h"
 #include "DWMapOpenPhases.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "HAL/PlatformTime.h"
@@ -107,12 +110,15 @@ bool FDWMapTerrainPolicyTest::RunTest(const FString& Parameters)
 bool DWWorldMapData::Validate(const TArray<FDWWorldMapMarkerSet>& Sets,FString& Error)
 {
     if(Sets.Num()>MaxMaps){Error=TEXT("Too many map marker sets.");return false;}
-    TSet<FString> Maps;int32 Total=0;
+    TSet<FString> Maps;int32 Total=0,ExplorationBytes=0;
     for(const auto& Set:Sets)
     {
         if(Set.MapPackage.IsEmpty()||Set.MapPackage.Len()>512||!Set.MapPackage.StartsWith(TEXT("/Game/"))||
            Set.MapPackage.Contains(TEXT("UEDPIE_"))||!FPackageName::IsValidLongPackageName(Set.MapPackage)||Maps.Contains(Set.MapPackage))
         {Error=TEXT("Invalid or duplicate world-map package.");return false;}
+        if(!DWMapExploration::Validate(Set.ExplorationLayers,Error))return false;
+        for(const auto& L:Set.ExplorationLayers)ExplorationBytes+=L.Bits.Num();
+        if(ExplorationBytes>DWMapExploration::MaxTotalBytes){Error=TEXT("Exploration data exceeds its total byte budget.");return false;}
         Maps.Add(Set.MapPackage);Total+=Set.Markers.Num();
         if(Set.Markers.Num()>MaxPerMap||Total>MaxTotal){Error=TEXT("Too many world-map markers.");return false;}
         TSet<FGuid> Ids;
@@ -170,6 +176,8 @@ bool UDWWorldMapSubsystem::OpenMapDeferred(APlayerController* LocalPlayer,FVecto
 {return OpenMapInternal(LocalPlayer,ViewportSize,OutError,true);}
 bool UDWWorldMapSubsystem::OpenMapInternal(APlayerController* LocalPlayer,FVector2D ViewportSize,FString& OutError,bool bDeferred)
 {
+    TRACE_CPUPROFILER_EVENT_SCOPE(DWMapOpenCached);
+    TRACE_BOOKMARK(TEXT("DWMap Open"));
     if(!CanUseBoundSlot(OutError))return false;
     UWorld* W=GetWorld();
     if(!IsValid(LocalPlayer)||LocalPlayer->GetWorld()!=W||!LocalPlayer->IsLocalPlayerController()||
@@ -191,13 +199,13 @@ bool UDWWorldMapSubsystem::RefreshMap(FString& OutError)
     if(!bOpen||!CanUseBoundSlot(OutError)||!IsValid(PC)||PC->GetWorld()!=W||!PC->IsLocalPlayerController())
     {if(OutError.IsEmpty())OutError=TEXT("The map is not open.");return false;}
     APawn* Pawn=PC->GetPawn();auto* Mini=Pawn?Pawn->FindComponentByClass<UDWMinimapComponent>():nullptr;
-    if(!Mini||!Mini->ImageMap.IsValidCalibration()){OutError=TEXT("Invalid shared map image calibration.");return false;}
+    if(!Mini||!Mini->GetEffectiveImageSettings().IsValidCalibration()){OutError=TEXT("Invalid shared map image calibration.");return false;}
     ADWWorldMapBounds* Config=nullptr;
     for(TActorIterator<ADWWorldMapBounds> It(W);It;++It)
     {if(!IsValid(*It)||It->IsActorBeingDestroyed())continue;if(Config){OutError=TEXT("Use only one world-map bounds actor.");return false;}Config=*It;}
     MarkerLimit=Config?FMath::Clamp(Config->MaxMarkers,1,DWWorldMapData::MaxPerMap):128;
     const float MaxZoom=Config&&FMath::IsFinite(Config->MaxZoom)?FMath::Clamp(Config->MaxZoom,1.f,32.f):8.f;
-    ImageSettings=Mini->ImageMap;ImageResource=Mini->GetImageResource();ImageGeneration=ImageResource->GetGeneration();
+    ImageSettings=Mini->GetEffectiveImageSettings();ImageResource=Mini->GetImageResource();ImageGeneration=ImageResource->GetGeneration();
     const double Width=ImageSettings.WidthAtViewYaw(View.NorthYaw);
     View.CaptureCenter=DWWorldMapPrivate::P(ImageSettings.WorldCenterCm);View.Center=View.CaptureCenter;
     View.CaptureWidth=Width;View.MinZoom=1.;View.MaxZoom=MaxZoom;View.Zoom=1.;
@@ -216,12 +224,18 @@ bool UDWWorldMapSubsystem::PollCaptureReadiness(bool& Ready,FString& Error)
     Ready=false;UWorld* W=GetWorld();
     if(!bOpen||!W||W->bIsTearingDown||!CanUseBoundSlot(Error))return false;
     const auto* PC=OwnerPlayer.Get();const APawn* Pawn=PC?PC->GetPawn():nullptr;
-    const auto* Mini=Pawn?Pawn->FindComponentByClass<UDWMinimapComponent>():nullptr;
+    auto* Mini=Pawn?Pawn->FindComponentByClass<UDWMinimapComponent>():nullptr;
     if(!PC||PC->GetWorld()!=W||!PC->IsLocalPlayerController()||!Mini){Error=TEXT("Map image owner changed.");return false;}
     if(bDeferredFirstCapture){Error.Reset();return true;}
-    if(!ImageResource||ImageGeneration!=ImageResource->GetGeneration()||!ImageSettings.SameAs(Mini->ImageMap))
+    if(!ImageResource||ImageGeneration!=ImageResource->GetGeneration()||!ImageSettings.SameAs(Mini->GetEffectiveImageSettings()))
     {Error=TEXT("Map image calibration changed; reopen the map.");return false;}
-    if(!ImageResource->Poll(Ready,Error))return false;
+    if(!ImageResource->Poll(Ready,Error))
+    {
+        // Missing per-map image: retain this frame's calibration and use a quiet placeholder.
+        Mini->UseImageFallback();ImageSettings=Mini->GetEffectiveImageSettings();
+        ImageResource=Mini->GetImageResource();ImageGeneration=ImageResource->GetGeneration();
+        if(!ImageResource->Poll(Ready,Error))return false;
+    }
     if(!Ready&&FPlatformTime::Seconds()-CapturePendingAt>15.){Error=TEXT("Map image resource was not ready in time.");return false;}
     if(Ready)bCapturePending=false;
     return true;
@@ -251,9 +265,9 @@ bool UDWWorldMapSubsystem::PixelToWorld(FVector2D Pixel,FVector& OutPosition) co
     OutPosition=FVector(P.X,P.Y,GroundZ);return DWWorldMapPrivate::FiniteVector(OutPosition);
 }
 bool UDWWorldMapSubsystem::PanPixels(FVector2D D)
-{if(!bOpen||!DWWorldMapMath::Pan(View,DWWorldMapPrivate::P(D)))return false;UpdateMaterialView();return true;}
+{TRACE_CPUPROFILER_EVENT_SCOPE(DWMapPanViewOnly);if(!bOpen||!DWWorldMapMath::Pan(View,DWWorldMapPrivate::P(D)))return false;UpdateMaterialView();return true;}
 bool UDWWorldMapSubsystem::ZoomAtPixel(float Factor,FVector2D Anchor)
-{if(!bOpen||!DWWorldMapMath::ZoomAt(View,Factor,DWWorldMapPrivate::P(Anchor)))return false;UpdateMaterialView();return true;}
+{TRACE_CPUPROFILER_EVENT_SCOPE(DWMapZoomViewOnly);if(!bOpen||!DWWorldMapMath::ZoomAt(View,Factor,DWWorldMapPrivate::P(Anchor)))return false;UpdateMaterialView();return true;}
 FVector2D UDWWorldMapSubsystem::WorldDirectionToScreen(FVector D) const
 {return DWWorldMapPrivate::UE(DWWorldMapMath::WorldDirectionToScreen(DWWorldMapPrivate::XY(D),View.NorthYaw));}
 UMaterialInterface* UDWWorldMapSubsystem::GetMapMaterial() const{return Material;}
@@ -355,15 +369,15 @@ bool UDWWorldMapSubsystem::PrepareLoadedMarkers(int32 Slot,const FDWWorldMapMark
     if(!W||W->bIsTearingDown||Slot<0||Slot>=UDWGameInstance::SaveSlotCount||!GI||GI->GetActiveSlot()!=Slot||!DWWorldMapData::ValidateSave(Save,Error))return false;
     const FString Package=DWWorldMapPrivate::Package(W);
     if(Package.IsEmpty()){Error=TEXT("Current world has no package.");return false;}
-    FDWWorldMapRestorePlan Plan;Plan.World=W;Plan.Owner=const_cast<UDWWorldMapSubsystem*>(this);Plan.MapPackage=Package;Plan.Slot=Slot;Plan.SourceRevision=MarkerRevision;
-    for(const auto& S:Save.Sets)if(S.MapPackage==Package){Plan.Markers=S.Markers;Plan.SelectedMarker=S.SelectedMarker;break;}
+    FDWWorldMapRestorePlan Plan;Plan.World=W;Plan.Owner=const_cast<UDWWorldMapSubsystem*>(this);Plan.MapPackage=Package;Plan.Slot=Slot;Plan.SourceRevision=MarkerRevision;Plan.ExplorationRevision=ExplorationRevision;
+    for(const auto& S:Save.Sets)if(S.MapPackage==Package){Plan.Markers=S.Markers;Plan.SelectedMarker=S.SelectedMarker;Plan.ExplorationLayers=S.ExplorationLayers;break;}
     Out=MoveTemp(Plan);Error.Reset();return true;
 }
 bool UDWWorldMapSubsystem::CanAdoptLoadedMarkers(const FDWWorldMapRestorePlan& Plan,FString& Error) const
 {
     const UWorld* W=GetWorld();const auto* GI=W?W->GetGameInstance<UDWGameInstance>():nullptr;
     if(!W||W->bIsTearingDown||Plan.World.Get()!=W||Plan.Owner.Get()!=this||!GI||GI->GetActiveSlot()!=Plan.Slot||
-       DWWorldMapPrivate::Package(W)!=Plan.MapPackage||MarkerRevision!=Plan.SourceRevision)
+       DWWorldMapPrivate::Package(W)!=Plan.MapPackage||MarkerRevision!=Plan.SourceRevision||ExplorationRevision!=Plan.ExplorationRevision)
     {Error=TEXT("World-map restore owner or revision changed before adoption.");return false;}
     Error.Reset();return true;
 }
@@ -371,6 +385,9 @@ void UDWWorldMapSubsystem::AdoptLoadedMarkersUnchecked(FDWWorldMapRestorePlan&& 
 {
     // Fixed native facts only. No broadcasts, widget operations, file IO or fallible work.
     PendingNavigationClear=SelectedMarker;PendingNavigationSelection=Plan.SelectedMarker;SelectedMarker.Invalidate();Markers=MoveTemp(Plan.Markers);
+    ExplorationLayers=MoveTemp(Plan.ExplorationLayers);ActiveExploration=INDEX_NONE;++ExplorationRevision;
+    // Native adoption only. Deferred resource refresh happens in the next valid minimap tick.
+    ExplorationDirty=FIntRect(0,0,0,0);LastExplorationUpdate=-1.;bHasRevealPosition=false;
     CurrentMapPackage=MoveTemp(Plan.MapPackage);BoundSlot=Plan.Slot;bSlotBound=true;++MarkerRevision;
 }
 bool UDWWorldMapSubsystem::PublishLoadedMarkers(int32 Slot,TFunctionRef<bool()> IsCurrentRequest,FString& Error)
@@ -427,24 +444,86 @@ bool UDWWorldMapSubsystem::PublishLoadedMarkers(int32 Slot,TFunctionRef<bool()> 
 bool UDWWorldMapSubsystem::MergeMarkersForSave(int32 Slot,const FDWWorldMapMarkerSave& Existing,FDWWorldMapMarkerSave& Out,FString& Error) const
 {
     if(!DWWorldMapData::ValidateSave(Existing,Error))return false;
-    if(!bSlotBound&&Markers.IsEmpty()){Out=Existing;return true;} // No map activity since this world was created.
+    if(!bSlotBound&&Markers.IsEmpty()&&ExplorationLayers.IsEmpty()){Out=Existing;return true;} // No map activity since this world was created.
     if(!bSlotBound||BoundSlot!=Slot||CurrentMapPackage!=DWWorldMapPrivate::Package(GetWorld()))
     {Error=TEXT("World-map marker owner does not match the active slot/world.");return false;}
     FDWWorldMapMarkerSave Result=Existing;Result.Schema=1;
     auto* Set=Result.Sets.FindByPredicate([&](const FDWWorldMapMarkerSet& S){return S.MapPackage==CurrentMapPackage;});
     if(!Set){Set=&Result.Sets.AddDefaulted_GetRef();Set->MapPackage=CurrentMapPackage;}
-    Set->Markers=Markers;Set->SelectedMarker=SelectedMarker;if(!DWWorldMapData::ValidateSave(Result,Error))return false;
+    Set->Markers=Markers;Set->SelectedMarker=SelectedMarker;Set->ExplorationLayers=ExplorationLayers;if(!DWWorldMapData::ValidateSave(Result,Error))return false;
     Out=MoveTemp(Result);return true;
 }
+void UDWWorldMapSubsystem::UpdateExploration(APlayerController* PC,const FDWMapImageSettings& Image,float Radius,int32 Grid)
+{
+    UWorld* W=GetWorld();FString Error;
+    if(!IsValid(PC)||PC->GetWorld()!=W||!PC->IsLocalPlayerController()||!W||W->bIsTearingDown||!CanUseBoundSlot(Error)||!Image.IsValidCalibration())return;
+    const auto* GI=W->GetGameInstance<UDWGameInstance>();
+    if(GI&&GI->HasActiveSlot()&&!bSlotBound)return; // Never reveal into an unbound restore.
+    if(CurrentMapPackage.IsEmpty())CurrentMapPackage=DWWorldMapPrivate::Package(W);
+    if(CurrentMapPackage!=DWWorldMapPrivate::Package(W))return;
+    if(Grid<32||Grid>DWMapExploration::MaxGrid||!FMath::IsPowerOfTwo(Grid)||!FMath::IsFinite(Radius)||Radius<=0.f||Radius>100000.f)return;
+    const double Now=FPlatformTime::Seconds();if(LastExplorationUpdate>=0.&&Now-LastExplorationUpdate<.1)return;
+    LastExplorationUpdate=Now;
+    const int32 Wanted=DWMapExploration::FindFrame(ExplorationLayers,Image,Grid);
+    if(Wanted==INDEX_NONE)
+    {
+        if(ExplorationLayers.Num()>=DWMapExploration::MaxLayers)
+        {
+            if(!bExplorationBudgetNotice){bExplorationBudgetNotice=true;UE_LOG(LogTemp,Warning,TEXT("Exploration calibration capacity reached; previous facts preserved, new frame not recorded."));}
+            ActiveExploration=INDEX_NONE;return;
+        }
+        ActiveExploration=DWMapExploration::FindOrAddFrame(ExplorationLayers,Image,Grid);if(ActiveExploration==INDEX_NONE)return;++ExplorationRevision;
+        ExplorationDirty=FIntRect(0,0,Grid,Grid);bHasRevealPosition=false;
+    }
+    else if(ActiveExploration!=Wanted)
+    {ActiveExploration=Wanted;ExplorationDirty=FIntRect(0,0,Grid,Grid);bHasRevealPosition=false;}
+    auto& Layer=ExplorationLayers[ActiveExploration];
+    const APawn* Pawn=PC->GetPawn();
+    // Limit work to a local neighborhood, including on tiny authored maps.
+    const double LocalRadius=FMath::Min(double(Radius),FMath::Min(Image.WorldSizeCm.X,Image.WorldSizeCm.Y)*.125);
+    FIntRect Changed;const FVector2D Position=IsValid(Pawn)?FVector2D(Pawn->GetActorLocation()):FVector2D::ZeroVector;
+    const bool Moved=IsValid(Pawn)&&(!bHasRevealPosition||!LastRevealPosition.Equals(Position,1.));
+    const bool Revealed=Moved&&!W->IsPaused()&&DWMapExploration::Reveal(Layer,Position,LocalRadius,Changed);
+    if(Moved&&!W->IsPaused()){LastRevealPosition=Position;bHasRevealPosition=true;}
+    if(Revealed)
+    {
+        ++ExplorationRevision;
+        if(ExplorationDirty.Width()<=0)ExplorationDirty=Changed;
+        else {ExplorationDirty.Min.X=FMath::Min(ExplorationDirty.Min.X,Changed.Min.X);ExplorationDirty.Min.Y=FMath::Min(ExplorationDirty.Min.Y,Changed.Min.Y);ExplorationDirty.Max.X=FMath::Max(ExplorationDirty.Max.X,Changed.Max.X);ExplorationDirty.Max.Y=FMath::Max(ExplorationDirty.Max.Y,Changed.Max.Y);}
+    }
+    // Resources are prepared by normal-play ticks, never constructed by paint/drag/close.
+    if(!ExplorationResource)return;
+    const auto* Mini=Pawn?Pawn->FindComponentByClass<UDWMinimapComponent>():nullptr;
+    if(ExplorationResource&&ExplorationResource->Sync(Layer,Mini?Mini->GetMapImage():nullptr,ExplorationDirty))ExplorationDirty=FIntRect(0,0,0,0);
+}
+bool UDWWorldMapSubsystem::IsWorldExplored(FVector Position) const
+{return ExplorationLayers.IsValidIndex(ActiveExploration)&&DWMapExploration::IsRevealed(ExplorationLayers[ActiveExploration],FVector2D(Position));}
+UMaterialInterface* UDWWorldMapSubsystem::GetExplorationMaterial() const
+{return ActiveExploration!=INDEX_NONE&&ExplorationResource?ExplorationResource->GetMaterial():nullptr;}
+const FSlateBrush* UDWWorldMapSubsystem::GetExplorationBrush() const
+{return ActiveExploration!=INDEX_NONE&&ExplorationResource?ExplorationResource->GetBrush():nullptr;}
+void UDWWorldMapSubsystem::PrepareExplorationAssets(const FDWMapImageSettings& Image,int32 Grid)
+{
+    UWorld* W=GetWorld();if(!W||W->bIsTearingDown)return;
+    if(!ExplorationResource)ExplorationResource=NewObject<UDWMapExplorationResource>(this);
+    ExplorationResource->Prepare();ExplorationResource->WarmMask(Image,Grid);
+}
+UMaterialInterface* UDWWorldMapSubsystem::GetPreparedTintMaterial() const
+{return ExplorationResource?ExplorationResource->GetPreparedTint():nullptr;}
+UTexture2D* UDWWorldMapSubsystem::GetPreparedCloseIcon() const
+{return ExplorationResource?ExplorationResource->GetPreparedCloseIcon():nullptr;}
+
 void UDWWorldMapSubsystem::CloseMap()
 {
-    bCapturePending=false;bDeferredFirstCapture=false;ImageResource=nullptr;++ImageGeneration;
+    TRACE_CPUPROFILER_EVENT_SCOPE(DWMapCloseRetainCache);
+    if(bOpen)TRACE_BOOKMARK(TEXT("DWMap Close"));
+    bCapturePending=false;bDeferredFirstCapture=false; // Keep the shared image cache for the next open.
     CaptureActor=nullptr;DepthTarget=nullptr;Material=nullptr;OwnerPlayer.Reset();bOpen=false;
 }
 void UDWWorldMapSubsystem::OnWorldEndPlay(UWorld& W)
-{CloseMap();if(auto* Nav=W.GetSubsystem<UDWMinimapNavigationSubsystem>())Nav->OnNavigationTargetChanged.RemoveDynamic(this,&UDWWorldMapSubsystem::OnNavigationChanged);Markers.Reset();SelectedMarker.Invalidate();bSlotBound=false;BoundSlot=INDEX_NONE;Super::OnWorldEndPlay(W);}
+{CloseMap();if(auto* Nav=W.GetSubsystem<UDWMinimapNavigationSubsystem>())Nav->OnNavigationTargetChanged.RemoveDynamic(this,&UDWWorldMapSubsystem::OnNavigationChanged);ImageResource=nullptr;Markers.Reset();ExplorationLayers.Reset();ExplorationResource=nullptr;ActiveExploration=INDEX_NONE;SelectedMarker.Invalidate();bSlotBound=false;BoundSlot=INDEX_NONE;Super::OnWorldEndPlay(W);}
 void UDWWorldMapSubsystem::Deinitialize()
-{CloseMap();if(UWorld* W=GetWorld())if(auto* Nav=W->GetSubsystem<UDWMinimapNavigationSubsystem>())Nav->OnNavigationTargetChanged.RemoveDynamic(this,&UDWWorldMapSubsystem::OnNavigationChanged);Markers.Reset();SelectedMarker.Invalidate();bSlotBound=false;BoundSlot=INDEX_NONE;Super::Deinitialize();}
+{CloseMap();if(UWorld* W=GetWorld())if(auto* Nav=W->GetSubsystem<UDWMinimapNavigationSubsystem>())Nav->OnNavigationTargetChanged.RemoveDynamic(this,&UDWWorldMapSubsystem::OnNavigationChanged);ImageResource=nullptr;Markers.Reset();ExplorationLayers.Reset();ExplorationResource=nullptr;ActiveExploration=INDEX_NONE;SelectedMarker.Invalidate();bSlotBound=false;BoundSlot=INDEX_NONE;Super::Deinitialize();}
 
 
 #if WITH_EDITOR

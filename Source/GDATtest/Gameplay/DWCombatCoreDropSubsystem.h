@@ -54,6 +54,7 @@ struct FDWPreparedCoreDrop
     uint64 Revision=0;
     bool bValid=false;
     bool bGeneric=false;
+    bool bBoundedSpawnRetry=false;
     FGuid GenericGroup;
     FString GenericSourceStableId;
     TArray<FDWCombatCoreDropSave> GenericRows;
@@ -93,6 +94,10 @@ private:
         TWeakObjectPtr<ADWCombatCorePickup> Physical;
         double PickupRadiusCm=0.;
         bool bMayMaterialize=false,bRestored=false;
+        // Transient record policy survives corpse destruction; validated restore reconstructs it.
+        bool bBoundedSpawnRetry=false;
+        int32 SpawnAttempts=0;
+        double NextSpawnAttempt=0.;
     };
     TMap<FGuid,FRecord> Records;
     uint64 Revision=1;
@@ -102,6 +107,7 @@ private:
         DWCombatCommit::FEntityLife EnemyLife,DWCombatCommit::FEntityLife PlayerLife,FDWPreparedCoreDrop& Out,const FVector* ForcedFallPoint=nullptr,DWCombatCommit::FReceiptId ForcedFallReceipt={});
     void CommitFatalUnchecked(FDWPreparedCoreDrop&& Prepared);
     bool PrepareGenericFatal(ADWEnemyCharacter&,DWCombatCommit::FReceiptId,DWCombatCommit::FEntityLife,DWCombatCommit::FEntityLife,FDWPreparedCoreDrop&,const FVector*,DWCombatCommit::FReceiptId);
+    bool PrepareThugFatal(ADWEnemyCharacter&,DWCombatCommit::FReceiptId,DWCombatCommit::FEntityLife,DWCombatCommit::FEntityLife,FDWPreparedCoreDrop&,const FVector*,DWCombatCommit::FReceiptId);
     void Materialize(FGuid DeathId);
     void PhysicalEnded(ADWCombatCorePickup& Pickup);
     bool IsPhysicalCurrent(const ADWCombatCorePickup& Pickup) const;

@@ -1,4 +1,5 @@
 #include "DWWeaponAnimationComponent.h"
+#include "DWActionSoundSubsystem.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWCombatItemRegistry.h"
 #include "DWCombatEquipment.h"
@@ -111,6 +112,7 @@ bool UDWWeaponAnimationComponent::BeginFormalSpear(FVector Target)
     if(!IsCurrentFormalSpear(SpearAction))return false;
     P->GetCharacterMovement()->bOrientRotationToMovement=false;
     NextAttackTime=FMath::Max(NextAttackTime,GetCombatActionWorldSeconds()+SpearPlan.EstimateRemainingSeconds(ReadFormalSpearForm()));
+    DWActionSound::Action(P,EDWActionSoundCue::Spear,SpearAction,CombatWeaponResources.RestoreEpoch);
     return true;
 }
 void UDWWeaponAnimationComponent::EndFormalSpear()

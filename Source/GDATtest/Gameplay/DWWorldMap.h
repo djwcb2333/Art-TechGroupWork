@@ -1,4 +1,5 @@
 #pragma once
+#include "DWMapExploration.h"
 #include "CoreMinimal.h"
 #include "DWMapImage.h"
 #include "Subsystems/WorldSubsystem.h"
@@ -26,6 +27,8 @@ struct FDWWorldMapRestorePlan
     FGuid SelectedMarker;
     int32 Slot=INDEX_NONE;
     uint64 SourceRevision=0;
+    uint64 ExplorationRevision=0;
+    TArray<FDWMapExplorationLayer> ExplorationLayers;
 };
 
 /** Optional per-level settings. The box is only used when bOverrideBounds is enabled. */
@@ -55,6 +58,14 @@ public:
     bool CaptureDeferredMap(FVector2D ViewportSize,FString& OutError);
     bool PollCaptureReadiness(bool& bReady,FString& OutError);
     void PauseCaptureDeadline(double Seconds);
+    // Tick calls update; paint only queries. Existing slot/world guards remain authoritative.
+    void UpdateExploration(APlayerController* Player,const FDWMapImageSettings& Image,float RadiusCm,int32 Grid);
+    bool IsWorldExplored(FVector Position) const;
+    UMaterialInterface* GetExplorationMaterial() const;
+    const FSlateBrush* GetExplorationBrush() const;
+    void PrepareExplorationAssets(const FDWMapImageSettings& Image,int32 Grid);
+    UMaterialInterface* GetPreparedTintMaterial() const;
+    UTexture2D* GetPreparedCloseIcon() const;
     UTexture2D* GetMapImage() const {return ImageResource?ImageResource->GetReadyTexture():nullptr;}
     const FDWMapImageSettings& GetImageSettings() const {return ImageSettings;}
 
@@ -107,7 +118,14 @@ private:
     int32 MarkerLimit=128,BoundSlot=INDEX_NONE;
     bool bOpen=false,bSlotBound=false,bUpdatingNavigation=false;
     FGuid SelectedMarker,PendingNavigationClear,PendingNavigationSelection;
-    uint64 MarkerRevision=0;
+    uint64 MarkerRevision=0,ExplorationRevision=0;
+    UPROPERTY(Transient) TArray<FDWMapExplorationLayer> ExplorationLayers;
+    UPROPERTY(Transient) TObjectPtr<UDWMapExplorationResource> ExplorationResource;
+    int32 ActiveExploration=INDEX_NONE;
+    FIntRect ExplorationDirty=FIntRect(0,0,0,0);
+    double LastExplorationUpdate=-1.;
+    bool bExplorationBudgetNotice=false,bHasRevealPosition=false;
+    FVector2D LastRevealPosition=FVector2D::ZeroVector;
     bool CanUseBoundSlot(FString& OutError) const;
     void UpdateMaterialView();
     UFUNCTION() void OnNavigationChanged();

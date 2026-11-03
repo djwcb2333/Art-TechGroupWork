@@ -34,8 +34,10 @@ struct FDWGatheringPieceRuntime
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Transient,Category="Physics") float DissolveAmount=0.f;
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Transient,Category="Physics") bool bFinished=false;
     float StableElapsed=0.f;
+    float DissolveStartActiveSeconds=-1.f;
 };
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDWGatheringPhysicalGroundContact);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDWGatheringSettlementReady);
 /** Physics presentation never credits inventory. Resource owns the exact-once reward transaction. */
 UCLASS(ClassGroup=(DoughWorld),BlueprintType,meta=(BlueprintSpawnableComponent))
 class GDATTEST_API UDWGatheringPresentationComponent : public UActorComponent
@@ -80,6 +82,12 @@ public:
     UPROPERTY() float CrownStartHeightRatio=.45f;
     UPROPERTY() float FractureDuration=.7f;
     UPROPERTY() float FragmentScatterRadius=105.f;
+    /** Reward readiness: real contact or bounded physical fallback, once per exhaustion. */
+    UPROPERTY(BlueprintAssignable,Category="Gathering Presentation|Physics") FDWGatheringSettlementReady OnExhaustionSettlementReady;
+    /** Active simulation seconds before stuck pieces may settle. Pauses do not advance this clock. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Gathering Presentation|Physics",meta=(ClampMin="0.25",ClampMax="60",Units="s")) float MaxPhysicalWaitSeconds=6.f;
+    /** True only if a physical timeout was used; never substitutes for bContactedGround. */
+    UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="Gathering Presentation|Debug") bool bUsedSettlementFallback=false;
     UPROPERTY(BlueprintAssignable,Category="Gathering Presentation|Physics") FDWGatheringPhysicalGroundContact OnPhysicalGroundContact;
     UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="Gathering Presentation|Debug") bool bExhaustionStarted=false;
     UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="Gathering Presentation|Debug") bool bContactedGround=false;
@@ -95,6 +103,8 @@ public:
     UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="Gathering Presentation|Debug") float PhysicsElapsed=0.f;
     UFUNCTION(BlueprintPure,Category="Gathering Presentation") bool IsExhaustionVisible() const {return bExhaustionStarted&&!bPresentationFinished;}
     UFUNCTION(BlueprintPure,Category="Gathering Presentation") bool IsAwaitingPhysicalContact() const {return bExhaustionStarted&&!bContactedGround&&!bPhysicsSetupFailed;}
+    UFUNCTION(BlueprintPure,Category="Gathering Presentation") bool HasExhaustionSettlementReady() const {return bContactedGround||bUsedSettlementFallback;}
+    UFUNCTION(BlueprintPure,Category="Gathering Presentation") bool IsAwaitingExhaustionSettlement() const {return bExhaustionStarted&&!HasExhaustionSettlementReady()&&!bPhysicsSetupFailed;}
     UFUNCTION(BlueprintPure,Category="Gathering Presentation") bool HasPersistentStump() const;
     UFUNCTION(BlueprintPure,Category="Gathering Presentation") int32 GetActivePhysicsBodyCount() const;
     UFUNCTION(BlueprintPure,Category="Gathering Presentation|Physics") TArray<FDWGatheringPieceRuntime> GetPhysicsPieces() const {return Pieces;}
@@ -119,10 +129,13 @@ private:
     FTransform SourceRest=FTransform::Identity;
     FVector Pivot=FVector::ZeroVector,FallDirection=FVector::ForwardVector,ContactPoint=FVector::ZeroVector;
     float HitElapsed=1.f,Progress=0.f,DustDiameter=100.f,DustElapsed=0.f;
-    double StumpContactWorldSeconds=-1.;
+    double StumpDissolveStartActiveSeconds=-1.;
     ECollisionEnabled::Type SourceCollision=ECollisionEnabled::QueryAndPhysics;
     bool bCaptured=false,bOriginalVisible=true,bFragmentsReady=false;
     uint64 PhysicsGeneration=0;
+    bool bSettlementEventPublished=false;
+    void PublishSettlementReady();
+    void BeginBoundedSettlement();
     bool CaptureSource();
     void ApplyDissolveMaterials(FDWGatheringPieceRuntime& Piece);
     bool BuildFragments();

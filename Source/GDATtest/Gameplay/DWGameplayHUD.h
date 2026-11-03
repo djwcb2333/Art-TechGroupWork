@@ -121,6 +121,8 @@ private:
     bool bSessionStarted = false;
     FText Toast;
     double ToastUntil = 0;
+    double ImportantToastUntil=0.,LastCombatToastAt=-1.;
+    FText LastCombatToast;
     FText PickupToast;double PickupToastStarted=0.,PickupToastUntil=0.;
     UPROPERTY(Transient) TObjectPtr<UAudioComponent> MusicComponent;
     UPROPERTY(Transient) TObjectPtr<USoundBase> CurrentMusic;

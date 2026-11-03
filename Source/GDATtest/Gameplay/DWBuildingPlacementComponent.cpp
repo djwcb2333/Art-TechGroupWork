@@ -1,4 +1,5 @@
 #include "DWBuildingPlacementComponent.h"
+#include "DWActionSoundSubsystem.h"
 #include "DWBuildingDefinition.h"
 #include "DWBuildingDemolitionCost.h"
 #include "DWPlaceableBuilding.h"
@@ -258,7 +259,10 @@ bool UDWBuildingPlacementComponent::CommitPlacementTransaction()
     }
     // Commit both facts before any notification or visual callback; cancellation never reaches here.
     Bag->AdoptPreparedUnchecked(MoveTemp(Plan));
-    Building->bStationEnabled=true;Building->SetStaged(false);EndPlacement(true);
+    Building->bStationEnabled=true;Building->SetStaged(false);
+    const auto CommittedBuildSound=DWActionSound::CaptureBuild(Building); // Freeze before EndPlacement or external callbacks.
+    EndPlacement(true);
+    DWActionSound::Build(CommittedBuildSound);
     Building->PublishInteractionState();
     if(IsValid(Building)&&!Building->IsActorBeingDestroyed()&&Building->BuildingEffects)Building->BuildingEffects->PlayConstructionEffect();
     if(SafeBag.IsValid()&&SafeBag->CanWriteInventory()&&SafeUser.IsValid()&&SafeUser->GetWorld()&&!SafeUser->GetWorld()->bIsTearingDown)SafeBag->OnChanged.Broadcast();

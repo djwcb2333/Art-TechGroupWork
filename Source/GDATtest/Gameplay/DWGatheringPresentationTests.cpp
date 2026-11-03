@@ -16,6 +16,13 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDWGatheringPhysicsRulesTest,"DoughWorld.Gather
 bool FDWGatheringPhysicsRulesTest::RunTest(const FString&)
 {
     using namespace DWGatheringPhysicsRules;
+    TestFalse(TEXT("No fallback before the configured deadline"),SettlementDeadlineReached(5.99f,6.f));
+    TestTrue(TEXT("Deadline is inclusive and bounded"),SettlementDeadlineReached(6.f,6.f));
+    TestTrue(TEXT("Repeated deadline checks stay ready without granting anything"),SettlementDeadlineReached(7.f,6.f));
+    TestFalse(TEXT("Invalid elapsed cannot claim completion"),SettlementDeadlineReached(std::numeric_limits<float>::quiet_NaN(),6.f));
+    TestFalse(TEXT("Negative elapsed cannot claim completion"),SettlementDeadlineReached(-1.f,6.f));
+    TestFalse(TEXT("Invalid config uses finite default"),SettlementDeadlineReached(5.99f,std::numeric_limits<float>::infinity()));
+    TestTrue(TEXT("Author delay is bounded at sixty seconds"),SettlementDeadlineReached(60.f,100000.f));
     TestTrue(TEXT("Static upward floor is contact"),IsGroundContact(true,false,false,false,1.f,.45f));
     TestFalse(TEXT("Player collision never starts ground sequence"),IsGroundContact(true,false,true,false,1.f,.45f));
     TestFalse(TEXT("Own stump is not the final ground"),IsGroundContact(true,true,false,false,1.f,.45f));

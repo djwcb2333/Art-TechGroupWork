@@ -1,4 +1,5 @@
 #include "DWWeaponAnimationComponent.h"
+#include "DWActionSoundSubsystem.h"
 #include "DWCombatUnarmed.h"
 #include "DWCombatEquipment.h"
 #include "DWCombatAuthoritySubsystem.h"
@@ -73,6 +74,7 @@ void UDWWeaponAnimationComponent::PublishAcceptedWeaponStartEffects()
     const auto Action=UnarmedAction;
     if(!IsCurrentFormalUnarmed(Action)||(UnarmedPublishedAction.Id==Action.Id&&UnarmedPublishedAction.Epoch==Action.Epoch))return;
     UnarmedPublishedAction=Action;auto* P=Player();
+    DWActionSound::Action(P,SimpleSpearSource.IsValid()?EDWActionSoundCue::SimpleSugarSpear:EDWActionSoundCue::Unarmed,Action,CombatWeaponResources.RestoreEpoch);
     P->ConsumeMovementInputVector();P->GetCharacterMovement()->StopMovementImmediately();if(!IsCurrentFormalUnarmed(Action))return;
     P->GetCharacterMovement()->bOrientRotationToMovement=false;P->SetActorRotation(UnarmedForward.Rotation());if(!IsCurrentFormalUnarmed(Action))return;
     P->SetHarvestHeld(false);if(!IsCurrentFormalUnarmed(Action))return;

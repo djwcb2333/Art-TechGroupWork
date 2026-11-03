@@ -79,13 +79,14 @@ bool UDWGatheringComponent::TryUseTool(FName Id)
         if(!Found||!User->WeaponAnimationComponent||!User->WeaponAnimationComponent->EquipSimpleSpearInventory(Slot))return false;
     }
     else if(ActiveTool==TEXT("SimpleSugarSpear")&&User->WeaponAnimationComponent)User->WeaponAnimationComponent->CancelAction();
+    const bool bSameTool=ActiveTool==Id&&bToolCarrySelected;
     CancelGatheringSwing();
     bToolCarrySelected=true;
     ActiveTool=Id; // Selecting again must not bypass the shared tool cooldown.
     const auto* Definition=Config->GetItemDefinition(Id);
     const FString CN=Definition?Definition->DisplayName.ToString():Id.ToString();
     const FString EN=Definition?Definition->EnglishDisplayName.ToString():Id.ToString();
-    Notify(User,TEXT("已选择采集工具：")+CN,TEXT("Gathering tool selected: ")+EN);return true;
+    if(!bSameTool)Notify(User,TEXT("已选择采集工具：")+CN,TEXT("Gathering tool selected: ")+EN);return true;
 }
 void UDWGatheringComponent::ClearActiveToolAfterShortcutForgotten()
 {

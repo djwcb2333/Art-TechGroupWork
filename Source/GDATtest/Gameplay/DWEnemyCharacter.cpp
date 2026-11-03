@@ -1,4 +1,5 @@
 #include "DWEnemyCharacter.h"
+#include "DWThugDropPolicy.h"
 #include "DWGiantAttackTiming.h"
 #include "DWCreatureAlertClock.h"
 #include "DWCombatPresentationComponent.h"
@@ -18,6 +19,7 @@
 #include "AIController.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/ShapeComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
@@ -123,6 +125,9 @@ void ADWEnemyCharacter::BeginPlay()
     }
     FString DefinitionError;
     bCreatureDefinitionValid=ApplyCreatureDefinition(DefinitionError);
+    // Runtime-only visibility: retain editor outlines, overlap/collision, and all child artwork.
+    if(CreatureDefinition&&DWThugDropPolicy::IsTarget(CreatureDefinition->GetPathName(),CombatProfile))
+    {TInlineComponentArray<UShapeComponent*> Shapes(this);for(auto* Shape:Shapes)if(Shape)Shape->SetHiddenInGame(true,false);}
     if(!bCreatureDefinitionValid)UE_LOG(LogTemp,Error,TEXT("Creature definition rejected: %s"),*DefinitionError);
     if (!bHealthRestoredFromSave) Health = DWEnemyCombat::FiniteClamp(MaxHealth, 1.f, 100000000.f, 100.f);
 
@@ -614,7 +619,7 @@ void ADWEnemyCharacter::UpdateCombatKnockback(float DeltaSeconds)
 void ADWEnemyCharacter::DrawCombatDebug() const
 {
 #if ENABLE_DRAW_DEBUG
-    if (!bShowCombatDebug || !GetWorld()) return;
+    if (!bShowCombatDebug || !GetWorld() || (CreatureDefinition && DWThugDropPolicy::IsTarget(CreatureDefinition->GetPathName(),CombatProfile))) return;
     if (State == EDWEnemyState::Alert)
         DrawDebugSphere(GetWorld(), GetActorLocation() + FVector(0.f, 0.f, 115.f), 12.f, 8, FColor::Yellow, false, 0.f, 0, 2.f);
     if (AttackPhase == EDWCombatPhase::None) return;

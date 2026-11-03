@@ -1,4 +1,5 @@
 #include "DWMinimap.h"
+#include "DWWorldMap.h"
 #include "DWMinimapWidget.h"
 #include "Camera/CameraComponent.h"
 #include "DWPlayerCharacter.h"
@@ -665,6 +666,9 @@ UDWMinimapComponent::UDWMinimapComponent()
 void UDWMinimapComponent::BeginPlay()
 {
     Super::BeginPlay();
+    // Async prewarm begins before the player can open M (including opening cinematics).
+    GetImageResource();
+    if(auto* State=GetWorld()?GetWorld()->GetSubsystem<UDWWorldMapSubsystem>():nullptr)State->PrepareExplorationAssets(GetEffectiveImageSettings(),ExplorationGridSize);
     DWStartMinimapVerification(this);
     CaptureElapsed=ScanElapsed=100.f;
 }
@@ -693,17 +697,38 @@ bool UDWMinimapComponent::CanShow(bool bIgnoreCinematic,bool bIgnoreMenu) const
     const UDWLoadingTransitionSubsystem* Loading=GI?GI->GetSubsystem<UDWLoadingTransitionSubsystem>():nullptr;
     return !GI||(!GI->IsPlayerRestorePending()&&(!Loading||!Loading->IsTransitionActive()));
 }
+FDWMapImageSettings UDWMinimapComponent::GetEffectiveImageSettings() const
+{
+    // Existing manual calibration takes precedence over newly supplied per-map defaults.
+    FDWMapImageSettings Result=ImageMap;const UWorld* W=GetWorld();
+    if(W&&bUsePerMapImages&&!bForceManualImageMap&&ImageMap.SameAs(FDWMapImageSettings()))
+    {
+        const FName Package(*UWorld::RemovePIEPrefix(W->GetOutermost()->GetName()));
+        if(const auto* Entry=PerMapImages.Find(Package);Entry&&Entry->IsValidCalibration())Result=*Entry;
+    }
+    if(!FailedMapImage.IsNull()&&FailedMapImage==Result.Image.ToSoftObjectPath())Result.Image=FDWMapImageSettings().Image;
+    return Result;
+}
+void UDWMinimapComponent::UseImageFallback()
+{const auto Settings=GetEffectiveImageSettings();FailedMapImage=Settings.Image.ToSoftObjectPath();if(ImageResource)ImageResource->Request(GetEffectiveImageSettings());}
+UMaterialInterface* UDWMinimapComponent::GetExplorationMaterial() const
+{const auto* Map=GetWorld()?GetWorld()->GetSubsystem<UDWWorldMapSubsystem>():nullptr;return Map?Map->GetExplorationMaterial():nullptr;}
+const FSlateBrush* UDWMinimapComponent::GetExplorationBrush() const
+{const auto* Map=GetWorld()?GetWorld()->GetSubsystem<UDWWorldMapSubsystem>():nullptr;return Map?Map->GetExplorationBrush():nullptr;}
+bool UDWMinimapComponent::IsWorldExplored(FVector P) const
+{const auto* Map=GetWorld()?GetWorld()->GetSubsystem<UDWWorldMapSubsystem>():nullptr;return Map&&Map->IsWorldExplored(P);}
 UDWMapImageResource* UDWMinimapComponent::GetImageResource()
 {
     if(!ImageResource)ImageResource=NewObject<UDWMapImageResource>(this);
-    ImageResource->Request(ImageMap);return ImageResource;
+    ImageResource->Request(GetEffectiveImageSettings());return ImageResource;
 }
 bool UDWMinimapComponent::EnsureCapture()
 {
     // Compatibility name only: this path creates a widget and requests a 2D texture, never a capture.
     APawn* Pawn=Cast<APawn>(GetOwner());APlayerController* PC=Pawn?Cast<APlayerController>(Pawn->GetController()):nullptr;
     if(!PC)return false;
-    bool Ready=false;FString Error;GetImageResource()->Poll(Ready,Error);
+    bool Ready=false;FString Error;
+    if(!GetImageResource()->Poll(Ready,Error)){UseImageFallback();GetImageResource()->Poll(Ready,Error);}
     if(!IsValid(Widget))
     {
         UClass* Class=WidgetClass.LoadSynchronous();if(!Class)Class=UDWMinimapWidget::StaticClass();
@@ -717,6 +742,7 @@ bool UDWMinimapComponent::EnsureCapture()
 void UDWMinimapComponent::TickComponent(float Dt,ELevelTick Type,FActorComponentTickFunction* F)
 {
     Super::TickComponent(Dt,Type,F);
+    if(auto* State=GetWorld()?GetWorld()->GetSubsystem<UDWWorldMapSubsystem>():nullptr)State->PrepareExplorationAssets(GetEffectiveImageSettings(),ExplorationGridSize);
     const APawn* C01Pawn=Cast<APawn>(GetOwner());
     const APlayerController* C01PC=C01Pawn?Cast<APlayerController>(C01Pawn->GetController()):nullptr;
     const ADWGameplayHUD* C01HUD=C01PC?Cast<ADWGameplayHUD>(C01PC->GetHUD()):nullptr;
@@ -788,6 +814,9 @@ void UDWMinimapComponent::TickComponent(float Dt,ELevelTick Type,FActorComponent
         return;
     }
     if(!EnsureCapture()){bVisible=false;return;}
+    if(auto* State=GetWorld()->GetSubsystem<UDWWorldMapSubsystem>())
+        if(auto* Pawn=Cast<APawn>(GetOwner()))if(auto* PC=Cast<APlayerController>(Pawn->GetController()))
+            State->UpdateExploration(PC,GetEffectiveImageSettings(),ExplorationRadiusCm,ExplorationGridSize);
     Widget->SetVisibility(ESlateVisibility::HitTestInvisible);
     Widget->SetDesiredSizeInViewport(FVector2D(FMath::Clamp(Diameter,160.f,400.f),FMath::Clamp(Diameter,160.f,400.f)+Widget->GetFooterHeight()));
     Widget->SetPositionInViewport(-BottomRightMargin,false);
@@ -855,16 +884,17 @@ void UDWMinimapComponent::GatherDisplayMarkers(TArray<FDWMinimapDisplayMarker>& 
         if(const auto* Marker=Actor->FindComponentByClass<UDWMinimapMarkerComponent>())
         {
             if(Marker==Selected||!Marker->IsMarkerValid())continue;
+            if((Marker->Kind==EDWMinimapMarkerKind::NPC||Marker->Kind==EDWMinimapMarkerKind::Enemy||Actor->IsA<ADWEnemyCharacter>()||Actor->IsA<ADWEnemyNest>())&&!IsWorldExplored(Marker->GetMarkerWorldPosition()))continue;
             Out.Add({Marker->GetMarkerWorldPosition(),Marker->GetMarkerColor(),Marker->Shape,Marker->Priority});
             continue;
         }
         if(Actor->IsHidden())continue;
         if(const auto* Enemy=Cast<ADWEnemyCharacter>(Actor))
-        {if(bShowExistingEnemies&&Enemy->IsAlive())
+        {if(bShowExistingEnemies&&Enemy->IsAlive()&&IsWorldExplored(Actor->GetActorLocation()))
             {const auto Kind=DWMinimapMath::CreatureMarkerKind(Enemy->CreatureDefinition?Enemy->CreatureDefinition->Disposition:EDWCreatureDisposition::InheritExisting);
              Out.Add({Actor->GetActorLocation(),DWMinimapMath::CategoryColor(Kind),EDWMinimapMarkerShape::Circle,150});}}
         else if(const auto* Nest=Cast<ADWEnemyNest>(Actor))
-        {if(bShowExistingEnemies&&Nest->IsAlive())Out.Add({Actor->GetActorLocation(),DWMinimapMath::CategoryColor(EDWMinimapMarkerKind::Enemy),EDWMinimapMarkerShape::Diamond,140});}
+        {if(bShowExistingEnemies&&Nest->IsAlive()&&IsWorldExplored(Actor->GetActorLocation()))Out.Add({Actor->GetActorLocation(),DWMinimapMath::CategoryColor(EDWMinimapMarkerKind::Enemy),EDWMinimapMarkerShape::Diamond,140});}
         else if(const auto* Resource=Cast<ADWResourceNode>(Actor))
         {if(bShowExistingResources&&Resource->IsAvailable())Out.Add({Actor->GetActorLocation(),DWMinimapMath::CategoryColor(EDWMinimapMarkerKind::Resource),EDWMinimapMarkerShape::Diamond,50});}
         else if(const auto* MinimapGatheringResource=Cast<ADWGatheringResource>(Actor))

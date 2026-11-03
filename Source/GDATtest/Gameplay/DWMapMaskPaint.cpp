@@ -1,4 +1,6 @@
 #include "DWMapMaskPaint.h"
+#include "Brushes/SlateColorBrush.h"
+#include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "DWMapOpenPhases.h"
 #include "DWMapVisualMath.h"
 #include "Framework/Application/SlateApplication.h"
@@ -26,7 +28,7 @@ bool DWMapMaskPaint::Paint(FSlateWindowElementList& Elements,int32 Layer,const F
     UMaterialInterface* Material,FVector2D MiniPos,FVector2D MiniSize,FVector2D FramePos,FVector2D FrameSize,
     float Progress,bool bSourceMaterialContainsRim,float Opacity,bool bCircleOnly)
 {
-    if(!IsValid(Material)||!FSlateApplication::IsInitialized()||!FSlateApplication::Get().GetRenderer()||
+    if((!IsValid(Material)&&!bCircleOnly)||!FSlateApplication::IsInitialized()||!FSlateApplication::Get().GetRenderer()||
        !FMath::IsFinite(Progress)||!FMath::IsFinite(Opacity)||MiniPos.ContainsNaN()||MiniSize.ContainsNaN()||FramePos.ContainsNaN()||FrameSize.ContainsNaN())return false;
     const FVector2D View=Geometry.GetLocalSize();DWMapVisualMath::Rect Shape;double Radius=0.;
     const DWMapVisualMath::Rect Mini{MiniPos.X,MiniPos.Y,MiniPos.X+MiniSize.X,MiniPos.Y+MiniSize.Y};
@@ -59,7 +61,8 @@ bool DWMapMaskPaint::Paint(FSlateWindowElementList& Elements,int32 Layer,const F
         Vertices.Add(Vertex(P,UV));
     }
     for(int32 I=0;I<int32(Polygon.size());++I){Indices.Add(0);Indices.Add(SlateIndex(I+1));Indices.Add(SlateIndex((I+1)%int32(Polygon.size())+1));}
-    FSlateBrush Brush;Brush.DrawAs=ESlateBrushDrawType::Image;Brush.SetResourceObject(Material);
+    FSlateBrush Brush;if(IsValid(Material)){Brush.DrawAs=ESlateBrushDrawType::Image;Brush.SetResourceObject(Material);}
+    else Brush=*FCoreStyle::Get().GetBrush("WhiteBrush");
     FSlateDrawElement::MakeCustomVerts(Elements,Layer,FSlateApplication::Get().GetRenderer()->GetResourceHandle(Brush),Vertices,Indices,nullptr,0,0);
     if(!bSourceMaterialContainsRim&&Progress<1.f)
     {
@@ -79,8 +82,9 @@ bool DWMapMaskPaint::Paint(FSlateWindowElementList& Elements,int32 Layer,const F
 
 bool DWMapMaskPaint::PaintImage(FSlateWindowElementList& Elements,int32 Layer,const FGeometry& Geometry,
     UTexture2D* Texture,const FDWMapImageSettings& Settings,const DWMapMotionMath::View& View,
-    FVector2D MiniPos,FVector2D MiniSize,float Progress,float Opacity)
+    FVector2D MiniPos,FVector2D MiniSize,float Progress,float Opacity,const FSlateBrush* ExplorationBrush)
 {
+    TRACE_CPUPROFILER_EVENT_SCOPE(DWMapPaintCachedImage);
     if(!FSlateApplication::IsInitialized()||!FSlateApplication::Get().GetRenderer()||!Settings.IsValidCalibration()||
        !FMath::IsFinite(Opacity)||!DWMapMotionMath::Valid(View))return false;
     const FVector2D Size=Geometry.GetLocalSize();DWMapOpenPhases::Circle Circle;
@@ -94,18 +98,20 @@ bool DWMapMaskPaint::PaintImage(FSlateWindowElementList& Elements,int32 Layer,co
         Polygon.Add({FVector2D(P.X,P.Y),UV});
     }
     const FSlateRenderTransform Transform=Geometry.GetAccumulatedRenderTransform();
-    const FColor Tint=FLinearColor(1,1,1,FMath::Clamp(Opacity,0.f,1.f)).ToFColor(true);
     auto Draw=[&](const TArray<Point>& Points,const FSlateBrush& Brush,int32 DrawLayer)
     {
         if(Points.Num()<3)return;
+        // CustomVerts does not apply brush tint automatically (important for gray fallback).
+        const FColor DrawTint=(Brush.TintColor.GetSpecifiedColor()*FLinearColor(1,1,1,FMath::Clamp(Opacity,0.f,1.f))).ToFColor(true);
         TArray<FSlateVertex> V;TArray<SlateIndex> I;
-        for(const auto& P:Points)V.Add(FSlateVertex::Make<ESlateVertexRounding::Disabled>(Transform,FVector2f(P.P),FVector2f(P.UV),Tint));
+        for(const auto& P:Points)V.Add(FSlateVertex::Make<ESlateVertexRounding::Disabled>(Transform,FVector2f(P.P),FVector4f(P.UV.X,P.UV.Y,1.f,1.f),FVector2f(P.UV),DrawTint));
         for(int32 K=1;K+1<Points.Num();++K){I.Add(0);I.Add(SlateIndex(K));I.Add(SlateIndex(K+1));}
         FSlateDrawElement::MakeCustomVerts(Elements,DrawLayer,FSlateApplication::Get().GetRenderer()->GetResourceHandle(Brush),V,I,nullptr,0,0);
     };
-    // The coverage outside the authored image is plain white, never a stretched edge texel.
-    TArray<Point> White=Polygon;for(auto& P:White)P.UV=FVector2D(.5,.5);
-    Draw(White,*FCoreStyle::Get().GetBrush("WhiteBrush"),Layer);
+    static const FSlateColorBrush UnknownBrush(FLinearColor(.32f,.32f,.32f,1.f));
+    // Outside the calibrated image remains unexplored gray; FullFade owns the white entrance.
+    TArray<Point> Unknown=Polygon;for(auto& P:Unknown)P.UV=FVector2D(.5,.5);
+    Draw(Unknown,UnknownBrush,Layer);
     if(!IsValid(Texture))return true;
     // Clip the convex circular polygon to the image's four UV half-planes.
     for(int32 Plane=0;Plane<4&&!Polygon.IsEmpty();++Plane)
@@ -122,7 +128,8 @@ bool DWMapMaskPaint::PaintImage(FSlateWindowElementList& Elements,int32 Layer,co
         }
         Polygon=MoveTemp(Out);
     }
-    FSlateBrush Brush;Brush.DrawAs=ESlateBrushDrawType::Image;Brush.SetResourceObject(Texture);
+    // Fail closed (unexplored gray), never reveal the whole atlas when a material is missing.
+    const FSlateBrush& Brush=ExplorationBrush?*ExplorationBrush:UnknownBrush;
     Draw(Polygon,Brush,Layer+1);return true;
 }
 

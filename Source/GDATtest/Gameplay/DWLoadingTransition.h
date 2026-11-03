@@ -6,6 +6,23 @@
 #include "DWLoadingTransition.generated.h"
 class UFont; class USoundBase; class UAudioComponent; class UPackage; class APlayerController; class SWidget;
 struct FDWLoadingPaintState;
+class APawn; class AActor; class APlayerCameraManager;
+
+/** Best-effort visual gate only. Call after mandatory world/restore/resource admission. */
+struct FDWLoadingPSOWarmup
+{
+ double StartedAt=-1.;
+ bool bExpired=false;
+ void Reset(){StartedAt=-1.;bExpired=false;}
+ bool ShouldWait(double Now,int32 ActiveTasks,float ConfiguredSeconds)
+ {
+  if(!FMath::IsFinite(Now))return false;
+  const double Budget=FMath::IsFinite(ConfiguredSeconds)?FMath::Clamp(double(ConfiguredSeconds),0.,30.):3.;
+  if(StartedAt<0.)StartedAt=Now;
+  bExpired=Now-StartedAt>=Budget;
+  return ActiveTasks>0&&Budget>0.&&!bExpired;
+ }
+};
 
 UENUM(BlueprintType)
 enum class EDWLoadingPhase:uint8 { Idle, Closing, Loading, Travelling, Complete, Opening };
@@ -31,6 +48,8 @@ public:
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Readiness") bool bWaitForLevelStreaming=true;
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Readiness") bool bWaitForAssetCompilation=true;
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Readiness") bool bWaitForTextureStreaming=true;
+ /** Extra native PSO wait after mandatory readiness. Zero disables; expiry never bypasses mandatory checks. */
+ UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Readiness",meta=(ClampMin="0",ClampMax="30",Units="s")) float MaxPSOPrecacheWaitSeconds=3.f;
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Readiness",meta=(ClampMin="3",ClampMax="30")) int32 MinimumReadyFrames=3;
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Readiness",meta=(ClampMin="0.1",Units="s")) float StableReadySeconds=.25f;
  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Loading",meta=(ClampMin="0.5",ClampMax="2")) float ContentScale=1.f;
@@ -83,6 +102,7 @@ public:
  UPROPERTY(BlueprintReadOnly,Category="DoughWorld|Loading") int32 PendingShaderJobs=0;
  UPROPERTY(BlueprintReadOnly,Category="DoughWorld|Loading") int32 PendingAssets=0;
  UPROPERTY(BlueprintReadOnly,Category="DoughWorld|Loading") int32 PendingTextures=0;
+ UPROPERTY(BlueprintReadOnly,Category="DoughWorld|Loading") int32 PendingPSOPrecompiles=0;
  UFUNCTION(BlueprintPure,Category="DoughWorld|Loading") UDWLoadingTransitionSettings* GetDefaultSettings();
  UFUNCTION(BlueprintPure,Category="DoughWorld|Loading") static float EvaluateCompletionScale(float Elapsed,float HoldSeconds,bool bEnabled,float Strength,float FrequencyHz,float DampingRatio);
  UFUNCTION(BlueprintPure,Category="DoughWorld|Loading") static float EvaluateIris(float Elapsed,float Duration,float FrequencyHz,float DampingRatio,bool bOpening);
@@ -115,6 +135,14 @@ private:
  // Only GI's terminal restore error can reveal its already-loaded world's recovery UI.
  bool RevealCombatRestoreFailure(UWorld* FailedWorld,const FText& Reason);
  bool PrimeDestinationCamera();
+ void ResetCameraPrime();
+ TWeakObjectPtr<UWorld> PrimedCameraWorld;
+ TWeakObjectPtr<APlayerController> PrimedCameraController;
+ TWeakObjectPtr<APawn> PrimedCameraPawn;
+ TWeakObjectPtr<AActor> PrimedCameraTarget;
+ TWeakObjectPtr<APlayerCameraManager> PrimedCameraManager;
+ FDWLoadingPSOWarmup PSOWarmup;
+ bool bPSOWarmupExpiredLogged=false;
  bool CheckDestinationReadiness();
  TMap<FName,FText> ReadinessTasks;
  int32 PeakCompileWork=0,PeakTextureWork=0;

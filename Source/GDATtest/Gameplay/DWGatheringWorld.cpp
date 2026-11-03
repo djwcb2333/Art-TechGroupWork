@@ -1,4 +1,5 @@
 #include "DWGatheringWorld.h"
+#include "DWGatheringHitAudioSubsystem.h"
 #include "DWRetiredItemPolicy.h"
 #include "DWLootBeaconSubsystem.h"
 #include "DWPickupPresentationComponent.h"
@@ -111,14 +112,14 @@ void ADWGatheringResource::BeginPlay()
     Drops.RemoveAll([](const FDWItemStack& Item){return DWRetiredItemPolicy::IsRetired(Item.ItemId);});
     MaxDurability = FMath::IsFinite(MaxDurability) ? FMath::Max(1., MaxDurability) : 100.;
     Durability = FMath::IsFinite(Durability) ? FMath::Clamp(Durability, 0., MaxDurability) : MaxDurability;
-    if(GatheringPresentation)GatheringPresentation->OnPhysicalGroundContact.AddUniqueDynamic(this,&ADWGatheringResource::HandleGatheringPhysicalGroundContact);
+    if(GatheringPresentation)GatheringPresentation->OnExhaustionSettlementReady.AddUniqueDynamic(this,&ADWGatheringResource::HandleGatheringSettlementReady);
     Super::BeginPlay();
     if (Durability <= 0. && !bDropsReleased && !bStaged) ScheduleDrops(DropDelaySeconds);
 }
 
 void ADWGatheringResource::EndPlay(const EEndPlayReason::Type Reason)
 {
-    if(GatheringPresentation)GatheringPresentation->OnPhysicalGroundContact.RemoveDynamic(this,&ADWGatheringResource::HandleGatheringPhysicalGroundContact);
+    if(GatheringPresentation)GatheringPresentation->OnExhaustionSettlementReady.RemoveDynamic(this,&ADWGatheringResource::HandleGatheringSettlementReady);
     if (GetWorld()){GetWorld()->GetTimerManager().ClearTimer(DropTimer);GetWorld()->GetTimerManager().ClearTimer(FeedbackHoldTimer);}
     Super::EndPlay(Reason);
 }
@@ -154,13 +155,16 @@ bool ADWGatheringResource::ApplyToolHit(ADWPlayerCharacter* User, FName Kind, do
     Durability = FMath::Max(0., Durability - ActualDamage);
     if(CorruptionOwner)CorruptionOwner->AdoptRuntimeUnchecked(MoveTemp(CorruptionCandidate)); // Joint native facts, before any hit/Blueprint callback.
     const bool Exhausted = Durability <= 0.;
+    // Cosmetic notification follows committed facts, once, before external callbacks.
+    if(auto* GI=GetGameInstance())if(auto* Audio=GI->GetSubsystem<UDWGatheringHitAudioSubsystem>())
+        Audio->PlayCommittedHit(this,Kind,GetActorLocation());
     // Commit HP first. UI feedback sees exactly this real debit, before external presentation callbacks.
     const TWeakObjectPtr<ADWGatheringResource> WeakThis(this);
     if(Prompt)Prompt->NotifyGatheringHitCommitted(User,PreviousProgress,GetGatheringProgress());
     if (!WeakThis.IsValid() || IsActorBeingDestroyed()) return true;
     if(GatheringPresentation)GatheringPresentation->PlayAcceptedHit(User->GetActorLocation(),GetGatheringProgress(),Exhausted);
     if (!WeakThis.IsValid() || IsActorBeingDestroyed()) return true;
-    // Real physics has no scheduled contact time. Its one ground event starts the reward timer.
+    // Real contact or bounded readiness starts the existing exact-once reward timer.
     // Missing/invalid physics assets remain an explicit setup failure; preserve legacy reward safety.
     const bool Physical=GatheringPresentation&&GatheringPresentation->bExhaustionStarted&&!GatheringPresentation->bPhysicsSetupFailed;
     if(Exhausted&&!Physical)ScheduleDrops(DropDelaySeconds);
@@ -175,8 +179,12 @@ bool ADWGatheringResource::ApplyToolHit(ADWPlayerCharacter* User, FName Kind, do
 
 void ADWGatheringResource::HandleGatheringPhysicalGroundContact()
 {
+    if(GatheringPresentation&&GatheringPresentation->bContactedGround)HandleGatheringSettlementReady();
+}
+void ADWGatheringResource::HandleGatheringSettlementReady()
+{
     if(!IsActorBeingDestroyed()&&GetWorld()&&!GetWorld()->bIsTearingDown&&!bStaged&&!bDropsReleased&&Durability<=0.&&
-        GatheringPresentation&&GatheringPresentation->bContactedGround&&!GatheringPresentation->bPhysicsSetupFailed)
+        GatheringPresentation&&GatheringPresentation->HasExhaustionSettlementReady()&&!GatheringPresentation->bPhysicsSetupFailed)
         ScheduleDrops(DropDelaySeconds);
 }
 
@@ -194,7 +202,7 @@ void ADWGatheringResource::ScheduleDrops(float Delay)
 bool ADWGatheringResource::ReleaseDrops()
 {
     if (bReleasingDrops || bStaged || bDropsReleased || Durability > 0. || !GetWorld() || GetWorld()->bIsTearingDown || !IsGatheringWorld() ||
-        (GatheringPresentation&&GatheringPresentation->IsAwaitingPhysicalContact())) return false;
+        (GatheringPresentation&&GatheringPresentation->IsAwaitingExhaustionSettlement())) return false;
     const auto* Profile = UDWGameplayConfig::AsGatheringConfig(GetWorld()->GetGameInstance<UDWGameInstance>()->GetConfig());
     const TArray<FDWItemStack> DropSnapshot = Drops;
     for (const auto& Drop : DropSnapshot)
@@ -289,7 +297,7 @@ void ADWGatheringResource::PublishResourceState()
         if(!PublishGatheringPersistencePresentation(RestoreError))UE_LOG(LogTemp,Warning,TEXT("Gathering restore presentation: %s"),*RestoreError);
     }
     if (GetWorld()) GetWorld()->GetTimerManager().ClearTimer(DropTimer);
-    if (!bDropsReleased && Durability <= 0. && !bStaged && !(GatheringPresentation&&GatheringPresentation->IsAwaitingPhysicalContact())) ScheduleDrops(FMath::Max(0.f, PendingDropDelay));
+    if (!bDropsReleased && Durability <= 0. && !bStaged && !(GatheringPresentation&&GatheringPresentation->IsAwaitingExhaustionSettlement())) ScheduleDrops(FMath::Max(0.f, PendingDropDelay));
     PublishInteractionState();
 }
 
@@ -551,7 +559,7 @@ ADWGatheringRemains::ADWGatheringRemains()
 bool ADWGatheringResource::CanCaptureGatheringPersistence(FString& Error) const
 {
     if(bApplyingHit||bReleasingDrops||(Durability<=0.&&!bDropsReleased)||
-        (GatheringPresentation&&(GatheringPresentation->IsAwaitingPhysicalContact()||GatheringPresentation->GetActivePhysicsBodyCount()>0||
+        (GatheringPresentation&&(GatheringPresentation->IsAwaitingExhaustionSettlement()||GatheringPresentation->GetActivePhysicsBodyCount()>0||
             (GatheringPresentation->Style==EDWGatheringDestructionStyle::TreeFall&&GatheringPresentation->IsExhaustionVisible()))))
     {Error=TEXT("Wait for this gathering hit, physical contact and pending drops to finish before saving.");return false;}
     Error.Reset();return true;

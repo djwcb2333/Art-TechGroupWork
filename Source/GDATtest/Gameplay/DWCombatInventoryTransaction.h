@@ -23,6 +23,7 @@ struct FDWCombatWeaponResourceNotice
     int32 LoadedBefore=0,LoadedAfter=0;
     bool bInventoryChanged=false;
     bool bSporePresentation=false,bShotgunPresentation=false;
+    uint8 CommittedAudioCue=0;FVector CommittedAudioLocation=FVector::ZeroVector; // Optional frozen cosmetic notice only.
     FTransform CommittedMuzzleTransform=FTransform::Identity;
     bool bPublishCommittedAttack=false;
     uint8 CommittedWeapon=0;FName CommittedRole;int32 CommittedEvent=0;

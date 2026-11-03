@@ -1,4 +1,12 @@
 #include "DWOpeningPrototype.h"
+#if WITH_EDITOR
+#include "Engine/AssetManager.h"
+#include "Engine/StreamableManager.h"
+#include "HAL/PlatformTime.h"
+#endif
+
+#include "ProfilingDebugging/CpuProfilerTrace.h"
+#include "ProfilingDebugging/MiscTrace.h"
 #include "DWOpeningExitVolume.h"
 #include "DWGameInstance.h"
 #include "DWLoadingTransition.h"
@@ -406,6 +414,32 @@ void ADWOpeningPrototype::BeginPlay()
  if(InputGate)InputGate->OnExternalCancelRequested.AddUniqueDynamic(this,&ThisClass::CancelOpeningFromCinematic);
  // Covers even a disabled-iris OpenLevel path before the first world frame; no gameplay admission here.
  PrepareArrivalCover(UGameplayStatics::GetPlayerController(this,0));
+#if WITH_EDITOR
+ // These optional visuals were synchronously resolved only after the loader released.
+ // Start their ordinary async load inside the existing arrival-cover lifetime in PIE only when water exists.
+ if(GetWorld()&&GetWorld()->WorldType==EWorldType::PIE&&bArrivalCoverOwned)
+ {
+  TArray<AActor*> WarmupWaterActors;UGameplayStatics::GetAllActorsWithTag(this,TEXT("OpeningWater"),WarmupWaterActors);
+  UE_LOG(LogTemp,Display,TEXT("DW_PIE_OPENING_OPTIONAL_REQUEST owner=%s water_actors=%d"),*GetName(),WarmupWaterActors.Num());
+  if(!WarmupWaterActors.IsEmpty())
+  {
+  const TWeakObjectPtr<UWorld> RequestedWorld(GetWorld());
+  const double RequestedAt=FPlatformTime::Seconds();
+  TArray<FSoftObjectPath> Paths;
+  Paths.Emplace(TEXT("/Engine/BasicShapes/Cylinder.Cylinder"));
+  Paths.Emplace(TEXT("/Game/DoughWorld/OpeningPrototype/Materials/M_SC0101_Ripple.M_SC0101_Ripple"));
+  PIEOptionalVisualWarmup=UAssetManager::GetStreamableManager().RequestAsyncLoad(Paths,
+   FStreamableDelegate::CreateWeakLambda(this,[this,RequestedWorld,RequestedAt]()
+   {
+    if(IsActorBeingDestroyed()||!RequestedWorld.IsValid()||GetWorld()!=RequestedWorld.Get()||GetWorld()->bIsTearingDown||bPresentationCleaned||(!bArrivalCoverOwned&&!bPresentationInitialized))return;
+    RippleMesh=Cast<UStaticMesh>(FSoftObjectPath(TEXT("/Engine/BasicShapes/Cylinder.Cylinder")).ResolveObject());
+    RippleMaterial=Cast<UMaterialInterface>(FSoftObjectPath(TEXT("/Game/DoughWorld/OpeningPrototype/Materials/M_SC0101_Ripple.M_SC0101_Ripple")).ResolveObject());
+    UE_LOG(LogTemp,Display,TEXT("DW_PIE_OPENING_OPTIONAL_READY owner=%s mesh=%d material=%d elapsed_ms=%.3f"),*GetName(),IsValid(RippleMesh.Get()),IsValid(RippleMaterial.Get()),(FPlatformTime::Seconds()-RequestedAt)*1000.);
+   }));
+  }
+ }
+#endif
+
  // Original package diagnostics remain isolated and are never a formal-save or real-input acceptance test.
  FString Prefix;
 #if WITH_EDITOR && WITH_DEV_AUTOMATION_TESTS
@@ -524,6 +558,16 @@ void ADWOpeningPrototype::CancelArrivalCover()
 }
 void ADWOpeningPrototype::CleanupPresentation(bool bKeepBlackCover)
 {
+#if WITH_EDITOR
+ if(InputGate)InputGate->FinishPIEEntryFrameDiagnostics(TEXT("SCCleanup"));
+#endif
+
+#if WITH_EDITOR
+ if(PIEOptionalVisualWarmup){PIEOptionalVisualWarmup->CancelHandle();PIEOptionalVisualWarmup.Reset();}
+#endif
+
+ TRACE_CPUPROFILER_EVENT_SCOPE(DW_Opening_Cleanup);
+ TRACE_BOOKMARK(TEXT("DW Opening cleanup owner=%s keepcover=%d"),*GetName(),bKeepBlackCover);
  ShutdownOpeningHoldSkip();
  if(bLocked&&InputGate){bLocked=false;InputGate->EndExternalControl(bKeepBlackCover);}
  bLocked=false;StopOpeningDialogue();
@@ -701,6 +745,10 @@ void ADWOpeningPrototype::CapturePose()
 void ADWOpeningPrototype::PlayShots()
 {
  if(!Shots.Num()||!ShotCamera||!PC.IsValid())return;
+#if WITH_EDITOR
+ if(InputGate)InputGate->BeginPIEEntryFrameDiagnostics(TEXT("SCShotEnter"));
+#endif
+
  // Start from exactly what is on screen, so entering a beat never pops.
  CapturePose();ShotIndex=0;ShotAge=0;CaptureShot=INDEX_NONE;
  InputGate->ApplyAuthoredCameraPose(ShotCamera,BlendLoc,BlendRot,BlendFov);
@@ -709,6 +757,12 @@ void ADWOpeningPrototype::PlayShots()
 }
 void ADWOpeningPrototype::CutToGameplay()
 {
+#if WITH_EDITOR
+ if(InputGate)InputGate->BeginPIEEntryFrameDiagnostics(TEXT("SCReturn"));
+#endif
+
+ TRACE_CPUPROFILER_EVENT_SCOPE(DW_Opening_CutToGameplay);
+ TRACE_BOOKMARK(TEXT("DW Opening cut to gameplay owner=%s"),*GetName());
  ShotIndex=INDEX_NONE;
  if(ShotCamera)ShotCamera->GetCameraComponent()->PostProcessBlendWeight=0;
  if(PC.IsValid()&&Player.IsValid()&&PC->GetViewTarget()==ShotCamera)PC->SetViewTarget(Player.Get());
@@ -716,6 +770,7 @@ void ADWOpeningPrototype::CutToGameplay()
 }
 void ADWOpeningPrototype::TickShots(float Dt)
 {
+ TRACE_CPUPROFILER_EVENT_SCOPE(DW_Opening_TickShots);
  if(ShotIndex==INDEX_NONE||!ShotCamera)return;
  if(!OpeningSequence)
  {
@@ -883,6 +938,7 @@ void ADWOpeningPrototype::Enter(EDWOpeningStage Next)
  // Exit dialogue may continue during the linear fade; it finishes before the title starts.
  const bool Lock=Next==EDWOpeningStage::Wake||Next==EDWOpeningStage::StretchPrompt||Next==EDWOpeningStage::Stretch||Next==EDWOpeningStage::Reveal||Next==EDWOpeningStage::Encounter;
  if(!SetLocked(Lock))return; // No stage advance, shots or cues without our lease.
+ TRACE_BOOKMARK(TEXT("DW Opening stage=%d owner=%s"),int32(Next),*GetName());
  Stage=Next;Age=PrevAge=0;bShotTaken=false;Visited.Add(Next);RequestOpeningAspect(Lock);
  ResetOpeningHoldSkipForStage();
  TimingActiveBeat=NAME_None;
@@ -1423,6 +1479,7 @@ void ADWOpeningPrototype::CompleteSequenceDialogue(bool bSuccess)
 }
 bool ADWOpeningPrototype::PrepareSequenceStep()
 {
+ TRACE_CPUPROFILER_EVENT_SCOPE(DW_Opening_PrepareStep);
  bSequencePreparedThisFrame=false;if(!OpeningSequence)return true;
  const auto S=OpeningSequence->Current();
  if(S==DWOpeningSteps::Step::Cancelled){FailOpeningDialogue(TEXT("Opening sequence cancelled."));return false;}
@@ -1464,9 +1521,14 @@ bool ADWOpeningPrototype::PrepareSequenceStep()
 
 void ADWOpeningPrototype::Tick(float Dt)
 {
+ TRACE_CPUPROFILER_EVENT_SCOPE(DW_Opening_Tick);
  TGuardValue<bool> TickGuard(bDirectorTickInProgress,true);
  ON_SCOPE_EXIT { FlushCinematicHandoff(); };
  Super::Tick(Dt);
+#if WITH_EDITOR
+ if(InputGate)InputGate->AdvancePIEEntryFrameDiagnostics();
+#endif
+
  const float RealDt=GetWorld()->DeltaRealTimeSeconds;
  TickOpeningDialogue();if(bDialogueFailure)return;
  if(TickFormalFlow(RealDt)){InvalidateOpeningHoldSkip();return;}
@@ -1512,6 +1574,19 @@ void ADWOpeningPrototype::Tick(float Dt)
   if(!ValidSequenceParameters()){FailOpeningDialogue(TEXT("Invalid opening shot settings."));return;}
   if(!GI||!GI->TryStartOpening(this,Player.Get()))return;
   bFormalFlowAdmitted=true;
+#if WITH_EDITOR
+  const double PIESetupStarted=FPlatformTime::Seconds();
+  double PIESetupPrevious=PIESetupStarted;FString PIESetupSteps;
+  const auto MarkPIESetup=[&](const TCHAR* Step)
+  {if(GetWorld()->WorldType==EWorldType::PIE){const double Now=FPlatformTime::Seconds();PIESetupSteps+=FString::Printf(TEXT(" %s=%.3f"),Step,(Now-PIESetupPrevious)*1000.);PIESetupPrevious=Now;}};
+  if(InputGate)InputGate->BeginPIEEntryFrameDiagnostics(TEXT("SCSetupEnter"));
+  ON_SCOPE_EXIT
+  {
+   if(GetWorld()&&GetWorld()->WorldType==EWorldType::PIE)
+    UE_LOG(LogTemp,Display,TEXT("DW_PIE_OPENING_SETUP owner=%s cpu_ms=%.3f optional_mesh=%d optional_material=%d%s"),*GetName(),(FPlatformTime::Seconds()-PIESetupStarted)*1000.,IsValid(RippleMesh.Get()),IsValid(RippleMaterial.Get()),*PIESetupSteps);
+  };
+#endif
+
   for(const TCHAR* Tag:{TEXT("OpeningWater"),TEXT("OpeningPitFloor")})
   {TArray<AActor*> Found;UGameplayStatics::GetAllActorsWithTag(this,Tag,Found);for(auto* A:Found)A->SetActorEnableCollision(false);}
   auto* OriginalMesh=Player->GetMesh();
@@ -1522,6 +1597,10 @@ void ADWOpeningPrototype::Tick(float Dt)
    return;
   }
   if(!SetLocked(true))return;
+#if WITH_EDITOR
+  MarkPIESetup(TEXT("LockInput"));
+#endif
+
   SourceHeroMesh=OriginalMesh;MeshScale=OriginalMesh->GetRelativeScale3D();MeshLoc=OriginalMesh->GetRelativeLocation();MeshRot=OriginalMesh->GetRelativeRotation().Quaternion();
   PreviousViewTarget=PC->GetViewTarget();bPresentationInitialized=true;bPresentationCleaned=false;bArrivalCoverOwned=false;
   if(auto* H=Cast<ADWGameplayHUD>(PC->GetHUD()))
@@ -1559,6 +1638,10 @@ void ADWOpeningPrototype::Tick(float Dt)
    if(TraumaCameraManager.IsValid())ActiveTraumaShake=TraumaCameraManager->StartCameraShake(UDWOpeningTraumaShake::StaticClass(),Params);
   }
   ChewAttenuation=NewObject<USoundAttenuation>(this);
+#if WITH_EDITOR
+  MarkPIESetup(TEXT("CameraAndShake"));
+#endif
+
   {
    auto& A=ChewAttenuation->Attenuation;A.bAttenuate=true;A.bSpatialize=true;A.AttenuationShape=EAttenuationShape::Sphere;
    A.AttenuationShapeExtents=FVector(250,0,0);A.FalloffDistance=2600;
@@ -1569,13 +1652,29 @@ void ADWOpeningPrototype::Tick(float Dt)
   Found.Reset();UGameplayStatics::GetAllActorsWithTag(this,TEXT("OpeningPitFloor"),Found);for(auto* A:Found)PitFloor.Add(A);
   Found.Reset();UGameplayStatics::GetAllActorsWithTag(this,TEXT("OpeningWater"),Found);
   if(Found.Num()){Water=Found[0];bWaterFound=true;WaterZ=Found[0]->GetComponentsBoundingBox(true).Max.Z;}
+
+#if WITH_EDITOR
+  if(GetWorld()->WorldType!=EWorldType::PIE||(bWaterFound&&!RippleMesh))
+#endif
   RippleMesh=LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Cylinder.Cylinder"));
+
+#if WITH_EDITOR
+  if(GetWorld()->WorldType!=EWorldType::PIE||(bWaterFound&&!RippleMaterial))
+#endif
   RippleMaterial=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/DoughWorld/OpeningPrototype/Materials/M_SC0101_Ripple.M_SC0101_Ripple"));
   // Feeding with their backs to the pit, so "it turns around" is an event.
   const float Yaws[3]={8,-26,32},Phases[3]={0,2.1f,4.f};
   constexpr int32 ExpectedOpeningEnemies=UE_ARRAY_COUNT(Yaws);
   // Same pale dough as the hero, a little greyer: "the same colour, the same texture".
-  auto* SourBody=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/DoughWorld/OpeningPrototype/Materials/MI_SC0101_SourBody.MI_SC0101_SourBody"));
+  auto* SourBody=
+#if WITH_EDITOR
+   (GetWorld()->WorldType==EWorldType::PIE&&OpeningEnemyClass&&OpeningEnemyClass->IsChildOf(ADWSourDoughEnemy::StaticClass()))?nullptr:
+#endif
+LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/DoughWorld/OpeningPrototype/Materials/MI_SC0101_SourBody.MI_SC0101_SourBody"));
+#if WITH_EDITOR
+  MarkPIESetup(TEXT("OptionalAssets"));
+#endif
+
   for(int32 I=0;I<ExpectedOpeningEnemies;++I)
   {
    FVector P=EnemyCenter+FVector(I==0?0:210,I==0?0:(I==1?-250:250),0);
@@ -1606,6 +1705,10 @@ void ADWOpeningPrototype::Tick(float Dt)
    return;
   }
   EnemyCenter=Enemies[0]->GetActorLocation();
+#if WITH_EDITOR
+  MarkPIESetup(TEXT("SpawnEnemies"));
+#endif
+
   const auto* FirstOpeningCapsule=Enemies[0]->GetCapsuleComponent();
   UE_LOG(LogTemp,Display,TEXT("SC0101 Size hero capsule r=%.0f hh=%.0f mesh=%s loc=%s | enemy capsule r=%.0f hh=%.0f body=%s loc=%s | gamecam fov=%.0f dist=%.0f"),
    Player->GetCapsuleComponent()->GetScaledCapsuleRadius(),Player->GetCapsuleComponent()->GetScaledCapsuleHalfHeight(),*Player->GetMesh()->Bounds.BoxExtent.ToString(),*Player->GetActorLocation().ToString(),
@@ -1613,6 +1716,10 @@ void ADWOpeningPrototype::Tick(float Dt)
    Cast<ADWSourDoughEnemy>(Enemies[0].Get())&&IsValid(Enemies[0]->GetMesh())?*Enemies[0]->GetMesh()->Bounds.BoxExtent.ToString():(IsValid(Enemies[0]->PlaceholderBody.Get())&&!Enemies[0]->PlaceholderBody->IsBeingDestroyed()?*Enemies[0]->PlaceholderBody->Bounds.BoxExtent.ToString():TEXT("-")),*EnemyCenter.ToString(),
    GameCamera.IsValid()?GameCamera->FieldOfView:0.f,GameCamera.IsValid()?FVector::Dist(GameCamera->GetComponentLocation(),Player->GetActorLocation()):0.f);
   CreateDouble();
+#if WITH_EDITOR
+  MarkPIESetup(TEXT("DoubleAndProbe"));
+#endif
+
   if(bPoseTest){Stage=EDWOpeningStage::Approach;Overlay->SetBlack(0);ShowDouble(true);PC->SetViewTarget(ShotCamera);bViewTargetOverridden=true;return;}
   // It wakes lying on its back in the water: the stand-in performs until it is on its feet.
   if(Double){bDoubleActive=true;ShowDouble(true);TickDouble(0.f);}
@@ -1869,6 +1976,10 @@ void ADWOpeningPrototype::FinishTest(bool Passed,const FString& Detail)
 }
 void ADWOpeningPrototype::EndPlay(const EEndPlayReason::Type Reason)
 {
+#if WITH_EDITOR
+ if(PIEOptionalVisualWarmup){PIEOptionalVisualWarmup->CancelHandle();PIEOptionalVisualWarmup.Reset();}
+#endif
+
  for(auto& Enemy:Enemies)if(IsValid(Enemy.Get()))Enemy->OnDestroyed.RemoveDynamic(this,&ADWOpeningPrototype::OnOpeningEnemyDestroyed);
  CleanupPresentation();
  Super::EndPlay(Reason);

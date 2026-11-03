@@ -17,7 +17,7 @@ static bool MakeFrame(const DWMapMotionMath::View& View,FFrame& Out)
 }
 bool SnapshotMinimap(const UDWMinimapComponent* Mini,FVector2D TopLeft,FVector2D Size,FFrame& Out,FString& Error)
 {
-    if(!IsValid(Mini)||!Mini->IsMinimapVisible()||!Mini->GetOwner()||!Mini->GetOwner()->GetWorld()||!Mini->ImageMap.IsValidCalibration())
+    if(!IsValid(Mini)||!Mini->IsMinimapVisible()||!Mini->GetOwner()||!Mini->GetOwner()->GetWorld()||!Mini->GetEffectiveImageSettings().IsValidCalibration())
     {Error=TEXT("The live minimap image/view is unavailable.");return false;}
     const auto& Projection=Mini->GetProjection();const FVector P=Mini->GetPlayerLocation();DWMapMotionMath::View V;
     if(Size.X<=0.||!FMath::IsFinite(Size.Y)||FMath::Abs(Size.X-Size.Y)>.01*FMath::Max(Size.X,Size.Y)||

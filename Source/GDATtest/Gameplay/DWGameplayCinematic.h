@@ -16,6 +16,27 @@ class UDWWorldEventSubsystem;
 class UDWUIOffscreenComponent;
 class UTextBlock;
 class UDWTextVoiceProfile;
+#if WITH_EDITOR
+struct FDWPIEEntryFrameWindow
+{
+ bool bActive=false,bInvalidClock=false;
+ double StartedAt=0,PreviousAt=0,MaxGapMs=0,FirstGapMs[8]={};
+ uint64 PreviousFrame=0;
+ int32 Samples=0,Hitches=0;
+ void Begin(double Now,uint64 Frame)
+ {*this=FDWPIEEntryFrameWindow();if(FMath::IsFinite(Now)){StartedAt=PreviousAt=Now;PreviousFrame=Frame;bActive=true;}}
+ bool Sample(double Now,uint64 Frame)
+ {
+  if(!bActive||Frame==PreviousFrame)return false;
+  if(!FMath::IsFinite(Now)||Now<PreviousAt){bInvalidClock=true;bActive=false;return true;}
+  const double GapMs=(Now-PreviousAt)*1000.;PreviousAt=Now;PreviousFrame=Frame;
+  if(Samples<8)FirstGapMs[Samples]=GapMs;
+  ++Samples;MaxGapMs=FMath::Max(MaxGapMs,GapMs);if(GapMs>33.334)++Hitches;
+  if(Samples>=120||Now-StartedAt>=2.){bActive=false;return true;}return false;
+ }
+};
+#endif
+
 UENUM(BlueprintType)
 enum class EDWCinematicPhase:uint8 { Idle,TravelOut,SceneEvent,Hold,TravelBack,UIReturn,External };
 UENUM(BlueprintType)
@@ -86,6 +107,12 @@ public:
  void RequestExternalAspect(ACameraActor* Camera,float TargetAspect);
  void AdvanceExternalAspect(ACameraActor* Camera,float DeltaSeconds);
  void ApplyAuthoredCameraPose(ACameraActor* Camera,const FVector& Location,const FQuat& Rotation,float FieldOfView);
+#if WITH_EDITOR
+ void BeginPIEEntryFrameDiagnostics(const TCHAR* Label);
+ void AdvancePIEEntryFrameDiagnostics();
+ void FinishPIEEntryFrameDiagnostics(const TCHAR* Reason);
+#endif
+
  UDWCinematicSubtitleWidget* CreateAuthoredSubtitle(APlayerController* Controller,int32 ZOrder);
  UDWDialogueSequenceComponent* CreateAuthoredDialogue();
  UFUNCTION(BlueprintCallable,Category="Cinematic") bool PlayCinematic(APlayerController* PlayerController);
@@ -98,6 +125,13 @@ protected:
  virtual void BeginPlay()override;
  virtual void EndPlay(const EEndPlayReason::Type R)override;
 private:
+#if WITH_EDITOR
+ FDWPIEEntryFrameWindow PIEEntryFrameWindow;
+ FString PIEEntryFrameLabel;
+ bool bPIEEntryReportPending=false;
+ int32 PIEEntryAssets=0,PIEEntryShaders=0,PIEEntryPSOs=0;
+#endif
+
  UPROPERTY(Transient) TObjectPtr<UCameraShakeBase> ActiveCinematicShake;
  UPROPERTY(Transient) TObjectPtr<UDWWorldEventComponent> ViewEvent;
  UPROPERTY(Transient) TObjectPtr<ACameraActor> PlaybackCamera;

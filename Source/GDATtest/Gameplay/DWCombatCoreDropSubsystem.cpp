@@ -1,4 +1,5 @@
 #include "DWCombatCoreDropSubsystem.h"
+#include "DWThugDropPolicy.h"
 #include "DWLootBeaconSubsystem.h"
 #include "DWCombatCorePickup.h"
 #include "DWCombatItemRegistry.h"
@@ -58,6 +59,8 @@ bool UDWCombatCoreDropSubsystem::PrepareFatal(ADWEnemyCharacter& Enemy,DWCombatC
     DWCombatCommit::FEntityLife EnemyLife,DWCombatCommit::FEntityLife PlayerLife,FDWPreparedCoreDrop& Out,const FVector* ForcedFallPoint,DWCombatCommit::FReceiptId ForcedFallReceipt)
 {
     Out={};
+    if(Enemy.CreatureDefinition&&DWThugDropPolicy::IsTarget(Enemy.CreatureDefinition->GetPathName(),Enemy.CombatProfile))
+        return PrepareThugFatal(Enemy,Receipt,EnemyLife,PlayerLife,Out,ForcedFallPoint,ForcedFallReceipt);
     if(Enemy.CreatureDefinition&&Enemy.CreatureDefinition->DropPolicy==EDWCreatureDropPolicy::ConfiguredItems)
         return PrepareGenericFatal(Enemy,Receipt,EnemyLife,PlayerLife,Out,ForcedFallPoint,ForcedFallReceipt);
     if(ForcedFallPoint?(ForcedFallPoint->ContainsNaN()||!ForcedFallReceipt.Epoch||!ForcedFallReceipt.Id||!PlayerLife.Entity||!PlayerLife.Life):
@@ -107,7 +110,7 @@ void UDWCombatCoreDropSubsystem::CommitFatalUnchecked(FDWPreparedCoreDrop&& P)
         Enemy->GenericDropGroup=P.GenericGroup;Enemy->GenericDropRows=P.GenericRows.Num();Enemy->bGenericDropsCommitted=true;
         if(Enemy->CombatProfile==EDWEnemyCombatProfile::Legacy)Enemy->CombatWorldStableId=P.GenericSourceStableId;
         for(auto& S:P.GenericRows)
-        {FRecord R;R.Save=MoveTemp(S);R.Origin=Enemy;R.PickupRadiusCm=P.GenericPickupRadiusCm;R.bMayMaterialize=DWCombatCoreDrop::Ground(R.Save.Decision);Records.Add(R.Save.DeathId,MoveTemp(R));}
+        {FRecord R;R.Save=MoveTemp(S);R.Origin=Enemy;R.bBoundedSpawnRetry=P.bBoundedSpawnRetry;R.PickupRadiusCm=P.GenericPickupRadiusCm;R.bMayMaterialize=DWCombatCoreDrop::Ground(R.Save.Decision);Records.Add(R.Save.DeathId,MoveTemp(R));}
         ++Revision;P.bValid=false;return;
     }
     FRecord Record;Record.Save=P.Save;Record.Origin=Enemy;Record.PickupRadiusCm=Enemy->FormalCoreDropConfig.PickupRadiusCm;
@@ -125,6 +128,9 @@ void UDWCombatCoreDropSubsystem::Materialize(FGuid Id)
 {
     FRecord* Record=Records.Find(Id);
     if(!Record||!Record->bMayMaterialize||Record->Physical.IsValid()||!DWCombatCoreDrop::Ground(Record->Save.Decision)||Revision==MAX_uint64)return;
+    const bool Bounded=Record->bBoundedSpawnRetry;
+    if(!DWThugDropPolicy::CanAttemptSpawn(Bounded,Record->SpawnAttempts,GetWorld()->GetTimeSeconds(),Record->NextSpawnAttempt))return;
+    if(Bounded){++Record->SpawnAttempts;Record->NextSpawnAttempt=GetWorld()->GetTimeSeconds()+1.;}
     // A committed death belongs to this world record, not to the continued existence of its corpse.
     // EndPlay by itself cannot create this record; only a committed fatal receipt or validated load can.
     const FVector Position=Record->Save.Location;const TWeakObjectPtr<UWorld> World(GetWorld());
@@ -150,6 +156,8 @@ void UDWCombatCoreDropSubsystem::Materialize(FGuid Id)
         return;
     }
     Record=Records.Find(Id);
+    if(Bounded&&Record&&!IsValid(Actor)&&DWCombatCoreDrop::Ground(Record->Save.Decision))
+    {Record->Physical.Reset();Record->bMayMaterialize=true;return;}
     if(!Record||Record->Physical.Get()!=Actor||!DWCombatCoreDrop::Ground(Record->Save.Decision))
     {if(IsValid(Actor)&&!Actor->IsActorBeingDestroyed())Actor->Destroy();return;}
     if(auto* V=GetWorld()->GetSubsystem<UDWLootBeaconSubsystem>())V->PublishBeacon(Actor,Actor->Placeholder,Actor->ItemId);

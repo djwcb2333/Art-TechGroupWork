@@ -49,6 +49,17 @@ public:
     UDWMinimapComponent();
     /** Shared background for BOTH maps. Replace this image and calibrate its world coverage here. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Map Image") FDWMapImageSettings ImageMap;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Map Image") TMap<FName,FDWMapImageSettings> PerMapImages;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Map Image") bool bUsePerMapImages=true;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Map Image") bool bForceManualImageMap=false;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Map Exploration",meta=(ClampMin="1",ClampMax="100000",Units="cm")) float ExplorationRadiusCm=1500.f;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Map Exploration",meta=(ClampMin="32",ClampMax="256")) int32 ExplorationGridSize=128;
+    FDWMapImageSettings GetEffectiveImageSettings() const;
+    void UseImageFallback();
+    FSoftObjectPath FailedMapImage;
+    UMaterialInterface* GetExplorationMaterial() const;
+    const FSlateBrush* GetExplorationBrush() const;
+    bool IsWorldExplored(FVector Position) const;
     UDWMapImageResource* GetImageResource();
     UTexture2D* GetMapImage() const {return ImageResource?ImageResource->GetReadyTexture():nullptr;}
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Minimap") bool bMinimapEnabled=true;
