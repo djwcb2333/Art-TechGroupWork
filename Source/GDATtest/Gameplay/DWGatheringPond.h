@@ -130,6 +130,7 @@ public:
     UFUNCTION(BlueprintCallable,Category="Gathering|Pond|Save") bool RestoreWater(double Value);
     bool IsGatheringProfileActive() const;
     bool IsWetAndOperational() const;
+    TArray<FVector2D> GetMapOutlineWorld() const;
     static FName WaterStationId(){return FName(TEXT("GatherStation_WaterPond"));}
 protected:
     virtual void BeginPlay() override;

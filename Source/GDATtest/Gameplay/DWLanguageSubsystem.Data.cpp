@@ -1,4 +1,6 @@
 #include "DWLanguageSubsystem.h"
+#include "DWPlayerCombatTuningSubsystem.h"
+#include "Engine/GameInstance.h"
 #include "DWLanguageModel.h"
 #include "DWCharacterA01SaveBridge.h"
 #include "DWPlayerCharacter.h"
@@ -98,6 +100,8 @@ bool UDWLanguageSubsystem::LoadDefinitions(FString& Error)
     using namespace DWLanguageData;DWLanguage::FCatalog Catalog;FObject NewDefinitions,NewTrial;
     const FString Root=FPaths::ProjectContentDir()/TEXT("DoughWorld/Gameplay/Combat");
     if(!Load(Root/TEXT("DWLanguageDefinitions.json"),NewDefinitions,Error)||!Load(Root/TEXT("DWA01TrialDefaults.json"),NewTrial,Error))return false;
+    auto* Tuning=GetGameInstance()->GetSubsystem<UDWPlayerCombatTuningSubsystem>();
+    if(!Tuning||!Tuning->ResolveAbilityParameters(NewTrial,Error))return false;
     TMap<FName,FObject> NewEntries,NewClues,NewRelics,NewTalents;TArray<FObject> Rows;
     int32 GuessLimit=40;if(!CountParameter(NewTrial,TEXT("language.guess_max_chars"),GuessLimit)||GuessLimit<1)return DWLanguageData::Error(Error,TEXT("Missing/invalid language.guess_max_chars."));
     Catalog.MaxGuessCharacters=GuessLimit;

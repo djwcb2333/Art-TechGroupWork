@@ -122,6 +122,7 @@ public:
     UFUNCTION(BlueprintCallable,Category="UI|Handbook") void HandleHandbookAction(int32 Action);
     void RegisterHandbookLabel(UTextBlock* Label,const TCHAR* Chinese,const TCHAR* English);
     void InitializeHandbook();void RefreshHandbook();void RefreshHandbookRecipes();
+    void SetHandbookRecipeSelection(FName RecipeId);
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI|Handbook",meta=(ClampMin="0.5",ClampMax="1")) float HandbookScreenFraction=.86f;
     UFUNCTION(BlueprintPure,Category="UI|Handbook") bool HasHandbook() const {return HandbookPageIndex!=INDEX_NONE;}
     /** Fixed for players; editors can change combinations in WBP class defaults. */
@@ -369,6 +370,7 @@ private:
     UPROPERTY(Transient) TObjectPtr<UWidget> LanguagePagePlaceholder;
     UPROPERTY(Transient) TObjectPtr<UWidgetSwitcher> HandbookPages;
     UPROPERTY(Transient) TObjectPtr<UVerticalBox> HandbookRecipeList;
+    UPROPERTY(Transient) TObjectPtr<class UDWCraftingPanel> HandbookCraftPanel;
     UPROPERTY(Transient) TObjectPtr<UTextBlock> HandbookRecipeDetails;
     UPROPERTY(Transient) TObjectPtr<UTextBlock> HandbookStats;
     UPROPERTY(Transient) TObjectPtr<UImage> HandbookEquippedIcon;

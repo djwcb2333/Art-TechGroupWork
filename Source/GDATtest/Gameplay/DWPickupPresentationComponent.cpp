@@ -1,6 +1,8 @@
 #include "DWPickupPresentationComponent.h"
 #include "DWPickupPresentationMath.h"
 #include "DWGatheringWorld.h"
+#include "DWGatheringPresentationMath.h"
+#include "DWWorldPickup.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
@@ -79,12 +81,25 @@ void UDWPickupPresentationComponent::NormalizePickupVisual()
 }
 void UDWPickupPresentationComponent::OnCatalogVisualChanged()
 {
-    auto* Pickup=Cast<ADWGatheringPickup>(GetOwner());
-    if(!IsValid(Pickup)||!IsValid(Pickup->Mesh)||bCollectionActive)return;
-    SourceMesh=Pickup->Mesh;
+    const auto* Pickup = Cast<IDWWorldPickup>(GetOwner());
+    if(!Pickup || !IsValid(Pickup->GetPickupMesh()) || bCollectionActive) return;
+    SourceMesh = Pickup->GetPickupMesh();
     auto* OldOutline=OutlineProxy.Get();OutlineProxy=nullptr;
     if(IsValid(OldOutline))OldOutline->DestroyComponent();
 }
+void UDWPickupPresentationComponent::StartScatter(const FVector& Origin)
+{
+    const auto* Pickup = Cast<IDWWorldPickup>(GetOwner());
+    auto* Mesh = Pickup ? Pickup->GetPickupMesh() : nullptr;
+    if (!IsValid(Mesh) || !Mesh->GetAttachParent() || Origin.ContainsNaN() || bCollectionActive) return;
+    ScatterOrigin = Origin;
+    ScatterRestLocation = Mesh->GetRelativeLocation();
+    ScatterElapsed = 0.f;
+    bScattering = true;
+    Mesh->SetWorldLocation(Origin);
+    WakePickupBudget();
+}
+
 UStaticMeshComponent* UDWPickupPresentationComponent::MakeProxy(UStaticMeshComponent* Source,UMaterialInterface* Material,bool bCopySurface)
 {
     if(!IsValid(GetOwner())||!IsValid(Source)||!Source->GetStaticMesh())return nullptr;
@@ -99,23 +114,23 @@ UStaticMeshComponent* UDWPickupPresentationComponent::MakeProxy(UStaticMeshCompo
 }
 void UDWPickupPresentationComponent::EnsureOutline()
 {
-    auto* Pickup=Cast<ADWGatheringPickup>(GetOwner());
-    if(!IsActive()||!IsValid(Pickup)||!GetWorld()||!GetWorld()->IsGameWorld()||!IsValid(Pickup->Mesh))return;
-    SourceMesh=Pickup->Mesh;
+    const auto* Pickup = Cast<IDWWorldPickup>(GetOwner());
+    if (!IsActive() || !Pickup || !GetWorld() || !GetWorld()->IsGameWorld() || !IsValid(Pickup->GetPickupMesh())) return;
+    SourceMesh = Pickup->GetPickupMesh();
     if(!OutlineMID&&!OutlineMaterial.IsNull())
         if(auto* M=OutlineMaterial.LoadSynchronous())OutlineMID=UMaterialInstanceDynamic::Create(M,this);
     if(!OutlineProxy&&OutlineMID)OutlineProxy=MakeProxy(SourceMesh.Get(),OutlineMID,false);
 }
 bool UDWPickupPresentationComponent::IsBudgetedOutlineIdle() const
 {
-    const auto* Pickup=Cast<ADWGatheringPickup>(GetOwner());
-    const UWorld* World=GetWorld();
-    if(!bBudgetIdlePickupOutline||!bOutlineOnlyInPickupRange||bCollectionActive||!IsValid(Pickup)||!World)return false;
-    const auto* Mesh=Pickup->Mesh.Get();
-    if(!bShowOutline||World->IsPaused()||Pickup->IsHidden()||!IsValid(Mesh)||!Mesh->GetVisibleFlag()||Mesh->bHiddenInGame||!Pickup->IsInteractionAvailable())return true;
-    const APlayerController* PC=World->GetFirstPlayerController();
-    const APawn* Player=PC?PC->GetPawn():nullptr;
-    return !Player||!Pickup->IsWithinReach(Player);
+    const auto* Pickup = Cast<IDWWorldPickup>(GetOwner());
+    const UWorld* World = GetWorld();
+    if (!bOutlineOnlyInPickupRange || bCollectionActive || !Pickup || !World) return false;
+    const auto* Mesh = Pickup->GetPickupMesh();
+    if (!bShowOutline || World->IsPaused() || GetOwner()->IsHidden() || !IsValid(Mesh) ||
+        !Mesh->GetVisibleFlag() || Mesh->bHiddenInGame || !Pickup->IsPickupAvailable()) return true;
+    const APlayerController* PC = World->GetFirstPlayerController();
+    return !PC || !Pickup->IsPickupInReach(PC->GetPawn());
 }
 void UDWPickupPresentationComponent::WakePickupBudget()
 {
@@ -137,16 +152,17 @@ void UDWPickupPresentationComponent::UpdatePickupBudget(bool bIdle)
 }
 void UDWPickupPresentationComponent::UpdateOutline()
 {
-    auto* Pickup=Cast<ADWGatheringPickup>(GetOwner());if(!IsValid(Pickup)||!SourceMesh.IsValid())return;
+    const auto* Pickup = Cast<IDWWorldPickup>(GetOwner());
+    if (!Pickup || !SourceMesh.IsValid()) return;
     CurrentHighlight=0.f;
-    const bool bRenderable=IsActive()&&!Pickup->IsHidden()&&SourceMesh->GetVisibleFlag()&&(!SourceMesh->bHiddenInGame||bSourceHiddenBorrowed);
+    const bool bRenderable=IsActive()&&!GetOwner()->IsHidden()&&SourceMesh->GetVisibleFlag()&&(!SourceMesh->bHiddenInGame||bSourceHiddenBorrowed);
     if(bRenderable&&bShowOutline&&GetWorld()&&!GetWorld()->IsPaused())
     {
         if(bCollectionActive)CurrentHighlight=DWPickupPresentationMath::Evaluate(CollectionElapsed/FMath::Max(.05f,DWPickupPresentationMath::Safe(CollectionDuration,.55f))).Opacity;
-        else if(Pickup->IsInteractionAvailable())
+        else if(Pickup->IsPickupAvailable())
         {
             const APlayerController* PC=GetWorld()->GetFirstPlayerController();const APawn* Player=PC?PC->GetPawn():nullptr;
-            CurrentHighlight=(!bOutlineOnlyInPickupRange||(Player&&Pickup->IsWithinReach(Player)))?1.f:0.f;
+            CurrentHighlight=(!bOutlineOnlyInPickupRange||(Player&&Pickup->IsPickupInReach(Player)))?1.f:0.f;
         }
     }
     if(OutlineMID)
@@ -163,8 +179,9 @@ void UDWPickupPresentationComponent::UpdateOutline()
 }
 bool UDWPickupPresentationComponent::PlayCommittedPickupEffect()
 {
-    auto* Pickup=Cast<ADWGatheringPickup>(GetOwner());
-    if(!bEnableCollectionEffect||bCollectionActive||!IsActive()||!IsValid(Pickup)||Pickup->IsActorBeingDestroyed()||Pickup->IsStaged()||!GetWorld()||!GetWorld()->IsGameWorld()||GetWorld()->bIsTearingDown)return false;
+    const auto* Pickup = Cast<IDWWorldPickup>(GetOwner());
+    if (!bEnableCollectionEffect || bCollectionActive || !IsActive() || !Pickup || GetOwner()->IsActorBeingDestroyed() ||
+        !Pickup->CanPlayPickupPresentation() || !GetWorld() || !GetWorld()->IsGameWorld() || GetWorld()->bIsTearingDown) return false;
     const bool bWasBudgetIdle=bBudgetOwnsTickInterval;
     WakePickupBudget();
     EnsureOutline();if(!SourceMesh.IsValid()||!SourceMesh->GetStaticMesh()||!SourceMesh->GetVisibleFlag()||SourceMesh->bHiddenInGame)return false;
@@ -173,7 +190,7 @@ bool UDWPickupPresentationComponent::PlayCommittedPickupEffect()
         if(auto* M=FlashMaterial.LoadSynchronous())FlashMID=UMaterialInstanceDynamic::Create(M,this);
     if(FlashMID)FlashProxy=MakeProxy(SourceMesh.Get(),FlashMID,false);
     CollectionStart=SourceMesh->GetComponentTransform();const FBox Bounds=SourceMesh->GetStaticMesh()->GetBoundingBox();
-    AnchorLocal=FVector(Bounds.GetCenter().X,Bounds.GetCenter().Y,Bounds.Min.Z);CollectionItemId=Pickup->ItemId;
+    AnchorLocal=FVector(Bounds.GetCenter().X,Bounds.GetCenter().Y,Bounds.Min.Z);CollectionItemId=Pickup->GetPickupItemId();
     bOriginalSourceHidden=SourceMesh->bHiddenInGame;bSourceHiddenBorrowed=true;SourceMesh->SetHiddenInGame(true,false);
     CollectionElapsed=0.f;bCollectionActive=true;bDiscardNextCollectionTick=bWasBudgetIdle;++CollectionPlayCount;UpdateCollection();return true;
 }
@@ -202,8 +219,8 @@ void UDWPickupPresentationComponent::FinishCollection(bool bNotifyOwner)
     bSourceHiddenBorrowed=false;
     if(IsValid(CollectionProxy))CollectionProxy->DestroyComponent();if(IsValid(FlashProxy))FlashProxy->DestroyComponent();
     CollectionProxy=nullptr;FlashProxy=nullptr;if(FlashMID)FlashMID->SetScalarParameterValue(TEXT("FlashAmount"),0.f);
-    if(bNotifyOwner&&bWasActive)
-        if(auto* Pickup=Cast<ADWGatheringPickup>(GetOwner());IsValid(Pickup)&&!Pickup->IsActorBeingDestroyed())Pickup->HandlePickupPresentationFinished();
+    if (bNotifyOwner && bWasActive && IsValid(GetOwner()) && !GetOwner()->IsActorBeingDestroyed())
+        if (auto* Pickup = Cast<IDWWorldPickup>(GetOwner())) Pickup->HandlePickupPresentationFinished();
 }
 void UDWPickupPresentationComponent::DestroyVisuals(bool bNotifyOwner)
 {
@@ -223,37 +240,50 @@ void UDWPickupPresentationComponent::OnUnregister()
     // UnregisterComponent does not call EndPlay. In a live game it can be temporary
     // (for example component re-registration) while the logical pickup survives.
     UWorld* World=GetWorld();
-    const TWeakObjectPtr<ADWGatheringPickup> Pickup=Cast<ADWGatheringPickup>(GetOwner());
+    const TWeakObjectPtr<AActor> Pickup = GetOwner();
     const bool bRestoreLiveOwner=bCollectionActive&&!bEndingPlay&&HasBegunPlay()&&
         World&&World->IsGameWorld()&&!World->bIsTearingDown&&Pickup.IsValid()&&
         Pickup->HasActorBegunPlay()&&!Pickup->IsActorBeingDestroyed();
     DestroyVisuals(false);
     Super::OnUnregister(); // finish proxy cleanup and registration-state transition first
-    if(bRestoreLiveOwner&&Pickup.IsValid()&&Pickup->HasActorBegunPlay()&&!Pickup->IsActorBeingDestroyed())
-        Pickup->HandlePickupPresentationFinished();
+    if (bRestoreLiveOwner && Pickup.IsValid() && Pickup->HasActorBegunPlay() && !Pickup->IsActorBeingDestroyed())
+        if (auto* Host = Cast<IDWWorldPickup>(Pickup.Get())) Host->HandlePickupPresentationFinished();
 }
 void UDWPickupPresentationComponent::TickComponent(float DeltaTime,ELevelTick TickType,FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime,TickType,ThisTickFunction);UWorld* World=GetWorld();
     if(!IsActive()||!World||!World->IsGameWorld()||World->bIsTearingDown)return;
-    auto* Pickup=Cast<ADWGatheringPickup>(GetOwner());if(!IsValid(Pickup)||Pickup->IsActorBeingDestroyed())return;
-    if(IsBudgetedOutlineIdle())
+    const auto* Pickup = Cast<IDWWorldPickup>(GetOwner());
+    if (!Pickup || GetOwner()->IsActorBeingDestroyed()) return;
+    const auto* PC = World->GetFirstPlayerController();
+    const auto* Viewer = PC ? PC->GetViewTarget() : nullptr;
+    auto* Mesh = Pickup->GetPickupMesh();
+    const bool bSpin = !World->IsPaused() && !bCollectionActive && IsValid(Mesh) && !GetOwner()->IsHidden() &&
+        Viewer && FVector::DistSquared(Viewer->GetActorLocation(), GetOwner()->GetActorLocation()) <= FMath::Square(1600.) &&
+        IdleSpinDegreesPerSecond > 0.f && Pickup->IsPickupAvailable();
+    const float Dt = FMath::Max(0.f, DWPickupPresentationMath::Safe(DeltaTime, 0.f));
+    if (bScattering && !bCollectionActive && !World->IsPaused() && IsValid(Mesh) && Mesh->GetAttachParent())
     {
-        // Keep a previously created outline correctly hidden; do not create one for a distant pickup.
-        if(IsValid(OutlineProxy)&&SourceMesh.IsValid())UpdateOutline();
-        UpdatePickupBudget(true);
-        return;
+        constexpr float Duration = .55f;
+        ScatterElapsed += Dt;
+        const float Alpha = FMath::Clamp(ScatterElapsed / Duration, 0.f, 1.f);
+        const FVector Landing = Mesh->GetAttachParent()->GetComponentTransform().TransformPosition(ScatterRestLocation);
+        Mesh->SetWorldLocation(DWGatheringPresentationMath::ScatterPoint(ScatterOrigin, Landing, Alpha, 65.f));
+        if (Alpha >= 1.f) bScattering = false;
     }
-    UpdatePickupBudget(false);
-    EnsureOutline();
+    if (bSpin) Mesh->AddWorldRotation(FRotator(0.f, FMath::Min(Dt, .05f) * IdleSpinDegreesPerSecond, 0.f));
+    const bool bOutlineIdle = IsBudgetedOutlineIdle();
+    UpdatePickupBudget(bOutlineIdle && !bSpin && !bScattering);
+    if (!bOutlineIdle && (bShowOutline || bCollectionActive)) EnsureOutline();
+    if (bOutlineIdle && !IsValid(OutlineProxy)) return;
     if(bCollectionActive)
     {
-        if(Pickup->IsStaged()||Pickup->ItemId!=CollectionItemId)FinishCollection(true);
+        if (!Pickup->CanPlayPickupPresentation() || Pickup->GetPickupItemId() != CollectionItemId) FinishCollection(true);
         else if(!World->IsPaused())
         {
             const float ActiveDt=bDiscardNextCollectionTick?0.f:FMath::Max(0.f,DWPickupPresentationMath::Safe(DeltaTime,0.f));
             bDiscardNextCollectionTick=false;CollectionElapsed+=ActiveDt;UpdateCollection();
         }
     }
-    UpdateOutline();
+    if (IsValid(GetOwner()) && !GetOwner()->IsActorBeingDestroyed()) UpdateOutline();
 }

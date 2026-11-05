@@ -1,4 +1,5 @@
 #include "DWCombatWorldObjectsPersistence.h"
+#include "DWEnemyNumericTuning.h"
 #include "DWThugDropPolicy.h"
 #include "DWCombatWorldObjectsRegistry.h"
 #include "DWCombatAuthoritySubsystem.h"
@@ -67,11 +68,17 @@ bool LegacyEqual(const TArray<FDWPersistedActorState>& A,const TArray<FDWPersist
 }
 namespace
 {
+bool BuildConfiguredEnemyRestore(const ADWEnemyCharacter& E,const FDWCombatRules& Rules,EDWEnemyCombatProfile Profile,FDWEnemyCombatConfig& Out,FString& Error)
+{
+ FDWEnemyCombatConfig Candidate;FDWEnemyActorNumericSupplement Extra;
+ if(!DWEnemyFormal::BuildConfig(Rules,Profile,Candidate,Error)||!E.ProjectFormalNumericTuning(Candidate,Extra,Error))return false;
+ Out=Candidate;return true;
+}
 bool ValidateCreatureDefaultRestoreSource(const ADWEnemyCharacter& E,float SavedMax,FString& Error)
 {
  const auto* D=E.GetClass()->GetDefaultObject<ADWEnemyCharacter>();
  return D&&(!E.CreatureDefinition||E.bCreatureDefinitionValid)&&
-  DWCreaturePersistencePolicy::ValidateSource(E.CreatureDefinition.Get(),D->CreatureDefinition.Get(),E.CombatProfile,SavedMax,E.MaxHealth,E.MoveSpeed,Error);
+  E.ValidateCreatureNumericSource(SavedMax,Error);
 }
 }
 void FDWCombatWorldObjectsRestoreStateDeleter::operator()(FDWCombatWorldObjectsRestoreState* P)const{delete P;}
@@ -173,7 +180,7 @@ bool FDWCombatWorldObjectsPersistence::PrepareWorldObjects(UWorld& W,ADWPlayerCh
         if(!ValidateCreatureDefaultRestoreSource(*E,V.MaxHealth,Error))return false;
         Used.Add(E);FDWWorldEnemyPrepared Row;Row.Saved=V;Row.Actor=E;
         if(V.Profile!=EDWEnemyCombatProfile::Legacy)
-        {if(!E->IsFormalCombatReady()||!DWEnemyFormal::BuildConfig(*Rules,V.Profile,Row.Config,Error)||!DWEnemyFormal::BuildCoreDropConfig(*Rules,Row.DropConfig,Error)||V.Health>static_cast<float>(Row.Config.Health)||V.MaxHealth!=static_cast<float>(Row.Config.Health)||
+        {if(!E->IsFormalCombatReady()||!BuildConfiguredEnemyRestore(*E,*Rules,V.Profile,Row.Config,Error)||!DWEnemyFormal::BuildCoreDropConfig(*Rules,Row.DropConfig,Error)||V.Health>static_cast<float>(Row.Config.Health)||V.MaxHealth!=static_cast<float>(Row.Config.Health)||
             V.Formal.DisengageElapsedSeconds>Row.Config.DisengageSeconds||V.Formal.AlertRemainingSeconds>Row.Config.AlertDelaySeconds||V.AttackCooldown>Row.Config.AttackCycleSeconds())
             {Error=TEXT("Formal enemy snapshot exceeds current formal rule contract");return false;}
             const auto& T=Row.Config;const double PhaseDuration=V.Phase==1?T.WindupSeconds:V.Phase==2?T.ActiveSeconds:V.Phase==3?T.RecoverySeconds:0.;

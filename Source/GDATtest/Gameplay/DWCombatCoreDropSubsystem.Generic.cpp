@@ -1,4 +1,5 @@
 #include "DWCombatCoreDropSubsystem.h"
+#include "DWCreatureDropConfiguration.h"
 #include "DWEnemyCharacter.h"
 #include "DWGameInstance.h"
 #include "DWGameplayConfig.h"
@@ -7,20 +8,20 @@
 bool UDWCombatCoreDropSubsystem::PrepareGenericFatal(ADWEnemyCharacter& E,DWCombatCommit::FReceiptId Receipt,DWCombatCommit::FEntityLife Life,DWCombatCommit::FEntityLife Player,
  FDWPreparedCoreDrop& Out,const FVector* FallPoint,DWCombatCommit::FReceiptId FallReceipt)
 {
- const auto* D=E.CreatureDefinition.Get();auto* GI=GetWorld()?GetWorld()->GetGameInstance<UDWGameInstance>():nullptr;
+ FDWCreatureResolvedDrops Drops;FString DropError;if(!E.ResolveCreatureDrops(Drops,DropError))return false;auto* GI=GetWorld()?GetWorld()->GetGameInstance<UDWGameInstance>():nullptr;
  const auto* C=GI?GI->GetConfigForMap(UWorld::RemovePIEPrefix(GetWorld()->GetOutermost()->GetName())):nullptr;
  FString Error;FDWEnemyCoreDropConfig Pickup;
- if(!Operational()||Revision==MAX_uint64||!D||D->DropPolicy!=EDWCreatureDropPolicy::ConfiguredItems||!E.bCreatureDefinitionValid||
+ if(!Operational()||Revision==MAX_uint64||Drops.Policy!=EDWCreatureDropPolicy::ConfiguredItems||!E.bCreatureDefinitionValid||
   E.bGenericDropsCommitted||E.GetWorld()!=GetWorld()||E.IsActorBeingDestroyed()||!Receipt.Epoch||!Receipt.Id||!Life.Entity||!Life.Life||
   !C||!GI->GetCombatRules()||!DWEnemyFormal::BuildCoreDropConfig(*GI->GetCombatRules(),Pickup,Error)||
-  !DWCreatureDropPolicy::ValidateEntriesForConfig(D->ItemDrops,C,Error)||
-  (FallPoint?FallPoint->ContainsNaN():false)||Records.Num()>65536-D->ItemDrops.Num())return false;
+  !DWCreatureDropPolicy::ValidateEntriesForConfig(Drops.Entries,C,Error)||
+  (FallPoint?FallPoint->ContainsNaN():false)||Records.Num()>65536-Drops.Entries.Num())return false;
  FDWPreparedCoreDrop P;P.Revision=Revision;P.Enemy=&E;P.bGeneric=true;P.GenericGroup=FGuid::NewGuid();P.GenericPickupRadiusCm=Pickup.PickupRadiusCm;
  P.GenericSourceStableId=E.CombatProfile!=EDWEnemyCombatProfile::Legacy?TEXT("enemy:")+E.FormalEnemyId.ToString(EGuidFormats::Digits):E.CombatWorldStableId;
  if(P.GenericSourceStableId.IsEmpty())P.GenericSourceStableId=E.SourceNest?TEXT("enemy:runtime:")+FGuid::NewGuid().ToString(EGuidFormats::Digits):TEXT("enemy:scene:")+UWorld::RemovePIEPrefix(E.GetPathName());
- for(int32 I=0;I<D->ItemDrops.Num();++I)
+ for(int32 I=0;I<Drops.Entries.Num();++I)
  {
-  const auto& Row=D->ItemDrops[I];FDWCombatCoreDropSave S;S.Schema=2;S.DeathId=FGuid::NewGuid();S.StableEnemyId=E.FormalEnemyId.IsValid()?E.FormalEnemyId:P.GenericGroup;
+  const auto& Row=Drops.Entries[I];FDWCombatCoreDropSave S;S.Schema=2;S.DeathId=FGuid::NewGuid();S.StableEnemyId=E.FormalEnemyId.IsValid()?E.FormalEnemyId:P.GenericGroup;
   S.Profile=E.CombatProfile;S.FatalEpoch=Receipt.Epoch;S.FatalReceipt=Receipt.Id;S.EnemyEntity=Life.Entity;S.EnemyLife=Life.Life;S.PlayerEntity=Player.Entity;S.PlayerLife=Player.Life;
   S.SourceStableId=P.GenericSourceStableId;S.GenericGroup=P.GenericGroup;S.GenericOrdinal=I+1;S.Location=FallPoint?*FallPoint:E.GetActorLocation();
   S.ForcedFallReceiptEpoch=FallReceipt.Epoch;S.ForcedFallReceiptId=FallReceipt.Id;

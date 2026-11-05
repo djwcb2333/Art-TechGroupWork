@@ -1,4 +1,5 @@
 #include "DWEnemyCharacter.h"
+#include "DWEnemyNumericTuning.h"
 #include "DWCombatCoreDropSubsystem.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWCombatRules.h"
@@ -55,9 +56,11 @@ bool ADWEnemyCharacter::InitializeFormalCombat(const FDWCombatRules& Rules,FStri
     {Error=TEXT("New profiles require empty attack slots until new enemy art/timing is coordinated; existing art was preserved.");return false;}
     FDWEnemyCombatConfig Candidate;FDWEnemyCoreDropConfig Drops;
     if(!DWEnemyFormal::BuildConfig(Rules,CombatProfile,Candidate,Error)||!DWEnemyFormal::BuildCoreDropConfig(Rules,Drops,Error))return false;
+    FDWEnemyActorNumericSupplement NumericSupplement;if(!ProjectFormalNumericTuning(Candidate,NumericSupplement,Error))return false;
     if(bHealthRestoredFromSave&&(!FMath::IsFinite(Health)||Health<0.f||Health>Candidate.Health))
     {Error=TEXT("Restored health is outside this formal profile; initialization changed no state.");return false;}
     FormalCombatConfig=Candidate;FormalCoreDropConfig=Drops;bFormalCombatReady=true;
+    AdoptNumericSupplement(NumericSupplement);
     MaxHealth=Candidate.Health;if(!bHealthRestoredFromSave)Health=MaxHealth;
     DetectionRadius=Candidate.AlertRadiusCm;LoseTargetRadius=Candidate.DisengageDistanceCm;MoveSpeed=Candidate.MoveSpeedCmPerSecond;
     AlertDuration=Candidate.AlertDelaySeconds;AttackRange=Candidate.RangeCm;AttackDamage=Candidate.Damage;

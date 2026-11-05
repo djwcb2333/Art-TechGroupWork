@@ -1,6 +1,7 @@
 #include "DWCombatRecoverySubsystem.h"
 #include "DWLootBeaconSubsystem.h"
 #include "DWCombatRecoveryActors.h"
+#include "DWInteractionPromptComponent.h"
 #include "DWCombatRecoveryTransaction.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWPlayerCharacter.h"
@@ -99,6 +100,7 @@ void UDWCombatRecoverySubsystem::Materialize(FGuid Id)
     {if(IsValid(P)&&P->GetWorld()&&!P->GetWorld()->bIsTearingDown)P->Destroy();return;}
     P->BagId=Id;P->bBound=true;Physical.Add(Id,P);
     if(auto* V=GetWorld()->GetSubsystem<UDWLootBeaconSubsystem>())V->PublishDeathBag(P,P->Placeholder);
+    if (IsValid(P) && P->IsPickupAvailable()) P->Prompt->SetPromptEnabled(true);
 }
 void UDWCombatRecoverySubsystem::Tick(float Dt)
 {

@@ -1625,6 +1625,10 @@ void ADWOpeningPrototype::Tick(float Dt)
   if(!Overlay->IsInViewport())Overlay->AddToViewport(150);Overlay->SetBlack(1);
   ShotCamera=GetWorld()->SpawnActor<ACameraActor>();
   if(!ShotCamera){CleanupPresentation();SetActorTickEnabled(false);return;}
+#if WITH_EDITOR
+  InputGate->PrepareOwnedRuntimeCamera(ShotCamera);
+#endif
+
   {
    int32 Width=0,Height=0;PC->GetViewportSize(Width,Height);const auto POV=PC->PlayerCameraManager->GetCameraCacheView();
    InitialOpeningAspect=POV.bConstrainAspectRatio?POV.AspectRatio:(Height>0?float(Width)/Height:POV.AspectRatio);
@@ -1683,6 +1687,9 @@ LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/DoughWorld/OpeningPrototype/M
    // Only Sour opts out of its CDO's formal profile for this tutorial instance, before BeginPlay.
    if(auto* Sour=Cast<ADWSourDoughEnemy>(E))
    {Sour->CombatProfile=EDWEnemyCombatProfile::Legacy;Sour->Health=60;Sour->SetDirectorPresentationControlled(true);}
+   // The director's explicit Legacy host keeps its prepared tutorial numbers before BeginPlay.
+   if(E->CombatProfile==EDWEnemyCombatProfile::Legacy)
+   {FString NumericError;if(!E->PrepareOpeningNumericSource(*this,NumericError)){UE_LOG(LogTemp,Error,TEXT("Opening numeric binding rejected: %s"),*NumericError);E->Destroy();continue;}}
    E->FinishSpawning(FTransform(FRotator(0,Yaws[I],0),P));if(!IsValid(E)||E->IsActorBeingDestroyed())continue;
    // Sour ticks crumbs while its flag suppresses AI; other enemy classes keep the old disabled tick.
    if(auto* Sour=Cast<ADWSourDoughEnemy>(E))Sour->SetDirectorPresentationControlled(true,this);

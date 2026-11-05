@@ -214,8 +214,7 @@ bool ADWGatheringResource::ReleaseDrops()
     bool Ready = true;
     for (int32 Index = 0; Index < DropSnapshot.Num(); ++Index)
     {
-        const double Angle = double(Index) * 2.3999632297;
-        FVector Position = GetActorLocation() + FVector(FMath::Cos(Angle) * 100., FMath::Sin(Angle) * 100., 30.);
+        FVector Position = GetActorLocation() + DWGatheringPresentationMath::ScatterOffset(Index) + FVector(0, 0, 30.);
         FHitResult Ground;
         FCollisionQueryParams Query(SCENE_QUERY_STAT(GatheringDropGround), false, this);
         if (World->LineTraceSingleByChannel(Ground, Position + FVector(0, 0, 150.), Position - FVector(0, 0, 450.), ECC_Visibility, Query))
@@ -333,6 +332,7 @@ void ADWGatheringResource::PublishInteractionState()
 ADWGatheringPickup::ADWGatheringPickup()
 {
     PickupPresentation=CreateDefaultSubobject<UDWPickupPresentationComponent>(TEXT("PickupPresentation"));
+    PickupPresentation->bBudgetIdlePickupOutline = true;
     RandomScaleMin=RandomScaleMax=1.f;
     PrimaryActorTick.bCanEverTick = true;
     PrimaryActorTick.bStartWithTickEnabled = false;

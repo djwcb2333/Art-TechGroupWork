@@ -1,4 +1,5 @@
 #include "DWLanguageSubsystem.h"
+#include "DWPlayerCombatTuningSubsystem.h"
 #include "DWFormalLanguagePersistence.h"
 #include "DWLanguageModel.h"
 #include "DWCombatEquipment.h"
@@ -57,6 +58,7 @@ bool ReadProgress(const DWLanguage::FCatalog& Catalog,const FString& Json,FStrin
 UDWLanguageSubsystem::~UDWLanguageSubsystem()=default;
 void UDWLanguageSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
+    Collection.InitializeDependency<UDWPlayerCombatTuningSubsystem>();
     Super::Initialize(Collection);FString Error;
     bInitialized=LoadDefinitions(Error);
     if(!bInitialized)UE_LOG(LogTemp,Error,TEXT("Language definitions unavailable: %s"),*Error);

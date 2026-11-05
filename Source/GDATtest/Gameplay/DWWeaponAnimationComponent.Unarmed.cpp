@@ -46,11 +46,11 @@ bool UDWWeaponAnimationComponent::BeginFormalUnarmed(FVector Target)
     if (UAnimSequenceBase* Punch=UnarmedAttackAnimation.Get(); IsValid(Punch) && !Punch->IsA<UAnimMontage>() && Punch->GetAdditiveAnimType()==AAT_None && FMath::IsFinite(Punch->GetPlayLength()) && Punch->GetPlayLength()>0.f)
     {
         const USkeletalMesh* TargetMesh=P->GetMesh()?P->GetMesh()->GetSkeletalMeshAsset():nullptr;
-        const USkeleton* Target=TargetMesh?TargetMesh->GetSkeleton():nullptr;
+        const USkeleton* TargetSkeleton=TargetMesh?TargetMesh->GetSkeleton():nullptr;
         const USkeleton* Source=Punch->GetSkeleton();
-        bool bCompatible=Target && Source && Target==Source;
-        if(Target && Source && !bCompatible)
-            for(const TSoftObjectPtr<USkeleton>& Compatible:Target->GetCompatibleSkeletons())
+        bool bCompatible=TargetSkeleton && Source && TargetSkeleton==Source;
+        if(TargetSkeleton && Source && !bCompatible)
+            for(const TSoftObjectPtr<USkeleton>& Compatible:TargetSkeleton->GetCompatibleSkeletons())
                 if(Compatible.ToSoftObjectPath()==FSoftObjectPath(Source)){bCompatible=true;break;}
         if(bCompatible)ActiveClip.Animation=Punch;
     }

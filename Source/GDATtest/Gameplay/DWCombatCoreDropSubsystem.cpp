@@ -1,7 +1,9 @@
 #include "DWCombatCoreDropSubsystem.h"
+#include "DWCreatureDropConfiguration.h"
 #include "DWThugDropPolicy.h"
 #include "DWLootBeaconSubsystem.h"
 #include "DWCombatCorePickup.h"
+#include "DWGatheringPresentationMath.h"
 #include "DWCombatItemRegistry.h"
 #include "DWCombatRules.h"
 #include "DWEnemyCharacter.h"
@@ -61,7 +63,8 @@ bool UDWCombatCoreDropSubsystem::PrepareFatal(ADWEnemyCharacter& Enemy,DWCombatC
     Out={};
     if(Enemy.CreatureDefinition&&DWThugDropPolicy::IsTarget(Enemy.CreatureDefinition->GetPathName(),Enemy.CombatProfile))
         return PrepareThugFatal(Enemy,Receipt,EnemyLife,PlayerLife,Out,ForcedFallPoint,ForcedFallReceipt);
-    if(Enemy.CreatureDefinition&&Enemy.CreatureDefinition->DropPolicy==EDWCreatureDropPolicy::ConfiguredItems)
+    FDWCreatureResolvedDrops Drops;FString DropError;if(!Enemy.ResolveCreatureDrops(Drops,DropError))return false;
+    if(Drops.Policy==EDWCreatureDropPolicy::ConfiguredItems)
         return PrepareGenericFatal(Enemy,Receipt,EnemyLife,PlayerLife,Out,ForcedFallPoint,ForcedFallReceipt);
     if(ForcedFallPoint?(ForcedFallPoint->ContainsNaN()||!ForcedFallReceipt.Epoch||!ForcedFallReceipt.Id||!PlayerLife.Entity||!PlayerLife.Life):
         (ForcedFallReceipt.Epoch!=0||ForcedFallReceipt.Id!=0))return false;
@@ -124,6 +127,31 @@ void UDWCombatCoreDropSubsystem::Tick(float DeltaTime)
     TGuardValue<bool> Guard(bUpdating,true);TArray<FGuid> Ids;Records.GetKeys(Ids);
     for(const auto& Id:Ids){if(!Operational())return;Materialize(Id);}
 }
+namespace
+{
+FVector ResolveDropLanding(UWorld& World, const FVector& Origin, int32 Slot, AActor* Corpse,
+    const TArray<FVector>& Occupied)
+{
+    FCollisionQueryParams Query(SCENE_QUERY_STAT(CombatDropLanding), false, Corpse);
+    const FVector Lift(0., 0., 20.);
+    for (int32 Attempt = 0; Attempt < 8; ++Attempt)
+    {
+        const FVector Offset = DWGatheringPresentationMath::ScatterOffset(Slot).RotateAngleAxis(Attempt * 45., FVector::UpVector);
+        const FVector Target = Origin + Offset;
+        FHitResult Ground;
+        if (!World.LineTraceSingleByChannel(Ground, Target + FVector(0., 0., 90.), Target - FVector(0., 0., 180.), ECC_Visibility, Query) ||
+            Ground.ImpactPoint.ContainsNaN() || Ground.ImpactNormal.ContainsNaN() || Ground.ImpactNormal.Z < .55 ||
+            Cast<APawn>(Ground.GetActor())) continue;
+        const FVector Landing = Ground.ImpactPoint + Lift;
+        if (Occupied.ContainsByPredicate([&](const FVector& Other)
+            { return FVector::DistSquared2D(Landing, Other) < FMath::Square(50.); })) continue;
+        if (!World.LineTraceTestByChannel(Origin + Lift, Landing, ECC_Visibility, Query)) return Landing;
+    }
+    // Tight ledges or worlds without a reachable floor retain the safe source point.
+    return Origin;
+}
+}
+
 void UDWCombatCoreDropSubsystem::Materialize(FGuid Id)
 {
     FRecord* Record=Records.Find(Id);
@@ -133,7 +161,22 @@ void UDWCombatCoreDropSubsystem::Materialize(FGuid Id)
     if(Bounded){++Record->SpawnAttempts;Record->NextSpawnAttempt=GetWorld()->GetTimeSeconds()+1.;}
     // A committed death belongs to this world record, not to the continued existence of its corpse.
     // EndPlay by itself cannot create this record; only a committed fatal receipt or validated load can.
-    const FVector Position=Record->Save.Location;const TWeakObjectPtr<UWorld> World(GetWorld());
+    const FVector Origin = Record->Save.Location;
+    const bool bNewDrop = !Record->bRestored;
+    FVector Position = Origin;
+    // The primary item from a forced fall stays exactly at the saved standable point.
+    // Additional rows can fan out onto nearby ground without moving the recovery anchor.
+    const bool bForcedFallAnchor = Record->Save.ForcedFallReceiptId != 0 && Record->Save.GenericOrdinal <= 1;
+    if (bNewDrop && !bForcedFallAnchor)
+    {
+        TArray<FVector> Occupied;
+        if (Record->Save.GenericGroup.IsValid())
+            for (const auto& Pair : Records)
+                if (Pair.Value.Save.GenericGroup == Record->Save.GenericGroup && Pair.Value.Physical.IsValid())
+                    Occupied.Add(Pair.Value.Physical->GetActorLocation());
+        Position = ResolveDropLanding(*GetWorld(), Origin, Record->Save.GenericOrdinal - 1, Record->Origin.Get(), Occupied);
+    }
+    const TWeakObjectPtr<UWorld> World(GetWorld());
     Record->bMayMaterialize=false; // Reentrant spawning never sees an available second creation.
     auto* Actor=GetWorld()->SpawnActorDeferred<ADWCombatCorePickup>(ADWCombatCorePickup::StaticClass(),FTransform(Position),nullptr,nullptr,ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
     if(!Operational()||GetWorld()!=World.Get()||!GetWorld()->HasBegunPlay())
@@ -146,8 +189,8 @@ void UDWCombatCoreDropSubsystem::Materialize(FGuid Id)
     {if(IsValid(Actor)&&!Actor->IsActorBeingDestroyed())Actor->Destroy();return;}
     if(!IsValid(Actor)){Record->bMayMaterialize=true;return;}
     Actor->DeathId=Id;Actor->PickupId=Record->Save.PickupId;Actor->ItemId=Record->Save.ItemId;Actor->Count=Record->Save.Count;
-    Actor->PickupRadiusCm=Record->PickupRadiusCm;Actor->PickupRange->SetSphereRadius(static_cast<float>(Record->PickupRadiusCm),false);Actor->bBound=true;
-    Record->Physical=Actor;Record->Save.Decision=EDWEnemyCoreDropDecision::Spawned;++Revision;
+    Actor->PickupRadiusCm=Record->PickupRadiusCm;Actor->bBound=true;
+    Record->Physical=Actor;Record->Save.Location=Position;Record->Save.Decision=EDWEnemyCoreDropDecision::Spawned;++Revision;
     if(auto* E=Record->Origin.Get();IsValid(E)&&!E->IsActorBeingDestroyed()&&E->GetWorld()==GetWorld()&&E->FormalCoreDrop.DeathId==Id)E->FormalCoreDrop.Decision=EDWEnemyCoreDropDecision::Spawned;
     Actor->FinishSpawning(FTransform(Position));
     if(!Operational()||GetWorld()!=World.Get()||!GetWorld()->HasBegunPlay())
@@ -160,7 +203,8 @@ void UDWCombatCoreDropSubsystem::Materialize(FGuid Id)
     {Record->Physical.Reset();Record->bMayMaterialize=true;return;}
     if(!Record||Record->Physical.Get()!=Actor||!DWCombatCoreDrop::Ground(Record->Save.Decision))
     {if(IsValid(Actor)&&!Actor->IsActorBeingDestroyed())Actor->Destroy();return;}
-    if(auto* V=GetWorld()->GetSubsystem<UDWLootBeaconSubsystem>())V->PublishBeacon(Actor,Actor->Placeholder,Actor->ItemId);
+    const FVector PopOrigin = Origin + FVector(0., 0., 45.);
+    Actor->BeginDropPresentation(bNewDrop ? &PopOrigin : nullptr);
 }
 bool UDWCombatCoreDropSubsystem::IsPhysicalCurrent(const ADWCombatCorePickup& P)const
 {

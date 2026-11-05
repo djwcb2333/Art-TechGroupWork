@@ -6,6 +6,9 @@
 
 class UTexture2D;
 
+UENUM(BlueprintType)
+enum class EDWItemCategory:uint8 {Auto,Weapon,Armour,Tool,Consumable,Material,Building,Other};
+
 USTRUCT(BlueprintType)
 struct GDATTEST_API FDWItemStack
 {
@@ -49,6 +52,9 @@ struct GDATTEST_API FDWItemDefinition : public FTableRowBase
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item|Use", meta=(ClampMin="0"))
     float TransformationGainPercent = 0.f;
+
+    /** Auto preserves existing rows; explicit values override derived crafting categories. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Item") EDWItemCategory Category=EDWItemCategory::Auto;
 };
 
 USTRUCT(BlueprintType)

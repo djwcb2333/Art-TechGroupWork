@@ -9,6 +9,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "DWInteractionPromptComponent.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
 
 bool FDWGatheringInventoryTransaction::TryCraftBuilding(UDWInventoryComponent& Inventory,FName Recipe,bool Yeast)
 {
@@ -58,12 +59,33 @@ bool FDWGatheringInventoryTransaction::TryDiscardToWorld(UDWInventoryComponent& 
     if(!User||User->IsDead()||!User->GetWorld()||!UDWGatheringComponent::Find(Inventory)||!UDWGameplayConfig::AsGatheringConfig(User->GetGameplayConfig()))return false;
     FDWPreparedInventoryChange Plan;
     if(!Inventory.PrepareRemoveSnapshot(Snapshot,Snapshot.Quantity,Plan))return false;
-    auto* World=User->GetWorld();FVector Position=User->GetActorLocation()+User->GetActorForwardVector()*110.;
+    auto* World = User->GetWorld();
+    const FVector Origin = User->GetActorLocation();
+    const FVector Forward = User->GetActorForwardVector().GetSafeNormal2D();
     TWeakObjectPtr<UDWInventoryComponent> SafeInventory(&Inventory);
     TWeakObjectPtr<ADWPlayerCharacter> SafeUser(User);
-    FHitResult Ground;FCollisionQueryParams Query(SCENE_QUERY_STAT(GatherDiscard),false,User);
-    if(!World->LineTraceSingleByChannel(Ground,Position+FVector(0,0,100),Position-FVector(0,0,500),ECC_Visibility,Query)||Ground.ImpactNormal.Z<.5)return false;
-    Position=Ground.ImpactPoint+FVector(0,0,20.);
+    TArray<FVector> Occupied;
+    for (TActorIterator<ADWGatheringPickup> It(World); It; ++It)
+        if (It->IsInteractionAvailable() && FVector::DistSquared2D(Origin, It->GetActorLocation()) <= FMath::Square(200.))
+            Occupied.Add(It->GetActorLocation());
+
+    FVector Position;
+    bool bFoundLanding = false;
+    FCollisionQueryParams Query(SCENE_QUERY_STAT(GatherDiscard), false, User);
+    constexpr double Angles[] = {0., 32., -32., 64., -64., 96., -96., 128., -128., 160., -160.};
+    for (double Angle : Angles)
+    {
+        const FVector Target = Origin + Forward.RotateAngleAxis(Angle, FVector::UpVector) * 110.;
+        if (Occupied.ContainsByPredicate([&](const FVector& Other)
+            { return FVector::DistSquared2D(Target, Other) < FMath::Square(50.); })) continue;
+        FHitResult Ground;
+        if (!World->LineTraceSingleByChannel(Ground, Target + FVector(0, 0, 100), Target - FVector(0, 0, 500), ECC_Visibility, Query) ||
+            Ground.ImpactNormal.Z < .5 || Cast<IDWWorldPickup>(Ground.GetActor()) || Cast<APawn>(Ground.GetActor())) continue;
+        Position = Ground.ImpactPoint + FVector(0, 0, 20.);
+        bFoundLanding = true;
+        break;
+    }
+    if (!bFoundLanding) return false;
     auto* Drop=World->SpawnActorDeferred<ADWGatheringPickup>(ADWGatheringPickup::StaticClass(),FTransform(Position),nullptr,nullptr,ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
     if(!Drop)return false;
     Drop->SetStaged(true);Drop->ItemId=Snapshot.ItemId;Drop->Quantity=0;Drop->bRuntimeSpawned=true;Drop->PersistentId=FName(*FGuid::NewGuid().ToString(EGuidFormats::Digits));
@@ -72,6 +94,8 @@ bool FDWGatheringInventoryTransaction::TryDiscardToWorld(UDWInventoryComponent& 
     if(!IsValid(Drop)||Drop->IsActorBeingDestroyed()||!SafeUser.IsValid()||User->IsActorBeingDestroyed()||!SafeInventory.IsValid()||!Inventory.CanWriteInventory()||World->bIsTearingDown||!Inventory.ValidatePreparedForCommit(Plan))
     {if(IsValid(Drop))Drop->Destroy();return false;}
     Inventory.AdoptPreparedUnchecked(MoveTemp(Plan));Drop->Quantity=Snapshot.Quantity;
+    Drop->bPopOnSpawn = true;
+    Drop->SetPopOrigin(User->GetActorLocation() + FVector(0., 0., 45.));
     Drop->SetStaged(false);Drop->RefreshPickup();
     if(SafeInventory.IsValid()&&SafeInventory->CanWriteInventory()&&SafeUser.IsValid()&&SafeUser->GetWorld()&&!SafeUser->GetWorld()->bIsTearingDown)SafeInventory->OnChanged.Broadcast();return true;
 }

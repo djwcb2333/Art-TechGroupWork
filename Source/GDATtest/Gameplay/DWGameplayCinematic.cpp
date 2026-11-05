@@ -1,6 +1,8 @@
 #include "DWGameplayCinematic.h"
 #if WITH_EDITOR
 #include "HAL/PlatformTime.h"
+#include "RenderTimer.h"
+#include "DynamicRHI.h"
 #include "Misc/ScopeExit.h"
 #include "HAL/IConsoleManager.h"
 #include "CoreGlobals.h"
@@ -124,6 +126,10 @@ UDWDialogueSequenceComponent* UDWCinematicComponent::CreateAuthoredDialogue()
 void UDWCinematicComponent::SetPhase(EDWCinematicPhase P)
 {
 #if WITH_EDITOR
+ if(P!=Phase){const FString Label=FString::Printf(TEXT("Phase%d"),int32(P));BeginPIEEntryFrameDiagnostics(*Label);}
+#endif
+
+#if WITH_EDITOR
  if(GetWorld()&&GetWorld()->WorldType==EWorldType::PIE)UE_LOG(LogTemp,Display,TEXT("DW_PIE_CINEMATIC_PHASE owner=%s phase=%d"),*GetNameSafe(GetOwner()),int32(P));
 #endif
 TRACE_BOOKMARK(TEXT("DW Cinematic phase=%d owner=%s"),int32(P),*GetNameSafe(GetOwner()));Phase=P;PhaseSeconds=0;if(P==EDWCinematicPhase::TravelBack&&bStopShakeWhenReturning)StopCinematicShake(false);}
@@ -182,6 +188,10 @@ bool UDWCinematicComponent::PlayCinematic(APlayerController* C)
  FActorSpawnParameters P;P.ObjectFlags|=RF_Transient;P.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
  PlaybackCamera=GetWorld()->SpawnActor<ACameraActor>(OriginalPOV.Location,OriginalPOV.Rotation,P);
  if(!PlaybackCamera){S->Release(this);return Fail(TEXT("Unable to create playback camera"));}
+#if WITH_EDITOR
+ PrepareOwnedRuntimeCamera(PlaybackCamera);
+#endif
+
 #if WITH_EDITOR
  MarkPIEEntry(TEXT("SpawnCamera"));
 #endif
@@ -335,7 +345,11 @@ void UDWCinematicComponent::Cleanup(bool Success)
  if(auto* W=GetWorld())W->GetSubsystem<UDWWorldEventSubsystem>()->Release(this);
  SetPhase(EDWCinematicPhase::Idle);SetComponentTickEnabled(false);Event.Reset();OnFinished.Broadcast(Success);
 }
-void UDWCinematicComponent::EndPlay(const EEndPlayReason::Type R){EndExternalControl(false);FlushExternalCompletion();if(IsPlaying())Cleanup(false);if(ViewEvent){ViewEvent->DestroyComponent();ViewEvent=nullptr;}Super::EndPlay(R);}
+void UDWCinematicComponent::EndPlay(const EEndPlayReason::Type R){
+#if WITH_EDITOR
+ bPIEDiagnosticsClosing=true;FinishPIEEntryFrameDiagnostics(TEXT("EndPlay"));
+#endif
+EndExternalControl(false);FlushExternalCompletion();if(IsPlaying())Cleanup(false);if(ViewEvent){ViewEvent->DestroyComponent();ViewEvent=nullptr;}Super::EndPlay(R);}
 ADWCinematicTrigger::ADWCinematicTrigger()
 {
  TriggerBox=CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));RootComponent=TriggerBox;TriggerBox->SetBoxExtent(FVector(160,300,150));TriggerBox->SetCollisionProfileName(TEXT("Trigger"));TriggerBox->SetGenerateOverlapEvents(true);
@@ -345,31 +359,66 @@ void ADWCinematicTrigger::BeginPlay(){Super::BeginPlay();TriggerBox->OnComponent
 void ADWCinematicTrigger::Enter(UPrimitiveComponent*,AActor* Other,UPrimitiveComponent*,int32,bool,const FHitResult&)
 {if(auto* P=Cast<APawn>(Other))if(auto* C=Cast<APlayerController>(P->GetController()))Cinematic->PlayCinematic(C);}
 #if WITH_EDITOR
+
+void UDWCinematicComponent::PrepareOwnedRuntimeCamera(ACameraActor* Camera)
+{
+ if(!IsValid(Camera)||Camera->IsTemplate()||!GetWorld()||!GetWorld()->IsGameWorld()||Camera->GetWorld()!=GetWorld()||Camera->GetClass()!=ACameraActor::StaticClass())return;
+ auto* Cam=Camera->GetCameraComponent();if(!IsValid(Cam)||Cam->GetClass()!=UCameraComponent::StaticClass())return;
+ // UE5.8 base camera editor tick only updates the debug frustum. Normal camera evaluation is independent.
+ Cam->SetComponentTickEnabled(false);
+ TInlineComponentArray<UActorComponent*> Components(Camera);
+ for(auto* Visual:Components)if(IsValid(Visual)&&Visual->GetOwner()==Camera&&Visual->IsVisualizationComponent())
+ {Visual->SetComponentTickEnabled(false);Visual->UnregisterComponent();}
+}
+
 void UDWCinematicComponent::BeginPIEEntryFrameDiagnostics(const TCHAR* Label)
 {
- if(!GetWorld()||GetWorld()->WorldType!=EWorldType::PIE)return;
+ if(bPIEDiagnosticsClosing||!GetWorld()||GetWorld()->bIsTearingDown||GetWorld()->WorldType!=EWorldType::PIE||!IsValid(GetOwner())||GetOwner()->IsActorBeingDestroyed())return;
  FinishPIEEntryFrameDiagnostics(TEXT("NextEntry"));
  PIEEntryFrameLabel=Label;PIEEntryFrameWindow.Begin(FPlatformTime::Seconds(),GFrameCounter);bPIEEntryReportPending=true;
  PIEEntryAssets=FAssetCompilingManager::Get().GetNumRemainingAssets();
  PIEEntryShaders=GShaderCompilingManager?GShaderCompilingManager->GetNumRemainingJobs():0;
  PIEEntryPSOs=PipelineStateCache::GetNumActivePipelinePrecompileTasks();
+ // Existing finite sampler continues after gameplay/actor tick is disabled at return. No gameplay work in this ticker.
+ const TWeakObjectPtr<UDWCinematicComponent> Weak(this);
+ PIEEntryTicker=FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([Weak](float)
+ {if(auto* C=Weak.Get()){C->AdvancePIEEntryFrameDiagnostics();return C->PIEEntryFrameWindow.bActive;}return false;}));
 }
 void UDWCinematicComponent::AdvancePIEEntryFrameDiagnostics()
 {
  if(!PIEEntryFrameWindow.bActive)return;
  if(!GetWorld()||GetWorld()->WorldType!=EWorldType::PIE||GetWorld()->IsPaused()){FinishPIEEntryFrameDiagnostics(TEXT("PausedOrInvalidWorld"));return;}
- if(PIEEntryFrameWindow.Sample(FPlatformTime::Seconds(),GFrameCounter))FinishPIEEntryFrameDiagnostics(TEXT("BoundReached"));
+ if(GFrameCounter==PIEEntryFrameWindow.PreviousFrame)return;
+ const int32 Before=PIEEntryFrameWindow.Samples;
+ const bool Done=PIEEntryFrameWindow.Sample(FPlatformTime::Seconds(),GFrameCounter);
+ if(PIEEntryFrameWindow.Samples!=Before)
+ {
+  // Engine stat-unit cached counters: no timestamp query, flush, wait or profiling-mode changes.
+  PIEEntryFrameWindow.GameMs.Add(FPlatformTime::ToMilliseconds(GGameThreadTime));
+  PIEEntryFrameWindow.RenderMs.Add(FPlatformTime::ToMilliseconds(GRenderThreadTime));
+  PIEEntryFrameWindow.RHIMs.Add(FPlatformTime::ToMilliseconds(GRHIThreadTime));
+  if(GDynamicRHI)PIEEntryFrameWindow.GPUMs.Add(FPlatformTime::ToMilliseconds(RHIGetGPUFrameCycles(0)));
+ }
+ if(Done)FinishPIEEntryFrameDiagnostics(TEXT("BoundReached"));
 }
 void UDWCinematicComponent::FinishPIEEntryFrameDiagnostics(const TCHAR* Reason)
 {
+ if(PIEEntryTicker.IsValid()){FTSTicker::RemoveTicker(PIEEntryTicker);PIEEntryTicker.Reset();}
  if(!bPIEEntryReportPending)return;
  bPIEEntryReportPending=false;PIEEntryFrameWindow.bActive=false;
  int32 Width=0,Height=0;if(auto* C=GetWorld()?GetWorld()->GetFirstPlayerController():nullptr)C->GetViewportSize(Width,Height);
  const auto* SP=IConsoleManager::Get().FindConsoleVariable(TEXT("r.ScreenPercentage"));
+ const auto* History=IConsoleManager::Get().FindConsoleVariable(TEXT("r.TSR.History.ScreenPercentage"));
+ const auto FormatTiming=[](const FDWPIETimingMoments& V)
+ {return V.ValidSamples?FString::Printf(TEXT("mean=%.2f max=%.2f valid=%d"),V.MeanMs(),V.MaxMs,V.ValidSamples):FString(TEXT("Unavailable"));};
+ FMinimalViewInfo POV;if(auto* C=GetWorld()?GetWorld()->GetFirstPlayerController():nullptr)if(C->PlayerCameraManager)POV=C->PlayerCameraManager->GetCameraCacheView();
  FString First;for(int32 I=0;I<FMath::Min(PIEEntryFrameWindow.Samples,8);++I)First+=FString::Printf(TEXT(" %.2f"),PIEEntryFrameWindow.FirstGapMs[I]);
  UE_LOG(LogTemp,Display,TEXT("DW_PIE_CINEMATIC_FRAME_WINDOW owner=%s label=%s reason=%s samples=%d elapsed_ms=%.2f max_gap_ms=%.2f gaps_over_33ms=%d invalid_clock=%d first_gaps_ms=[%s] viewport=%dx%d raw_screenpercentage=%.2f pending_assets=%d/%d pending_shaders=%d/%d pending_nativepso=%d/%d"),
  *GetNameSafe(GetOwner()),*PIEEntryFrameLabel,Reason,PIEEntryFrameWindow.Samples,(PIEEntryFrameWindow.PreviousAt-PIEEntryFrameWindow.StartedAt)*1000.,PIEEntryFrameWindow.MaxGapMs,PIEEntryFrameWindow.Hitches,PIEEntryFrameWindow.bInvalidClock,*First,Width,Height,SP?SP->GetFloat():-999.f,
  PIEEntryAssets,FAssetCompilingManager::Get().GetNumRemainingAssets(),PIEEntryShaders,GShaderCompilingManager?GShaderCompilingManager->GetNumRemainingJobs():0,PIEEntryPSOs,PipelineStateCache::GetNumActivePipelinePrecompileTasks());
+ UE_LOG(LogTemp,Display,TEXT("DW_PIE_CINEMATIC_UNIT_WINDOW owner=%s label=%s callback_samples=%d engine_frame_span=%llu over_16_667ms=%d Game=[%s] Render=[%s] RHI=[%s] GPU=[%s] pov_fov=%.3f aspect=%.4f constrain=%d projection=%d raw_tsr_history_pct=%.1f"),
+ *GetNameSafe(GetOwner()),*PIEEntryFrameLabel,PIEEntryFrameWindow.Samples,PIEEntryFrameWindow.PreviousFrame-PIEEntryFrameWindow.StartedFrame,PIEEntryFrameWindow.GapsOver60Budget,
+ *FormatTiming(PIEEntryFrameWindow.GameMs),*FormatTiming(PIEEntryFrameWindow.RenderMs),*FormatTiming(PIEEntryFrameWindow.RHIMs),*FormatTiming(PIEEntryFrameWindow.GPUMs),POV.FOV,POV.AspectRatio,POV.bConstrainAspectRatio,int32(POV.ProjectionMode),History?History->GetFloat():-1.f);
 }
 #if WITH_DEV_AUTOMATION_TESTS
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDWPIECinematicEntryWindowTest,"DoughWorld.Cinematic.PIEEntryFrameWindow",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
@@ -387,6 +436,11 @@ bool FDWPIECinematicEntryWindowTest::RunTest(const FString&)
  TestTrue(TEXT("120th sample ends even at high FPS"),W.Sample(200.120,140));TestEqual(TEXT("Hard sample cap"),W.Samples,120);
  W.Begin(300.,30);TestTrue(TEXT("Nonfinite sample clock stops"),W.Sample(std::numeric_limits<double>::quiet_NaN(),31));TestTrue(TEXT("Bad clock identified"),W.bInvalidClock);
  W.Begin(400.,40);TestTrue(TEXT("Clock rollback stops"),W.Sample(399.,41));
+ FDWPIETimingMoments Times;Times.Add(0.);Times.Add(-1.);Times.Add(std::numeric_limits<double>::quiet_NaN());
+ TestEqual(TEXT("Unavailable counters never become zero-ms success"),Times.ValidSamples,0);
+ Times.Add(2.);Times.Add(8.);TestEqual(TEXT("Mean uses only valid cached counter samples"),Times.MeanMs(),5.);
+ TestEqual(TEXT("Counter maximum retained"),Times.MaxMs,8.);TestEqual(TEXT("Valid counter sample count"),Times.ValidSamples,2);
+ W.Begin(500.,50);W.GameMs.Add(3.);W.Begin(501.,51);TestEqual(TEXT("New phase resets timing aggregates"),W.GameMs.ValidSamples,0);
  return true;
 }
 #endif

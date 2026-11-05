@@ -19,6 +19,9 @@ class GDATTEST_API FDWCombatRules final
 public:
     static bool LoadFromJson(const FString& Json, TSharedPtr<const FDWCombatRules>& OutRules, FString& OutError);
     static bool LoadProjectPayload(TSharedPtr<const FDWCombatRules>& OutRules, FString& OutError);
+    static bool WithPlayerOverrides(const TSharedPtr<const FDWCombatRules>& Base,const TMap<FName,double>& Overrides,TSharedPtr<const FDWCombatRules>& Out,FString& Error);
+    static bool FromCompletePlayerValues(const TSharedPtr<const FDWCombatRules>& Base,const TMap<FName,double>& Values,TSharedPtr<const FDWCombatRules>& Out,FString& Error);
+    int32 GetPlayerOverrideCount()const{return PlayerOverrideCount;}
     bool TryGetNumber(FName Id, EDWCombatRuleUnit RequestedUnit, double& OutValue, FString& OutError) const;
     bool TryGetCount(FName Id, int32& OutValue, FString& OutError) const;
     const FString& GetDesignVersion() const { return DesignVersion; }
@@ -44,4 +47,5 @@ private:
     int32 BaseParameterCount = 0;
     int32 DerivedParameterCount = 0;
     int32 UnboundEquipmentCount = 0;
+    int32 PlayerOverrideCount=0;
 };

@@ -1,4 +1,6 @@
 #include "DWCombatPlayerStateTransaction.h"
+#include "DWCharacterA01Component.h"
+#include "DWConsumableHealthPlan.h"
 #include "DWCombatEquipment.h"
 #include "DWCombatPlayerSave.h"
 #include "DWCombatAuthoritySubsystem.h"
@@ -72,6 +74,34 @@ bool FDWCombatPlayerStateTransaction::UseLegacyHealingItem(ADWPlayerCharacter& P
     I->AdoptPreparedUnchecked(MoveTemp(Prepared));P.Health=After;
     P.CancelCoreInjectionFacts(); // A committed use of another item interrupts unfinished injection.
     A->EndAction(Action);A->EnqueueCommittedPlayerState(Notice);A->DrainNotifications();return true;
+}
+
+bool FDWCombatPlayerStateTransaction::UseA01Consumable(ADWPlayerCharacter& P,FDWPreparedInventoryChange&& Bag,
+    FDWCharacterA01Runtime&& Refill,uint64 Revision,double Before,double Amount,FName UsedItem)
+{
+    using namespace DWCombatCommit;
+    auto* A=UDWCombatAuthoritySubsystem::Get(&P);auto* I=P.Inventory.Get();auto* C=P.CharacterA01.Get();auto* W=P.WeaponAnimationComponent.Get();
+    float After=0.f;
+    if(!A||!I||!C||!W||W->IsBeingDestroyed()||P.IsActorBeingDestroyed()||P.IsDead()||P.bRestoringSave||
+        !P.bGameplayActionInProgress||Revision==MAX_uint64||!C->CanAdoptRuntime(Revision,Before)||
+        !DWConsumableHealth::Prepare(Before,Refill.EffectiveMaxHealth(),Amount,After)||
+        !I->ValidatePreparedForCommit(Bag))return false;
+    // Refill was copied from the live A01 state; it changes water/satiety only, never cap loss.
+    if(Refill.EffectiveMaxHealth()!=C->GetRuntime().EffectiveMaxHealth()||!Refill.SyncCurrentHealth(After))return false;
+    auto* Ledger=A->GetLedgerForResourceTransaction();const auto Action=A->BeginAction(&P);
+    if(!Ledger||!Action.Id)return false;
+    const auto Admission=Ledger->AdmitResource({Action,1,EResourceKind::LegacyItemUse,1});
+    if(Admission.Result!=EAdmission::Admitted){A->EndAction(Action);return false;}
+    const auto Life=A->CaptureActorLife(&P);
+    if(!Life.Entity||!Life.Life||!I->ValidatePreparedForCommit(Bag)||!C->CanAdoptRuntime(Revision,Before)||!A->ReservePlayerStateNoticeSlot())
+    {Ledger->Resolve(Admission.Receipt.Handle,EOutcome::Rejected);A->EndAction(Action);return false;}
+    FDWCombatPlayerStateNotice N;N.Player=&P;N.Inventory=I;N.Weapon=W;N.Life=Life;
+    N.RestoreEpoch=W->CombatWeaponResources.RestoreEpoch;N.UsedItem=UsedItem;N.RestoredHealth=After-static_cast<float>(Before);
+    if(Ledger->Resolve(Admission.Receipt.Handle,EOutcome::Committed)!=EResolve::Resolved){A->EndAction(Action);return false;}
+    // No delegate, Blueprint, scene operation or second authority between the joint facts.
+    I->AdoptPreparedUnchecked(MoveTemp(Bag));P.Health=After;C->AdoptRuntimeUnchecked(MoveTemp(Refill));
+    C->SyncAuthoritativeHealth();P.SyncCombatVitalsCompatibility();P.CancelCoreInjectionFacts();
+    A->EndAction(Action);A->EnqueueCommittedPlayerState(N);A->DrainNotifications();return true;
 }
 
 void FDWCombatPlayerStateTransaction::Publish(const FDWCombatPlayerStateNotice& Notice)

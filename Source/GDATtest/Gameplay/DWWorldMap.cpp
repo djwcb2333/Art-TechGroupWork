@@ -1,4 +1,5 @@
 #include "DWWorldMap.h"
+#include "DWMapPondOverlay.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "ProfilingDebugging/MiscTrace.h"
 #include "DWMapExploration.h"
@@ -494,7 +495,11 @@ void UDWWorldMapSubsystem::UpdateExploration(APlayerController* PC,const FDWMapI
     // Resources are prepared by normal-play ticks, never constructed by paint/drag/close.
     if(!ExplorationResource)return;
     const auto* Mini=Pawn?Pawn->FindComponentByClass<UDWMinimapComponent>():nullptr;
-    if(ExplorationResource&&ExplorationResource->Sync(Layer,Mini?Mini->GetMapImage():nullptr,ExplorationDirty))ExplorationDirty=FIntRect(0,0,0,0);
+    auto* Ponds=GetWorld()->GetSubsystem<UDWMapPondOverlay>();
+    const TArray<uint8> EmptyWater;
+    const auto& Water=Ponds&&Mini&&Mini->bShowMapPonds?Ponds->Prepare(Image,Mini->MapPondResolution):EmptyWater;
+    const FLinearColor WaterColor=Mini&&Mini->bShowMapPonds?Mini->MapPondColor:FLinearColor::Transparent;
+    if(ExplorationResource->Sync(Layer,Mini?Mini->GetMapImage():nullptr,ExplorationDirty,Water,Ponds?Ponds->GetRevision():0,WaterColor))ExplorationDirty=FIntRect(0,0,0,0);
 }
 bool UDWWorldMapSubsystem::IsWorldExplored(FVector Position) const
 {return ExplorationLayers.IsValidIndex(ActiveExploration)&&DWMapExploration::IsRevealed(ExplorationLayers[ActiveExploration],FVector2D(Position));}

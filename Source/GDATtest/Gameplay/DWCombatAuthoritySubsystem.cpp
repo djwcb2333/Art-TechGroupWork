@@ -570,7 +570,7 @@ FDWCombatDamageResult UDWCombatAuthoritySubsystem::CommitPending(DWCombatCommit:
     }
     FDWPreparedCoreDrop CoreDrop;
     UDWCombatCoreDropSubsystem* CoreDrops=nullptr;
-    if(After<=HealthFloor)if(auto* Enemy=Cast<ADWEnemyCharacter>(Target);Enemy&&(Enemy->IsFormalCombatReady()||(Enemy->CreatureDefinition&&Enemy->CreatureDefinition->DropPolicy==EDWCreatureDropPolicy::ConfiguredItems)))
+    if(After<=HealthFloor)if(auto* Enemy=Cast<ADWEnemyCharacter>(Target);Enemy&&(Enemy->IsFormalCombatReady()||Enemy->UsesConfiguredCreatureDrops()))
     {
         CoreDrops=UDWCombatCoreDropSubsystem::Get(Enemy);
         if(!CoreDrops||!CoreDrops->PrepareFatal(*Enemy,Receipt,Snapshot->Command.TargetLife,

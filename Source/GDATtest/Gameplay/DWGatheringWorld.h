@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/EngineTypes.h"
 #include "DWGameplayTypes.h"
+#include "DWWorldPickup.h"
 #include "DWGatheringWorld.generated.h"
 
 class USceneComponent;
@@ -104,14 +105,19 @@ private:
 };
 
 UCLASS(Blueprintable)
-class GDATTEST_API ADWGatheringPickup : public ADWGatheringInteractable
+class GDATTEST_API ADWGatheringPickup : public ADWGatheringInteractable, public IDWWorldPickup
 {
     GENERATED_BODY()
 public:
     ADWGatheringPickup();
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Pickup Presentation") TObjectPtr<UDWPickupPresentationComponent> PickupPresentation;
     /** Visual completion only; quantity is already committed and never adjusted here. */
-    void HandlePickupPresentationFinished();
+    void HandlePickupPresentationFinished() override;
+    UStaticMeshComponent* GetPickupMesh() const override { return Mesh; }
+    FName GetPickupItemId() const override { return ItemId; }
+    bool IsPickupAvailable() const override { return IsInteractionAvailable(); }
+    bool IsPickupInReach(const AActor* User) const override { return IsWithinReach(User); }
+    bool CanPlayPickupPresentation() const override { return !IsStaged(); }
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gathering") FName ItemId = TEXT("SugarChunk");
     /** Opt out of catalog replacement to preserve a deliberately authored placeholder mesh. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Gathering|Visual") bool bUseItemCatalogVisuals=true;
@@ -122,7 +128,7 @@ public:
     /** Set before deferred FinishSpawning; only the mesh flies, logical pickup identity remains stable. */
     void SetPopOrigin(const FVector& Origin) { PopOriginWorld=Origin; bHasPopOrigin=true; }
     virtual bool IsInteractionAvailable() const override;
-    bool TryCollect(ADWPlayerCharacter* User);
+    bool TryCollect(ADWPlayerCharacter* User) override;
     void RefreshPickup();
     bool CanCaptureGatheringPersistence(FString& Error) const;
     /** Called only inside the complete aggregate adoption barrier. */

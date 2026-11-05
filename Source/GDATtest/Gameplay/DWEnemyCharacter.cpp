@@ -68,6 +68,7 @@ ADWEnemyCharacter::ADWEnemyCharacter()
 {
     CommittedHitFeedback=CreateDefaultSubobject<UDWCommittedHitFeedbackComponent>(TEXT("CommittedHitFeedback"));
     PrimaryActorTick.bCanEverTick = true;
+    DefaultHostileDrop.ItemId=TEXT("SugarChunk");
     // A paused game must cancel telegraphed hits instead of resuming a hidden pending strike.
     PrimaryActorTick.bTickEvenWhenPaused = true;
     GetCapsuleComponent()->InitCapsuleSize(38.f, 78.f);
@@ -125,6 +126,7 @@ void ADWEnemyCharacter::BeginPlay()
     }
     FString DefinitionError;
     bCreatureDefinitionValid=ApplyCreatureDefinition(DefinitionError);
+    if(bCreatureDefinitionValid&&CombatProfile==EDWEnemyCombatProfile::Legacy)bCreatureDefinitionValid=ApplyLegacyNumericTuning(DefinitionError);
     // Runtime-only visibility: retain editor outlines, overlap/collision, and all child artwork.
     if(CreatureDefinition&&DWThugDropPolicy::IsTarget(CreatureDefinition->GetPathName(),CombatProfile))
     {TInlineComponentArray<UShapeComponent*> Shapes(this);for(auto* Shape:Shapes)if(Shape)Shape->SetHiddenInGame(true,false);}

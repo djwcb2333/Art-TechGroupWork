@@ -1,4 +1,5 @@
 #include "DWCombatWorldObjectsPersistence.h"
+#include "DWCombatEnemyRetentionPolicy.h"
 #include "DWLanguageSubsystem.h"
 #include "DWFormalLanguagePersistence.h"
 #include "Engine/GameInstance.h"
@@ -31,7 +32,7 @@ bool FDWCombatWorldObjectsPersistence::CaptureEnemy(ADWEnemyCharacter& E,const T
     if(Formal&&!E.IsFormalCombatReady()){Error=TEXT("Uninitialized formal enemy cannot be saved");return false;}
     const auto* ClassDefault=E.GetClass()->GetDefaultObject<ADWEnemyCharacter>();
     if(!ClassDefault||(E.CreatureDefinition&&!E.bCreatureDefinitionValid)||
-       !DWCreaturePersistencePolicy::ValidateSource(E.CreatureDefinition.Get(),ClassDefault->CreatureDefinition.Get(),E.CombatProfile,E.MaxHealth,E.MaxHealth,E.MoveSpeed,Error))return false;
+       !E.ValidateCreatureNumericSource(E.MaxHealth,Error))return false;
     if(!Formal&&E.CombatWorldStableId.IsEmpty())
         E.CombatWorldStableId=E.SourceNest?TEXT("enemy:runtime:")+FGuid::NewGuid().ToString(EGuidFormats::Digits):TEXT("enemy:scene:")+Path(&E);
     S.StableId=Of(B,&E);if(S.StableId.IsEmpty())S.StableId=Formal?TEXT("enemy:")+E.FormalEnemyId.ToString(EGuidFormats::Digits):E.CombatWorldStableId;
@@ -111,7 +112,7 @@ bool FDWCombatWorldObjectsPersistence::CaptureInternal(UWorld& W,ADWPlayerCharac
 }
 void FDWCombatWorldObjectsPersistence::RecordDestroyedEnemy(ADWEnemyCharacter& E)
 {
-    auto* W=E.GetWorld();if(!W||W->bIsTearingDown||E.bCombatWorldStaged||(E.CombatProfile==EDWEnemyCombatProfile::Legacy&&!E.CreatureDefinition)||E.Health>0.f)return;
+    auto* W=E.GetWorld();if(!W||W->bIsTearingDown||E.bCombatWorldStaged||!DWCombatEnemyRetentionPolicy::NeedsSourceTombstone(E.CombatProfile,E.CreatureDefinition!=nullptr,E.bGenericDropsCommitted)||E.Health>0.f)return;
     auto* R=W->GetSubsystem<UDWCombatWorldObjectsRegistry>();if(!R)return;FDWCombatEnemyObjectSave S;FString Error;
     TArray<FDWCombatObjectBinding>B;
     // Dead snapshots have no future target/action. Retain the native committed drop and provenance.

@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
 
@@ -27,7 +27,7 @@ public class GDATtest : ModuleRules
             "SlateCore"
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "DeveloperSettings", "Json", "MoviePlayer", "RenderCore", "RHI", "PhysicsCore" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "DeveloperSettings", "Json", "MoviePlayer", "RenderCore", "RHI", "PhysicsCore", "NiagaraAnimNotifies" });
 
         // Generated from the authoritative combat parameter table; one packaged UFS file.
         RuntimeDependencies.Add("$(ProjectDir)/Content/DoughWorld/Gameplay/Combat/DWCombatRules.json", StagedFileType.UFS);

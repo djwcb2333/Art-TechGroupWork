@@ -19,7 +19,7 @@ namespace DWSimpleSpearPolicy
    Expected.Restore==Actual.Restore&&Expected.Action==Actual.Action;
  }
  inline bool Build(double Damage,double Period,double Range,double SharedArc,FVector2D SourceFractions,
-                   double RootDamage,FDWSpearTuning& Out)
+                   double RootDamage,FDWSpearTuning& Out,double KnockbackCm=0.,double KnockbackSeconds=.15)
  {
   if(!FMath::IsFinite(Damage)||Damage<=0.||!FMath::IsFinite(Period)||Period<=0.||!FMath::IsFinite(Range)||Range<=0.||
     !FMath::IsFinite(SourceFractions.X)||!FMath::IsFinite(SourceFractions.Y)||SourceFractions.X<0.||
@@ -27,7 +27,7 @@ namespace DWSimpleSpearPolicy
   FDWSpearTuning T;T.Damage=Damage;T.RangeCm=Range;T.FullArcDegrees=SharedArc;T.IntervalSeconds=Period;
   T.WindupSeconds=Period*SourceFractions.X;T.ActiveSeconds=Period*(SourceFractions.Y-SourceFractions.X);
   T.RecoverySeconds=Period-T.WindupSeconds-T.ActiveSeconds;
-  T.EdgeBandFraction=1.;T.MinimumDamageFraction=1.;T.KnockbackCm=0.;T.KnockbackSeconds=.15;
+  T.EdgeBandFraction=1.;T.MinimumDamageFraction=1.;T.KnockbackCm=KnockbackCm;T.KnockbackSeconds=KnockbackSeconds;
   T.YeastDamageMultiplier=T.YeastRateMultiplier=1.;T.RootedDamageMultiplier=RootDamage;T.SwitchLockSeconds=0.;
   if(!T.IsValid())return false;Out=T;return true;
  }

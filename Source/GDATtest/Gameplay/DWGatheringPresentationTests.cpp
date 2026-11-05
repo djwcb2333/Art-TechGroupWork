@@ -35,6 +35,11 @@ bool FDWGatheringPhysicsRulesTest::RunTest(const FString&)
     TestTrue(TEXT("2.5 seconds after contact is dissolving"),DissolveAfterContact(2.5f,2.f,1.15f)>0.f);
     TestEqual(TEXT("Full dissolve completes after configured hold plus fade"),DissolveAfterContact(3.2f,2.f,1.15f),1.f);
     TestEqual(TEXT("Per-node progress stays health-owned"),DWGatheringPresentationMath::GatheredFraction(75.,100.),.25f);
+    // The maximum configured enemy loot table still has room for separate meshes on open ground.
+    for (int32 I = 0; I < 16; ++I)
+        for (int32 J = I + 1; J < 16; ++J)
+            TestTrue(TEXT("Distinct loot rows clear the 50 cm separation target"),
+                FVector::Dist2D(DWGatheringPresentationMath::ScatterOffset(I), DWGatheringPresentationMath::ScatterOffset(J)) >= 50.);
     return true;
 }
 

@@ -2,7 +2,7 @@
 #include "DWBuildingAuthoringLibrary.h"
 #include "DWBuildingAuthoringViewport.h"
 #include "DWResourcePlacementTool.h"
-#include "DWAttackVfxAuthoringAdapter.h"
+#include "DWCombatNumericDetails.h"
 #include "DWGameplayConfig.h"
 #include "DWBuildingDefinition.h"
 #include "Engine/StaticMesh.h"
@@ -154,7 +154,7 @@ public:
     virtual void StartupModule() override
     {
         RegisterDWResourcePlacementTool();
-        RegisterDWAttackVfxProfileAssetActions();
+        RegisterDWCombatNumericDetails();
         FGlobalTabmanager::Get()->RegisterNomadTabSpawner(TEXT("DWBuildingAuthoring"),FOnSpawnTab::CreateLambda([](const FSpawnTabArgs&)
         {
             TSharedRef<SDWBuildingAuthoringPanel> Panel=SNew(SDWBuildingAuthoringPanel);
@@ -164,14 +164,14 @@ public:
     }
     virtual void ShutdownModule() override
     {
-        UnregisterDWAttackVfxProfileAssetActions();
         UnregisterDWResourcePlacementTool();
+        UnregisterDWCombatNumericDetails();
         UToolMenus::UnRegisterStartupCallback(this);UToolMenus::UnregisterOwner(this);FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(TEXT("DWBuildingAuthoring"));
     }
 private:
     void RegisterMenus()
     {
-        FToolMenuOwnerScoped Owner(this);RegisterDWResourcePlacementMenu();RegisterDWAttackVfxProfileCatalogMenu();auto* Menu=UToolMenus::Get()->ExtendMenu(TEXT("LevelEditor.MainMenu.Tools"));
+        FToolMenuOwnerScoped Owner(this);RegisterDWResourcePlacementMenu();auto* Menu=UToolMenus::Get()->ExtendMenu(TEXT("LevelEditor.MainMenu.Tools"));
         Menu->FindOrAddSection(TEXT("DoughWorldTools")).AddMenuEntry(TEXT("DWBuildingAuthoring"),FText::FromString(TEXT("建筑制作工具")),FText::FromString(TEXT("导入模型、比较玩家尺寸、登记背包建筑与合成配方")),FSlateIcon(),FUIAction(FExecuteAction::CreateLambda([](){UDWBuildingAuthoringLibrary::OpenBuildingAuthoringTool();})));
     }
 };

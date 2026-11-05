@@ -89,8 +89,11 @@ bool FDWCoreRestoreRadiusTest::RunTest(const FString&)
     if(!TestNotNull(TEXT("Actual mold placeholder actor"),M)||!TestNotNull(TEXT("Actual yeast placeholder actor"),Y))return false;
     TestFalse(TEXT("Outside 150 cm, no capsule-radius expansion"),M->TryCollect(Player));
     TestEqual(TEXT("No inventory cost or gain on rejection"),Player->GetInventory()->CountItem(Mold.ItemId),0);
-    Player->SetActorLocation(FVector(150,0,500));M->Tick(.016f);
-    TestEqual(TEXT("At exact rule radius, automatic native Tick collects one"),Player->GetInventory()->CountItem(Mold.ItemId),1);
+    Player->SetActorLocation(FVector(150,0,500));
+    M->Tick(.016f);
+    TestEqual(TEXT("Walking into range does not collect"),Player->GetInventory()->CountItem(Mold.ItemId),0);
+    TestTrue(TEXT("The F interaction entry claims at the exact rule radius"),M->TryCollect(Player));
+    TestEqual(TEXT("One committed pickup"),Player->GetInventory()->CountItem(Mold.ItemId),1);
     TestEqual(TEXT("Other core is a distinct item"),Player->GetInventory()->CountItem(Yeast.ItemId),0);
     TestFalse(TEXT("No timed expiration"),Y->GetLifeSpan()>0.f);
     FDWCombatCoreDropSave S;TestTrue(TEXT("Claim snapshot retained after physical destruction"),F.Drops()->FindDrop(Mold.DeathId,S));

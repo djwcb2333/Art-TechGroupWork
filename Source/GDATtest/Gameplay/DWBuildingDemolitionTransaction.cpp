@@ -82,7 +82,9 @@ bool FDWBuildingDemolitionTransaction::Commit(ADWPlayerCharacter& Player,ADWGath
         Staged.Add(Drop);Drop->SetStaged(true);Drop->bRuntimeSpawned=true;
         Drop->PersistentId=FName(*FGuid::NewGuid().ToString(EGuidFormats::Digits));
         StagedIds.Add(Drop->PersistentId);StagedTransforms.Add(DropTransform);
-        Drop->ItemId=Return[Index].ItemId;Drop->Quantity=0;Drop->bPopOnSpawn=false;
+        Drop->ItemId=Return[Index].ItemId;Drop->Quantity=0;
+        Drop->bPopOnSpawn = true;
+        Drop->SetPopOrigin(Transform.GetLocation() + FVector(0., 0., 45.));
         Drop->SetActorHiddenInGame(true);Drop->SetActorEnableCollision(false);Drop->Prompt->bPromptEnabled=false;
         Drop->FinishSpawning(DropTransform);
         if(!SafePlayer.IsValid()||!SafeBuilding.IsValid()||!SafeBag.IsValid()||!SafeWorld.IsValid()||

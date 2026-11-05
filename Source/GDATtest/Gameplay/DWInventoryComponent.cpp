@@ -1,4 +1,5 @@
 #include "DWInventoryComponent.h"
+#include "DWSugarMaterialPolicy.h"
 #include "DWGameplayConfig.h"
 #include "DWBuildingDefinition.h"
 #include "DWGatheringProfile.h"
@@ -10,6 +11,7 @@ void FDWPreparedInventoryChange::Reset()
     Owner.Reset(); CandidateSlots.Reset(); ExpectedRevision=INDEX_NONE;
     RequiredUsableItem=NAME_None; bConsumed=true;
     RequiredCraftRecipe=RequiredBuildingOutput=RequiredPermanentWeaponOutput=NAME_None;
+    RequiredCraftCount=1;RequiredCraftYeast=false;
 }
 
 FDWPreparedInventoryChange::FDWPreparedInventoryChange(FDWPreparedInventoryChange&& Other) noexcept
@@ -25,6 +27,7 @@ FDWPreparedInventoryChange& FDWPreparedInventoryChange::operator=(FDWPreparedInv
         ExpectedRevision=Other.ExpectedRevision; RequiredUsableItem=Other.RequiredUsableItem; bConsumed=Other.bConsumed;
         RequiredCraftRecipe=Other.RequiredCraftRecipe;RequiredBuildingOutput=Other.RequiredBuildingOutput;
         RequiredPermanentWeaponOutput=Other.RequiredPermanentWeaponOutput;
+        RequiredCraftCount=Other.RequiredCraftCount;RequiredCraftYeast=Other.RequiredCraftYeast;
         Other.Reset(); // A moved-from token must never become an empty-inventory commit.
     }
     return *this;
@@ -77,6 +80,9 @@ int32 UDWInventoryComponent::CountItem(FName ItemId) const
         if (Stack.ItemId == ItemId) Total += Stack.Quantity;
     return static_cast<int32>(FMath::Min<int64>(Total, MAX_int32));
 }
+
+int32 UDWInventoryComponent::CountCraftingMaterial(FName Id) const
+{return DWSugarMaterial::Count(Slots,Id);}
 
 bool UDWInventoryComponent::AreSlotsValidWithPolicy(const TArray<FDWItemStack>& InSlots,
     const UDWGameplayConfig* Settings,const TMap<FName,int32>& Overrides) const
@@ -225,6 +231,7 @@ bool UDWInventoryComponent::ValidatePreparedForCommit(const FDWPreparedInventory
             !GetCraftPermanentWeaponOutput(Prepared.RequiredCraftRecipe,Permanent)||Permanent!=Prepared.RequiredPermanentWeaponOutput||
             (!Permanent.IsNone()&&!CanCraftPermanentWeapon(Permanent)))return false;
     }
+    if(!ValidateBatchCandidate(Prepared))return false;
     // The native context hook is a query, but recheck identity/revision after it as a final boundary.
     return CanWriteInventory()&&!Prepared.bConsumed&&Prepared.Owner.Get()==this&&Prepared.ExpectedRevision==Revision&&Revision<MAX_int64;
 }
@@ -321,7 +328,7 @@ bool UDWInventoryComponent::MakeCraftedSlots(FName RecipeId, bool bYeast, TArray
     OutSlots = Slots;
     // Inputs are removed first, so their emptied slots can hold outputs. The source never changes on failure.
     for (const FDWItemStack& Input : Recipe->Inputs)
-        if (!RemoveFromSlots(OutSlots, Input.ItemId, Input.Quantity)) return false;
+        if (!DWSugarMaterial::Remove(OutSlots, Input.ItemId, Input.Quantity)) return false;
     if(Building.IsNone())
     {
         for (const FDWItemStack& Output : Recipe->Outputs)

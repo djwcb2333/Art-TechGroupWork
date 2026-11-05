@@ -1939,6 +1939,18 @@
       "consume": 1,
       "return_item": "Bottle",
       "return_count": 1
+    },
+    "SugarChunk": {
+      "hydration": 0,
+      "satiety": 7,
+      "health": 14,
+      "consume": 1
+    },
+    "HardSugarChunk": {
+      "hydration": 0,
+      "satiety": 7,
+      "health": 14,
+      "consume": 1
     }
   },
   "runtime_water_source": {

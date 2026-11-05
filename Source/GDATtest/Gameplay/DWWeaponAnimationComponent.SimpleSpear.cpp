@@ -1,4 +1,6 @@
-﻿#include "DWWeaponAnimationComponent.h"
+#include "DWWeaponAnimationComponent.h"
+#include "DWPlayerCombatTuningSubsystem.h"
+#include "Engine/GameInstance.h"
 #include "DWSimpleSpearPolicy.h"
 #include "DWCombatAuthoritySubsystem.h"
 #include "DWCombatInventoryTransaction.h"
@@ -14,11 +16,21 @@
 #include "Engine/World.h"
 #include "DWWeaponVisualSampler.h"
 
+namespace DWSimpleSpearTuning
+{
+static bool Resolve(ADWPlayerCharacter* P,double RawDamage,const FDWGatheringToolDefinition& Tool,double& Damage,double& Interval,double& Range,double& Knockback,double& KnockbackSeconds)
+{
+ auto* GI=P?P->GetGameInstance():nullptr;auto* Tuning=GI?GI->GetSubsystem<UDWPlayerCombatTuningSubsystem>():nullptr;FString Error;
+ FDWSimpleSpearNumbers N;if(!Tuning||!Tuning->ResolveSimpleAttack(N,Error))return false;
+ Damage=N.Damage;Interval=N.IntervalSeconds;Range=N.RangeCm;Knockback=N.KnockbackCm;KnockbackSeconds=N.KnockbackSeconds;return true;
+}
+}
+
 struct FDWSimpleSpearSource
 {
  TWeakObjectPtr<UDWInventoryComponent> Inventory;TWeakObjectPtr<UDWGameplayConfig> Config;
  FDWInventorySlotSnapshot Slot;FDWGatheringToolDefinition Tool;
- DWSimpleSpearPolicy::FFacts Facts;FVector2D Fractions;float Damage=0.;
+ DWSimpleSpearPolicy::FFacts Facts;FVector2D Fractions;float Damage=0.,BaselineDamage=0.;double EffectiveInterval=0.,EffectiveRange=0.,EffectiveKnockback=0.,EffectiveKnockbackSeconds=0.;
  TWeakObjectPtr<UAnimSequenceBase> Sequence;float SourceLength=0.;
 };
 bool UDWWeaponAnimationComponent::HasSimpleSpearSelected()const
@@ -58,10 +70,12 @@ bool UDWWeaponAnimationComponent::PrepareSimpleSpearSource(FDWSpearTuning& Tunin
  const auto* Mesh=P->GetMesh()?P->GetMesh()->GetSkeletalMeshAsset():nullptr;
  const auto* Skeleton=Mesh?Mesh->GetSkeleton():nullptr;bool Compatible=Skeleton&&Sequence->GetSkeleton()==Skeleton;
  if(Skeleton&&!Compatible)for(const auto& Entry:Skeleton->GetCompatibleSkeletons())if(Entry.ToSoftObjectPath()==FSoftObjectPath(Sequence->GetSkeleton())){Compatible=true;break;}
- if(!Compatible||!DWSimpleSpearPolicy::Build(SimpleSpearDamage,Tool->UseIntervalSeconds,Tool->ReachCm,SpearTuning.FullArcDegrees,
-   *Fractions,UnarmedTuning.Attack.RootedDamageMultiplier,Tuning))return false;
+ double EffectiveDamage=0.,EffectiveInterval=0.,EffectiveRange=0.,EffectiveKnockback=0.,EffectiveKnockbackSeconds=0.;
+ if(!DWSimpleSpearTuning::Resolve(P,SimpleSpearDamage,*Tool,EffectiveDamage,EffectiveInterval,EffectiveRange,EffectiveKnockback,EffectiveKnockbackSeconds))return false;
+ if(!Compatible||!DWSimpleSpearPolicy::Build(EffectiveDamage,EffectiveInterval,EffectiveRange,SpearTuning.FullArcDegrees,
+   *Fractions,UnarmedTuning.Attack.RootedDamageMultiplier,Tuning,EffectiveKnockback,EffectiveKnockbackSeconds))return false;
  auto Source=MakeShared<FDWSimpleSpearSource>();Source->Inventory=Bag;Source->Config=Config;Source->Slot=Slot;Source->Tool=*Tool;
- Source->Damage=SimpleSpearDamage;Source->Fractions=*Fractions;Source->Sequence=Sequence;Source->SourceLength=SourceClip->DurationSeconds;
+ Source->BaselineDamage=SimpleSpearDamage;Source->Damage=static_cast<float>(EffectiveDamage);Source->EffectiveInterval=EffectiveInterval;Source->EffectiveRange=EffectiveRange;Source->EffectiveKnockback=EffectiveKnockback;Source->EffectiveKnockbackSeconds=EffectiveKnockbackSeconds;Source->Fractions=*Fractions;Source->Sequence=Sequence;Source->SourceLength=SourceClip->DurationSeconds;
  auto& F=Source->Facts;const auto Life=A->CaptureActorLife(P);
  F.ItemId=Slot.ItemId;F.Slot=Slot.SlotIndex;F.Quantity=Slot.Quantity;F.InventoryRevision=Slot.Revision;
  F.EquipmentRevision=CombatWeaponResources.Revision;F.Restore=CombatWeaponResources.RestoreEpoch;F.Epoch=A->GetWorldEpoch();
@@ -75,12 +89,14 @@ bool UDWWeaponAnimationComponent::IsSimpleSpearSourceCurrent(const TSharedPtr<FD
  auto* Bag=P?P->GetInventory():nullptr;auto* Config=P?P->GetGameplayConfig():nullptr;
  if(!Source||!IsValid(this)||IsBeingDestroyed()||!P||P->IsActorBeingDestroyed()||!P->GetWorld()||P->GetWorld()->bIsTearingDown||
     !A||!A->IsOperational()||!Bag||Bag!=Source->Inventory.Get()||Bag->GetOwner()!=P||Config!=Source->Config.Get()||
-    !Config||!Bag->IsSlotSnapshotCurrent(Source->Slot)||!HasCurrentEquipmentIdentity()||SimpleSpearDamage!=Source->Damage)return false;
+    !Config||!Bag->IsSlotSnapshotCurrent(Source->Slot)||!HasCurrentEquipmentIdentity()||SimpleSpearDamage!=Source->BaselineDamage)return false;
  const auto* Tool=Config->Tools.Find(DWSimpleSpearPolicy::Item());const auto* Fractions=AttackSourcePhaseEnds.Find(EDWAnimatedWeapon::Spear);
  if(!Tool||Tool->ToolType!=Source->Tool.ToolType||Tool->Sharpness!=Source->Tool.Sharpness||
     Tool->UseIntervalSeconds!=Source->Tool.UseIntervalSeconds||Tool->ReachCm!=Source->Tool.ReachCm||
     Tool->GatheringSpeedMultiplier!=Source->Tool.GatheringSpeedMultiplier||!Fractions||*Fractions!=Source->Fractions||
     !Source->Sequence.IsValid()||Source->Sequence.Get()!=SpearSourceSequence.Get())return false;
+ double EffectiveDamage=0.,EffectiveInterval=0.,EffectiveRange=0.,EffectiveKnockback=0.,EffectiveKnockbackSeconds=0.;
+ if(!DWSimpleSpearTuning::Resolve(P,SimpleSpearDamage,*Tool,EffectiveDamage,EffectiveInterval,EffectiveRange,EffectiveKnockback,EffectiveKnockbackSeconds)||static_cast<float>(EffectiveDamage)!=Source->Damage||EffectiveInterval!=Source->EffectiveInterval||EffectiveRange!=Source->EffectiveRange||EffectiveKnockback!=Source->EffectiveKnockback||EffectiveKnockbackSeconds!=Source->EffectiveKnockbackSeconds)return false;
  FDWInventorySlotSnapshot ActualSlot;if(!Bag->CaptureSlotSnapshot(Source->Slot.SlotIndex,ActualSlot))return false;
  auto Current=Source->Facts;const auto Life=A->CaptureActorLife(P);
  Current.ItemId=ActualSlot.ItemId;Current.Slot=ActualSlot.SlotIndex;Current.Quantity=ActualSlot.Quantity;Current.InventoryRevision=ActualSlot.Revision;

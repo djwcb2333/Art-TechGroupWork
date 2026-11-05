@@ -1,12 +1,15 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "DWWorldPickup.h"
 #include "DWCombatRecoveryActors.generated.h"
 class ADWPlayerCharacter;
 class UStaticMeshComponent;
 class USceneComponent;
 class UDWCombatRecoverySubsystem;
 class FDWCombatRecoveryTransaction;
+class UDWPickupPresentationComponent;
+class UDWInteractionPromptComponent;
 /** Explicit capsule-centre destination. No default Map1 destination is invented. */
 UCLASS(NotBlueprintable)
 class GDATTEST_API ADWCombatSafePoint : public AActor
@@ -22,24 +25,31 @@ private:
     friend class FDWCombatWorldObjectsPersistence;
     UPROPERTY(VisibleAnywhere) TObjectPtr<USceneComponent> Destination;
 };
-/** Native placeholder; capsule contact offers one capacity-limited atomic claim. */
+/** A recoverable world pickup with a capacity-limited atomic claim. */
 UCLASS(NotBlueprintable,NotPlaceable)
-class GDATTEST_API ADWCombatDeathBag : public AActor
+class GDATTEST_API ADWCombatDeathBag : public AActor, public IDWWorldPickup
 {
     GENERATED_BODY()
 public:
     ADWCombatDeathBag();
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
-    virtual void Tick(float DeltaTime) override;
-    bool TryCollect(ADWPlayerCharacter*);
-    FGuid GetBagId()const{return BagId;}
-    bool Touches(const ADWPlayerCharacter&)const;
+    FGuid GetBagId() const { return BagId; }
+    UStaticMeshComponent* GetPickupMesh() const override { return Placeholder; }
+    FName GetPickupItemId() const override { return NAME_None; }
+    bool IsPickupAvailable() const override;
+    bool IsPickupInReach(const AActor* User) const override;
+    bool TryCollect(ADWPlayerCharacter*) override;
+    void HandlePickupPresentationFinished() override;
 private:
     friend class FDWCombatWorldObjectsPersistence;
     friend class UDWCombatRecoverySubsystem;
     friend class FDWCombatRecoveryTransaction;
+    void PresentCommittedPickup();
+    UPROPERTY(VisibleAnywhere) TObjectPtr<USceneComponent> PickupRoot;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UStaticMeshComponent> Placeholder;
+    UPROPERTY(VisibleAnywhere) TObjectPtr<UDWInteractionPromptComponent> Prompt;
+    UPROPERTY(VisibleAnywhere) TObjectPtr<UDWPickupPresentationComponent> PickupPresentation;
     FGuid BagId;
-    bool bBound=false;
-    int64 LastAttemptInventoryRevision=INDEX_NONE;
+    bool bBound = false;
+    bool bPickupVisualPending = false;
 };

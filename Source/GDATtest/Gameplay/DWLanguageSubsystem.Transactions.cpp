@@ -1,4 +1,5 @@
 #include "DWLanguageSubsystem.h"
+#include "DWCombatPlayerStateTransaction.h"
 #include "DWRetiredItemPolicy.h"
 #include "DWLanguageModel.h"
 #include "DWLanguageCarrier.h"
@@ -399,15 +400,17 @@ bool ADWPlayerCharacter::HandleTrialConsumable(const FDWInventorySlotSnapshot& S
     const auto Config=L?L->GetTrialConfig():nullptr;const TSharedPtr<FJsonObject>* Consumables=nullptr;const TSharedPtr<FJsonObject>* Definition=nullptr;
     if(!A01||!A01->IsEnabled()||!Config||!Config->TryGetObjectField(TEXT("runtime_consumables"),Consumables)||!Consumables||!(*Consumables)->TryGetObjectField(Slot.ItemId.ToString(),Definition))return false;
     Handled=true;if(!Definition||!(*Definition)||!Inventory||IsDead()||bRestoringSave||bGameplayActionInProgress||!Inventory->IsSlotSnapshotCurrent(Slot))return false;
-    double Water=0.,Satiety=0.,Consume=0.,ReturnCount=0.;FString Returned;
+    double Water=0.,Satiety=0.,Consume=0.,ReturnCount=0.,Healing=0.;FString Returned;
     if(!(*Definition)->TryGetNumberField(TEXT("hydration"),Water)||!(*Definition)->TryGetNumberField(TEXT("satiety"),Satiety)||!(*Definition)->TryGetNumberField(TEXT("consume"),Consume)||
         !FMath::IsFinite(Water)||Water<0.||!FMath::IsFinite(Satiety)||Satiety<0.||!FMath::IsFinite(Consume)||Consume<1||Consume>Slot.Quantity||FMath::FloorToDouble(Consume)!=Consume)return false;
+    if((*Definition)->HasField(TEXT("health"))&&(!(*Definition)->TryGetNumberField(TEXT("health"),Healing)||!FMath::IsFinite(Healing)||Healing<0.))return false;
     if((*Definition)->HasField(TEXT("return_item")))
     {if(!(*Definition)->TryGetStringField(TEXT("return_item"),Returned)||Returned.IsEmpty()||!(*Definition)->TryGetNumberField(TEXT("return_count"),ReturnCount)||!FMath::IsFinite(ReturnCount)||ReturnCount<1||ReturnCount>MAX_int32||FMath::FloorToDouble(ReturnCount)!=ReturnCount)return false;}
     FDWPreparedInventoryChange Bag;FDWCharacterA01Runtime Refill;
     const uint64 Revision=A01->GetResourceRevision();const double ExpectedHealth=GetHealth();
     if(!FDWLanguageInventoryTransaction::PrepareConsume(*Inventory,Slot,static_cast<int32>(Consume),FName(*Returned),static_cast<int32>(ReturnCount),Bag)||!A01->PrepareSurvivalRefill(Water,Satiety,Refill))return false;
     TStrongObjectPtr<ADWPlayerCharacter> Keep(this);TGuardValue<bool> Guard(bGameplayActionInProgress,true);
+    if(Healing>0.)return FDWCombatPlayerStateTransaction::UseA01Consumable(*this,MoveTemp(Bag),MoveTemp(Refill),Revision,ExpectedHealth,Healing,Slot.ItemId);
     auto* Authority=UDWCombatAuthoritySubsystem::Get(this);const uint64 Epoch=Authority?Authority->GetWorldEpoch():0;const auto Life=Authority?Authority->FindRegisteredActorLife(this):DWCombatCommit::FEntityLife{};
     if(!Authority||!Life.Entity||!Life.Life||!FDWLanguageInventoryTransaction::CommitWater(*Inventory,MoveTemp(Bag),*A01,MoveTemp(Refill),Revision,ExpectedHealth))return false;
     const TWeakObjectPtr<UDWInventoryComponent> OriginalInventory(Inventory.Get());Inventory->OnChanged.Broadcast();

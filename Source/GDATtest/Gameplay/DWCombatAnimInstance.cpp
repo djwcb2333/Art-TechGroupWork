@@ -1,4 +1,16 @@
-#include "DWCombatAnimInstance.h"
+﻿#include "DWCombatAnimInstance.h"
+#include "DWWeaponAnimationComponent.h"
+#include "DWGatheringComponent.h"
+#include "DWCombatAuthoritySubsystem.h"
+#include "Engine/World.h"
+#include "Animation/AnimNotifyQueue.h"
+#include "Animation/AnimationAsset.h"
+#include "Animation/AnimationInstanceScope.h"
+#include "Animation/AnimNotifies/AnimNotify_PlayParticleEffect.h"
+#include "Animation/AnimNotifies/AnimNotify_PlaySound.h"
+#include "Animation/AnimNotifies/AnimNotifyState_TimedParticleEffect.h"
+#include "AnimNotify_PlayNiagaraEffect.h"
+#include "AnimNotifyState_TimedNiagaraEffect.h"
 #include "DWPlayerCharacter.h"
 #include "DWEnemyCharacter.h"
 #include "DWGameplayConfig.h"
@@ -40,6 +52,7 @@ void UDWCombatAnimInstance::NativeInitializeAnimation()
 {
     Super::NativeInitializeAnimation();
     ResetInputs();
+    ResetNativeFxClock();
 }
 
 FName UDWCombatAnimInstance::GetCombatGraphStateName() const
@@ -167,3 +180,85 @@ void UDWCombatAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     else { ResetInputs(); return; }
     bUsingFallbackSequence=CompatibleSequence(RequestedSequence)==nullptr;
 }
+
+// Candidate method definitions appended to the existing DWCombatAnimInstance.cpp.
+namespace DWNativeAnimationFx
+{
+ bool ExactFx(const FAnimNotifyEvent& E)
+ {
+  const UClass* N=E.Notify?E.Notify->GetClass():nullptr;const UClass* S=E.NotifyStateClass?E.NotifyStateClass->GetClass():nullptr;
+  return N==UAnimNotify_PlayNiagaraEffect::StaticClass()||N==UAnimNotify_PlayParticleEffect::StaticClass()
+   ||S==UAnimNotifyState_TimedNiagaraEffect::StaticClass()||S==UAnimNotifyState_TimedParticleEffect::StaticClass();
+ }
+}
+
+void UDWCombatAnimInstance::ResetNativeFxClock()
+{
+ NativeFxSequence.Reset();NativeFxRole=NAME_None;NativeFxSerial=INDEX_NONE;NativeFxPrevious=0.f;NativeFxEpoch=0;NativeFxGeneration=0;NativeFxClockValid=false;NativeFxSeedCurrent=false;
+}
+
+void UDWCombatAnimInstance::NativeUninitializeAnimation()
+{
+ ResetNativeFxClock();Super::NativeUninitializeAnimation(); // Engine UninitializeAnimation owns NotifyState End.
+}
+
+void UDWCombatAnimInstance::NativeFinalizeAnimation(bool bWasEvaluated)
+{
+ Super::NativeFinalizeAnimation(bWasEvaluated);
+ // UE5.8 SkeletalMeshComponent calls Finalize before ConditionallyDispatchQueuedAnimEvents,
+ // after PostUpdate has appended the proxy queue. No pose advance or RootMotion mode changes.
+ if(!IsInGameThread()||!GetWorld()||!GetWorld()->IsGameWorld())return;
+ APawn* Pawn=TryGetPawnOwner();auto* Authority=UDWCombatAuthoritySubsystem::Get(Pawn);
+ if(!Pawn||!Authority){NativeFxClockValid=false;return;}
+ const uint64 Epoch=Authority->GetWorldEpoch();
+ UAnimSequenceBase* Sequence=nullptr;FName Role=NAME_None;int32 Serial=INDEX_NONE;float Current=0.f;
+ if(const auto* P=Cast<ADWPlayerCharacter>(Pawn))
+ {
+  if(P->IsCombatRestoreInProgress()){NativeFxSeedCurrent=true;NativeFxClockValid=false;return;}
+  const auto* Weapon=P->WeaponAnimationComponent.Get();
+  if(!P->IsDead()&&AnimationState==EDWCombatAnimationState::Melee&&Weapon&&Weapon->IsEnabled()&&Weapon->HasWeaponPresentation()
+   &&(!P->GatheringComponent||!P->GatheringComponent->IsGatheringSwingActive())&&P->GetCurrentMeleeAnimation()==MeleeSequence.Get())
+  {Sequence=MeleeSequence;Current=MeleePositionSeconds;Role=Weapon->GetPresentationClip().Role;Serial=Weapon->ActionSerial;}
+ }
+ else if(const auto* E=Cast<ADWEnemyCharacter>(Pawn))
+ {
+  if(E->IsAlive()&&AnimationState==EDWCombatAnimationState::Attack&&E->GetCurrentAttackAnimation()==AttackSequence.Get())
+  {Sequence=AttackSequence;Current=AttackPositionSeconds;Role=TEXT("Attack");Serial=E->AttackSerial;}
+ }
+ const bool Restored=NativeFxEpoch!=0&&NativeFxEpoch!=Epoch;NativeFxEpoch=Epoch;
+ if(!Sequence||!FMath::IsFinite(Current)){NativeFxClockValid=false;NativeFxSeedCurrent=false;return;}
+ Current=FMath::Clamp(Current,0.f,Sequence->GetPlayLength());
+ const bool NewAction=!NativeFxClockValid||NativeFxSequence.Get()!=Sequence||NativeFxRole!=Role||NativeFxSerial!=Serial;
+ const bool Rewind=NativeFxClockValid&&!NewAction&&Current<NativeFxPrevious;
+ float Previous=NewAction?-KINDA_SMALL_NUMBER:NativeFxPrevious;
+ if(Restored||NativeFxSeedCurrent||Rewind)Previous=Current; // States at the current point, never replay passed one-shots.
+ if(NewAction||Restored||Rewind){if(++NativeFxGeneration==0)++NativeFxGeneration;}
+ NativeFxSequence=Sequence;NativeFxRole=Role;NativeFxSerial=Serial;NativeFxPrevious=Current;NativeFxClockValid=true;NativeFxSeedCurrent=false;
+ FAnimTickRecord Tick;Tick.SourceAsset=Sequence;Tick.TimeAccumulator=&Current;Tick.EffectiveBlendWeight=1.f;
+ FAnimNotifyContext Context(Tick);
+ // Unlike GetAnimNotifies(delta), the direct positions API preserves the small negative first boundary for time0.
+ // Equal positions yield active states only, allowing Ready/frozen poses without replaying one-shots.
+ Sequence->GetAnimNotifiesFromDeltaPositions(Previous,Current,Context);
+ TArray<FAnimNotifyEventReference> Fx;
+ for(auto& Ref:Context.ActiveNotifies)
+ {
+  const auto* Event=Ref.GetNotify();if(!Event||!DWNativeAnimationFx::ExactFx(*Event))continue;
+  // Do not double-submit if a user later enables the node's own native notify extraction.
+  if(NotifyQueue.AnimNotifies.ContainsByPredicate([&](const FAnimNotifyEventReference& Existing){return Existing.GetNotify()==Event&&Existing.GetSourceObject()==Sequence;}))continue;
+  Ref.AddContextData<UE::Anim::FAnimNotifyAssetPlayerInstanceContext>(NativeFxGeneration);Fx.Add(Ref);
+ }
+ NotifyQueue.AddAnimNotifies(Fx,1.f); // Engine dispatch owns Notify/Begin/Tick/End and component retirement.
+}
+
+#if WITH_DEV_AUTOMATION_TESTS && WITH_EDITOR
+#include "Misc/AutomationTest.h"
+#include "Animation/AnimSequence.h"
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDWNativeFxClassFilterTest,"DoughWorld.Animation.NativeFX.ExactClassFilter",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FDWNativeFxClassFilterTest::RunTest(const FString&)
+{
+ FAnimNotifyEvent One;One.Notify=NewObject<UAnimNotify_PlayNiagaraEffect>();TestTrue(TEXT("Exact native Niagara one-shot admitted"),DWNativeAnimationFx::ExactFx(One));
+ FAnimNotifyEvent State;State.NotifyStateClass=NewObject<UAnimNotifyState_TimedNiagaraEffect>();TestTrue(TEXT("Exact native timed Niagara admitted"),DWNativeAnimationFx::ExactFx(State));
+ FAnimNotifyEvent Generic;Generic.Notify=NewObject<UAnimNotify_PlaySound>();TestFalse(TEXT("Generic/custom gameplay notify not admitted"),DWNativeAnimationFx::ExactFx(Generic));
+ FAnimNotifyEvent Named;Named.NotifyName=TEXT("Damage");TestFalse(TEXT("Named damage event not admitted"),DWNativeAnimationFx::ExactFx(Named));return true;
+}
+#endif

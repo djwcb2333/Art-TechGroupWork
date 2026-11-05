@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
@@ -15,6 +15,8 @@ class GDATTEST_API UDWCombatAnimInstance : public UAnimInstance
     GENERATED_BODY()
 public:
     virtual void NativeInitializeAnimation() override;
+    virtual void NativeFinalizeAnimation(bool bWasEvaluated) override;
+    virtual void NativeUninitializeAnimation() override;
     virtual void NativeUpdateAnimation(float DeltaSeconds) override;
     /** Read the actually evaluated state machine, rather than merely the requested gameplay state. */
     UFUNCTION(BlueprintPure, Category="DoughWorld|Combat Animation|Diagnostics")
@@ -56,4 +58,12 @@ private:
     UAnimSequenceBase* CompatibleSequence(UAnimationAsset* Candidate) const;
     UAnimSequenceBase* ResolveSequence(UAnimationAsset* Candidate, UAnimSequenceBase* Fallback) const;
     void ResetInputs();
+    void ResetNativeFxClock();
+    TWeakObjectPtr<UAnimSequenceBase> NativeFxSequence;
+    FName NativeFxRole;
+    int32 NativeFxSerial=INDEX_NONE;
+    float NativeFxPrevious=0.f;
+    uint64 NativeFxEpoch=0;
+    uint32 NativeFxGeneration=0;
+    bool NativeFxClockValid=false,NativeFxSeedCurrent=false;
 };

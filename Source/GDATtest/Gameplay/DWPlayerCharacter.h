@@ -298,6 +298,8 @@ public:
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Animation|Core Injection") TObjectPtr<UAnimationAsset> CoreInjectionAnimation;
     UAnimationAsset* GetCoreInjectionAnimationForPlayback() const;
     UFUNCTION(BlueprintCallable,Category="DoughWorld") bool CraftRecipe(FName RecipeId);
+    UFUNCTION(BlueprintPure,Category="DoughWorld") bool CanCraftRecipeBatch(FName RecipeId,int32 Count) const;
+    UFUNCTION(BlueprintCallable,Category="DoughWorld") bool CraftRecipeBatch(FName RecipeId,int32 Count);
     UFUNCTION(BlueprintPure,Category="DoughWorld|Recovery") bool CanCombatRespawn()const;
     UFUNCTION(BlueprintCallable,Category="DoughWorld|Recovery") bool RequestCombatRespawn();
     UFUNCTION(BlueprintCallable,Category="DoughWorld") void RequestSave();

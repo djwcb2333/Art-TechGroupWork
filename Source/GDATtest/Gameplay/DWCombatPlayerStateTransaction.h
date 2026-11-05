@@ -8,6 +8,8 @@ class UDWWeaponAnimationComponent;
 class UDWCombatAuthoritySubsystem;
 class UDWSaveGame;
 class FDWCombatRules;
+class FDWCharacterA01Runtime;
+class FDWPreparedInventoryChange;
 
 struct FDWCombatPlayerStateNotice
 {
@@ -31,5 +33,7 @@ class FDWCombatPlayerStateTransaction final
     static bool Restore(ADWPlayerCharacter& Player,const UDWSaveGame& Save,const FDWCombatRules& Rules,
         FDWCombatPlayerStateNotice& OutNotice,FString& Error);
     static bool UseLegacyHealingItem(ADWPlayerCharacter& Player,int32 SlotIndex);
+    static bool UseA01Consumable(ADWPlayerCharacter&,FDWPreparedInventoryChange&&,FDWCharacterA01Runtime&&,
+        uint64 ExpectedRevision,double ExpectedHealth,double HealthAmount,FName UsedItem);
     static void Publish(const FDWCombatPlayerStateNotice& Notice);
 };

@@ -97,7 +97,7 @@ bool Reveal(FDWMapExplorationLayer& L,FVector2D World,double R,FIntRect& Dirty)
 }
 }
 
-bool UDWMapExplorationResource::Sync(const FDWMapExplorationLayer& L,UTexture2D* Base,const FIntRect& Dirty)
+bool UDWMapExplorationResource::Sync(const FDWMapExplorationLayer& L,UTexture2D* Base,const FIntRect& Dirty,const TArray<uint8>& Water,uint64 WaterRevision,FLinearColor WaterColor)
 {
     TRACE_CPUPROFILER_EVENT_SCOPE(DWMapExplorationDirtyUpdate);
     if(!IsInGameThread()||L.Schema!=1||L.GridSize<32||L.GridSize>DWMapExploration::MaxGrid||L.Bits.Num()!=L.GridSize*L.GridSize/8)return false;
@@ -123,8 +123,37 @@ bool UDWMapExplorationResource::Sync(const FDWMapExplorationLayer& L,UTexture2D*
         // Buffers outlive queued rendering even when this World closes.
         Mask->UpdateTextureRegions(0,1,Region,W*4,4,Bytes,[](uint8* B,const FUpdateTextureRegion2D* P){delete[] B;delete P;});
     }
+    const int32 WaterN=FMath::RoundToInt(FMath::Sqrt(double(Water.Num())));
+    const bool ValidWater=WaterN>=256&&WaterN<=1024&&Water.Num()==WaterN*WaterN;
+    if(ChangedFrame){PondRevision=PendingPondRevision=MAX_uint64;PondUploadCoverage.Reset();PondUploadRow=0;}
+    if(ValidWater&&PondRevision!=WaterRevision)
+    {
+        if(PendingPondRevision!=WaterRevision||PondUploadCoverage.Num()!=Water.Num())
+        {PendingPondRevision=WaterRevision;PondUploadCoverage=Water;PondUploadRow=0;}
+        if(!PendingPondMask||PendingPondMask->GetSizeX()!=WaterN)
+        {
+            PendingPondMask=UTexture2D::CreateTransient(WaterN,WaterN,PF_B8G8R8A8);if(!PendingPondMask)return false;
+            PendingPondMask->SRGB=false;PendingPondMask->NeverStream=true;PendingPondMask->Filter=TF_Bilinear;
+            PendingPondMask->AddressX=PendingPondMask->AddressY=TA_Clamp;PendingPondMask->UpdateResource();
+        }
+        if(PendingPondMask->GetResource())
+        {
+            const int32 Rows=FMath::Min(64,WaterN-PondUploadRow); // <=256 KiB per normal update.
+            uint8* Bytes=new uint8[WaterN*Rows*4];
+            for(int32 Y=0;Y<Rows;++Y)for(int32 X=0;X<WaterN;++X)
+            {const uint8 V=PondUploadCoverage[(Y+PondUploadRow)*WaterN+X];const int32 K=(Y*WaterN+X)*4;Bytes[K]=Bytes[K+1]=Bytes[K+2]=V;Bytes[K+3]=255;}
+            auto* Region=new FUpdateTextureRegion2D(0,PondUploadRow,0,0,WaterN,Rows);
+            PendingPondMask->UpdateTextureRegions(0,1,Region,WaterN*4,4,Bytes,[](uint8* B,const FUpdateTextureRegion2D* R){delete[] B;delete R;});
+            PondUploadRow+=Rows;
+            if(PondUploadRow==WaterN)
+            {Swap(PondMask,PendingPondMask);PondRevision=WaterRevision;PondUploadCoverage.Reset();}
+        }
+    }
     if(Material)
     {
+        if(ValidWater&&PondMask)Material->SetTextureParameterValue(TEXT("WaterMask"),PondMask);
+        if(!ValidWater||!PondMask||PondRevision==MAX_uint64)WaterColor.A=0.f;
+        Material->SetVectorParameterValue(TEXT("WaterColor"),WaterColor);
         if(BoundMask.Get()!=Mask.Get()){BoundMask=Mask;Material->SetTextureParameterValue(TEXT("ExploreMask"),Mask);}
         if(IsValid(Base)&&BoundImage!=Base){BoundImage=Base;Material->SetTextureParameterValue(TEXT("BaseImage"),Base);}
     }

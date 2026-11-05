@@ -18,7 +18,7 @@ bool FDWCombatCorePickupTransaction::Commit(ADWCombatCorePickup& P,ADWPlayerChar
     auto* Inventory=Player.GetInventory();
     if(!Drops||!Authority||!Inventory||!Inventory->CanWriteInventory()||Inventory->GetOwner()!=&Player||
         Player.GetWorld()!=P.GetWorld()||!Player.IsCombatActionAllowed()||P.IsActorBeingDestroyed()||!P.HasActorBegunPlay()||
-        !Drops->IsPhysicalCurrent(P)||FVector::DistSquared(Player.GetActorLocation(),P.GetActorLocation())>FMath::Square(P.PickupRadiusCm))return false;
+        !Drops->IsPhysicalCurrent(P)||!P.IsPickupInReach(&Player))return false;
     FDWPreparedInventoryChange Plan;
     if(!Inventory->PrepareAddItem(P.ItemId,P.Count,Plan))
     {
@@ -62,7 +62,7 @@ void FDWCombatCorePickupTransaction::Publish(const FDWCombatCorePickupNotice& No
     // A committed claim never reappears merely because a listener restored/destroyed the collector.
     auto* Pickup=Notice.Pickup.Get();
     if(IsValid(Pickup)&&!Pickup->IsActorBeingDestroyed()&&Pickup->GetWorld()&&!Pickup->GetWorld()->bIsTearingDown&&
-        Pickup->PickupId==Notice.PickupId&&Pickup->bClaimed)Pickup->Destroy();
+        Pickup->PickupId==Notice.PickupId&&Pickup->bClaimed)Pickup->PresentCommittedPickup();
     // Reacquire after inventory listeners and destruction. A restore cannot emit an old-life toast.
     Player=Notice.Player.Get();Inventory=Notice.Inventory.Get();Authority=UDWCombatAuthoritySubsystem::Get(Player);
     if(!Authority||!IsValid(Player)||Player->IsActorBeingDestroyed()||!Inventory||

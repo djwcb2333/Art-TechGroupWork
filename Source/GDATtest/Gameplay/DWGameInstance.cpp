@@ -1,4 +1,5 @@
 #include "DWGameInstance.h"
+#include "DWPlayerCombatTuningSubsystem.h"
 #include "DWRetiredSaveProjection.h"
 #include "DWFormalLanguagePersistence.h"
 #include "DWLanguageSubsystem.h"
@@ -35,8 +36,8 @@
 void UDWGameInstance::Init()
 {
  bCombatSaveAlive=true;Super::Init();GetSubsystem<UDWLoadingTransitionSubsystem>()->OnFailed.AddDynamic(this,&UDWGameInstance::HandleTravelFailure);
- if(!FDWCombatRules::LoadProjectPayload(CombatRules,CombatRulesError))
- {UE_LOG(LogTemp,Error,TEXT("DW_COMBAT_RULES_INVALID: %s"),*CombatRulesError);}
+ if(!GetSubsystem<UDWPlayerCombatTuningSubsystem>()->ResolveCombatRules(CombatRules,CombatRulesError))
+ {CombatRules.Reset();UE_LOG(LogTemp,Error,TEXT("DW_COMBAT_RULES_INVALID: %s"),*CombatRulesError);}
  else
  {UE_LOG(LogTemp,Display,TEXT("DW_COMBAT_RULES_NUMERIC_READY: %d base, %d derived, %d equipment bindings pending; %s"),CombatRules->GetBaseParameterCount(),CombatRules->GetDerivedParameterCount(),CombatRules->GetUnboundEquipmentCount(),*CombatRules->GetDesignVersion());}
 #if WITH_DEV_AUTOMATION_TESTS
@@ -285,8 +286,12 @@ bool UDWGameInstance::NewGame(int32 SlotIndex, const FString& Name)
     Save->Timestamp = FDateTime::UtcNow();
     Save->MapPackage = GetConfig()->GameplayMap;
     FString CombatError;
+    if(!CombatRules)return Fail(FText::Format(DWText(this,
+        TEXT("战斗数值尚未通过校验，无法新建存档。请修正战斗配置后重新开始：{0}"),
+        TEXT("Combat settings are not valid, so a new save cannot be created. Correct the combat settings and start again: {0}")),
+        FText::FromString(CombatRulesError.IsEmpty()?TEXT("战斗配置未初始化 / Combat configuration is not initialized"):CombatRulesError)));
     if(!ConfigureOpeningNewGame(*Save,CombatError))return Fail(FText::FromString(CombatError));
-    if(!CombatRules||!DWCombatPlayerSave::MakeNewFullSurvival(*CombatRules,*Save,CombatError))return Fail(FText::FromString(CombatError));
+    if(!DWCombatPlayerSave::MakeNewFullSurvival(*CombatRules,*Save,CombatError))return Fail(FText::FromString(CombatError));
     Save->bHasPlayerTransform = false;
     if(!FDWCombatWorldPersistence::PrepareNewAdventureMarker(*CombatRules,*Save,CombatError)||
         !FDWFormalLanguagePersistence::InitializeNew(*this,*Save,SlotIndex,CombatError))return Fail(FText::FromString(CombatError));

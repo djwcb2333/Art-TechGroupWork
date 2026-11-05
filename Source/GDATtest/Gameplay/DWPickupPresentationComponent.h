@@ -6,7 +6,7 @@ class UStaticMesh;
 class UStaticMeshComponent;
 class UMaterialInterface;
 class UMaterialInstanceDynamic;
-/** Cosmetic feedback only. GatheringPickup owns the inventory transaction and quantity. */
+/** Shared cosmetic feedback. Pickup owners retain their inventory and persistence transactions. */
 UCLASS(ClassGroup=(DoughWorld),BlueprintType,meta=(BlueprintSpawnableComponent))
 class GDATTEST_API UDWPickupPresentationComponent : public UActorComponent
 {
@@ -39,6 +39,10 @@ public:
     bool PlayCommittedPickupEffect();
     /** Drop a stale outline after a committed catalog mesh change; never changes gameplay facts. */
     void OnCatalogVisualChanged();
+    /** Visual arc only. The owner is already at its validated landing position. */
+    void StartScatter(const FVector& Origin);
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Pickup Presentation|Idle", meta=(ClampMin="0"))
+    float IdleSpinDegreesPerSecond = 35.f;
     bool IsCollectionActive()const{return bCollectionActive;}
     UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="Pickup Presentation|Debug") bool bCollectionActive=false;
     UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Transient,Category="Pickup Presentation|Debug") int32 CollectionPlayCount=0;
@@ -60,6 +64,10 @@ private:
     UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> FlashMID;
     UPROPERTY(Transient) TWeakObjectPtr<UStaticMeshComponent> SourceMesh;
     FTransform CollectionStart=FTransform::Identity;
+    FVector ScatterOrigin = FVector::ZeroVector;
+    FVector ScatterRestLocation = FVector::ZeroVector;
+    float ScatterElapsed = 0.f;
+    bool bScattering = false;
     FVector AnchorLocal=FVector::ZeroVector;
     FName CollectionItemId=NAME_None;
     bool bSourceHiddenBorrowed=false,bOriginalSourceHidden=false;

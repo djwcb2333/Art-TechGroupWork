@@ -1,7 +1,9 @@
-﻿#include "DWGatheringComponent.h"
+#include "DWGatheringComponent.h"
 #include "DWLanguageCarrier.h"
 #include "DWLanguageSubsystem.h"
 #include "DWGatheringWorld.h"
+#include "DWCombatCorePickup.h"
+#include "DWCombatRecoveryActors.h"
 #include "DWGatheringPond.h"
 #include "DWGatheringProfile.h"
 #include "DWLootVisualCatalog.h"
@@ -99,7 +101,7 @@ void UDWGatheringComponent::RestoreActiveTool(FName Id)
     ActiveTool=Profile()&&Player()->GetInventory()&&Profile()->Tools.Contains(Id)&&Player()->GetInventory()->CountItem(Id)>0?Id:NAME_None;
     bWasHeld=false;LastTarget.Reset();NextToolTime=0.;bToolCarrySelected=true;
 }
-AActor* UDWGatheringComponent::FindTarget() const
+AActor* UDWGatheringComponent::FindTarget(bool bIncludeCombatPickups) const
 {
     auto* User=Player();if(!User||!GetWorld())return nullptr;
     AActor* Best=nullptr;double Distance=TNumericLimits<double>::Max();
@@ -109,6 +111,17 @@ AActor* UDWGatheringComponent::FindTarget() const
         if((!It->IsInteractionAvailable()&&!IsDemolitionTarget(Cast<ADWGatheringStation>(*It)))||!It->IsWithinReach(User))continue;
         const double D=FVector::DistSquared2D(It->GetActorLocation(),User->GetActorLocation());
         if(D<Distance){Best=*It;Distance=D;}
+    }
+    if (bIncludeCombatPickups)
+    {
+        const auto ConsiderPickup = [&](AActor* Actor, const IDWWorldPickup& Pickup)
+        {
+            if (!Pickup.IsPickupAvailable() || !Pickup.IsPickupInReach(User)) return;
+            const double D = FVector::DistSquared2D(Actor->GetActorLocation(), User->GetActorLocation());
+            if (D < Distance) { Best = Actor; Distance = D; }
+        };
+        for (TActorIterator<ADWCombatCorePickup> It(GetWorld()); It; ++It) ConsiderPickup(*It, **It);
+        for (TActorIterator<ADWCombatDeathBag> It(GetWorld()); It; ++It) ConsiderPickup(*It, **It);
     }
     for(TActorIterator<ADWGatheringPond> It(GetWorld());It;++It)
     {
@@ -139,7 +152,9 @@ bool UDWGatheringComponent::HandleInteraction(float Dt,bool Held)
         return true;
     }
     if(SwingClock.bActive){bWasHeld=Held;return true;}
-    AActor* Target=FindTarget();const bool Pressed=Held&&!bWasHeld;bWasHeld=Held;
+    const bool Pressed = Held && !bWasHeld;
+    AActor* Target = FindTarget(Pressed);
+    bWasHeld = Held;
     if(!Target)return false; // Unified recipes do not disable authored legacy resource nodes in existing maps.
     if(LastTarget.Get()!=Target){LastTarget=Target;NextFailureNotice=0.;}
     if(Held&&Pressed)if(auto* Station=Cast<ADWGatheringStation>(Target);IsDemolitionTarget(Station))
@@ -159,7 +174,7 @@ bool UDWGatheringComponent::HandleInteraction(float Dt,bool Held)
 bool UDWGatheringComponent::InteractWith(AActor* Target,bool Pressed)
 {
     auto* User=Player();if(!CanAct()||!IsValid(Target)||SwingClock.bActive)return false;
-    if(auto* Pickup=Cast<ADWGatheringPickup>(Target))return Pressed&&Pickup->TryCollect(User);
+    if (auto* Pickup = Cast<IDWWorldPickup>(Target)) return Pressed && Pickup->TryCollect(User);
     if(auto* Resource=Cast<ADWGatheringResource>(Target))
     {
         const double Now=GetWorld()->GetTimeSeconds();if(Now<NextToolTime)return false;

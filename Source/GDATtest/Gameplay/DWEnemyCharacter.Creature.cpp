@@ -1,4 +1,5 @@
 #include "DWEnemyCharacter.h"
+#include "DWCreatureDropConfiguration.h"
 #include "DWWorldEvent.h"
 #include "Engine/World.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -14,17 +15,18 @@
 bool ADWEnemyCharacter::ApplyCreatureDefinition(FString& Error)
 {
  RegisteredAmbientPatrol=FindComponentByClass<UDWCreaturePatrolComponent>();
+ FDWCreatureResolvedDrops Drops;if(!ResolveCreatureDrops(Drops,Error))return false;
+ if(Drops.Policy==EDWCreatureDropPolicy::ConfiguredItems)
+ {
+  auto* GI=GetGameInstance<UDWGameInstance>();const auto* C=GI&&GetWorld()?GI->GetConfigForMap(UWorld::RemovePIEPrefix(GetWorld()->GetOutermost()->GetName())):nullptr;
+  if(!C||!DWCreatureDropPolicy::ValidateEntriesForConfig(Drops.Entries,C,Error))return false;
+ }
  if(!CreatureDefinition)return true;
  const auto& D=*CreatureDefinition;
  if(D.bExternalAmbientPatrol)AmbientPatrolOwner=RegisteredAmbientPatrol;
  if(D.DropPolicy==EDWCreatureDropPolicy::ConfiguredFormalCore&&
   (!FMath::IsFinite(D.CoreDropProbability)||D.CoreDropProbability<0.f||D.CoreDropProbability>1.f||D.CoreDropCount<1||D.CoreDropCount>100000))
  {Error=TEXT("Invalid configured core drop probability/count");return false;}
- if(D.DropPolicy==EDWCreatureDropPolicy::ConfiguredItems)
- {
-  auto* GI=GetGameInstance<UDWGameInstance>();const auto* C=GI&&GetWorld()?GI->GetConfigForMap(UWorld::RemovePIEPrefix(GetWorld()->GetOutermost()->GetName())):nullptr;
-  if(!C||!DWCreatureDropPolicy::ValidateEntriesForConfig(D.ItemDrops,C,Error))return false;
- }
  if(D.NumericSource==EDWCreatureNumericSource::DefinitionLegacyHost&&D.DropPolicy!=EDWCreatureDropPolicy::None&&D.DropPolicy!=EDWCreatureDropPolicy::ConfiguredItems)
  {Error=TEXT("Legacy creature supports empty drops; formal core drops require a registered formal profile");return false;}
  if(!FMath::IsFinite(D.AmbientGoalTimeoutSeconds)||D.AmbientGoalTimeoutSeconds<=0.f||D.AmbientGoalTimeoutSeconds>3600.f||

@@ -1,4 +1,5 @@
 #include "DWCombatCoreDropSubsystem.h"
+#include "DWCreatureDropConfiguration.h"
 #include "DWThugDropPolicy.h"
 #include "DWEnemyCharacter.h"
 #include "DWGameInstance.h"
@@ -30,10 +31,11 @@ bool UDWCombatCoreDropSubsystem::PrepareThugFatal(ADWEnemyCharacter& E,DWCombatC
    !DWEnemyFormal::ApplyLanguageEssenceDropOverrides(Map,Language->GetTrialConfig(),Drop,Error,Formal))return false;
  }
  // The guaranteed row replaces either spelling of this creature's core, never adds on top of it.
+ FDWCreatureResolvedDrops Effective;if(!E.ResolveCreatureDrops(Effective,Error))return false;
  TArray<FDWCreatureDropEntry> Rows;
  FDWCreatureDropEntry Core;Core.ItemId=DWThugDropPolicy::CoreId(E.CombatProfile,Drop.bLanguageEssenceIds);Rows.Add(Core);
- if(D->DropPolicy==EDWCreatureDropPolicy::ConfiguredItems)
-  for(const auto& Row:D->ItemDrops)if(!DWThugDropPolicy::IsCoreAlias(Row.ItemId,E.CombatProfile))Rows.Add(Row);
+ if(Effective.Policy==EDWCreatureDropPolicy::ConfiguredItems)
+  for(const auto& Row:Effective.Entries)if(!DWThugDropPolicy::IsCoreAlias(Row.ItemId,E.CombatProfile))Rows.Add(Row);
  if(!DWCreatureDropPolicy::ValidateEntriesForConfig(Rows,Config,Error)||Records.Num()>65536-Rows.Num())return false;
  FDWPreparedCoreDrop P;P.Revision=Revision;P.Enemy=&E;P.bGeneric=true;P.bBoundedSpawnRetry=true;P.GenericGroup=FGuid::NewGuid();
  P.GenericSourceStableId=TEXT("enemy:")+E.FormalEnemyId.ToString(EGuidFormats::Digits);P.GenericPickupRadiusCm=Drop.PickupRadiusCm;

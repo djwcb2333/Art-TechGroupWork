@@ -98,7 +98,8 @@ struct FDWEnemyFormalKnockback
 
 namespace DWEnemyFormal
 {
-    bool BuildConfig(const FDWCombatRules& Rules,EDWEnemyCombatProfile Profile,FDWEnemyCombatConfig& Out,FString& Error);
+    GDATTEST_API bool ValidateConfig(const FDWEnemyCombatConfig& Config,FString& Error);
+    GDATTEST_API bool BuildConfig(const FDWCombatRules& Rules,EDWEnemyCombatProfile Profile,FDWEnemyCombatConfig& Out,FString& Error);
     bool BuildCoreDropConfig(const FDWCombatRules& Rules,FDWEnemyCoreDropConfig& Out,FString& Error);
     /** Legacy config first; only the exact LANG map consumes the two new essence numeric keys. */
     bool ApplyLanguageEssenceDropOverrides(const FString& MapPackage,const TSharedPtr<FJsonObject>& Trial,

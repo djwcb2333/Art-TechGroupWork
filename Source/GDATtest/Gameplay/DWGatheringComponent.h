@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "CoreMinimal.h"
 #include "DWCombatCommitLedger.h"
 #include "Components/ActorComponent.h"
@@ -36,7 +36,7 @@ public:
     void InitializeGathering();
     bool IsGatheringEnabled() const;
     bool HandleInteraction(float DeltaSeconds,bool bHeld);
-    bool HasAvailableInteractionTarget()const{return FindTarget()!=nullptr;}
+    bool HasAvailableInteractionTarget() const { return FindTarget(true) != nullptr; }
     bool TryUseTool(FName ItemId);
     bool HandlePrimaryClick();
     void UpdateSimpleSpearVisual(const FTransform& GripToOwner,bool Show);
@@ -127,7 +127,7 @@ private:
     ADWPlayerCharacter* Player() const;
     const UDWGameplayConfig* Profile() const;
     bool CanAct() const;
-    AActor* FindTarget() const;
+    AActor* FindTarget(bool bIncludeCombatPickups = false) const;
     bool InteractWith(AActor* Target,bool bPressed);
     bool StartGatheringSwing(ADWGatheringResource* Resource);
     bool IsDemolitionTarget(const class ADWGatheringStation* Target) const;

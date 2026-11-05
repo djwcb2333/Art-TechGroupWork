@@ -65,6 +65,21 @@ namespace DWEnemyFormal
         return ContainsOrigin;
     }
 
+    bool ValidateConfig(const FDWEnemyCombatConfig& C,FString& Error)
+    {
+        const double NativeValues[]={C.Health,C.Damage,C.WindupSeconds,C.ActiveSeconds,C.RecoverySeconds,C.ExtraCooldownSeconds,
+            C.RangeCm,C.MoveSpeedCmPerSecond,C.AttackFullAngleDegrees,C.AttackHeightCm,C.KnockbackMultiplier,C.AttackKnockbackMultiplier,
+            C.OutgoingKnockbackCm,C.OutgoingKnockbackSeconds,C.AlertRadiusCm,C.DisengageDistanceCm,C.AlertDelaySeconds,C.DisengageSeconds,
+            C.WindupLockFraction,C.ReturnSpeedMultiplier,C.AttackCycleSeconds()};
+        for(const double Value:NativeValues)if(!FMath::IsFinite(Value)||Value<0.||Value>MAX_flt||(Value>0.&&static_cast<float>(Value)==0.f))
+        {Error=TEXT("Formal enemy rule cannot be represented by the native movement/presentation fields.");return false;}
+        // A changed rule must not silently inherit a one-hit implementation with a contradictory limit.
+        if(C.Health<=0.||C.ActiveSeconds<=0.||C.RangeCm<=0.||C.AttackHeightCm<=0.||C.AttackFullAngleDegrees<=0.||
+            C.AttackFullAngleDegrees>360.||C.HitsPerTarget!=1||!FMath::IsFinite(C.AttackCycleSeconds())||C.AttackCycleSeconds()<=0.)
+        {Error=TEXT("Formal enemy rules are unsupported or invalid; no legacy fallback applied.");return false;}
+        Error.Reset();return true;
+    }
+
     bool BuildConfig(const FDWCombatRules& Rules,EDWEnemyCombatProfile Profile,FDWEnemyCombatConfig& Out,FString& Error)
     {
         const TCHAR* Prefix=nullptr;
@@ -95,16 +110,7 @@ namespace DWEnemyFormal
             !Rules.TryGetNumber(TEXT("ai.windup_lock_fraction"),U::Fraction,C.WindupLockFraction,Error)||
             !Rules.TryGetNumber(TEXT("ai.return_speed_multiplier"),U::Multiplier,C.ReturnSpeedMultiplier,Error)||
             !Rules.TryGetCount(TEXT("enemy.attack.hits_per_target"),C.HitsPerTarget,Error))return false;
-        const double NativeValues[]={C.Health,C.Damage,C.WindupSeconds,C.ActiveSeconds,C.RecoverySeconds,C.ExtraCooldownSeconds,
-            C.RangeCm,C.MoveSpeedCmPerSecond,C.AttackFullAngleDegrees,C.AttackHeightCm,C.KnockbackMultiplier,C.AttackKnockbackMultiplier,
-            C.OutgoingKnockbackCm,C.OutgoingKnockbackSeconds,C.AlertRadiusCm,C.DisengageDistanceCm,C.AlertDelaySeconds,C.DisengageSeconds,
-            C.WindupLockFraction,C.ReturnSpeedMultiplier,C.AttackCycleSeconds()};
-        for(const double Value:NativeValues)if(!FMath::IsFinite(Value)||Value<0.||Value>MAX_flt||(Value>0.&&static_cast<float>(Value)==0.f))
-        {Error=TEXT("Formal enemy rule cannot be represented by the native movement/presentation fields.");return false;}
-        // A changed rule must not silently inherit a one-hit implementation with a contradictory limit.
-        if(C.Health<=0.||C.ActiveSeconds<=0.||C.RangeCm<=0.||C.AttackHeightCm<=0.||C.AttackFullAngleDegrees<=0.||
-            C.AttackFullAngleDegrees>360.||C.HitsPerTarget!=1||!FMath::IsFinite(C.AttackCycleSeconds())||C.AttackCycleSeconds()<=0.)
-        {Error=TEXT("Formal enemy rules are unsupported or invalid; no legacy fallback applied.");return false;}
+        if(!ValidateConfig(C,Error))return false;
         Out=C;Error.Reset();return true;
     }
 

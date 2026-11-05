@@ -54,6 +54,9 @@ public:
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Map Image") bool bForceManualImageMap=false;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Map Exploration",meta=(ClampMin="1",ClampMax="100000",Units="cm")) float ExplorationRadiusCm=1500.f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Map Exploration",meta=(ClampMin="32",ClampMax="256")) int32 ExplorationGridSize=128;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Map Ponds") bool bShowMapPonds=true;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Map Ponds") FLinearColor MapPondColor=FLinearColor(.10f,.55f,.70f,1.f);
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Map Ponds",meta=(ClampMin="256",ClampMax="1024")) int32 MapPondResolution=1024;
     FDWMapImageSettings GetEffectiveImageSettings() const;
     void UseImageFallback();
     FSoftObjectPath FailedMapImage;

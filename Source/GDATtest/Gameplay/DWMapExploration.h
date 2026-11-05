@@ -31,13 +31,18 @@ class GDATTEST_API UDWMapExplorationResource : public UObject
 public:
     void Prepare();
     void WarmMask(const FDWMapImageSettings& Image,int32 Grid);
-    bool Sync(const FDWMapExplorationLayer& Layer,UTexture2D* BaseImage,const FIntRect& Dirty);
+    bool Sync(const FDWMapExplorationLayer& Layer,UTexture2D* BaseImage,const FIntRect& Dirty,const TArray<uint8>& Water=TArray<uint8>(),uint64 WaterRevision=0,FLinearColor WaterColor=FLinearColor::Transparent);
     UMaterialInterface* GetMaterial() const;
     const FSlateBrush* GetBrush() const;
     UMaterialInterface* GetPreparedTint() const {return TintMaterial.Get();}
     UTexture2D* GetPreparedCloseIcon() const {return CloseIcon.Get();}
 private:
     UPROPERTY(Transient) TObjectPtr<UTexture2D> Mask;
+    UPROPERTY(Transient) TObjectPtr<UTexture2D> PondMask;
+    uint64 PondRevision=MAX_uint64,PendingPondRevision=MAX_uint64;
+    UPROPERTY(Transient) TObjectPtr<UTexture2D> PendingPondMask;
+    TArray<uint8> PondUploadCoverage;
+    int32 PondUploadRow=0;
     UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> Material;
     UPROPERTY(Transient) TObjectPtr<UTexture2D> BoundImage;
     FDWMapExplorationLayer Frame;

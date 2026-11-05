@@ -3,12 +3,13 @@
 #include "DWCombatRecoverySubsystem.h"
 #include "DWCombatRecoveryTransaction.h"
 #include "DWPlayerCharacter.h"
-#include "DWInventoryComponent.h"
-#include "Components/CapsuleComponent.h"
+#include "DWInteractionPromptComponent.h"
+#include "DWPickupPresentationComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 
 ADWCombatSafePoint::ADWCombatSafePoint()
@@ -17,7 +18,20 @@ bool ADWCombatSafePoint::ActivateForPlayer(ADWPlayerCharacter* P)
 {auto* R=UDWCombatRecoverySubsystem::Get(this);return IsValid(P)&&R&&R->ActivateSafePoint(*P,*this);}
 ADWCombatDeathBag::ADWCombatDeathBag()
 {
-    PrimaryActorTick.bCanEverTick=true;Placeholder=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DeathBagPlaceholder"));SetRootComponent(Placeholder);
+    PickupRoot = CreateDefaultSubobject<USceneComponent>(TEXT("PickupRoot"));
+    SetRootComponent(PickupRoot);
+    Placeholder = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DeathBagPlaceholder"));
+    Placeholder->SetupAttachment(PickupRoot);
+    Prompt = CreateDefaultSubobject<UDWInteractionPromptComponent>(TEXT("InteractionPrompt"));
+    Prompt->SetupAttachment(PickupRoot);
+    Prompt->bPromptEnabled = false;
+    Prompt->GenericPromptTitle = FText::FromString(TEXT("遗失背包"));
+    Prompt->GenericEnglishPromptTitle = FText::FromString(TEXT("Lost Backpack"));
+    Prompt->GenericPromptAction = FText::FromString(TEXT("拾取"));
+    Prompt->GenericEnglishAction = FText::FromString(TEXT("Pick up"));
+    Prompt->WorldOffset = FVector(0, 0, 75.);
+    PickupPresentation = CreateDefaultSubobject<UDWPickupPresentationComponent>(TEXT("PickupPresentation"));
+    PickupPresentation->bBudgetIdlePickupOutline = true;
     static ConstructorHelpers::FObjectFinder<UStaticMesh> Shape(TEXT("/Engine/BasicShapes/Cube.Cube"));
     if(Shape.Succeeded())Placeholder->SetStaticMesh(Shape.Object);
     Placeholder->SetRelativeScale3D(FVector(.35,.35,.25));Placeholder->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -28,19 +42,42 @@ void ADWCombatDeathBag::EndPlay(const EEndPlayReason::Type Reason)
     if(auto* W=GetWorld())if(auto* V=W->GetSubsystem<UDWLootBeaconSubsystem>())V->WithdrawBeacon(this);
     Super::EndPlay(Reason);
 }
-bool ADWCombatDeathBag::Touches(const ADWPlayerCharacter& P)const
+bool ADWCombatDeathBag::IsPickupAvailable() const
 {
-    const auto* C=P.GetCapsuleComponent();if(!C||P.GetWorld()!=GetWorld())return false;
-    const FVector Point=C->GetComponentTransform().InverseTransformPosition(GetActorLocation());
-    const double Radius=C->GetUnscaledCapsuleRadius(),Segment=FMath::Max(0.,static_cast<double>(C->GetUnscaledCapsuleHalfHeight())-Radius);
-    const double Z=FMath::Max(0.,FMath::Abs(Point.Z)-Segment);return Point.X*Point.X+Point.Y*Point.Y+Z*Z<=Radius*Radius;
+    const auto* Recovery = UDWCombatRecoverySubsystem::Get(this);
+    return !bPickupVisualPending && !PickupPresentation->IsCollectionActive() && !IsActorBeingDestroyed() &&
+        Recovery && Recovery->IsPhysicalCurrent(*this);
 }
-bool ADWCombatDeathBag::TryCollect(ADWPlayerCharacter* P)
-{return IsValid(P)&&FDWCombatRecoveryTransaction::Claim(*this,*P);}
-void ADWCombatDeathBag::Tick(float Dt)
+
+bool ADWCombatDeathBag::IsPickupInReach(const AActor* User) const
 {
-    Super::Tick(Dt);auto* R=UDWCombatRecoverySubsystem::Get(this);if(!R||!R->IsPhysicalCurrent(*this)||GetWorld()->IsPaused())return;
-    auto* P=R->BoundPlayer.Get();if(!P||!P->IsCombatActionAllowed()||!Touches(*P)||!P->GetInventory())return;
-    const int64 Revision=P->GetInventory()->GetInventoryRevision();if(LastAttemptInventoryRevision==Revision)return;
-    LastAttemptInventoryRevision=Revision;TryCollect(P);
+    constexpr double ReachCm = 150.;
+    return IsValid(User) && User->GetWorld() == GetWorld() &&
+        FVector::DistSquared(User->GetActorLocation(), GetActorLocation()) <= FMath::Square(ReachCm);
+}
+
+bool ADWCombatDeathBag::TryCollect(ADWPlayerCharacter* Player)
+{
+    return IsValid(Player) && FDWCombatRecoveryTransaction::Claim(*this, *Player);
+}
+
+void ADWCombatDeathBag::PresentCommittedPickup()
+{
+    const TWeakObjectPtr<ADWCombatDeathBag> Self(this);
+    Prompt->SetPromptEnabled(false);
+    if (!Self.IsValid() || IsActorBeingDestroyed() || !bBound) return;
+    bPickupVisualPending = false;
+    if (!GetWorld()->GetFirstPlayerController() || !PickupPresentation->PlayCommittedPickupEffect())
+        HandlePickupPresentationFinished();
+}
+
+void ADWCombatDeathBag::HandlePickupPresentationFinished()
+{
+    if (!bBound || !IsPickupAvailable())
+    {
+        Destroy();
+        return;
+    }
+    if (auto* Beacons = GetWorld()->GetSubsystem<UDWLootBeaconSubsystem>()) Beacons->PublishDeathBag(this, Placeholder);
+    if (!IsActorBeingDestroyed() && IsPickupAvailable()) Prompt->SetPromptEnabled(true);
 }

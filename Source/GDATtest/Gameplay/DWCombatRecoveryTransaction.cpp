@@ -58,7 +58,7 @@ bool FDWCombatRecoveryTransaction::Claim(ADWCombatDeathBag& B,ADWPlayerCharacter
     using namespace DWCombatCommit;
     auto* R=UDWCombatRecoverySubsystem::Get(&B);auto* A=UDWCombatAuthoritySubsystem::Get(&P);auto* I=P.GetInventory();
     if(!R||!A||!I||!I->CanWriteInventory()||P.GetWorld()!=B.GetWorld()||!P.IsCombatActionAllowed()||
-        R->BoundPlayer.Get()!=&P||!R->IsPhysicalCurrent(B)||!B.Touches(P)||R->State.Revision==MAX_uint64)return false;
+        R->BoundPlayer.Get()!=&P||!B.IsPickupAvailable()||!B.IsPickupInReach(&P)||R->State.Revision==MAX_uint64)return false;
     FDWDeathBagSave Bag;if(!R->FindBag(B.BagId,Bag))return false;const auto* Config=I->GetConfig();if(!Config)return false;
     TMap<FName,int32> Limits;for(const auto& S:I->GetSlots())Limits.Add(S.ItemId,I->GetEffectiveStackLimit(S.ItemId));
     for(const auto& S:Bag.Contents)Limits.Add(S.ItemId,I->GetEffectiveStackLimit(S.ItemId));
@@ -77,7 +77,8 @@ bool FDWCombatRecoveryTransaction::Claim(ADWCombatDeathBag& B,ADWPlayerCharacter
     N.PlayerId=Candidate.PlayerId;N.BagId=Bag.BagId;N.WorldEpoch=A->GetWorldEpoch();N.RecoveryRevision=Candidate.Revision;N.bInventoryChanged=true;
     if(Ledger->Resolve(Admission.Receipt.Handle,EOutcome::Committed)!=EResolve::Resolved){A->EndAction(Action);return false;}
     I->AdoptPreparedUnchecked(MoveTemp(Inventory));R->State=MoveTemp(Candidate);
-    if(Changed.bClaimed)if(auto* W=B.GetWorld())if(auto* V=W->GetSubsystem<UDWLootBeaconSubsystem>())V->SuspendBeacon(&B);
+    B.bPickupVisualPending = true;
+    if(auto* W=B.GetWorld())if(auto* V=W->GetSubsystem<UDWLootBeaconSubsystem>())V->SuspendBeacon(&B);
     A->EndAction(Action);A->EnqueueCommittedRecovery(N);A->DrainNotifications();return true;
 }
 bool FDWCombatRecoveryTransaction::Respawn(ADWPlayerCharacter& P)
@@ -145,11 +146,12 @@ void FDWCombatRecoveryTransaction::Publish(const FDWCombatRecoveryNotice& N)
         }
         if(N.bInventoryChanged){auto* I=N.Inventory.Get();if(I&&I->CanWriteInventory()&&I->GetOwner()==P)I->OnChanged.Broadcast();}
     }
-    // Claim facts survive collector destruction/restore. Retire a now-empty marker independently.
+    // Claim facts survive collector destruction or restore. Present the committed transfer independently.
     if(N.Kind==EDWRecoveryNotice::Claim)
     {
         auto* R=N.Recovery.Get();auto* A=UDWCombatAuthoritySubsystem::Get(R);FDWDeathBagSave B;
-        if(A&&A->GetWorldEpoch()==N.WorldEpoch&&R&&R->State.PlayerId==N.PlayerId&&R->FindBag(N.BagId,B)&&B.bClaimed)
-            if(auto* Physical=R->FindPhysicalBag(B.BagId);Physical&&!Physical->IsActorBeingDestroyed())Physical->Destroy();
+        if(A&&A->GetWorldEpoch()==N.WorldEpoch&&R&&R->State.PlayerId==N.PlayerId&&R->FindBag(N.BagId,B))
+            if (auto* Physical = R->FindPhysicalBag(B.BagId); Physical && !Physical->IsActorBeingDestroyed())
+                Physical->PresentCommittedPickup();
     }
 }

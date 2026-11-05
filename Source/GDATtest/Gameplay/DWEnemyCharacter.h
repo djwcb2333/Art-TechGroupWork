@@ -22,7 +22,11 @@ class ADWEnemyNest;
 class UDWCommittedHitFeedbackComponent;
 class UAnimationAsset;
 class ADWPlayerCharacter;
+class ADWOpeningPrototype;
+struct FDWEnemyNumbers;
 class FDWCombatRules;
+struct FDWCreatureResolvedDrops;
+struct FDWEnemyActorNumericSupplement;
 
 /** Optional attacks sharing the existing Attack state and authoritative hit resolution. */
 USTRUCT(BlueprintType)
@@ -66,7 +70,19 @@ public:
     virtual FDWAmbientPatrolState ReadCreatureAmbientPatrol_Implementation() const override {return GetAmbientPatrolState();}
     virtual bool RequestCreatureAmbientGoal_Implementation(UActorComponent* R,FVector G,float Wait) override {return TryRequestAmbientPatrolGoal(R,G,Wait);}
     virtual void StopCreatureAmbientPatrol_Implementation(UActorComponent* R) override {StopAmbientPatrol(R);}
+    /** Class-default-only overrides; no instance table can create another death authority. */
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Creature|Drop Override") bool bOverrideCreatureDropTable=false;
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Creature|Drop Override",meta=(EditCondition="bOverrideCreatureDropTable")) TArray<FDWCreatureDropEntry> CreatureDropEntries;
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Creature|Drop Override") bool bUseDefaultHostileDropWhenEmpty=true;
+    UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Creature|Drop Override") FDWCreatureDropEntry DefaultHostileDrop;
+    bool ResolveCreatureDrops(FDWCreatureResolvedDrops& Out,FString& Error)const;
+    bool UsesConfiguredCreatureDrops()const;
     bool ApplyCreatureDefinition(FString& Error);
+    bool ApplyLegacyNumericTuning(FString& Error);
+    bool ProjectFormalNumericTuning(FDWEnemyCombatConfig& Config,FDWEnemyActorNumericSupplement& Extra,FString& Error)const;
+    void AdoptNumericSupplement(const FDWEnemyActorNumericSupplement& Extra);
+    bool ValidateCreatureNumericSource(float SavedMax,FString& Error)const;
+    bool ResolveNumericSource(const FDWEnemyNumbers* ClassNumbers,const FDWEnemyNumbers*& Out,FString& Error)const;
     bool bCreatureDefinitionValid=true;
     FGuid GenericDropGroup;
     int32 GenericDropRows=0;
@@ -209,6 +225,10 @@ protected:
     virtual bool HideRestoredDeadWithoutPresentation()const{return false;}
     void FinishSpecializedDeathPresentation();
 private:
+    friend class ADWOpeningPrototype;
+    bool PrepareOpeningNumericSource(ADWOpeningPrototype& Director,FString& Error);
+    TWeakObjectPtr<ADWOpeningPrototype> OpeningNumericOwner;
+    TSharedPtr<const FDWEnemyNumbers> OpeningNumericSource;
     void ApplyElitePlaceholderFallback();
     friend class FDWCombatWorldObjectsPersistence;
     friend class FDWCombatWorldObjectsRestorePlan;

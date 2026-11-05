@@ -1,49 +1,84 @@
 #include "DWCombatCorePickup.h"
-#include "DWLootBeaconSubsystem.h"
+
 #include "DWCombatCoreDropSubsystem.h"
 #include "DWCombatCorePickupTransaction.h"
+#include "DWInteractionPromptComponent.h"
+#include "DWLootBeaconSubsystem.h"
+#include "DWPickupPresentationComponent.h"
 #include "DWPlayerCharacter.h"
-#include "Components/SphereComponent.h"
+#include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/World.h"
-#include "EngineUtils.h"
+#include "GameFramework/PlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 
 ADWCombatCorePickup::ADWCombatCorePickup()
 {
-    PrimaryActorTick.bCanEverTick=true;
-    PickupRange=CreateDefaultSubobject<USphereComponent>(TEXT("PickupRange"));SetRootComponent(PickupRange);
-    PickupRange->SetCollisionEnabled(ECollisionEnabled::NoCollision);PickupRange->SetGenerateOverlapEvents(false);
-    PickupRange->SetCanEverAffectNavigation(false);
-    Placeholder=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Placeholder"));Placeholder->SetupAttachment(PickupRange);
+    PickupRoot = CreateDefaultSubobject<USceneComponent>(TEXT("PickupRoot"));
+    SetRootComponent(PickupRoot);
+    Placeholder = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Placeholder"));
+    Placeholder->SetupAttachment(PickupRoot);
     static ConstructorHelpers::FObjectFinder<UStaticMesh> Sphere(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
-    if(Sphere.Succeeded())Placeholder->SetStaticMesh(Sphere.Object);
-    Placeholder->SetRelativeScale3D(FVector(.25));Placeholder->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    if (Sphere.Succeeded()) Placeholder->SetStaticMesh(Sphere.Object);
+    Placeholder->SetRelativeScale3D(FVector(.25));
+    Placeholder->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     Placeholder->SetCanEverAffectNavigation(false);
-    // No physics impulse, timed lifespan, custom material or replacement of existing art.
+    Prompt = CreateDefaultSubobject<UDWInteractionPromptComponent>(TEXT("InteractionPrompt"));
+    Prompt->SetupAttachment(PickupRoot);
+    Prompt->bPromptEnabled = false;
+    Prompt->GenericPromptAction = FText::FromString(TEXT("拾取"));
+    Prompt->GenericEnglishAction = FText::FromString(TEXT("Pick up"));
+    Prompt->WorldOffset = FVector(0, 0, 75.);
+    PickupPresentation = CreateDefaultSubobject<UDWPickupPresentationComponent>(TEXT("PickupPresentation"));
+    PickupPresentation->bBudgetIdlePickupOutline = true;
 }
-void ADWCombatCorePickup::Tick(float Dt)
+
+bool ADWCombatCorePickup::IsPickupAvailable() const
 {
-    Super::Tick(Dt);
-    auto* Drops=UDWCombatCoreDropSubsystem::Get(this);
-    if(!Drops||!Drops->IsPhysicalCurrent(*this)||!HasActorBegunPlay()||GetWorld()->IsPaused()||!FMath::IsFinite(Dt)||Dt<=0.f)return;
-    const TWeakObjectPtr<ADWCombatCorePickup> Self(this);const TWeakObjectPtr<UWorld> World(GetWorld());
-    for(TActorIterator<ADWPlayerCharacter> It(GetWorld());It;++It)
-    {
-        auto* Player=*It;
-        if(FVector::DistSquared(Player->GetActorLocation(),GetActorLocation())>FMath::Square(PickupRadiusCm))
-        {LastFullInventoryRevision.Remove(Player);continue;}
-        if(TryCollect(Player))return;
-        if(!Self.IsValid()||IsActorBeingDestroyed()||!World.IsValid()||GetWorld()!=World.Get()||World->bIsTearingDown||!HasActorBegunPlay()||bClaimed)return;
-    }
+    const auto* Drops = UDWCombatCoreDropSubsystem::Get(this);
+    return !IsActorBeingDestroyed() && Drops && Drops->IsPhysicalCurrent(*this);
 }
+
+bool ADWCombatCorePickup::IsPickupInReach(const AActor* User) const
+{
+    return IsValid(User) && User->GetWorld() == GetWorld() && PickupRadiusCm > 0. &&
+        FVector::DistSquared(User->GetActorLocation(), GetActorLocation()) <= FMath::Square(PickupRadiusCm);
+}
+
 bool ADWCombatCorePickup::TryCollect(ADWPlayerCharacter* Player)
-{return IsValid(Player)&&FDWCombatCorePickupTransaction::Commit(*this,*Player);}
+{
+    return IsValid(Player) && FDWCombatCorePickupTransaction::Commit(*this, *Player);
+}
+
+void ADWCombatCorePickup::BeginDropPresentation(const FVector* PopOrigin)
+{
+    const TWeakObjectPtr<ADWCombatCorePickup> Self(this);
+    if (auto* Beacons = GetWorld()->GetSubsystem<UDWLootBeaconSubsystem>())
+        Beacons->PublishBeacon(this, Placeholder, ItemId);
+    if (!Self.IsValid() || !IsPickupAvailable()) return;
+    if (PopOrigin) PickupPresentation->StartScatter(*PopOrigin);
+    Prompt->SetPromptEnabled(true);
+}
+
+void ADWCombatCorePickup::PresentCommittedPickup()
+{
+    const TWeakObjectPtr<ADWCombatCorePickup> Self(this);
+    Prompt->SetPromptEnabled(false);
+    if (!Self.IsValid() || IsActorBeingDestroyed()) return;
+    if (!GetWorld()->GetFirstPlayerController() || !PickupPresentation->PlayCommittedPickupEffect()) Destroy();
+}
+
+void ADWCombatCorePickup::HandlePickupPresentationFinished()
+{
+    if (bClaimed) Destroy();
+}
+
 void ADWCombatCorePickup::EndPlay(EEndPlayReason::Type Reason)
 {
-    if(auto* W=GetWorld())if(auto* V=W->GetSubsystem<UDWLootBeaconSubsystem>())V->WithdrawBeacon(this);
-    bBound=false;
-    if(auto* Drops=UDWCombatCoreDropSubsystem::Get(this))Drops->PhysicalEnded(*this);
+    if (auto* W = GetWorld())
+        if (auto* Beacons = W->GetSubsystem<UDWLootBeaconSubsystem>()) Beacons->WithdrawBeacon(this);
+    bBound = false;
+    if (auto* Drops = UDWCombatCoreDropSubsystem::Get(this)) Drops->PhysicalEnded(*this);
     Super::EndPlay(Reason);
 }

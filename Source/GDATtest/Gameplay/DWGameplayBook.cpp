@@ -1,4 +1,5 @@
 #include "DWGameplayWidget.h"
+#include "DWCraftingPanel.h"
 #include "DWCharacterPreview.h"
 #include "Animation/AnimSequenceBase.h"
 #include "DWLanguageUIBridgeComponent.h"
@@ -194,18 +195,10 @@ void UDWGameplayWidget::InitializeHandbook()
  auto* Equip=D.LocalButton(TEXT("装备"),TEXT("Equip"),27,Paper,false,TEXT("HandbookInventoryEquip"));Equip->SetIsEnabled(false);D.At(Inventory,Equip,656,398,196,48);
  HandbookCraftMoreButton=D.LocalButton(TEXT("制作更多"),TEXT("Craft more"),26,Gold);D.At(Inventory,HandbookCraftMoreButton,868,398,196,48);
 
- auto* Craft=D.Make<UCanvasPanel>();HandbookPages->AddChild(Craft);auto* Categories=D.Make<UHorizontalBox>();D.At(Craft,Categories,0,0,558,44);
- const TCHAR* CatCN[]={TEXT("全部"),TEXT("武器"),TEXT("护甲"),TEXT("消耗品")};const TCHAR* CatEN[]={TEXT("All"),TEXT("Weapons"),TEXT("Armour"),TEXT("Consumables")};
- // Preserve the first three hit areas; the longer English category needs its own width.
- for(int32 I=0;I<4;++I){auto* B=D.LocalButton(CatCN[I],CatEN[I],-1);B->SetIsEnabled(I==0);D.H(Categories,D.Size(B,I==3?164.f:118.f,42),0,5);}
- auto* RecipeScroll=D.Make<UScrollBox>();HandbookRecipeList=D.Make<UVerticalBox>(TEXT("HandbookRecipeList"));RecipeScroll->AddChild(HandbookRecipeList);D.At(Craft,RecipeScroll,0,68,520,362);
- HandbookRecipeImage=D.Make<UImage>();auto* RecipeCard=D.Card(D.FitImage(HandbookRecipeImage,120,120),SlotColor,8);
- RecipeCard->SetBrush(FSlateRoundedBoxBrush(SlotColor,16.f));D.At(Craft,RecipeCard,568,0,136,136);
- HandbookRecipeDetails=D.Text(FText::GetEmpty(),20);D.At(Craft,HandbookRecipeDetails,724,0,340,136);
- auto* MaterialScroll=D.Make<UScrollBox>();auto* MaterialList=D.Make<UVerticalBox>(TEXT("HandbookRecipeItems"));MaterialScroll->AddChild(MaterialList);D.At(Craft,MaterialScroll,568,148,496,170);
- LanguageRecipeNeeds=D.Make<UDWLanguageRecipeNeedsWidget>(TEXT("LanguageRecipeNeeds"));D.At(Craft,LanguageRecipeNeeds,568,326,496,82);
- auto* Quantity=D.LocalText(TEXT("1 份"),TEXT("1 craft"),18);Quantity->SetJustification(ETextJustify::Center);Quantity->SetAutoWrapText(false);auto* QuantityCard=D.Card(Quantity,SlotColor,0);QuantityCard->SetPadding(FMargin(8,0));QuantityCard->SetVerticalAlignment(VAlign_Center);D.At(Craft,QuantityCard,568,422,258,48);
- HandbookCraftButton=D.LocalButton(TEXT("制作"),TEXT("Craft"),30,Gold);D.At(Craft,HandbookCraftButton,880,422,184,48);
+ auto* Craft=D.Make<UCanvasPanel>();HandbookPages->AddChild(Craft);
+ HandbookRecipeList=D.Make<UVerticalBox>(TEXT("HandbookRecipeList"));D.At(Craft,HandbookRecipeList,0,0,1064,470);
+ HandbookCraftPanel=CreateWidget<UDWCraftingPanel>(GetOwningPlayer(),UDWCraftingPanel::StaticClass());
+ if(HandbookCraftPanel){HandbookCraftPanel->Setup(this);auto* Cell=HandbookRecipeList->AddChildToVerticalBox(HandbookCraftPanel);Cell->SetSize(FSlateChildSize(ESlateSizeRule::Fill));Cell->SetHorizontalAlignment(HAlign_Fill);}
 
  auto* Building=D.Make<UHorizontalBox>();HandbookPages->AddChild(Building);auto* Facilities=D.Make<UVerticalBox>();
  if(LanguageTrial)
@@ -255,58 +248,13 @@ void UDWGameplayWidget::UnmountLanguageJournal()
  if(LanguagePagePlaceholder)LanguagePagePlaceholder->SetVisibility(ESlateVisibility::Visible);
 }
 
+void UDWGameplayWidget::SetHandbookRecipeSelection(FName Id)
+{if(const auto* C=GetGameplayConfig())HandbookRecipeIndex=C->Recipes.IndexOfByPredicate([Id](const auto& R){return R.RecipeId==Id;});}
 void UDWGameplayWidget::RefreshHandbookRecipes()
 {
- if(!HandbookRecipeList)return;using namespace DWHandbook;Builder D{this,WidgetTree};const auto* C=GetGameplayConfig();const int32 Count=C?C->Recipes.Num():0,Rows=(Count+3)/4;
- bool RebuildRecipes=HandbookRecipeList->GetChildrenCount()!=Rows;
- if(!RebuildRecipes)for(int32 RowIndex=0;RowIndex<Rows;++RowIndex){const auto* Row=Cast<UHorizontalBox>(HandbookRecipeList->GetChildAt(RowIndex));if(!Row||Row->GetChildrenCount()!=FMath::Min(4,Count-RowIndex*4)){RebuildRecipes=true;break;}}
- HandbookRecipeIndex=FMath::Clamp(HandbookRecipeIndex,0,FMath::Max(Count-1,0));
- const double Now=FPlatformTime::Seconds();auto* RecipeInventory=GetInventory();auto* RecipePlayer=GetPlayer();const int64 Revision=RecipeInventory?RecipeInventory->GetInventoryRevision():-1;const int32 Locale=UDWLocalizationLibrary::GetRevision(this);
- if(!RebuildRecipes&&HandbookRecipeLastIndex==HandbookRecipeIndex&&HandbookRecipeLastRevision==Revision&&HandbookRecipeLastLocale==Locale&&HandbookRecipeLastConfig.Get()==C&&HandbookRecipeLastInventory.Get()==RecipeInventory&&HandbookRecipeLastPlayer.Get()==RecipePlayer&&HandbookRecipeLastRefresh>=0.0&&Now>=HandbookRecipeLastRefresh&&Now-HandbookRecipeLastRefresh<.25)return;
- HandbookRecipeLastIndex=HandbookRecipeIndex;HandbookRecipeLastRevision=Revision;HandbookRecipeLastLocale=Locale;HandbookRecipeLastConfig=GetGameplayConfig();HandbookRecipeLastInventory=RecipeInventory;HandbookRecipeLastPlayer=RecipePlayer;HandbookRecipeLastRefresh=Now;
- if(RebuildRecipes){DWC01UI::ReleaseMotionTree(HandbookRecipeList);HandbookRecipeList->ClearChildren();for(int32 RowIndex=0;RowIndex<Rows;++RowIndex){auto* Row=D.Make<UHorizontalBox>();D.V(HandbookRecipeList,Row,4);for(int32 Col=0;Col<4&&RowIndex*4+Col<Count;++Col){
-  auto* B=D.Button(FText::GetEmpty(),1000+RowIndex*4+Col,Paper,true);
-  FButtonStyle Style=B->GetStyle();Style.Normal=Style.Hovered=Style.Pressed=Style.Disabled=FSlateRoundedBoxBrush(FLinearColor::White,14.f);Style.NormalPadding=Style.PressedPadding=FMargin(0);B->SetStyle(Style);
-  auto* Content=D.Make<UVerticalBox>();auto* Icon=D.Make<UImage>();D.V(Content,D.FitImage(Icon,72,72),0);auto* Fallback=D.Text(FText::GetEmpty(),14);Fallback->SetJustification(ETextJustify::Center);D.V(Content,Fallback,0);B->SetContent(Content);D.H(Row,D.Size(B,104,104),0,10);
- }}}
- HandbookRecipeIndex=FMath::Clamp(HandbookRecipeIndex,0,FMath::Max(Count-1,0));
- for(int32 I=0;I<Count;++I)if(auto* Row=Cast<UHorizontalBox>(HandbookRecipeList->GetChildAt(I/4)))if(auto* Box=Cast<USizeBox>(Row->GetChildAt(I%4)))if(auto* B=Cast<UDWHandbookButton>(Box->GetContent())){
-  const auto& Recipe=C->Recipes[I];const auto* Def=Recipe.Outputs.Num()?C->GetItemDefinition(Recipe.Outputs[0].ItemId):nullptr;const bool HasIcon=Def&&Def->Icon;
-  if(auto* Content=Cast<UVerticalBox>(B->GetContent())){
-   if(auto* IconBox=Cast<USizeBox>(Content->GetChildAt(0)))if(auto* Fit=Cast<UScaleBox>(IconBox->GetContent()))if(auto* Icon=Cast<UImage>(Fit->GetContent())){Icon->SetBrushFromTexture(HasIcon?Def->Icon.Get():nullptr,false);IconBox->SetVisibility(HasIcon?ESlateVisibility::HitTestInvisible:ESlateVisibility::Collapsed);}
-   if(auto* T=Cast<UTextBlock>(Content->GetChildAt(1))){T->SetText(UDWLocalizationLibrary::GetRecipeDisplayName(this,Recipe));T->SetAutoWrapText(true);T->SetVisibility(HasIcon?ESlateVisibility::Collapsed:ESlateVisibility::HitTestInvisible);}
-  }B->UpdateSelection(I==HandbookRecipeIndex);DWLanguageItemTooltip::AttachRecipe(B,this,Recipe.RecipeId);
- }
- auto* MaterialList=Cast<UVerticalBox>(GetWidgetFromName(TEXT("HandbookRecipeItems")));
- if(!Count){if(MaterialList)MaterialList->ClearChildren();if(LanguageRecipeNeeds)LanguageRecipeNeeds->SetRecipeContext(this,NAME_None);DWLanguageItemTooltip::AttachRecipe(HandbookCraftButton,this,NAME_None);HandbookRecipeDetails->SetText(DWText(this,TEXT("暂无配方"),TEXT("No recipes")));HandbookCraftButton->SetIsEnabled(false);HandbookRecipeImage->SetVisibility(ESlateVisibility::Hidden);return;}
- const auto& R=C->Recipes[HandbookRecipeIndex];if(LanguageRecipeNeeds)LanguageRecipeNeeds->SetRecipeContext(this,R.RecipeId);DWLanguageItemTooltip::AttachRecipe(HandbookCraftButton,this,R.RecipeId);const auto* Bag=GetInventory();const auto* Player=GetPlayer();
- HandbookRecipeDetails->SetText(UDWLocalizationLibrary::GetRecipeDisplayName(this,R));
- if(MaterialList){
-  // Presentation only: preserve first-seen order and sum repeated input IDs.
-  // A wide total cannot overflow when combining int32 recipe quantities.
-  struct FInputTotal { FName Id; int64 Quantity=0; bool bValid=true; };
-  TArray<FInputTotal> Inputs;
-  for(const FDWItemStack& Input:R.Inputs){
-   FInputTotal* Existing=Inputs.FindByPredicate([&Input](const FInputTotal& Total){return Total.Id==Input.ItemId;});
-   if(!Existing){Inputs.AddDefaulted();Existing=&Inputs.Last();Existing->Id=Input.ItemId;}
-   Existing->bValid=Existing->bValid&&!Input.ItemId.IsNone()&&Input.Quantity>0;
-   if(Input.Quantity>0)Existing->Quantity+=int64(Input.Quantity);
-  }
-  const int32 ItemCount=Inputs.Num()+R.Outputs.Num();
-  if(MaterialList->GetChildrenCount()!=ItemCount){MaterialList->ClearChildren();for(int32 I=0;I<ItemCount;++I){auto* Row=D.Make<UHorizontalBox>();auto* Icon=D.Make<UImage>();D.H(Row,D.FitImage(Icon,26,26),0,4);auto* Label=D.Text(FText::GetEmpty(),16);Label->SetAutoWrapText(true);D.H(Row,Label,1,4);D.V(MaterialList,Row,1);}}
-  for(int32 I=0;I<ItemCount;++I)if(auto* Row=Cast<UHorizontalBox>(MaterialList->GetChildAt(I))){
-   const bool IsInput=I<Inputs.Num();const FName Id=IsInput?Inputs[I].Id:R.Outputs[I-Inputs.Num()].ItemId;
-   const int64 Amount=IsInput?Inputs[I].Quantity:int64(R.Outputs[I-Inputs.Num()].Quantity);
-   const auto* Def=C->GetItemDefinition(Id);const FText Name=Def?UDWLocalizationLibrary::GetItemDisplayName(this,*Def):FText::FromName(Id);
-   if(auto* IconBox=Cast<USizeBox>(Row->GetChildAt(0)))if(auto* Fit=Cast<UScaleBox>(IconBox->GetContent()))if(auto* Icon=Cast<UImage>(Fit->GetContent())){Icon->SetBrushFromTexture(Def?Def->Icon.Get():nullptr,false);Icon->SetVisibility(Def&&Def->Icon?ESlateVisibility::HitTestInvisible:ESlateVisibility::Collapsed);}
-   if(auto* Text=Cast<UTextBlock>(Row->GetChildAt(1))){
-    if(IsInput&&!Inputs[I].bValid)Text->SetText(FText::Format(DWText(this,TEXT("材料 {0} · 配置无效"),TEXT("Ingredient {0} · Invalid configuration")),Name));
-    else Text->SetText(IsInput?FText::Format(DWText(this,TEXT("需要 {0}  {1} / {2}"),TEXT("Needs {0}  {1} / {2}")),Name,FText::AsNumber(Bag?Bag->CountItem(Id):0),FText::AsNumber(Amount)):FText::Format(DWText(this,TEXT("产物 {0} × {1}"),TEXT("Makes {0} x {1}")),Name,FText::AsNumber(Amount)));
-   }
-  }}
- const bool Can=Bag&&Player&&Bag->CanCraft(R.RecipeId,Player->IsYeastForm());HandbookCraftButton->SetIsEnabled(Can);
- if(!Can)HandbookRecipeDetails->SetText(FText::Format(DWText(this,TEXT("{0}\n\n检查材料、空间和制作条件。"),TEXT("{0}\n\nCheck materials, space and crafting requirements.")),UDWLocalizationLibrary::GetRecipeDisplayName(this,R)));
- const auto* Out=R.Outputs.Num()?C->GetItemDefinition(R.Outputs[0].ItemId):nullptr;if(Out&&Out->Icon){HandbookRecipeImage->SetBrushFromTexture(Out->Icon,true);HandbookRecipeImage->SetColorAndOpacity(FLinearColor::White);HandbookRecipeImage->SetVisibility(ESlateVisibility::HitTestInvisible);}else HandbookRecipeImage->SetVisibility(ESlateVisibility::Hidden);
+ if(!HandbookCraftPanel)return;
+ const auto* C=GetGameplayConfig();const FName Preferred=C&&C->Recipes.IsValidIndex(HandbookRecipeIndex)?C->Recipes[HandbookRecipeIndex].RecipeId:NAME_None;
+ HandbookCraftPanel->Refresh(Preferred);
 }
 
 void UDWGameplayWidget::RefreshHandbook()
@@ -431,6 +379,7 @@ void UDWGameplayWidget::HandleHandbookAction(int32 Action)
  if(Action==22){auto* Bag=GetInventory();if(Bag&&Bag->GetSlots().IsValidIndex(SelectedSlot)){int32 NewSlot;const int32 Amount=Bag->GetSlots()[SelectedSlot].Quantity/2;if(Amount>0&&Bag->TrySplitSlot(SelectedSlot,Amount,NewSlot)){SelectInventorySlot(NewSlot);RefreshFromHUD(true);}else SetToast(DWText(this,TEXT("空间或数量不足"),TEXT("Not enough space or items")).ToString());}return;}
  if(Action==23){RequestDiscardSelectedInventory();return;}
  if(Action==24){if(auto* Bag=GetInventory()){Bag->TryQuickStack(NAME_None);RefreshFromHUD(true);}return;}
+ if(Action==30&&HandbookCraftPanel){HandbookCraftPanel->Act(3,NAME_None);return;}
  if(Action==30){const auto* C=GetGameplayConfig();if(C&&C->Recipes.IsValidIndex(HandbookRecipeIndex))CraftRecipe(C->Recipes[HandbookRecipeIndex].RecipeId);return;}
  if(Action==25||Action==26)
  {
@@ -507,7 +456,7 @@ void UDWGameplayWidget::ActivateQuickInventorySlot(int32 Index)
  {const bool Done=EquipInventorySlot(Index);if(Done){if(auto* A=P->FindComponentByClass<UDWCharacterA01Component>())A->NotifyShortcutUse(Index);}
   else SetToast(DWText(this,TEXT("当前无法装备该物品"),TEXT("This item cannot be equipped now")).ToString());return;}
  const auto* Config=GetGameplayConfig();const auto* Def=Config?Config->GetItemDefinition(CapturedSlot.ItemId):nullptr;
- const bool Core=Role==EDWCombatItemRole::MoldCore||Role==EDWCombatItemRole::YeastCore;
+ const bool Core=UDWCharacterA01Component::FormForEssence(CapturedSlot.ItemId)!=EDWCombatBaseForm::Normal;
  if(Core||(Def&&Def->bUsable))
  {
   if(!Bag->IsSlotSnapshotCurrent(CapturedSlot)||GetPlayer()!=P.Get()||P->GetInventory()!=Bag.Get())return;

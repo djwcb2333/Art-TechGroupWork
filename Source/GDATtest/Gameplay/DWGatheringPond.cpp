@@ -1,4 +1,5 @@
 #include "DWGatheringPond.h"
+#include "DWMapPondOverlay.h"
 #include "DWGatheringPondMath.h"
 #include "DWGatheringProfile.h"
 #include "DWPlayerCharacter.h"
@@ -188,6 +189,7 @@ void ADWGatheringPond::BeginPlay()
     OverlapRange->OnComponentEndOverlap.AddDynamic(this,&ADWGatheringPond::OnPondEndOverlap);
     RebuildPondGeometry();
     RefreshPromptAvailability();
+    if(auto* Map=GetWorld()->GetSubsystem<UDWMapPondOverlay>())Map->Register(this);
 }
 
 bool ADWGatheringPond::IsGatheringProfileActive() const
@@ -610,6 +612,7 @@ void ADWGatheringPond::OnPondEndOverlap(UPrimitiveComponent* Component,AActor* O
 
 void ADWGatheringPond::EndPlay(const EEndPlayReason::Type Reason)
 {
+    if(auto* Map=GetWorld()?GetWorld()->GetSubsystem<UDWMapPondOverlay>():nullptr)Map->Unregister(this);
     if(EdgeFoamMesh){EdgeFoamMesh->SetVisibility(false);EdgeFoamMesh->ClearAllMeshSections();EdgeFoamMesh->SetMaterial(0,nullptr);}
     EdgeFoamMID=nullptr;
     ClearPondVFX();
@@ -713,4 +716,14 @@ void ADWGatheringPond::TickPondVFX(float DeltaSeconds)
         }
     }
     else ShoreRippleClock=0.f;
+}
+
+TArray<FVector2D> ADWGatheringPond::GetMapOutlineWorld() const
+{
+ TArray<FVector2D> Result;if(!IsConfigurationValid())return Result;
+ if(bUseSplineBoundary)
+ {if(!bBoundaryValid)return Result;for(auto P:BoundaryPolygon){const auto W=GetActorTransform().TransformPosition(FVector(P,WaterHeightCm));Result.Emplace(W.X,W.Y);}}
+ else
+ {for(int32 K=0;K<64;++K){const double A=2.*UE_PI*K/64.;const auto W=GetActorTransform().TransformPosition(FVector(FMath::Cos(A)*RadiusCm,FMath::Sin(A)*RadiusCm,0.));Result.Emplace(W.X,W.Y);}}
+ return Result;
 }

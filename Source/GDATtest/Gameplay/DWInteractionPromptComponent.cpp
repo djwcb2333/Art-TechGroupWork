@@ -12,6 +12,7 @@
 #include "DWLanguageUIBridgeComponent.h"
 #include "DWResourceNode.h"
 #include "DWGatheringWorld.h"
+#include "DWWorldPickup.h"
 #include "Engine/World.h"
 #include "GameFramework/Pawn.h"
 #include "HAL/PlatformTime.h"
@@ -55,7 +56,8 @@ void UDWInteractionPromptComponent::OnRegister()
 bool UDWInteractionPromptComponent::UsesGatheringPromptBudget() const
 {
     const UWorld* World=GetWorld();
-    return bBudgetGatheringResourcePrompt && World && World->IsGameWorld() && Cast<ADWGatheringResource>(GetOwner());
+    return World && World->IsGameWorld() &&
+        (Cast<IDWWorldPickup>(GetOwner()) || (bBudgetGatheringResourcePrompt && Cast<ADWGatheringResource>(GetOwner())));
 }
 
 void UDWInteractionPromptComponent::InitWidget()
@@ -74,6 +76,8 @@ bool UDWInteractionPromptComponent::IsGatheringPromptNearLocalPawn() const
     const APlayerController* PC=UGameplayStatics::GetPlayerController(this,0);
     const APawn* Pawn=PC?PC->GetPawn():nullptr;
     if(!PC||!PC->IsLocalPlayerController()||!IsValid(Pawn))return false;
+    if (const auto* Pickup = Cast<IDWWorldPickup>(Owner))
+        return Pickup->IsPickupAvailable() && Pickup->IsPickupInReach(Pawn);
     const FVector Delta=Pawn->GetActorLocation()-Owner->GetActorLocation();
     return FMath::Abs(Delta.Z)<=FMath::Max(0.f,HeightTolerance)
         &&Delta.SizeSquared2D()<=FMath::Square(FMath::Max(1.f,GenericDetectionRadius));
@@ -293,21 +297,27 @@ void UDWInteractionPromptComponent::ResetDemolitionPresentation()
 void UDWInteractionPromptComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     const bool bWasBudgetIdle=bBudgetOwnsTickInterval;
-    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
     UWorld* World = GetWorld();
-    if (!World || !World->IsGameWorld() || World->bIsTearingDown) return;
-    if(UsesGatheringPromptBudget()&&!GetUserWidgetObject()&&!IsGatheringPromptNearLocalPawn())
+    if (!World || !World->IsGameWorld() || World->bIsTearingDown)
+    {Super::TickComponent(DeltaTime, TickType, ThisTickFunction);return;}
+    // A fully hidden, distant opted-in resource has no visual work to advance.
+    // Skip the WidgetComponent/Slate path even after a previous visit created its widget.
+    // Visible fades, near prompts and committed-hit feedback retain the original full update.
+    if(UsesGatheringPromptBudget()&&!IsGatheringPromptNearLocalPawn()
+        &&!bPromptDesiredVisible&&!bPromptVisible&&!HasPendingGatheringHitFeedback()
+        &&C06GatheringFeedbackDeadline<=FPlatformTime::Seconds())
     {
         UpdateGatheringPromptBudget(true);
-        return; // No widget exists, so no visual transition or feedback can be in progress.
+        return;
     }
+    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
     RefreshWorldPlacement();
     PrepareWidget();
     UDWInteractionPromptWidget* Prompt = GetPromptWidget();
     if (!Prompt) return;
 
     AActor* Owner = GetOwner();
-    if(!Cast<ADWGatheringPickup>(Owner))Prompt->SetPickupIcon(nullptr,false);
+    if (!Cast<IDWWorldPickup>(Owner)) Prompt->SetPickupIcon(nullptr, false);
     if(const auto* Node=Cast<ADWGatheringResource>(Owner))
         if(Node->GetGatheringProgress()<C06LastNotifiedGatheringProgress)ResetGatheringHitFeedback();
     APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
@@ -385,19 +395,20 @@ void UDWInteractionPromptComponent::TickComponent(float DeltaTime, ELevelTick Ti
                 Prompt->SetProgress(GatheringResource->GetGatheringProgress(),true);
             }
         }
-        else if(const ADWGatheringPickup* Pickup=Cast<ADWGatheringPickup>(Owner))
+        else if (const auto* Pickup = Cast<IDWWorldPickup>(Owner))
         {
-            bShouldShow=bWithinHeight&&Pickup->IsInteractionAvailable()
-                &&Delta.SizeSquared2D()<=FMath::Square(FMath::Max(1.f,GenericDetectionRadius));
+            bShouldShow = Pickup->IsPickupAvailable() && Pickup->IsPickupInReach(Pawn);
             if(bShouldShow)
             {
                 const UDWGameplayConfig* Config=Player?Player->GetGameplayConfig():nullptr;
                 if(!Config)if(auto* GI=World->GetGameInstance<UDWGameInstance>())Config=GI->GetConfig();
-                const FDWItemDefinition* Item=Config?Config->GetItemDefinition(Pickup->ItemId):nullptr;
-                const bool bEnglish=UDWLocalizationLibrary::GetLanguage(this)==EDWGameLanguage::English;
-                Prompt->SetPickupIcon(Item?Item->Icon.Get():nullptr,true);
-                Prompt->SetPromptText(Item?UDWLocalizationLibrary::GetItemDisplayName(this,*Item):FText::FromName(Pickup->ItemId),
-                    bEnglish&&!GenericEnglishAction.IsEmpty()?GenericEnglishAction:GenericPromptAction,GenericPromptKey);
+                const FName ItemId = Pickup->GetPickupItemId();
+                const FDWItemDefinition* Item = Config ? Config->GetItemDefinition(ItemId) : nullptr;
+                const bool bEnglish = UDWLocalizationLibrary::GetLanguage(this) == EDWGameLanguage::English;
+                const FText Title = Item ? UDWLocalizationLibrary::GetItemDisplayName(this, *Item) :
+                    (ItemId.IsNone() ? (bEnglish ? GenericEnglishPromptTitle : GenericPromptTitle) : FText::FromName(ItemId));
+                Prompt->SetPickupIcon(Item ? Item->Icon.Get() : nullptr, !ItemId.IsNone());
+                Prompt->SetPromptText(Title, bEnglish && !GenericEnglishAction.IsEmpty() ? GenericEnglishAction : GenericPromptAction, GenericPromptKey);
                 Prompt->SetProgress(0.f,false);
             }
         }
@@ -416,7 +427,7 @@ void UDWInteractionPromptComponent::TickComponent(float DeltaTime, ELevelTick Ti
     }
     // Presentation only. Read the applied keys each tick, not the editable pending fields.
     // Resource/pickup use the real Harvest action; unrelated authored generic actors keep text.
-    bool bApplied=Cast<ADWResourceNode>(Owner)||Cast<ADWGatheringResource>(Owner)||Cast<ADWGatheringPickup>(Owner);
+    bool bApplied=Cast<ADWResourceNode>(Owner)||Cast<ADWGatheringResource>(Owner)||Cast<IDWWorldPickup>(Owner);
     FKey Primary=DWPC?DWPC->GetAppliedActionKey(EDWInputAction::Harvest):FKey(),ReadKey;
     if(bDemolition&&!bBlocked){bApplied=true;Primary=DemolitionKey;}
     bool bSecondary=false;

@@ -10,6 +10,14 @@ namespace DWGatheringPresentationMath
     }
     // Accelerating, gravity-inspired presentation; this is deliberately not Chaos simulation.
     inline float FallFraction(float T) { return FMath::Pow(Unit(T),2.25f); }
+    // The first six drops match the sugar-tree ring. Wider outer rings keep larger tables readable.
+    inline FVector ScatterOffset(int32 Slot)
+    {
+        const int32 Index = FMath::Max(0, Slot);
+        const double Angle = double(Index) * 2.3999632297;
+        const double Radius = 100. + 48. * (Index / 6);
+        return FVector(FMath::Cos(Angle) * Radius, FMath::Sin(Angle) * Radius, 0.);
+    }
     inline FVector ScatterPoint(const FVector& Start,const FVector& End,float T,float Height)
     {
         const float A=Unit(T),H=FMath::IsFinite(Height)?FMath::Max(0.f,Height):0.f;

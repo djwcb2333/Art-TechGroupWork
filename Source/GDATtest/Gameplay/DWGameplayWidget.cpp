@@ -14,6 +14,8 @@
 #include "DWPlayerController.h"
 #include "DWGameInstance.h"
 #include "DWLanguageSubsystem.h"
+#include "DWLanguageItemTooltipFactory.h"
+#include "DWCharacterA01Component.h"
 #include "DWLanguageUIBridgeComponent.h"
 #include "Input/Events.h"
 #include "DWGameplayConfig.h"
@@ -635,20 +637,19 @@ void UDWGameplayWidget::RefreshSelection()
     const auto* D=C?C->GetItemDefinition(Item.ItemId):nullptr;
     FString Description=DWText(this,TEXT("选择物品查看用途，再点击使用。"),TEXT("Select an item to see its use, then choose Use.")).ToString();
     const auto ItemRole=FDWCombatItemRegistry::GetItemRole(Item.ItemId);
-    const bool bCore=ItemRole==EDWCombatItemRole::MoldCore||ItemRole==EDWCombatItemRole::YeastCore;
+    const bool bCore=UDWCharacterA01Component::FormForEssence(Item.ItemId)!=EDWCombatBaseForm::Normal;
     FDWInventorySlotSnapshot CoreSlot;
     const auto* Language=GetGameInstance()?GetGameInstance()->GetSubsystem<UDWLanguageSubsystem>():nullptr;
     const bool bRuntimeConsumable=Language&&Language->IsRuntimeConsumable(Item.ItemId);
-    const bool bA01Session=Language&&Language->IsReady();
     const bool bCanUse=bCore?(GetPlayer()&&Bag&&Bag->CaptureSlotSnapshot(SelectedSlot,CoreSlot)&&GetPlayer()->CanRequestCoreInjection(CoreSlot,true)):(D&&Item.Quantity>0&&(D->bUsable||bRuntimeConsumable));
     if(D&&Item.Quantity>0)
     {
-        Description=UDWLocalizationLibrary::GetItemDisplayName(this,*D).ToString();
-        if(!bA01Session&&D->HealAmount>0)Description+=FText::Format(DWText(this,TEXT(" · 恢复 {0} 生命"),TEXT(" - Restores {0} health")),FMath::RoundToInt(D->HealAmount)).ToString();
-        if(!bA01Session&&D->TransformationGainPercent>0)Description+=FText::Format(DWText(this,TEXT(" · +{0}% 变身值"),TEXT(" - +{0}% transformation")),FMath::RoundToInt(D->TransformationGainPercent)).ToString();
-        if(ItemRole==EDWCombatItemRole::PermanentWeapon||ItemRole==EDWCombatItemRole::ThrowableStock)Description+=DWText(this,TEXT(" · 可从背包装备"),TEXT(" - Equip from inventory")).ToString();
-        else if(bRuntimeConsumable)Description+=DWText(this,TEXT(" · 补充生存资源（详情见物品提示）"),TEXT(" - Restores survival resources; see item details")).ToString();
-        else if(!D->bUsable)Description+=DWText(this,TEXT(" · 制作 / 战斗材料"),TEXT(" - Crafting / combat material")).ToString();
+        // The hover view already reads actual runtime_consumables (including sugar
+        // aliases) or the applicable legacy ItemDef. Reuse it, never duplicate effects.
+        const FDWItemTooltipView View=DWLanguageItemTooltip::Item(this,Item);
+        Description=View.Name.ToString();
+        for(const FText& Attribute:View.Attributes)if(!Attribute.IsEmpty())Description+=TEXT("\n")+Attribute.ToString();
+        if(!View.Use.IsEmpty())Description+=TEXT("\n")+View.Use.ToString();
     }
     DWSetText(InventoryDetailsText,Description);DWSetText(CraftingDetailsText,Description);
     if(InventoryUseButton)InventoryUseButton->SetIsEnabled(bCanUse);if(CraftingUseButton)CraftingUseButton->SetIsEnabled(bCanUse);
@@ -681,8 +682,7 @@ void UDWGameplayWidget::ClickUse()
     if(IsInventoryDiscardPending())return;
     PlayClick();const auto* Bag=GetInventory();const FName Id=Bag&&Bag->GetSlots().IsValidIndex(SelectedSlot)?Bag->GetSlots()[SelectedSlot].ItemId:NAME_None;
     bool Used=false;
-    const auto Role=FDWCombatItemRegistry::GetItemRole(Id);
-    if(Role==EDWCombatItemRole::MoldCore||Role==EDWCombatItemRole::YeastCore)
+    if(UDWCharacterA01Component::FormForEssence(Id)!=EDWCombatBaseForm::Normal)
     {
         const TWeakObjectPtr<ADWPlayerCharacter> P(GetPlayer());
         auto* A=UDWCombatAuthoritySubsystem::Get(P.Get());FDWInventorySlotSnapshot CoreSlot;

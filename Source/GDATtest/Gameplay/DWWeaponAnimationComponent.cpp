@@ -1,4 +1,4 @@
-﻿#include "DWWeaponAnimationComponent.h"
+#include "DWWeaponAnimationComponent.h"
 #include "DWWeaponVisualSampler.h"
 #include "DWAttackVfxResolver.h"
 #include "DWCombatPresentationComponent.h"
@@ -692,7 +692,7 @@ void UDWWeaponAnimationComponent::UpdateVisuals()
     const auto& Presentation=GetPresentationClip();
     const auto* Feedback=P->CombatFeedback.Get();
     const auto EffectiveTrails=DWAttackVfxResolver::ResolveTrails(Set->AttackVfxProfile.Get(),*Set);
-    const bool bPrimaryGeometryAllowed=!EffectiveTrails.bParticleReplacesGeometry||!EffectiveTrails.Primary.System;
+    const bool bPrimaryGeometryAllowed=!EffectiveTrails.bParticleReplacesGeometry; // Replacement may be a native animation notify.
     const bool bSecondaryGeometryAllowed=!EffectiveTrails.bParticleReplacesGeometry||!EffectiveTrails.Secondary.System;
     const bool bUseGeometryTrail=(bPrimaryGeometryAllowed||bSecondaryGeometryAllowed)&&
         (EffectiveTrails.bUseGeometryTrail||(Feedback&&Feedback->bHighlightTrails&&!Presentation.GeometryFrames.IsEmpty()));

@@ -47,6 +47,7 @@ private:
     int64 ExpectedRevision=INDEX_NONE;
     FName RequiredUsableItem;
     FName RequiredCraftRecipe,RequiredBuildingOutput,RequiredPermanentWeaponOutput;
+    int32 RequiredCraftCount=1;bool RequiredCraftYeast=false;
     bool bConsumed=true;
     void Reset();
 };
@@ -69,6 +70,9 @@ public:
     bool PrepareAddItemUpTo(FName ItemId,int32 Requested,int32& OutAccepted,FDWPreparedInventoryChange& OutPrepared) const;
     /** Uses the same station checks as CanCraft. Registered building outputs are added to inventory. */
     bool PrepareCraftRecipe(FName RecipeId,bool bYeast,FDWPreparedInventoryChange& OutPrepared) const;
+    bool PrepareCraftRecipeBatch(FName RecipeId,bool bYeast,int32 Count,FDWPreparedInventoryChange& OutPrepared) const;
+    bool CanCraftRecipeBatch(FName RecipeId,bool bYeast,int32 Count) const;
+    bool TryCraftRecipeBatch(FName RecipeId,bool bYeast,int32 Count);
     /** False for malformed recipes. None means ordinary craft; permanent output must be exactly one item. */
     bool GetCraftPermanentWeaponOutput(FName RecipeId,FName& OutItemId) const;
     bool PrepareRemoveItem(FName ItemId, int32 Quantity, FDWPreparedInventoryChange& OutPrepared) const;
@@ -99,6 +103,8 @@ public:
 
     UFUNCTION(BlueprintPure, Category="DoughWorld|Inventory")
     int32 CountItem(FName ItemId) const;
+    // Recipe UI counts the same audited material aliases as the craft transaction.
+    int32 CountCraftingMaterial(FName ItemId) const;
 
     UFUNCTION(BlueprintCallable, Category="DoughWorld|Inventory")
     bool TryAddItem(FName ItemId, int32 Quantity);
@@ -183,6 +189,7 @@ private:
     const UDWGameplayConfig* GetConfig() const;
     bool CanWriteInventory() const;
     bool ValidatePreparedForCommit(const FDWPreparedInventoryChange& Prepared) const;
+    bool ValidateBatchCandidate(const FDWPreparedInventoryChange& Prepared) const;
     void AdoptPreparedUnchecked(FDWPreparedInventoryChange&& Prepared);
     bool AreSlotsValidWithPolicy(const TArray<FDWItemStack>& InSlots, const UDWGameplayConfig* Settings,
         const TMap<FName,int32>& Overrides) const;

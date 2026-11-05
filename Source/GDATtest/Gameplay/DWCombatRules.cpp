@@ -1,4 +1,5 @@
 #include "DWCombatRules.h"
+#include "DWPlayerCombatTuningPolicy.h"
 #include "Dom/JsonObject.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
@@ -261,6 +262,39 @@ bool FDWCombatRules::LoadFromJson(const FString& Json,TSharedPtr<const FDWCombat
     OutRules=Candidate;return true;
 }
 
+bool FDWCombatRules::WithPlayerOverrides(const TSharedPtr<const FDWCombatRules>& Base,const TMap<FName,double>& Overrides,TSharedPtr<const FDWCombatRules>& Out,FString& Error)
+{
+ using namespace DWCombatRulesInternal;
+ if(!Base){Error=TEXT("Missing original combat rules");return false;}
+ if(Overrides.IsEmpty()){Out=Base;Error.Reset();return true;}
+ TSharedPtr<FDWCombatRules> Candidate(new FDWCombatRules(*Base));
+ for(const auto& Pair:Overrides)
+ {
+  const FBaseSpec* Spec=nullptr;for(const auto& S:BaseSpecs)if(FName(S.Id)==Pair.Key){Spec=&S;break;}
+  if(!DWPlayerCombatTuningPolicy::RuleAllowed(Pair.Key)||!Spec||!ValidValue(Pair.Value,Spec->Domain))
+   return Fail(Error,TEXT("Invalid or locked player attack override: ")+Pair.Key.ToString());
+  auto* Value=Candidate->Values.Find(Pair.Key);if(!Value||Value->bDerived)return Fail(Error,TEXT("Derived overrides are forbidden"));
+  Value->Value=Pair.Value;
+ }
+ if(!ValidateRelationships(Candidate->Values,Error))return false;
+ for(const auto& S:DerivedSpecs)
+ {
+  const double V=Candidate->Values.FindChecked(FName(S.Left)).Value*Candidate->Values.FindChecked(FName(S.Right)).Value;
+  if(!FMath::IsFinite(V))return Fail(Error,TEXT("Derived attack override overflow"));
+  Candidate->Values.FindChecked(FName(S.Id)).Value=V;
+ }
+ // Baseline design provenance is retained; effective override count is explicitly separate.
+ Candidate->PlayerOverrideCount=Overrides.Num();Out=MoveTemp(Candidate);Error.Reset();return true;
+}
+
+bool FDWCombatRules::FromCompletePlayerValues(const TSharedPtr<const FDWCombatRules>& Base,const TMap<FName,double>& Values,TSharedPtr<const FDWCombatRules>& Out,FString& Error)
+{
+ if(Values.Num()!=147){Error=TEXT("玩家战斗数值必须完整，不允许逐项继承 / Incomplete player numeric source");return false;}
+ for(const auto& Pair:Values)if(!DWPlayerCombatTuningPolicy::RuleAllowed(Pair.Key)){Error=TEXT("玩家战斗数值身份无效 / Invalid complete player numeric identity");return false;}
+ // Reuse the original value-domain, relationship and derived-value implementation.
+ // Every approved player field is mandatory; no enable bits or per-field fallback exist here.
+ return WithPlayerOverrides(Base,Values,Out,Error);
+}
 bool FDWCombatRules::LoadProjectPayload(TSharedPtr<const FDWCombatRules>& OutRules,FString& OutError)
 {
     OutRules.Reset();FString Json;

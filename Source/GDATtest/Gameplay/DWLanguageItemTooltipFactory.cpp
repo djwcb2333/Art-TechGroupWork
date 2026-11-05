@@ -125,10 +125,11 @@ FDWItemTooltipView Item(UDWGameplayWidget* S,const FDWItemStack& Stack)
  V.bOccupied=true;V.ItemId=Stack.ItemId;V.Name=Name(S,Stack.ItemId);V.Icon=Icon(S,Stack.ItemId);V.Quantity=Stack.Quantity;
  V.StackLimit=Bag?Bag->GetEffectiveStackLimit(Stack.ItemId):0;
  const auto Role=FDWCombatItemRegistry::GetItemRole(Stack.ItemId);
+ const auto EssenceForm=UDWCharacterA01Component::FormForEssence(Stack.ItemId);
  if(Role==EDWCombatItemRole::PermanentWeapon)V.Use=DWText(S,TEXT("在背包中装备后使用对应武器攻击。"),TEXT("Equip from the inventory to use this weapon."));
  else if(Role==EDWCombatItemRole::ReserveAmmo)V.Use=DWText(S,TEXT("对应武器使用的备用弹药。"),TEXT("Reserve ammunition for its weapon."));
  else if(Role==EDWCombatItemRole::ThrowableStock)V.Use=DWText(S,TEXT("装备并投掷；已发出的投掷物按实际规则扣除库存。"),TEXT("Equip and throw; committed throws spend real inventory stock."));
- else if(Role==EDWCombatItemRole::MoldCore||Role==EDWCombatItemRole::YeastCore)V.Use=DWText(S,TEXT("使用后进入对应形态的精华。"),TEXT("An essence used to enter its corresponding form."));
+ else if(EssenceForm!=EDWCombatBaseForm::Normal)V.Use=DWText(S,TEXT("使用后进入对应形态的精华。"),TEXT("An essence used to enter its corresponding form."));
  else if(C->GetBuildingDefinition(Stack.ItemId))V.Use=DWText(S,TEXT("在背包中使用，选择实际可用的位置放置。"),TEXT("Use from the inventory and choose a valid placement location."));
  else if(D->bUsable||(S->GetGameInstance()&&S->GetGameInstance()->GetSubsystem<UDWLanguageSubsystem>()&&S->GetGameInstance()->GetSubsystem<UDWLanguageSubsystem>()->IsRuntimeConsumable(Stack.ItemId)))V.Use=DWText(S,TEXT("可在背包或已解锁的快捷格使用。"),TEXT("Use from the inventory or an unlocked quick slot."));
  else V.Use=DWText(S,TEXT("制作或交换使用的物品；相关配方读取当前配置。"),TEXT("An item for crafting or exchange; related recipes use the current configuration."));
@@ -150,24 +151,32 @@ FDWItemTooltipView Item(UDWGameplayWidget* S,const FDWItemStack& Stack)
  AppendWeaponAttributes(S,Stack.ItemId,V.Attributes);
  // These legacy use values are not the A01 survival rules. Never advertise them for the trial overlay.
  const auto* P=S->GetPlayer();const auto* A=P?P->FindComponentByClass<UDWCharacterA01Component>():nullptr;
- if(A&&A->IsEnabled()&&IsLanguageSessionReady(S))if(const auto* GI=S->GetGameInstance())if(const auto* L=GI->GetSubsystem<UDWLanguageSubsystem>())
+ if(EssenceForm!=EDWCombatBaseForm::Normal&&A&&A->IsEnabled()&&IsLanguageSessionReady(S))
+ {
+  const int32 Count=A->EssenceCount();const double Seconds=A->InjectionSeconds();
+  if(Count>0)V.Attributes.Add(FText::Format(DWText(S,TEXT("每次消耗 {0}"),TEXT("Consumed per use: {0}")),FText::AsNumber(Count)));
+  if(FMath::IsFinite(Seconds)&&Seconds>0.)V.Attributes.Add(FText::Format(DWText(S,TEXT("注射时长 {0} 秒"),TEXT("Injection duration: {0} s")),FText::AsNumber(Seconds)));
+ }
+ if(EssenceForm==EDWCombatBaseForm::Normal&&A&&A->IsEnabled()&&IsLanguageSessionReady(S))if(const auto* GI=S->GetGameInstance())if(const auto* L=GI->GetSubsystem<UDWLanguageSubsystem>())
  {
   const TSharedPtr<FJsonObject> Config=L->GetTrialConfig();const TSharedPtr<FJsonObject>* Uses=nullptr,*Use=nullptr;
   if(Config&&Config->TryGetObjectField(TEXT("runtime_consumables"),Uses)&&Uses&&(*Uses)->TryGetObjectField(Stack.ItemId.ToString(),Use)&&Use)
   {
-   double Water=0.,Food=0.,Count=0.;
+   double Water=0.,Food=0.,Count=0.,Healing=0.;
    if((*Use)->TryGetNumberField(TEXT("consume"),Count)&&FMath::IsFinite(Count)&&Count>=1.)
     V.Attributes.Add(FText::Format(DWText(S,TEXT("每次消耗 {0}"),TEXT("Consumed per use: {0}")),FText::AsNumber(Count)));
    if((*Use)->TryGetNumberField(TEXT("hydration"),Water)&&FMath::IsFinite(Water)&&Water>0.)
     V.Attributes.Add(FText::Format(DWText(S,TEXT("补充水分 {0}"),TEXT("Water restored: {0}")),FText::AsNumber(Water)));
    if((*Use)->TryGetNumberField(TEXT("satiety"),Food)&&FMath::IsFinite(Food)&&Food>0.)
     V.Attributes.Add(FText::Format(DWText(S,TEXT("补充饱腹 {0}"),TEXT("Food restored: {0}")),FText::AsNumber(Food)));
+   if((*Use)->TryGetNumberField(TEXT("health"),Healing)&&FMath::IsFinite(Healing)&&Healing>0.)
+    V.Attributes.Add(FText::Format(DWText(S,TEXT("恢复当前生命 {0}（不恢复损失上限）"),TEXT("Current HP restored: {0} (lost cap unchanged)")),FText::AsNumber(Healing)));
    FString Returned;double Amount=0.;
    if((*Use)->TryGetStringField(TEXT("return_item"),Returned)&&!Returned.IsEmpty()&&(*Use)->TryGetNumberField(TEXT("return_count"),Amount)&&FMath::IsFinite(Amount)&&Amount>0.)
     V.Attributes.Add(FText::Format(DWText(S,TEXT("使用后返还 {0} × {1}"),TEXT("Returned after use: {0} x {1}")),Name(S,FName(*Returned)),FText::AsNumber(Amount)));
   }
  }
- if(!A||!A->IsEnabled())
+ if(EssenceForm==EDWCombatBaseForm::Normal&&(!A||!A->IsEnabled()))
  {if(D->HealAmount>0.)V.Attributes.Add(FText::Format(DWText(S,TEXT("恢复生命 {0}"),TEXT("Health restored {0}")),FText::AsNumber(D->HealAmount)));
   if(D->TransformationGainPercent>0.)V.Attributes.Add(FText::Format(DWText(S,TEXT("形态资源 {0}%"),TEXT("Form resource {0}%")),FText::AsNumber(D->TransformationGainPercent)));}
  return V;
@@ -213,7 +222,7 @@ FDWItemTooltipView Recipe(UDWGameplayWidget* S,FName RecipeId)
  V.Product=Join(Products);
  for(const auto& I:R->Inputs)Required.FindOrAdd(I.ItemId)+=I.Quantity;
  for(const auto& I:Required)
- {const int32 Have=Bag?Bag->CountItem(I.Key):0;
+ {const int32 Have=Bag?Bag->CountCraftingMaterial(I.Key):0;
   V.Materials.Add(FText::Format(DWText(S,TEXT("材料：{0}  {1} / {2}"),TEXT("Material: {0}  {1} / {2}")),Name(S,I.Key),FText::AsNumber(Have),FText::AsNumber(I.Value)));
   if(Have<I.Value)Missing.Add(FText::Format(DWText(S,TEXT("{0} 还缺 {1}"),TEXT("{0}: {1} more needed")),Name(S,I.Key),FText::AsNumber(I.Value-Have)).ToString());}
  for(const auto& Condition:V.Conditions)if(!Condition.bSatisfied&&!Condition.MissingReason.IsEmpty())Missing.Add(Condition.MissingReason.ToString());
