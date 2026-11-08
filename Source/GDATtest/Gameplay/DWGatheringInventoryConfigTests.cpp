@@ -129,16 +129,19 @@ bool FDWGatheringMapProfileResolution::RunTest(const FString&)
     TStrongObjectPtr<UDWGameInstance> GI(NewObject<UDWGameInstance>());GI->SoftConfigPath.Reset();
     UDWGameplayConfig* Original=GI->GetConfigForMap(TEXT("/Game/DW_QA_Original"));
     if(!TestNotNull(TEXT("Transient original fallback"),Original))return false;
-    const FName TestMap(TEXT("/Game/DW_QA_Gathering"));
+    const FName TestMap(TEXT("/Game/DoughWorld/Maps/Gameplay/Levels/L_DoughWorld_GatheringTest"));
+    const FName MissingMap(TEXT("/Game/DoughWorld/Maps/Gameplay/Levels/L_DoughWorld_LanguagePlaytest"));
+    Original->MapConfigOverrides.Add(TEXT("/Game/DW_QA_Original"),TSoftObjectPtr<UDWGameplayConfig>(F.Profile.Get()));
+    TestTrue(TEXT("Non-isolated maps cannot override the formal profile"),GI->GetConfigForMap(TEXT("/Game/DW_QA_Original"))==Original);
     Original->MapConfigOverrides.Add(TestMap,TSoftObjectPtr<UDWGameplayConfig>(F.Profile.Get()));
     TestTrue(TEXT("Registered map resolves profile before travel"),GI->GetConfigForMap(TestMap.ToString())==F.Profile.Get());
-    TestTrue(TEXT("PIE map name resolves same profile"),GI->GetConfigForMap(TEXT("/Game/UEDPIE_2_DW_QA_Gathering"))==F.Profile.Get());
+    TestTrue(TEXT("PIE map name resolves same profile"),GI->GetConfigForMap(TEXT("/Game/DoughWorld/Maps/Gameplay/Levels/UEDPIE_2_L_DoughWorld_GatheringTest"))==F.Profile.Get());
     TestTrue(TEXT("Old map still resolves original after new map lookup"),GI->GetConfigForMap(TEXT("/Game/DW_QA_Original"))==Original);
     TestFalse(TEXT("Cross-profile inventory travel incompatible"),GI->AreGameplayMapProfilesCompatible(TEXT("/Game/DW_QA_Original"),TestMap.ToString()));
     TestTrue(TEXT("Two original-profile maps compatible"),GI->AreGameplayMapProfilesCompatible(TEXT("/Game/DW_QA_Original"),TEXT("/Game/DW_QA_Original2")));
-    Original->MapConfigOverrides.Add(TEXT("/Game/DW_QA_Missing"),TSoftObjectPtr<UDWGameplayConfig>());
-    TestNull(TEXT("Explicit missing profile fails closed"),GI->GetConfigForMap(TEXT("/Game/DW_QA_Missing")));
-    TestFalse(TEXT("Missing target profile cannot carry inventory"),GI->AreGameplayMapProfilesCompatible(TEXT("/Game/DW_QA_Original"),TEXT("/Game/DW_QA_Missing")));
+    Original->MapConfigOverrides.Add(MissingMap,TSoftObjectPtr<UDWGameplayConfig>());
+    TestNull(TEXT("Explicit missing isolated profile fails closed"),GI->GetConfigForMap(MissingMap.ToString()));
+    TestFalse(TEXT("Missing target profile cannot carry inventory"),GI->AreGameplayMapProfilesCompatible(TEXT("/Game/DW_QA_Original"),MissingMap.ToString()));
     return true;
 }
 #endif

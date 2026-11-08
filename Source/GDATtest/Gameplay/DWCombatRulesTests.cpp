@@ -1,5 +1,6 @@
 #if WITH_DEV_AUTOMATION_TESTS
 #include "DWCombatRules.h"
+#include "DWCombatMoldRoot.h"
 #include "Dom/JsonObject.h"
 #include "Misc/AutomationTest.h"
 #include "Misc/FileHelper.h"
@@ -161,7 +162,19 @@ bool FDWCombatRulesConstraintsTest::RunTest(const FString& Parameters)
         TSharedPtr<const FDWCombatRules> Rules;FString E;TestFalse(Label,FDWCombatRules::LoadFromJson(Json(R),Rules,E));TestFalse(TEXT("Reason reported"),E.IsEmpty());
     };
     RejectValue(TEXT("yeast.dash.spend_per_second"),N(TEXT("special.gain_per_second")),TEXT("Spend equal to automatic gain cannot drain ability"));
-    RejectValue(TEXT("mold.root.spend_per_second"),N(TEXT("special.gain_per_second")),TEXT("Root spend cannot equal gain"));
+    RejectValue(TEXT("mold.root.spend_per_second"),-1.,TEXT("Root cannot spend a negative amount"));
+    const double LegacyGain=N(TEXT("special.gain_per_second"));
+    Parameter(Original,TEXT("mold.root.spend_per_second"))->SetNumberField(TEXT("value"),LegacyGain);
+    TSharedPtr<const FDWCombatRules> RootRules;
+    if(TestTrue(TEXT("Root spend may equal retired legacy gain"),FDWCombatRules::LoadFromJson(Json(Original),RootRules,Error)))
+    {
+        FDWMoldRootConfig Root;
+        if(TestTrue(TEXT("Root builds against the A01 budget"),FDWMoldRootConfig::Build(*RootRules,Root,Error)))
+        {
+            TestEqual(TEXT("Root uses the configured drain"),Root.SpendPerSecond,LegacyGain);
+            TestEqual(TEXT("Root receives no retired legacy gain"),Root.SpecialGainPerSecond,0.);
+        }
+    }
     RejectValue(TEXT("yeast.dash.start_cost"),N(TEXT("special.max")),TEXT("No affordable minimum dash after start cost"));
     RejectValue(TEXT("mold.root.start_cost"),N(TEXT("special.max")),TEXT("Root requires positive post-fee duration"));
     RejectValue(TEXT("weapon.spear.active_s"),N(TEXT("weapon.spear.interval_s"))+1.,TEXT("Melee windows cannot exceed attack cycle"));

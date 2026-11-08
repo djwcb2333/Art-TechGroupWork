@@ -39,7 +39,9 @@ bool FDWEnemyNumericTuningTest::RunTest(const FString&)
  TestTrue(TEXT("Authorized effective Legacy projection accepted"),DWEnemyNumericPolicy::ValidateLegacyProjection(300,190,300,300,190));
  TestFalse(TEXT("Forged saved cap not admitted by numeric editor"),DWEnemyNumericPolicy::ValidateLegacyProjection(300,190,333,300,190));
  TestFalse(TEXT("Mixed live source remains rejected"),DWEnemyNumericPolicy::ValidateLegacyProjection(300,190,300,100,190));
- TestFalse(TEXT("Native overflow rejected"),DWEnemyNumericPolicy::ValidateValue(EDWEnemyNumericField::Damage,static_cast<double>(MAX_flt)*2.));
+ // Keep the oversized input at runtime so MSVC does not fold the guarded float cast in a unity build.
+ const volatile double OversizedValue=static_cast<double>(MAX_flt)*2.;
+ TestFalse(TEXT("Native overflow rejected"),DWEnemyNumericPolicy::ValidateValue(EDWEnemyNumericField::Damage,OversizedValue));
  TestFalse(TEXT("Legacy active duration below original .01 rejected"),DWEnemyNumericPolicy::ValidateLegacyValue(EDWEnemyNumericField::Active,.001));
  TestFalse(TEXT("Legacy interval below original .05 rejected"),DWEnemyNumericPolicy::ValidateLegacyValue(EDWEnemyNumericField::Interval,.01));
  TestFalse(TEXT("Legacy health below original one rejected"),DWEnemyNumericPolicy::ValidateLegacyValue(EDWEnemyNumericField::MaxHealth,.5));

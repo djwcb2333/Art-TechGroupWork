@@ -185,9 +185,12 @@ public:
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Transformation",meta=(ClampMin="0.01")) float TransformShakeSeconds=0.35f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Transformation",meta=(ClampMin="0")) float TransformShakeMagnitude=8.f;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Transformation",meta=(ClampMin="1")) float TransformShakeFrequency=35.f;
-    /** Material multipliers: preserve the source atlas and change only its FormTint parameter. */
+    /** Material multipliers preserve the source atlas. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Transformation|Visual") FLinearColor YeastTint=FLinearColor(1.f,0.36f,0.065f,1.f);
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Transformation|Visual") FLinearColor DoughTint=FLinearColor::White;
+    /** Additive material emission for the normal form. Zero disables the added glow. */
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Transformation|Visual",meta=(ClampMin="0",ClampMax="1"))
+    float NormalFormGlowStrength=0.22f;
     /** Adjustable trial recognition tint; final art approval remains separate. Linear RGB multiplier. */
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="DoughWorld|Transformation|Visual",meta=(DisplayName="Mold Tint (Playtest Default)")) FLinearColor MoldTint=FLinearColor(0.16f,0.70f,0.42f,1.f);
     /** Matches the authored Transform root's final scale, but persists across all yeast animations. */

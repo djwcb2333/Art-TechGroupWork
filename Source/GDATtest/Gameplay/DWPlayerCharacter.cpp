@@ -1695,11 +1695,19 @@ void ADWPlayerCharacter::TickFormAppearance(float DeltaSeconds)
     CurrentFormBlendAlpha=FMath::Lerp(FormBlendStartAlpha,FormBlendTargetAlpha,SmoothAlpha);
     CurrentFormVisualScale=FMath::Lerp(1.f,FMath::Max(.1f,YeastFormScaleMultiplier),CurrentFormBlendAlpha);
     CurrentFormTint=FMath::Lerp(FormBlendStartTint,FormBlendTargetTint,SmoothAlpha);
+    const bool bNormalForm=!bYeastForm&&GetCombatBaseForm()==EDWCombatBaseForm::Normal;
+    const float NormalFormGlow=bNormalForm&&FMath::IsFinite(NormalFormGlowStrength)
+        ?FMath::Clamp(NormalFormGlowStrength,0.f,1.f):0.f;
+    static const FName NormalFormGlowParameter(TEXT("DWNormalFormGlow"));
     for(int32 I=0;I<GetMesh()->GetNumMaterials();++I)
     {
         auto* MID=Cast<UMaterialInstanceDynamic>(GetMesh()->GetMaterial(I));
         if(!MID)MID=GetMesh()->CreateDynamicMaterialInstance(I);
-        if(MID)MID->SetVectorParameterValue(TEXT("FormTint"),CurrentFormTint);
+        if(MID)
+        {
+            MID->SetVectorParameterValue(TEXT("FormTint"),CurrentFormTint);
+            MID->SetScalarParameterValue(NormalFormGlowParameter,NormalFormGlow);
+        }
     }
     ApplyFormMeshScale();
 }
