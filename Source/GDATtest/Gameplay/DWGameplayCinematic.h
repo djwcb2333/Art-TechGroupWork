@@ -11,6 +11,8 @@
 
 #include "DWGameplayCinematic.generated.h"
 class UCameraShakeBase;
+class UGameViewportClient;
+class SDWCinematicLetterbox;
 class UInputComponent;
 class ADWPlayerController;
 class UBoxComponent;
@@ -170,11 +172,15 @@ private:
  TWeakObjectPtr<UDWWorldEventComponent> Event;
  TArray<TWeakObjectPtr<UDWUIOffscreenComponent>> UI;
  FMinimalViewInfo OriginalPOV,TargetPOV;
+ TWeakObjectPtr<UGameViewportClient> LetterboxViewport;
+ TSharedPtr<SDWCinematicLetterbox> ViewportLetterbox;
  float PhaseSeconds=0,InitialAspect=1.777778f,UIReturnDuration=0;
  uint8 PreviousMovementMode=0,PreviousCustomMode=0;
  bool bSavedCursor=false,bSavedDamage=true,bInputLocked=false,bMovementLocked=false;
  void SetPhase(EDWCinematicPhase P);
  void UpdateCamera(float T,bool bReturning);
+ void AddViewportLetterbox(APlayerController& Controller,float ViewportAspect);
+ void RemoveViewportLetterbox();
  void Cleanup(bool bSuccessful);
  UFUNCTION() void SceneCompleted();
 };

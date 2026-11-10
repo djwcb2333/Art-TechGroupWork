@@ -16,6 +16,7 @@
 #endif
 
 #include "ProfilingDebugging/CpuProfilerTrace.h"
+#include "ProfilingDebugging/CsvProfiler.h"
 #include "ProfilingDebugging/MiscTrace.h"
 #include "DWGameplayCameraShake.h"
 #include "Camera/CameraShakeBase.h"
@@ -39,6 +40,55 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
+#include "Engine/GameViewportClient.h"
+#include "Rendering/DrawElementTypes.h"
+#include "Styling/CoreStyle.h"
+#include "Widgets/SLeafWidget.h"
+
+class SDWCinematicLetterbox final : public SLeafWidget
+{
+public:
+ SLATE_BEGIN_ARGS(SDWCinematicLetterbox) {}
+ SLATE_END_ARGS()
+
+ void Construct(const FArguments&)
+ {
+  SetVisibility(EVisibility::HitTestInvisible);
+  SetCanTick(false);
+ }
+
+ void SetAspect(float Aspect)
+ {
+  if (Aspect == MovieAspect) return;
+  MovieAspect = Aspect;
+  Invalidate(EInvalidateWidgetReason::Paint);
+ }
+
+ float GetAspect() const { return MovieAspect; }
+
+ FVector2D ComputeDesiredSize(float) const override { return FVector2D::ZeroVector; }
+
+ int32 OnPaint(const FPaintArgs&, const FGeometry& Geometry, const FSlateRect&,
+              FSlateWindowElementList& Draw, int32 Layer, const FWidgetStyle&, bool) const override
+ {
+  const FVector2D Size = Geometry.GetLocalSize();
+  const double BarHeight = FMath::Max(0.0, (Size.Y - Size.X / MovieAspect) * 0.5);
+  if (BarHeight == 0.0) return Layer;
+
+  const FSlateBrush* White = FCoreStyle::Get().GetBrush("WhiteBrush");
+  const FVector2D BarSize(Size.X, BarHeight);
+  for (const double Y : {0.0, Size.Y - BarHeight})
+  {
+   FSlateDrawElement::MakeBox(Draw, Layer,
+    Geometry.ToPaintGeometry(BarSize, FSlateLayoutTransform(FVector2D(0, Y))),
+    White, ESlateDrawEffect::None, FLinearColor::Black);
+  }
+  return Layer;
+ }
+
+private:
+ float MovieAspect = 1.777778f;
+};
 
 void UDWCinematicSubtitleWidget::ShowCue(FText Text,UDWTextVoiceProfile* Voice)
 {if(!SubtitleText)return;if(auto* R=UDWTextRevealLibrary::GetTextRevealComponent(SubtitleText)){if(Voice)R->VoiceProfile=Voice;R->PlayText(Text);}else SubtitleText->SetText(Text);}
@@ -70,6 +120,11 @@ void UDWCinematicComponent::ReleaseExternalResources()
 {
  if(!bExternalControlOwned||bExternalResourcesReleased)return;
  bExternalResourcesReleased=true;
+ if(ViewportLetterbox)
+ {
+  ExternalAspectFrom=ExternalAspectTo=InitialAspect;
+  RemoveViewportLetterbox();
+ }
  if(ExternalEvents.IsValid())ExternalEvents->Release(this);
  if(ExternalController.IsValid()){
   ExternalController->SetIgnoreMoveInput(false);ExternalController->SetIgnoreLookInput(false);
@@ -87,7 +142,19 @@ void UDWCinematicComponent::FlushExternalCompletion()
 void UDWCinematicComponent::RequestExternalAspect(ACameraActor* Camera,float TargetAspect)
 {
  if(!IsValid(Camera)||!Camera->GetCameraComponent())return;
- auto* Cam=Camera->GetCameraComponent();ExternalAspectFrom=Cam->AspectRatio;
+ auto* Cam=Camera->GetCameraComponent();
+ if(!ViewportLetterbox&&ExternalController.IsValid()&&Cam->ProjectionMode==ECameraProjectionMode::Perspective
+    &&TargetAspect>Cam->AspectRatio)
+ {
+  int32 Width=0,Height=0;
+  ExternalController->GetViewportSize(Width,Height);
+  if(Width>0&&Height>0)
+  {
+   InitialAspect=Cam->AspectRatio;
+   AddViewportLetterbox(*ExternalController.Get(),float(Width)/Height);
+  }
+ }
+ ExternalAspectFrom=ViewportLetterbox?ViewportLetterbox->GetAspect():Cam->AspectRatio;
  ExternalAspectTo=TargetAspect;ExternalAspectAge=0.f;Cam->SetConstraintAspectRatio(true);
 }
 void UDWCinematicComponent::AdvanceExternalAspect(ACameraActor* Camera,float DeltaSeconds)
@@ -95,7 +162,9 @@ void UDWCinematicComponent::AdvanceExternalAspect(ACameraActor* Camera,float Del
  if(!IsValid(Camera)||!Camera->GetCameraComponent())return;
  ExternalAspectAge+=FMath::Max(0.f,DeltaSeconds);
  const float T=FMath::SmoothStep(0.f,1.f,ExternalAspectAge/FMath::Max(.001f,AspectTransitionSeconds));
- Camera->GetCameraComponent()->SetAspectRatio(FMath::Lerp(ExternalAspectFrom,ExternalAspectTo,T));
+ const float Aspect=FMath::Lerp(ExternalAspectFrom,ExternalAspectTo,T);
+ if(ViewportLetterbox) ViewportLetterbox->SetAspect(Aspect);
+ else Camera->GetCameraComponent()->SetAspectRatio(Aspect);
 }
 void UDWCinematicComponent::ApplyAuthoredCameraPose(ACameraActor* Camera,const FVector& Location,const FQuat& Rotation,float FieldOfView)
 {
@@ -132,6 +201,7 @@ void UDWCinematicComponent::SetPhase(EDWCinematicPhase P)
 #if WITH_EDITOR
  if(GetWorld()&&GetWorld()->WorldType==EWorldType::PIE)UE_LOG(LogTemp,Display,TEXT("DW_PIE_CINEMATIC_PHASE owner=%s phase=%d"),*GetNameSafe(GetOwner()),int32(P));
 #endif
+ if(P!=Phase) CSV_EVENT_GLOBAL(TEXT("DW.Cinematic.%s.%d"),*GetNameSafe(GetOwner()),int32(P));
 TRACE_BOOKMARK(TEXT("DW Cinematic phase=%d owner=%s"),int32(P),*GetNameSafe(GetOwner()));Phase=P;PhaseSeconds=0;if(P==EDWCinematicPhase::TravelBack&&bStopShakeWhenReturning)StopCinematicShake(false);}
 void UDWCinematicComponent::StartCinematicShake()
 {
@@ -197,6 +267,8 @@ bool UDWCinematicComponent::PlayCinematic(APlayerController* C)
 #endif
 
  auto* Cam=PlaybackCamera->GetCameraComponent();Cam->ProjectionMode=OriginalPOV.ProjectionMode;Cam->OrthoWidth=OriginalPOV.OrthoWidth;Cam->PostProcessSettings=OriginalPOV.PostProcessSettings;Cam->PostProcessBlendWeight=OriginalPOV.PostProcessBlendWeight;Cam->SetFieldOfView(OriginalPOV.FOV);Cam->SetAspectRatio(InitialAspect);Cam->SetConstraintAspectRatio(true);
+ if(Width>0&&Height>0&&OriginalPOV.ProjectionMode==ECameraProjectionMode::Perspective)
+  AddViewportLetterbox(*C,float(Width)/Height);
  bSavedCursor=C->bShowMouseCursor;C->bShowMouseCursor=false;bSavedDamage=Pawn->CanBeDamaged();Pawn->SetCanBeDamaged(false);
  C->SetIgnoreMoveInput(true);C->SetIgnoreLookInput(true);bInputLocked=true;
  if(auto* Ch=Cast<ACharacter>(Pawn.Get())){auto* M=Ch->GetCharacterMovement();PreviousMovementMode=M->MovementMode;PreviousCustomMode=M->CustomMovementMode;M->StopMovementImmediately();M->DisableMovement();bMovementLocked=true;}
@@ -250,6 +322,33 @@ bool UDWCinematicComponent::SkipSubtitleLine()
  bSubtitleDismissed=true;Subtitle->SetVisibility(ESlateVisibility::Collapsed);
  return true;
 }
+void UDWCinematicComponent::AddViewportLetterbox(APlayerController& Controller,float ViewportAspect)
+{
+ auto* Instance=Controller.GetGameInstance();
+ auto* Viewport=Instance?Instance->GetGameViewportClient():nullptr;
+ const float Movie=FMath::Clamp(MovieAspectRatio,.5f,4.f);
+ if(!Viewport||Instance->GetNumLocalPlayers()!=1||!Viewport->GetGameViewportWidget().IsValid()
+    ||!FMath::IsNearlyEqual(InitialAspect,ViewportAspect,.001f)||Movie<=InitialAspect) return;
+
+ // The existing horizontal FOV is preserved by a centered vertical crop.
+ // Keep the scene view rectangle fixed and draw that crop below the UMG layer.
+ ViewportLetterbox=SNew(SDWCinematicLetterbox);
+ ViewportLetterbox->SetAspect(InitialAspect);
+ LetterboxViewport=Viewport;
+ Viewport->AddViewportWidgetContent(ViewportLetterbox.ToSharedRef(),-100);
+}
+
+void UDWCinematicComponent::RemoveViewportLetterbox()
+{
+ if(ViewportLetterbox)
+ {
+  if(auto* Viewport=LetterboxViewport.Get())
+   Viewport->RemoveViewportWidgetContent(ViewportLetterbox.ToSharedRef());
+  ViewportLetterbox.Reset();
+  LetterboxViewport.Reset();
+ }
+}
+
 void UDWCinematicComponent::UpdateCamera(float T,bool Back)
 {
  TRACE_CPUPROFILER_EVENT_SCOPE(DW_Cinematic_UpdateCamera);
@@ -259,7 +358,10 @@ void UDWCinematicComponent::UpdateCamera(float T,bool Back)
  ApplyAuthoredCameraPose(PlaybackCamera,FMath::Lerp(From.Location,To.Location,A),FQuat::Slerp(From.Rotation.Quaternion(),To.Rotation.Quaternion(),A),FMath::Lerp(From.FOV,To.FOV,A));
  auto* Cam=PlaybackCamera->GetCameraComponent();
  const float B=FMath::SmoothStep(0.f,1.f,PhaseSeconds/FMath::Max(.001f,AspectTransitionSeconds));
- const float Movie=FMath::Clamp(MovieAspectRatio,.5f,4.f);Cam->SetAspectRatio(Back?FMath::Lerp(Movie,InitialAspect,B):FMath::Lerp(InitialAspect,Movie,B));
+ const float Movie=FMath::Clamp(MovieAspectRatio,.5f,4.f);
+ const float Aspect=Back?FMath::Lerp(Movie,InitialAspect,B):FMath::Lerp(InitialAspect,Movie,B);
+ if(ViewportLetterbox) ViewportLetterbox->SetAspect(Aspect);
+ else Cam->SetAspectRatio(Aspect);
 }
 void UDWCinematicComponent::TickComponent(float Dt,ELevelTick Type,FActorComponentTickFunction* F)
 {
@@ -300,6 +402,7 @@ void UDWCinematicComponent::TickComponent(float Dt,ELevelTick Type,FActorCompone
  case EDWCinematicPhase::TravelBack:
   UpdateCamera(PhaseSeconds/FMath::Max(.001f,TravelBackSeconds),true);
   if(PhaseSeconds>=FMath::Max(TravelBackSeconds,AspectTransitionSeconds)){
+   RemoveViewportLetterbox();
    StopCinematicShake(true);PC->SetViewTarget(PreviousViewTarget.Get());UIReturnDuration=0;
    for(auto U:UI)if(U.IsValid()){U->ReturnToScreen();UIReturnDuration=FMath::Max(UIReturnDuration,U->ReturnSeconds);}
    SetPhase(EDWCinematicPhase::UIReturn);
@@ -325,6 +428,7 @@ void UDWCinematicComponent::Cleanup(bool Success)
 #endif
 
  TRACE_CPUPROFILER_EVENT_SCOPE(DW_Cinematic_Cleanup);
+ RemoveViewportLetterbox();
  if(SubtitleInput){if(PC.IsValid())PC->PopInputComponent(SubtitleInput);SubtitleInput->DestroyComponent();SubtitleInput=nullptr;}
  bSkipPressHeld=false;bSubtitleDismissed=false;
  StopCinematicShake(true);
